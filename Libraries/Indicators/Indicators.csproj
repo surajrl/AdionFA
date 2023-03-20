@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <StartWorkingDirectory>$(MSBuildProjectDirectory)</StartWorkingDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\Common\Adion.FinancialAutomat.Infrastructure.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\IoC\Adion.FinancialAutomat.Infrastructure.Core.IofC.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AdionFinancialAutomat.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

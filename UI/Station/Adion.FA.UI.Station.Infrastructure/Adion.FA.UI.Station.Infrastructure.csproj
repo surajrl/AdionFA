@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Dragablz" Version="0.0.3.223" />
+    <PackageReference Include="DynamicData" Version="7.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.2.2" />
+    <PackageReference Include="Grpc.Core" Version="2.41.1" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="MaterialDesignColors" Version="2.0.3" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
+    <PackageReference Include="Prism.Unity" Version="8.1.97" />
+    <PackageReference Include="protobuf-net" Version="3.0.101" />
+    <PackageReference Include="ReactiveUI" Version="16.3.5" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\Adion.FA.Core.Application.Contract\Adion.FA.Core.Application.Contract.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Adion.FA.Infrastructure.Common\Adion.FA.Infrastructure.Common.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Adion.FA.Infrastructure.Core.IofC\Adion.FA.Infrastructure.Core.IofC.csproj" />
+    <ProjectReference Include="..\..\..\Model\Adion.FA.TransferObject\Adion.FA.TransferObject.csproj" />
+  </ItemGroup>
+
+</Project>

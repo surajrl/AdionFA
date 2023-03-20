@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\Adion.FA.Infrastructure.Core\Adion.FA.Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\Adion.FA.Core.Api.Contract\Adion.FA.Core.API.Contract.csproj" />
+    <ProjectReference Include="..\Adion.FA.Core.Application.Contract\Adion.FA.Core.Application.Contract.csproj" />
+  </ItemGroup>
+
+</Project>

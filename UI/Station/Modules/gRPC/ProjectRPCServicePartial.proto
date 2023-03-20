@@ -1,0 +1,18 @@
+﻿
+
+syntax = "proto3";
+
+package Adion.FA.UI.Station.Modules.gRPC;
+
+service ProjectRPCServicePartial {
+  rpc LoadProject (ProjectRequest) returns (ProjectResponse) {}
+}
+
+message ProjectRequest {
+  int32 projectId = 1;
+  bool IsLoadSuccess = 2;
+}
+
+message ProjectResponse {
+  bool IsSuccess = 1;
+}

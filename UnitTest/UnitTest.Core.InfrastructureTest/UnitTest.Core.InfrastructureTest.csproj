@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <StartWorkingDirectory>$(MSBuildProjectDirectory)</StartWorkingDirectory>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Adion.FA.Core.Application.Contract\Adion.FA.Core.Application.Contract.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Adion.FA.Infrastructure.Common\Adion.FA.Infrastructure.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Adion.FA.Infrastructure.Core.IofC\Adion.FA.Infrastructure.Core.IofC.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Adion.FA.Infrastructure.Core\Adion.FA.Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\..\Model\Adion.FA.TransferObject\Adion.FA.TransferObject.csproj" />
+  </ItemGroup>
+
+</Project>

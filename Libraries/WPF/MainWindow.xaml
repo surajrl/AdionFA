@@ -1,0 +1,64 @@
+﻿<Window x:Class="WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF"
+        xmlns:trace="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" MinWidth="250" x:Name="window">
+
+    <Window.Resources>
+        <ControlTemplate x:Key="ValidationTemplate">
+            <StackPanel>
+                <DockPanel>
+                    <Border Name="BorderError" BorderThickness="1" BorderBrush="Red" DockPanel.Dock="Left">
+                        <AdornedElementPlaceholder Name="ErrorAdorner">
+                        </AdornedElementPlaceholder>
+                    </Border>
+                </DockPanel>
+                <TextBlock Foreground="Red" FontWeight="Bold" 
+                        Text="{Binding ElementName=ErrorAdorner, Path=AdornedElement.(Validation.Errors)/ErrorContent}"/>
+                <TextBlock>
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding ElementName=ErrorAdorner, Path=AdornedElement.(Validation.Errors)/ErrorContent}"/>
+                            <!--<Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=ErrorAdorner, Path=AdornedElement.(Validation.Errors).Count}" Value="0">
+                                    <Setter Property="Text" Value="as"/>
+                                </DataTrigger>
+                            </Style.Triggers>-->
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </ControlTemplate>
+
+        <Style x:Key="TextBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+
+    
+    <StackPanel Margin="10" Orientation="Vertical">
+        <!--<TextBox Name="txtAge" 
+                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+            <TextBox.Text>
+                <Binding Path="Age" UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True">
+                    <Binding.ValidationRules>
+                        <local:AgeRule />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>-->
+
+        <Button x:Name="YYY" Command="{Binding Validate}">Validate</Button>
+    </StackPanel>
+</Window>

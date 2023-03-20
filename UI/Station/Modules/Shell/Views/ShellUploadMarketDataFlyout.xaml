@@ -1,0 +1,22 @@
+﻿<metro:Flyout x:Class="Adion.FA.UI.Station.Module.Shell.Views.ShellUploadMarketDataFlyout"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:infrastructure="clr-namespace:Adion.FA.UI.Station.Infrastructure;assembly=Adion.FA.UI.Station.Infrastructure"
+             xmlns:commonResources="clr-namespace:Adion.FA.Infrastructure.I18n.Resources;assembly=Adion.FA.Infrastructure.I18n"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:local="clr-namespace:Adion.FA.UI.Station.Module.Shell.Views"
+             Position="Right" Theme="Adapt" Width="770" CloseButtonIsCancel="True"
+             Header="{x:Static commonResources:CommonResources.UploadMarketData}" IsModal="True">
+    <Grid>
+        <Expander Margin="0"
+                  Header="{x:Static commonResources:CommonResources.UploadMarketData}"
+                  IsExpanded="True">
+            <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:AppRegions.UploadMarketDataView_SettingModule}"/>
+        </Expander>
+    </Grid>
+</metro:Flyout>

@@ -1,0 +1,37 @@
+﻿using MahApps.Metro.Controls.Dialogs;
+using System;
+using System.Linq;
+
+namespace Adion.FA.UI.Station.Infrastructure.Helpers
+{
+    public static class MessageHelper
+    {
+        readonly static IDialogCoordinator Dialog = new DialogCoordinator();
+        readonly static MetroDialogSettings _setting;
+
+        static MessageHelper()
+        {
+            _setting = new MetroDialogSettings
+            {
+                DialogTitleFontSize = 16,
+                DialogMessageFontSize = 12,
+                ColorScheme = MetroDialogColorScheme.Theme
+            };
+        }
+
+        public static async void ShowMessage(object context, string title, string message)
+        {
+            await Dialog.ShowMessageAsync(context, 
+                title, $" - {message ?? string.Empty}", 
+                settings: _setting);
+        }
+
+        public static async void ShowMessages(object context, string title, string[] messages)
+        {
+            var megs = messages?.ToArray() ?? Array.Empty<string>();
+            await Dialog.ShowMessageAsync(context,
+                title, string.Join(Environment.NewLine, messages.Select(m => $" - {m}")),
+                settings: _setting);
+        }
+    }
+}
