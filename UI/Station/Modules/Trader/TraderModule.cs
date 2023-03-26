@@ -1,12 +1,12 @@
-﻿using Adion.FA.UI.Station.Infrastructure;
-using Adion.FA.UI.Station.Modules.Trader.Infrastructure;
-using Adion.FA.UI.Station.Modules.Trader.Services;
-using Adion.FA.UI.Station.Modules.Trader.ViewModels;
+﻿using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Modules.Trader.Infrastructure;
+using AdionFA.UI.Station.Modules.Trader.Services;
+using AdionFA.UI.Station.Modules.Trader.ViewModels;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
 
-namespace Adion.FA.UI.Station.Modules.Trader
+namespace AdionFA.UI.Station.Modules.Trader
 {
     public class TraderModule : IModule
     {

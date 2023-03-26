@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ninject" Version="3.3.6" PrivateAssets="none" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core\AdionFA.Infrastructure.Core.csproj">
+      <PrivateAssets>none</PrivateAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Model\AdionFA.TransferObject\AdionFA.TransferObject.csproj">
+      <PrivateAssets>none</PrivateAssets>
+    </ProjectReference>
+    
+    <ProjectReference Include="..\AdionFA.Core.Application.Contract\AdionFA.Core.Application.Contract.csproj">
+      <PrivateAssets>none</PrivateAssets>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

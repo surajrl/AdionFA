@@ -1,7 +1,7 @@
 ﻿using DynamicData.Binding;
 using System;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Infrastructure
+namespace AdionFA.UI.Station.Modules.Trader.Infrastructure
 {
     public class ViewContainer : AbstractNotifyPropertyChanged
     {

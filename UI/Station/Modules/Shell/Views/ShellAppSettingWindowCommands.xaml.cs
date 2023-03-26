@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Adion.FA.UI.Station.Module.Shell.Views
+namespace AdionFA.UI.Station.Module.Shell.Views
 {
     /// <summary>
     /// Interaction logic for ShellAppSetting.xaml

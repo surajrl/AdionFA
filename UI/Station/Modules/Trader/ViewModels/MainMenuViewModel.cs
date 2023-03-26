@@ -1,6 +1,6 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Enums;
-using Adion.FA.UI.Station.Modules.Trader.Infrastructure;
-using Adion.FA.UI.Station.Modules.Trader.Model;
+﻿using AdionFA.UI.Station.Modules.Trader.Enums;
+using AdionFA.UI.Station.Modules.Trader.Infrastructure;
+using AdionFA.UI.Station.Modules.Trader.Model;
 using DynamicData.Binding;
 using Prism.Ioc;
 using ReactiveUI;
@@ -11,7 +11,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
-namespace Adion.FA.UI.Station.Modules.Trader.ViewModels
+namespace AdionFA.UI.Station.Modules.Trader.ViewModels
 {
     public class MainMenuViewModel : AbstractNotifyPropertyChanged, IDisposable
     {

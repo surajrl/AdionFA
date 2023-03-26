@@ -1,7 +1,7 @@
-﻿using Adion.FA.UI.Station.Module.Dashboard.ViewModels;
+﻿using AdionFA.UI.Station.Module.Dashboard.ViewModels;
 using System.Windows.Controls;
 
-namespace Adion.FA.UI.Station.Module.Dashboard
+namespace AdionFA.UI.Station.Module.Dashboard
 {
     /// <summary>
     /// Interaction logic for AppSettingView.xaml

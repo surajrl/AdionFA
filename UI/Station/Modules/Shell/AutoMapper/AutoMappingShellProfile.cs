@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Adion.FA.UI.Station.Module.Shell.AutoMapper
+namespace AdionFA.UI.Station.Module.Shell.AutoMapper
 {
     public class AutoMappingShellProfile : Profile
     {

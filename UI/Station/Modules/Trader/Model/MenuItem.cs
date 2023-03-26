@@ -1,12 +1,12 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Enums;
-using Adion.FA.UI.Station.Modules.Trader.Infrastructure;
+﻿using AdionFA.UI.Station.Modules.Trader.Enums;
+using AdionFA.UI.Station.Modules.Trader.Infrastructure;
 using DynamicData.Binding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Model
+namespace AdionFA.UI.Station.Modules.Trader.Model
 {
     public class MenuItem : AbstractNotifyPropertyChanged
     {

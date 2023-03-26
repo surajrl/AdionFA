@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Enums
+namespace AdionFA.UI.Station.Modules.Trader.Enums
 {
     public enum BuyOrSell
     {

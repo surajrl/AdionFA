@@ -1,26 +1,28 @@
-﻿<StackPanel x:Class="Adion.FA.UI.Station.Module.Shell.Views.ShellAppSettingWindowCommands"
+﻿<StackPanel x:Class="AdionFA.UI.Station.Module.Shell.Views.ShellAppSettingWindowCommands"
             xmlns:prism="http://prismlibrary.com/"
             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-            xmlns:infrastructure="clr-namespace:Adion.FA.UI.Station.Infrastructure;assembly=Adion.FA.UI.Station.Infrastructure"
+            xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-            xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-            xmlns:local="clr-namespace:Adion.FA.UI.Station.Module.Shell.Views"
-            mc:Ignorable="d" 
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:local="clr-namespace:AdionFA.UI.Station.Module.Shell.Views"
+            mc:Ignorable="d"
             VerticalAlignment="Center"
+            Orientation="Horizontal"
             d:DesignHeight="30" d:DesignWidth="300">
 
+    <!-- App Settings -->
     <Button x:Name="AppSettingBtn" ToolTip="App Setting">
         <Button.Resources>
             <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button.WindowCommands}">
-                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Cursor" Value="Hand" />
             </Style>
         </Button.Resources>
         <StackPanel>
-            <iconPacks:PackIconMaterial Kind="CogOutline" Height="20" Width="20"/>
+            <iconPacks:PackIconMaterial Kind="CogOutline" Height="20" Width="20" />
         </StackPanel>
 
         <behaviors:Interaction.Triggers>
@@ -28,12 +30,18 @@
                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                     <behaviors:InvokeCommandAction.CommandParameter>
                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutAppSetting}"/>
+                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutAppSetting}" />
                         </MultiBinding>
                     </behaviors:InvokeCommandAction.CommandParameter>
                 </behaviors:InvokeCommandAction>
             </behaviors:EventTrigger>
         </behaviors:Interaction.Triggers>
     </Button>
-    
+
+    <!-- MetaTrader Connection Status -->
+    <StackPanel>
+        <TextBlock Text="MetaTrader Connection Status" />
+        <StatusBar Width="100" Height="10"
+                   Background="{Binding IsMetaTraderConnected, Converter={StaticResource BooleanToBrushConverter}}" />
+    </StackPanel>
 </StackPanel>

@@ -1,4 +1,4 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Enums;
+﻿using AdionFA.UI.Station.Modules.Trader.Enums;
 using DynamicData;
 using DynamicData.Binding;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Model
+namespace AdionFA.UI.Station.Modules.Trader.Model
 {
     public class CurrencyPairPosition : AbstractNotifyPropertyChanged, IDisposable, IEquatable<CurrencyPairPosition>
     {

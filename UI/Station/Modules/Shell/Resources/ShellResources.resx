@@ -126,8 +126,8 @@
   <data name="CreateProject" xml:space="preserve">
     <value>Create Project</value>
   </data>
-  <data name="MarketData" xml:space="preserve">
-    <value>Market Data</value>
+  <data name="HistoricalData" xml:space="preserve">
+    <value>Historical Data</value>
   </data>
   <data name="OpenOrImport" xml:space="preserve">
     <value>Open or Import</value>

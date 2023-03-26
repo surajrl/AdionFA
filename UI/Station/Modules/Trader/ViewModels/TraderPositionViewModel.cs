@@ -1,13 +1,13 @@
-﻿using Adion.FA.UI.Station.Infrastructure.Contracts.Services;
-using Adion.FA.UI.Station.Modules.Trader.Model;
-using Adion.FA.UI.Station.Modules.Trader.Services;
+﻿using AdionFA.UI.Station.Infrastructure.Contracts.Services;
+using AdionFA.UI.Station.Modules.Trader.Model;
+using AdionFA.UI.Station.Modules.Trader.Services;
 using DynamicData;
 using DynamicData.Binding;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 
-namespace Adion.FA.UI.Station.Modules.Trader.ViewModels
+namespace AdionFA.UI.Station.Modules.Trader.ViewModels
 {
     public class TraderPositionViewModel : IDisposable
     {

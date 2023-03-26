@@ -1,9 +1,9 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Model;
+﻿using AdionFA.UI.Station.Modules.Trader.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Services
+namespace AdionFA.UI.Station.Modules.Trader.Services
 {
     public class StaticData : IStaticData
     {

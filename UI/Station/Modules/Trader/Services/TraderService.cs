@@ -1,6 +1,6 @@
-﻿using Adion.FA.UI.Station.Infrastructure.Contracts.Services;
-using Adion.FA.UI.Station.Modules.Trader.Enums;
-using Adion.FA.UI.Station.Modules.Trader.Model;
+﻿using AdionFA.UI.Station.Infrastructure.Contracts.Services;
+using AdionFA.UI.Station.Modules.Trader.Enums;
+using AdionFA.UI.Station.Modules.Trader.Model;
 using DynamicData;
 using DynamicData.Kernel;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Services
+namespace AdionFA.UI.Station.Modules.Trader.Services
 {
     public class TraderService : ITraderService, IDisposable
     {

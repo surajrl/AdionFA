@@ -1,4 +1,4 @@
-﻿using Adion.FA.UI.Station.Controls.SearchBoxControl.Resources;
+﻿using AdionFA.UI.Station.Controls.SearchBoxControl.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Adion.FA.UI.Station.Controls.SearchBoxControl
+namespace AdionFA.UI.Station.Controls.SearchBoxControl
 {
     /// <summary>
     /// Follow steps 1a or 1b and then 2 to use this custom control in a XAML file.
@@ -24,14 +24,14 @@ namespace Adion.FA.UI.Station.Controls.SearchBoxControl
     /// Add this XmlNamespace attribute to the root element of the markup file where it is 
     /// to be used:
     ///
-    ///     xmlns:MyNamespace="clr-namespace:Adion.FA.UI.Station.Controls.SearchTextBoxControl"
+    ///     xmlns:MyNamespace="clr-namespace:AdionFA.UI.Station.Controls.SearchTextBoxControl"
     ///
     ///
     /// Step 1b) Using this custom control in a XAML file that exists in a different project.
     /// Add this XmlNamespace attribute to the root element of the markup file where it is 
     /// to be used:
     ///
-    ///     xmlns:MyNamespace="clr-namespace:Adion.FA.UI.Station.Controls.SearchTextBoxControl;assembly=Adion.FA.UI.Station.Controls.SearchTextBoxControl"
+    ///     xmlns:MyNamespace="clr-namespace:AdionFA.UI.Station.Controls.SearchTextBoxControl;assembly=AdionFA.UI.Station.Controls.SearchTextBoxControl"
     ///
     /// You will also need to add a project reference from the project where the XAML file lives
     /// to this project and Rebuild to avoid compilation errors:

@@ -1,7 +1,7 @@
-﻿using Adion.FA.Infrastructure.Common.Directories.Services;
-using Adion.FA.Infrastructure.Enums;
-using Adion.FA.UI.Station.Infrastructure.Contracts.AppServices;
-using Adion.FA.UI.Station.Module.Shell.AutoMapper;
+﻿using AdionFA.Infrastructure.Common.Directories.Services;
+using AdionFA.Infrastructure.Enums;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Module.Shell.AutoMapper;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Adion.FA.UI.Station.Module.Shell.Services
+namespace AdionFA.UI.Station.Module.Shell.Services
 {
     public class ShellServiceShell : IShellServiceShell
     {

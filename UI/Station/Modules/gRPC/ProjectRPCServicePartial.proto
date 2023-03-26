@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package Adion.FA.UI.Station.Modules.gRPC;
+package AdionFA.UI.Station.Modules.gRPC;
 
 service ProjectRPCServicePartial {
   rpc LoadProject (ProjectRequest) returns (ProjectResponse) {}

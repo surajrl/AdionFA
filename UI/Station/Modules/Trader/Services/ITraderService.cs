@@ -1,7 +1,7 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Model;
+﻿using AdionFA.UI.Station.Modules.Trader.Model;
 using DynamicData;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Services
+namespace AdionFA.UI.Station.Modules.Trader.Services
 {
     public interface ITraderService
     {

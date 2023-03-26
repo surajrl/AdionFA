@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Adion.FA.Core.Application.Contract\Adion.FA.Core.Application.Contract.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Adion.FA.Infrastructure.Common\Adion.FA.Infrastructure.Common.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Adion.FA.Infrastructure.Core.IofC\Adion.FA.Infrastructure.Core.IofC.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Adion.FA.Infrastructure.Core\Adion.FA.Infrastructure.Core.csproj" />
-    <ProjectReference Include="..\..\Model\Adion.FA.TransferObject\Adion.FA.TransferObject.csproj" />
+    <ProjectReference Include="..\..\Core\AdionFA.Core.Application.Contract\AdionFA.Core.Application.Contract.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Common\AdionFA.Infrastructure.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core.IofC\AdionFA.Infrastructure.Core.IofC.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core\AdionFA.Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\..\Model\AdionFA.TransferObject\AdionFA.TransferObject.csproj" />
   </ItemGroup>
 
 </Project>

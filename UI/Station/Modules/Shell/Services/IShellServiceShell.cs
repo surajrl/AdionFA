@@ -1,8 +1,8 @@
-﻿using Adion.FA.UI.Station.Module.Shell.Model;
+﻿using AdionFA.UI.Station.Module.Shell.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Adion.FA.UI.Station.Module.Shell.Services
+namespace AdionFA.UI.Station.Module.Shell.Services
 {
     public interface IShellServiceShell
     {

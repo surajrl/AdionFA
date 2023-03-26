@@ -1,11 +1,11 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Model;
+﻿using AdionFA.UI.Station.Modules.Trader.Model;
 using DynamicData.Kernel;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Text;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Services
+namespace AdionFA.UI.Station.Modules.Trader.Services
 {
     public class MarketDataService : IMarketDataService
     {

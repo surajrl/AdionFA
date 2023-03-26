@@ -1,13 +1,13 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Enums;
-using Adion.FA.UI.Station.Modules.Trader.Infrastructure;
-using Adion.FA.UI.Station.Modules.Trader.Model;
+﻿using AdionFA.UI.Station.Modules.Trader.Enums;
+using AdionFA.UI.Station.Modules.Trader.Infrastructure;
+using AdionFA.UI.Station.Modules.Trader.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using DynamicData.Kernel;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Services
+namespace AdionFA.UI.Station.Modules.Trader.Services
 {
     public class TradeGenerator : IDisposable
     {

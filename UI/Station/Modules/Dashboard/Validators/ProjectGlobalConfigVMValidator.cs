@@ -1,8 +1,8 @@
-﻿using Adion.FA.Infrastructure.I18n.Resources;
-using Adion.FA.UI.Station.Module.Dashboard.Model;
+﻿using AdionFA.Infrastructure.I18n.Resources;
+using AdionFA.UI.Station.Module.Dashboard.Model;
 using FluentValidation;
 
-namespace Adion.FA.UI.Station.Module.Dashboard.Validators
+namespace AdionFA.UI.Station.Module.Dashboard.Validators
 {
     public class ProjectGlobalConfigVMValidator : AbstractValidator<ProjectGlobalConfigModel>
     {
@@ -22,20 +22,20 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Validators
                 RuleFor(m => m.ToTimeInSecondsEurope).NotNull().NotEmpty();
             });
 
-            #endregion
+            #endregion Schedules
 
             #region Currency
 
-            RuleFor(m => m.CurrencyPairId).GreaterThan(0)
-                .WithMessage(m => string.Format(ValidationResources.IsRequired, CommonResources.CurrencyPair));
+            RuleFor(m => m.SymbolId).GreaterThan(0)
+                .WithMessage(m => string.Format(ValidationResources.IsRequired, CommonResources.Symbols));
 
-            RuleFor(m => m.CurrencyPeriodId).GreaterThan(0)
-                .WithMessage(m => string.Format(ValidationResources.IsRequired, CommonResources.Period));
+            RuleFor(m => m.TimeframeId).GreaterThan(0)
+                .WithMessage(m => string.Format(ValidationResources.IsRequired, CommonResources.Timeframe));
 
             RuleFor(m => m.CurrencySpreadId).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.IsRequired, CommonResources.Spread));
 
-            #endregion
+            #endregion Currency
 
             #region Weka
 
@@ -69,7 +69,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Validators
                 .When(m => m.AutoAdjustConfig)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            #endregion
+            #endregion Weka
 
             #region Strategy Builder
 
@@ -84,7 +84,6 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Validators
             RuleFor(m => m.MinAdjustMinPercentSuccessIS).GreaterThan(0)
                 .When(m => m.AutoAdjustConfig)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
-
 
             RuleFor(m => m.MinTransactionCountOS).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
@@ -124,7 +123,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Validators
                 .When(m => m.AutoAdjustConfig)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            #endregion
+            #endregion Strategy Builder
 
             #region Assembled Builder
 
@@ -137,7 +136,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Validators
             RuleFor(m => m.TotalAssemblyIterations).GreaterThan(0)
                  .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            #endregion
+            #endregion Assembled Builder
         }
     }
 }

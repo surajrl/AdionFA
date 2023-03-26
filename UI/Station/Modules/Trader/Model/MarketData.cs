@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Model
+namespace AdionFA.UI.Station.Modules.Trader.Model
 {
     public class MarketData : IEquatable<MarketData>
     {

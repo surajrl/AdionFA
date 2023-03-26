@@ -1,0 +1,1 @@
+"C:\Program Files\MetaTrader 5\terminal64.exe" /config:"C:\AdionFA\metatrader5\config.ini"

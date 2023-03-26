@@ -1,9 +1,9 @@
-﻿using Adion.FA.UI.Station.Infrastructure;
-using Adion.FA.UI.Station.Infrastructure.Commands;
-using Adion.FA.UI.Station.Infrastructure.Extensions;
-using Adion.FA.UI.Station.Infrastructure.Services;
-using Adion.FA.UI.Station.Modules.Trader.Infrastructure;
-using Adion.FA.UI.Station.Modules.Trader.Services;
+﻿using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Infrastructure.Commands;
+using AdionFA.UI.Station.Infrastructure.Extensions;
+using AdionFA.UI.Station.Infrastructure.Services;
+using AdionFA.UI.Station.Modules.Trader.Infrastructure;
+using AdionFA.UI.Station.Modules.Trader.Services;
 using Dragablz;
 using DynamicData;
 using DynamicData.Binding;
@@ -18,7 +18,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Windows.Input;
 
-namespace Adion.FA.UI.Station.Modules.Trader.ViewModels
+namespace AdionFA.UI.Station.Modules.Trader.ViewModels
 {
     public class TraderViewModel : AbstractNotifyPropertyChanged, IDisposable
     {
@@ -63,11 +63,14 @@ namespace Adion.FA.UI.Station.Modules.Trader.ViewModels
         #endregion
 
         #region Dispose
+        
         private readonly IDisposable _cleanUp;
         public void Dispose()
         {
             _cleanUp.Dispose();
+            GC.SuppressFinalize(this);
         }
+        
         #endregion
 
         #region Commands
@@ -113,13 +116,13 @@ namespace Adion.FA.UI.Station.Modules.Trader.ViewModels
         {
             #region Material Design Theme
             //----------Set Theme Material Design----------------
-            PaletteHelper paletteHelper = new PaletteHelper();
+            PaletteHelper paletteHelper = new();
             ITheme theme = new Theme();
             try
             {
                 theme = paletteHelper.GetTheme();
             }
-            catch (Exception ex) 
+            catch (Exception) 
             {
                 theme.SetBaseTheme(Theme.Light);
                 paletteHelper.SetTheme(theme);

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Views
+namespace AdionFA.UI.Station.Modules.Trader.Views
 {
     /// <summary>
     /// Interaction logic for MenuView.xaml

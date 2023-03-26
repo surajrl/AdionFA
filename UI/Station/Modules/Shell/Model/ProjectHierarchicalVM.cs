@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Adion.FA.UI.Station.Module.Shell.Model
+namespace AdionFA.UI.Station.Module.Shell.Model
 {
     public class ProjectHierarchicalVM
     {

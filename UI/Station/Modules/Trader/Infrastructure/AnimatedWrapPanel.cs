@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Infrastructure
+namespace AdionFA.UI.Station.Modules.Trader.Infrastructure
 {
     /// <summary>
     /// Lifted from http://tech.pro/tutorial/736/wpf-tutorial-creating-a-custom-panel-control

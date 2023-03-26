@@ -1,10 +1,10 @@
-﻿using Adion.FA.Core.Application.Contracts.Projects;
-using Adion.FA.Infrastructure.Enums;
-using Adion.FA.UI.Station.Infrastructure.Contracts.AppServices;
-using Adion.FA.UI.Station.Infrastructure.Model.Market;
-using Adion.FA.UI.Station.Infrastructure.Model.Project;
-using Adion.FA.UI.Station.Module.Dashboard.AutoMapper;
-using Adion.FA.UI.Station.Module.Dashboard.Model;
+﻿using AdionFA.Core.Application.Contracts.Projects;
+using AdionFA.Infrastructure.Enums;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Module.Dashboard.AutoMapper;
+using AdionFA.UI.Station.Module.Dashboard.Model;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -12,30 +12,30 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Adion.FA.UI.Station.Module.Dashboard.Services
+namespace AdionFA.UI.Station.Module.Dashboard.Services
 {
     public class SettingService : ISettingService
     {
         #region Services
 
-        public readonly IMarketDataServiceAgent MarketDataService;
+        public readonly IHistoricalDataServiceAgent HistoricalDataService;
         public readonly IProjectServiceAgent ProjectService;
 
-        #endregion
+        #endregion Services
 
         #region AutoMapper
 
         public readonly IMapper Mapper;
 
-        #endregion
+        #endregion AutoMapper
 
-        #region Ctor
+        #region Constructor
 
         public SettingService(
-            IMarketDataServiceAgent marketDataService,
+            IHistoricalDataServiceAgent historicalDataService,
             IProjectServiceAgent projectService)
         {
-            MarketDataService = marketDataService;
+            HistoricalDataService = historicalDataService;
             ProjectService = projectService;
 
             Mapper = new MapperConfiguration(mc =>
@@ -44,7 +44,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             }).CreateMapper();
         }
 
-        #endregion
+        #endregion Constructor
 
         #region Configurations
 
@@ -53,7 +53,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             try
             {
                 var list = await ProjectService.GetAllGlobalConfigurations(includeGraph);
-                var vm = Mapper.Map<IList<ProjectGlobalConfigurationVM>,IList<ProjectGlobalConfigurationVM>>(list);
+                var vm = Mapper.Map<IList<ProjectGlobalConfigurationVM>, IList<ProjectGlobalConfigurationVM>>(list);
                 return vm;
             }
             catch (Exception ex)
@@ -67,21 +67,20 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
         {
             try
             {
+                var globalConfig = await ProjectService.GetGlobalConfiguration(includeGraph: true);
+                var result = Mapper.Map<ProjectGlobalConfigurationVM, ProjectGlobalConfigModel>(globalConfig);
 
-                var config = await ProjectService.GetGlobalConfiguration(includeGraph: true);
-                var result = Mapper.Map<ProjectGlobalConfigurationVM, ProjectGlobalConfigModel>(config);
-
-                var europa = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe);
+                var europa = globalConfig.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe);
                 result.GlobalScheduleEuropeId = europa.ProjectGlobalScheduleConfigurationId;
                 result.FromTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.FromTimeInSeconds ?? 0);
                 result.ToTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.ToTimeInSeconds ?? 0);
 
-                var america = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.America);
+                var america = globalConfig.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.America);
                 result.GlobalScheduleAmericaId = america.ProjectGlobalScheduleConfigurationId;
                 result.FromTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.FromTimeInSeconds ?? 0);
                 result.ToTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.ToTimeInSeconds ?? 0);
 
-                var asia = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia);
+                var asia = globalConfig.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia);
                 result.GlobalScheduleAsiaId = asia.ProjectGlobalScheduleConfigurationId;
                 result.FromTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.FromTimeInSeconds ?? 0);
                 result.ToTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.ToTimeInSeconds ?? 0);
@@ -101,7 +100,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             {
                 int factor = 3600;
 
-                #region Convert Hours to Milliseconds Europe 
+                #region Convert Hours to Milliseconds Europe
 
                 var europa = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe
@@ -109,9 +108,9 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
                 europa.FromTimeInSeconds = config.FromTimeInSecondsEurope?.Hour * factor;
                 europa.ToTimeInSeconds = config.ToTimeInSecondsEurope?.Hour * factor;
 
-                #endregion
+                #endregion Convert Hours to Milliseconds Europe
 
-                #region Convert Hours to Milliseconds America 
+                #region Convert Hours to Milliseconds America
 
                 var america = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.America
@@ -119,7 +118,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
                 america.FromTimeInSeconds = config.FromTimeInSecondsAmerica?.Hour * factor;
                 america.ToTimeInSeconds = config.ToTimeInSecondsAmerica?.Hour * factor;
 
-                #endregion
+                #endregion Convert Hours to Milliseconds America
 
                 #region Convert Hours to Milliseconds Asia
 
@@ -129,7 +128,7 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
                 asia.FromTimeInSeconds = config.FromTimeInSecondsAsia?.Hour * factor;
                 asia.ToTimeInSeconds = config.ToTimeInSecondsAsia?.Hour * factor;
 
-                #endregion
+                #endregion Convert Hours to Milliseconds Asia
 
                 var configVm = Mapper.Map<ProjectGlobalConfigurationVM, ProjectGlobalConfigModel>(config);
 
@@ -143,16 +142,16 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        #endregion
+        #endregion Configurations
 
         #region Market Data
 
-        public async Task<IList<MarketDataVM>> GetAllMarketData(bool includeGraph = false)
+        public async Task<IList<HistoricalDataVM>> GetAllHistoricalData(bool includeGraph = false)
         {
             try
             {
-                var list = await MarketDataService.GetAllMarketData(includeGraph);
-                return Mapper.Map<IList<MarketDataVM>, IList<MarketDataVM>>(list);
+                var list = await HistoricalDataService.GetAllHistoricalData(includeGraph);
+                return Mapper.Map<IList<HistoricalDataVM>, IList<HistoricalDataVM>>(list);
             }
             catch (Exception ex)
             {
@@ -161,20 +160,20 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        public async Task<UploadMarketDataModel> GetMarketData(int marketId = 0, int currencyPairId = 0, int currencyPeriodId = 0)
+        public async Task<UploadHistoricalDataModel> GetHistoricalData(int marketId = 0, int symbolId = 0, int timeframeId = 0)
         {
             try
             {
-                MarketDataVM vm = await MarketDataService.GetMarketData(marketId, currencyPairId, currencyPeriodId);
+                HistoricalDataVM vm = await HistoricalDataService.GetHistoricalData(marketId, symbolId, timeframeId);
 
-                var settingVm = Mapper.Map<MarketDataVM, UploadMarketDataModel>(vm) ?? new UploadMarketDataModel();
-                List<MarketDataDetailSettingVM> details = vm?.MarketDataDetails.Select(
-                   d => Mapper.Map<MarketDataDetailVM, MarketDataDetailSettingVM>(d))
-                            .OrderBy(h => h.StartDate).ThenBy(h => h.StartTime).ToList() 
-                            ?? Array.Empty<MarketDataDetailSettingVM>().ToList();
+                var settingVm = Mapper.Map<HistoricalDataVM, UploadHistoricalDataModel>(vm) ?? new UploadHistoricalDataModel();
+                List<HistoricalDataDetailSettingVM> details = vm?.HistoricalDataDetails.Select(
+                   d => Mapper.Map<HistoricalDataDetailVM, HistoricalDataDetailSettingVM>(d))
+                            .OrderBy(h => h.StartDate).ThenBy(h => h.StartTime).ToList()
+                            ?? Array.Empty<HistoricalDataDetailSettingVM>().ToList();
 
-                settingVm.MarketDataDetails?.Clear();
-                settingVm.MarketDataDetailSettings = details;
+                settingVm.HistoricalDataDetails?.Clear();
+                settingVm.HistoricalDataDetailSettings = details;
 
                 return settingVm;
             }
@@ -185,11 +184,11 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        public async Task<bool> CreateMarketData(UploadMarketDataModel vm)
+        public async Task<bool> CreateHistoricalData(UploadHistoricalDataModel vm)
         {
             try
             {
-                var result = await MarketDataService.CreateMarketData(vm);
+                var result = await HistoricalDataService.CreateHistoricalData(vm);
                 return result.IsSuccess;
             }
             catch (Exception ex)
@@ -199,7 +198,21 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        #endregion
+        public async Task<bool> CreateHistoricalData(DownloadHistoricalDataModel vm)
+        {
+            try
+            {
+                var result = await HistoricalDataService.CreateHistoricalData(vm);
+                return result.IsSuccess;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                throw;
+            }
+        }
+
+        #endregion Market Data
 
         #region Project
 
@@ -208,7 +221,9 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             try
             {
                 var result = await ProjectService.CreateProject(
-                    project, project.ConfigurationId ?? 0, project.MarketDataId ?? 0);
+                    project,
+                    project.ConfigurationId ?? 0,
+                    project.HistoricalDataId ?? 0);
                 return result.IsSuccess;
             }
             catch (Exception ex)
@@ -218,6 +233,6 @@ namespace Adion.FA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        #endregion
+        #endregion Project
     }
 }

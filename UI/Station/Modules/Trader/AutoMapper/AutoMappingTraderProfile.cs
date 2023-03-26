@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Adion.FA.UI.Station.Modules.Trader.AutoMapper
+namespace AdionFA.UI.Station.Modules.Trader.AutoMapper
 {
     public class AutoMappingTraderProfile : Profile
     {

@@ -1,33 +1,39 @@
-﻿using Adion.FA.UI.Station.Infrastructure.Model.Market;
-using Adion.FA.UI.Station.Infrastructure.Model.Project;
-using Adion.FA.UI.Station.Module.Dashboard.Model;
+﻿using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Module.Dashboard.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Adion.FA.UI.Station.Module.Dashboard.Services
+namespace AdionFA.UI.Station.Module.Dashboard.Services
 {
     public interface ISettingService
     {
         #region Configurations
 
         Task<IList<ProjectGlobalConfigurationVM>> GetAllGlobalConfigurations(bool includeGraph = false);
+
         Task<ProjectGlobalConfigModel> GetGlobalConfiguration();
+
         Task<bool> UpdateGlobalConfiguration(ProjectGlobalConfigModel config);
 
-        #endregion
+        #endregion Configurations
 
-        #region Market Data
+        #region Historical Data
 
-        Task<IList<MarketDataVM>> GetAllMarketData(bool includeGraph = false);
-        Task<UploadMarketDataModel> GetMarketData(int marketId = 0, int currencyPairId = 0, int currencyPeriodId = 0);
-        Task<bool> CreateMarketData(UploadMarketDataModel vm);
+        Task<IList<HistoricalDataVM>> GetAllHistoricalData(bool includeGraph = false);
 
-        #endregion
+        Task<UploadHistoricalDataModel> GetHistoricalData(int marketId = 0, int symbolId = 0, int timeframeId = 0);
+
+        Task<bool> CreateHistoricalData(UploadHistoricalDataModel vm);
+
+        Task<bool> CreateHistoricalData(DownloadHistoricalDataModel vm);
+
+        #endregion Historical Data
 
         #region Project
 
         Task<bool> CreateProject(CreateProjectModel project);
 
-        #endregion
+        #endregion Project
     }
 }

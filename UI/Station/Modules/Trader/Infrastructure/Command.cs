@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Infrastructure
+namespace AdionFA.UI.Station.Modules.Trader.Infrastructure
 {
     public class Command : ICommand
     {

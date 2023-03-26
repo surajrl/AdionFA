@@ -1,6 +1,6 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Infrastructure;
+﻿using AdionFA.UI.Station.Modules.Trader.Infrastructure;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Model
+namespace AdionFA.UI.Station.Modules.Trader.Model
 {
     public class TradesPosition
     {

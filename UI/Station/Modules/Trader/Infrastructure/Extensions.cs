@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Infrastructure
+namespace AdionFA.UI.Station.Modules.Trader.Infrastructure
 {
     public static class Extensions
     {

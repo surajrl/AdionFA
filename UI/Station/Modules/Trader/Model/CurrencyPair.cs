@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Model
+namespace AdionFA.UI.Station.Modules.Trader.Model
 {
     public class CurrencyPair
     {

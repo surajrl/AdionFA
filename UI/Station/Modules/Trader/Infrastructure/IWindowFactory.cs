@@ -1,9 +1,9 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Views;
+﻿using AdionFA.UI.Station.Modules.Trader.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Infrastructure
+namespace AdionFA.UI.Station.Modules.Trader.Infrastructure
 {
     public interface IWindowFactory
     {

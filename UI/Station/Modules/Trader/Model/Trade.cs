@@ -1,11 +1,11 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.Enums;
+﻿using AdionFA.UI.Station.Modules.Trader.Enums;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Model
+namespace AdionFA.UI.Station.Modules.Trader.Model
 {
     public class Trade : IDisposable, IEquatable<Trade>
     {

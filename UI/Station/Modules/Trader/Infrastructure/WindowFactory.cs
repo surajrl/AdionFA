@@ -1,11 +1,11 @@
-﻿using Adion.FA.UI.Station.Modules.Trader.ViewModels;
-using Adion.FA.UI.Station.Modules.Trader.Views;
+﻿using AdionFA.UI.Station.Modules.Trader.ViewModels;
+using AdionFA.UI.Station.Modules.Trader.Views;
 using Dragablz;
 using Prism.Ioc;
 using System;
 using System.Windows;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Infrastructure
+namespace AdionFA.UI.Station.Modules.Trader.Infrastructure
 {
     public class WindowFactory : IWindowFactory
     {

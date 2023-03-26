@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Adion.FA.UI.Station.Modules.Trader.Views
+namespace AdionFA.UI.Station.Modules.Trader.Views
 {
     /// <summary>
     /// Interaction logic for TraderTabWindow.xaml

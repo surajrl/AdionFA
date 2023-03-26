@@ -1,26 +1,28 @@
-﻿using Adion.FA.Infrastructure.Common.Helpers;
-using Adion.FA.Infrastructure.Enums;
-using Adion.FA.UI.Station.Infrastructure;
-using Adion.FA.UI.Station.Infrastructure.Base;
-using Adion.FA.UI.Station.Infrastructure.Enums;
-using Adion.FA.UI.Station.Module.Shell.Model;
-using Adion.FA.UI.Station.Module.Shell.Services;
+﻿using AdionFA.Infrastructure.Common.Helpers;
+using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Enums;
+using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Enums;
+using AdionFA.UI.Station.Module.Shell.Model;
+using AdionFA.UI.Station.Module.Shell.Services;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media;
 
-namespace Adion.FA.UI.Station.Module.Shell.ViewModels
+namespace AdionFA.UI.Station.Module.Shell.ViewModels
 {
     public class ShellViewModel : ViewModelBase
     {
         #region Services
 
-        private IShellServiceShell ShellService;
+        private readonly IShellServiceShell _shellService;
 
-        #endregion
+        #endregion Services
 
         #region Ctor
 
@@ -28,7 +30,7 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
             IShellServiceShell shellServices,
             IApplicationCommands applicationCommands)
         {
-            ShellService = shellServices;
+            _shellService = shellServices;
 
             PopulateViewModel();
 
@@ -38,7 +40,7 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
             applicationCommands.PinnedProjectCommand.RegisterCommand(UpdateProjectHierarchyInMemoryCommand);
         }
 
-        #endregion
+        #endregion Ctor
 
         #region Commands
 
@@ -58,11 +60,11 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
             //        pinnedParentNode.Children.Add(node);
             //    }
             //    else
-            //    { 
+            //    {
             //        var root = node.Parent.Parent;
             //        if (root != null)
-            //        { 
-            //            root.Children.Add(new ProjectTreeViewModel 
+            //        {
+            //            root.Children.Add(new ProjectTreeViewModel
             //            {
             //                Children = new ObservableCollection<ProjectTreeViewModel> { node }
             //            });
@@ -87,7 +89,7 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
             }
         });
 
-        #endregion
+        #endregion UpdateProjectHierarchyCommand
 
         #region Filter Into Project Hierarchy
 
@@ -135,9 +137,9 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
             }
         }
 
-        #endregion
+        #endregion Filter Into Project Hierarchy
 
-        #endregion
+        #endregion Commands
 
         private async void PopulateViewModel()
         {
@@ -149,8 +151,8 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
                 Name = "Root",
                 Projects = new ObservableCollection<ProjectHierarchicalVM>()
             };
-            
-            var projects = await ShellService.GetAllProjects();
+
+            var projects = await _shellService.GetAllProjects();
             if (projects.Count > 0)
             {
                 DateTime todayTime = DateTime.UtcNow;
@@ -158,7 +160,7 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
                 DateTime lastMonthTime = todayTime.AddMonths(-1);
 
                 var loadFavoriteProject = projects.Where(p => p.IsFavorite).Select(
-                    p => new ProjectHierarchicalVM{ Name = p.Name, Project = p }).ToList();
+                    p => new ProjectHierarchicalVM { Name = p.Name, Project = p }).ToList();
                 if (loadFavoriteProject.Count > 0)
                 {
                     root.Projects.Add(new ProjectHierarchicalVM
@@ -218,28 +220,30 @@ namespace Adion.FA.UI.Station.Module.Shell.ViewModels
             if (ProjectHierarchy.Any())
                 ProjectHierarchy.FirstOrDefault(p => !p.IsExpanded).IsExpanded = true;
 
-            #endregion
+            #endregion ProjectHierarchy
         }
 
         #region Bindable Model
 
-        string _searchableText;
+        private string _searchableText;
+
         public string SearchableText
         {
             get => _searchableText;
             set => SetProperty(ref _searchableText, value);
         }
 
-        IList<string> _sectionsSelected;
+        private IList<string> _sectionsSelected;
+
         public IList<string> SectionsSelected
         {
             get => _sectionsSelected;
-            set => SetProperty<IList<string>>(ref _sectionsSelected, value);
+            set => SetProperty(ref _sectionsSelected, value);
         }
 
         public List<string> HistoricalTimeGrouping { get; }
         public ObservableCollection<ProjectTreeViewModel> ProjectHierarchy { get; } = new ObservableCollection<ProjectTreeViewModel>();
 
-        #endregion
+        #endregion Bindable Model
     }
 }

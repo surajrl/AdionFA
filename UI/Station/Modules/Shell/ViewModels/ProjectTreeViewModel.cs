@@ -1,15 +1,15 @@
-﻿using Adion.FA.UI.Station.Infrastructure;
-using Adion.FA.UI.Station.Infrastructure.Base;
-using Adion.FA.UI.Station.Infrastructure.Enums;
-using Adion.FA.UI.Station.Module.Shell.Model;
-using Adion.FA.UI.Station.Module.Shell.Services;
+﻿using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Enums;
+using AdionFA.UI.Station.Module.Shell.Model;
+using AdionFA.UI.Station.Module.Shell.Services;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Adion.FA.UI.Station.Module.Shell.ViewModels
+namespace AdionFA.UI.Station.Module.Shell.ViewModels
 {
     public class ProjectTreeViewModel : ViewModelBase
     {

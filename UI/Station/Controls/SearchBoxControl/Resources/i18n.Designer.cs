@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Adion.FA.UI.Station.Controls.SearchBoxControl.Resources {
+namespace AdionFA.UI.Station.Controls.SearchBoxControl.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Adion.FA.UI.Station.Controls.SearchBoxControl.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Adion.FA.UI.Station.Controls.SearchBoxControl.Resources.i18n", typeof(i18n).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AdionFA.UI.Station.Controls.SearchBoxControl.Resources.i18n", typeof(i18n).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

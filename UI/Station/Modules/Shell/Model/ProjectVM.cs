@@ -1,7 +1,7 @@
-﻿using Adion.FA.Infrastructure.Enums;
+﻿using AdionFA.Infrastructure.Enums;
 using System;
 
-namespace Adion.FA.UI.Station.Module.Shell.Model
+namespace AdionFA.UI.Station.Module.Shell.Model
 {
     public class ProjectVM
     {

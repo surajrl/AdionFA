@@ -1,38 +1,34 @@
-﻿using Adion.FA.UI.Station.Infrastructure.Base;
-using Adion.FA.UI.Station.Infrastructure.Model.Project;
-using Adion.FA.UI.Station.Module.Dashboard.Validators;
+﻿using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Module.Dashboard.Validators;
 using FluentValidation.Results;
 
-namespace Adion.FA.UI.Station.Module.Dashboard.Model
+namespace AdionFA.UI.Station.Module.Dashboard.Model
 {
     public class CreateProjectModel : ProjectVM, IModelValidator
     {
-        #region Properties
+        private int? _configurationId;
 
-        int? configurationId;
         public int? ConfigurationId
         {
-            get => configurationId;
-            set => SetProperty(ref configurationId, value);
+            get => _configurationId;
+            set => SetProperty(ref _configurationId, value);
         }
 
-        int? marketDataId;
-        public int? MarketDataId
+        private int? _historicalDataId;
+
+        public int? HistoricalDataId
         {
-            get => marketDataId;
-            set => SetProperty(ref marketDataId, value);
+            get => _historicalDataId;
+            set => SetProperty(ref _historicalDataId, value);
         }
 
-        #endregion
-
-        #region Validation
+        // Validation
 
         public ValidationResult GetValidationResult()
         {
-            CrateProjectVMValidator v = new CrateProjectVMValidator();
+            CrateProjectVMValidator v = new();
             return v.Validate(this);
         }
-
-        #endregion
     }
 }

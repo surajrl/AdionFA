@@ -1,7 +1,7 @@
 ﻿
 using ReactiveUI;
 
-namespace Adion.FA.UI.Station.Modules.Trader.ViewModels
+namespace AdionFA.UI.Station.Modules.Trader.ViewModels
 {
     public class RxUiHostViewModel
     {

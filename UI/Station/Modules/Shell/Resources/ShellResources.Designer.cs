@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Adion.FA.UI.Station.Module.Shell.Resources {
+namespace AdionFA.UI.Station.Module.Shell.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Adion.FA.UI.Station.Module.Shell.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Adion.FA.UI.Station.Module.Shell.Resources.ShellResources", typeof(ShellResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AdionFA.UI.Station.Module.Shell.Resources.ShellResources", typeof(ShellResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -88,11 +88,11 @@ namespace Adion.FA.UI.Station.Module.Shell.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Market Data.
+        ///   Looks up a localized string similar to Historical Data.
         /// </summary>
-        public static string MarketData {
+        public static string HistoricalData {
             get {
-                return ResourceManager.GetString("MarketData", resourceCulture);
+                return ResourceManager.GetString("HistoricalData", resourceCulture);
             }
         }
         
