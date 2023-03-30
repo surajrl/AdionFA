@@ -9,18 +9,18 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contract
 {
     public interface IStrategyBuilderService
     {
-        #region Strategy
-        CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType);
-        #endregion
+        // Strategy
 
-        #region Backtest
+        CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType);
+
+        // Backtest
+
         StrategyBuilderModel BacktestBuild(string label, List<string> node, ConfigurationBaseDTO config, IEnumerable<Candle> data);
         BacktestModel BacktestExecute(string label, DateTime fromDate, DateTime toDate, List<string> node, IEnumerable<Candle> data, int periodId, decimal variation = 0);
-        #endregion
 
-        #region Serialization
+        // Serialization
+
         void BacktestSerialize(string projectName, BacktestModel model);
         BacktestModel BacktestDeserialize(string path);
-        #endregion
     }
 }

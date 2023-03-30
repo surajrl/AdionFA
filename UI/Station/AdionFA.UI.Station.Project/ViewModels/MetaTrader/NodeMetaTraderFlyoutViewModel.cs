@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Project.Model.Weka;
 
 namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
 {
@@ -67,18 +68,18 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
         {
             try
             {
-                if (NodeOutput == null)
-                    NodeOutput = new ObservableCollection<REPTreeNodeModelVM>();
+                NodeOutput ??= new ObservableCollection<REPTreeNodeModelVM>();
 
-                var n = NodeOutput.FirstOrDefault(_n => _n.NodeWithoutFormat == node.NodeWithoutFormat);
-                if (n != null)
+                foreach (var n in NodeOutput)
                 {
-                    NodeOutput.Remove(node);
+                    if (n.Node == node.Node)
+                    {
+                        NodeOutput.Remove(node);
+                        return;
+                    }
                 }
-                else
-                {
-                    nodeOutput.Add(node);
-                }
+
+                NodeOutput.Add(node);
             }
             catch (Exception ex)
             {
@@ -108,7 +109,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
         #region Bindable Model
 
         private ConfigurationBaseVM _configuration;
-
         public ConfigurationBaseVM Configuration
         {
             get => _configuration;
@@ -116,7 +116,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
         }
 
         private ObservableCollection<REPTreeNodeModelVM> nodeOutput;
-
         public ObservableCollection<REPTreeNodeModelVM> NodeOutput
         {
             get => nodeOutput;

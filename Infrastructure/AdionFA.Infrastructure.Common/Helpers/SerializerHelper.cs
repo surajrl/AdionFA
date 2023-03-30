@@ -8,9 +8,8 @@ namespace AdionFA.Infrastructure.Common.Helpers
 {
     public static class SerializerHelper
     {
-        #region XML
         /// <summary>
-        /// Serializes an object.
+        /// Serializes an object and create an XML file.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="serializableObject"></param>
@@ -38,9 +37,8 @@ namespace AdionFA.Infrastructure.Common.Helpers
             }
         }
 
-
         /// <summary>
-        /// Deserializes an xml file into an object list
+        /// Deserializes an XML file into an object list.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="fileName"></param>
@@ -76,6 +74,5 @@ namespace AdionFA.Infrastructure.Common.Helpers
 
             return objectOut;
         }
-        #endregion
     }
 }

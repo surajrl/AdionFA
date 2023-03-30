@@ -6,10 +6,10 @@
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:AdionFA.UI.Station.Project.StrategyBuilder"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True"
              Position="Right" Theme="Adapt" Width="1200" CloseButtonIsCancel="True"
              Header="{x:Static commonResources:CommonResources.CorrelationDetail}" IsModal="True">
@@ -30,39 +30,20 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>    
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!--#region UP-->
-
-                <!--#region testInMetatraderUPBtn-->
-                <StackPanel Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">
-                    <Button  x:Name="testInMetatraderUPBtn" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatraderUP, Converter={StaticResource InverseBooleanConverter}}">
-                        <Button.Content>
-                            <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}" />
-                        </Button.Content>
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="testInMetatraderUPBtn" EventName="Click">
-                                <behaviors:InvokeCommandAction 
-                                        Command="{x:Static infrastructure:ApplicationCommands.NodeTestInMetatraderCommand}">
-                                    <behaviors:InvokeCommandAction.CommandParameter>
-                                        <Binding Path="UPNodes" />
-                                    </behaviors:InvokeCommandAction.CommandParameter>
-                                </behaviors:InvokeCommandAction>
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
-                    </Button>
-                </StackPanel>
-                <!--#endregion-->
-                
                 <DataGrid Grid.Column="0" Grid.Row="1"
                     IsReadOnly="True"
-                    AutoGenerateColumns="False" 
+                    AutoGenerateColumns="False"
                     RowHeaderWidth="0"
-                    ItemsSource="{Binding UPNodes}">
+                    ItemsSource="{Binding NodesUP}">
+
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="White"/>
                     </DataGrid.Resources>
+
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="BorderThickness" Value="0"/>
@@ -70,6 +51,7 @@
                             <Setter Property="Foreground" Value="Black"/>
                         </Style>
                     </DataGrid.CellStyle>
+
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="BorderThickness" Value="0"/>
@@ -77,8 +59,8 @@
                             <Setter Property="Foreground" Value="Black"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="BorderBrush" Value="Gray" />
-                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="BorderBrush" Value="Gray"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
                                     <Setter Property="Foreground" Value="Black"/>
                                 </Trigger>
                             </Style.Triggers>
@@ -90,21 +72,21 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Expander Style="{x:Null}">
+
                                         <Expander.Header>
                                             <StackPanel Orientation="Horizontal">
-
                                                 <!--#region Header Title-->
                                                 <TextBlock Margin="{StaticResource ColumnMargin}">
                                                 <Run Text="{Binding Label}" FontWeight="SemiBold"/>
                                                 </TextBlock>
 
-                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                <!--<TextBlock Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{Binding Name, Mode=OneWay}"/>
-                                                </TextBlock>
+                                                </TextBlock>-->
                                                 <!--#endregion-->
-
                                             </StackPanel>
                                         </Expander.Header>
+
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
@@ -117,13 +99,15 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <!--#region Node-->
+                                            <!--#region Tree-->
                                             <ListView Grid.Column="0" ItemsSource="{Binding Node}" Padding="20 1"/>
                                             <!--#endregion-->
 
+                                            <!--#region Tree Information-->
                                             <StackPanel Grid.Column="2">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
@@ -140,7 +124,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalOpportunity, Mode=OneWay}"/>
+                                                    <Run Text="{Binding TotalOpportunityIs, Mode=OneWay}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -149,7 +133,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalTrades}"/>
+                                                    <Run Text="{Binding TotalTradesIs}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -158,7 +142,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding WinningTrades}"/>
+                                                    <Run Text="{Binding WinningTradesIs}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -167,7 +151,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding LosingTrades}"/>
+                                                    <Run Text="{Binding LosingTradesIs}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -176,7 +160,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding PercentSuccess, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
@@ -191,8 +175,27 @@
                                                     </TextBlock>
                                                     <!--#endregion-->
 
+                                                    <!--#region Test In MetaTrader-->
+                                                    <StackPanel Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                        <Button  x:Name="btnTestInMetaTraderUP" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatrader, Converter={StaticResource InverseBooleanConverter}}">
+                                                            <Button.Content>
+                                                                <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}"/>
+                                                            </Button.Content>
+                                                            <behaviors:Interaction.Triggers>
+                                                                <behaviors:EventTrigger SourceName="btnTestInMetaTraderUP" EventName="Click">
+                                                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.NodeTestInMetatraderCommand}">
+                                                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                                                            <Binding Path="."/>
+                                                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                                                    </behaviors:InvokeCommandAction>
+                                                                </behaviors:EventTrigger>
+                                                            </behaviors:Interaction.Triggers>
+                                                        </Button>
+                                                    </StackPanel>
+                                                    <!--#endregion-->
                                                 </Grid>
                                             </StackPanel>
+                                            <!--#endregion-->
                                         </Grid>
                                     </Expander>
                                 </DataTemplate>
@@ -202,33 +205,12 @@
                 </DataGrid>
                 <!--#endregion-->
 
-                <!--#region DOWN-->
-
-                <!--#region testInMetatraderDOWNBtn-->
-                <StackPanel Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right">
-                    <Button  x:Name="testInMetatraderDOWNBtn" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatraderDOWN, Converter={StaticResource InverseBooleanConverter}}">
-                        <Button.Content>
-                            <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}" />
-                        </Button.Content>
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="testInMetatraderDOWNBtn" EventName="Click">
-                                <behaviors:InvokeCommandAction 
-                                        Command="{x:Static infrastructure:ApplicationCommands.NodeTestInMetatraderCommand}">
-                                    <behaviors:InvokeCommandAction.CommandParameter>
-                                        <Binding Path="DOWNNodes" />
-                                    </behaviors:InvokeCommandAction.CommandParameter>
-                                </behaviors:InvokeCommandAction>
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
-                    </Button>
-                </StackPanel>
-                <!--#endregion-->
-                
+                <!--#region Nodes DOWN List -->
                 <DataGrid Grid.Column="1" Grid.Row="1"
                     IsReadOnly="True"
-                    AutoGenerateColumns="False" 
+                    AutoGenerateColumns="False"
                     RowHeaderWidth="0"
-                    ItemsSource="{Binding DOWNNodes}">
+                    ItemsSource="{Binding NodesDOWN}">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="White"/>
                     </DataGrid.Resources>
@@ -246,8 +228,8 @@
                             <Setter Property="Foreground" Value="Black"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="BorderBrush" Value="Gray" />
-                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="BorderBrush" Value="Gray"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
                                     <Setter Property="Foreground" Value="Black"/>
                                 </Trigger>
                             </Style.Triggers>
@@ -267,11 +249,10 @@
                                                 <Run Text="{Binding Label}" FontWeight="SemiBold"/>
                                                 </TextBlock>
 
-                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                <!--<TextBlock Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{Binding Name, Mode=OneWay}"/>
-                                                </TextBlock>
+                                                </TextBlock>-->
                                                 <!--#endregion-->
-
                                             </StackPanel>
                                         </Expander.Header>
                                         <Grid>
@@ -290,9 +271,11 @@
                                             <ListView Grid.Column="0" ItemsSource="{Binding Node}" Padding="20 1"/>
                                             <!--#endregion-->
 
+                                            <!--#region Tree Information-->
                                             <StackPanel Grid.Column="2">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
@@ -309,7 +292,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalOpportunity, Mode=OneWay}"/>
+                                                    <Run Text="{Binding TotalOpportunityIs, Mode=OneWay}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -318,7 +301,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalTrades}"/>
+                                                    <Run Text="{Binding TotalTradesIs}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -327,7 +310,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding WinningTrades}"/>
+                                                    <Run Text="{Binding WinningTradesIs}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -336,7 +319,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding LosingTrades}"/>
+                                                    <Run Text="{Binding LosingTradesIs}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -345,7 +328,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding PercentSuccess, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
@@ -355,13 +338,32 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding ProgressivenessIs, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
+                                                    <!--#region Test In MetaTrader-->
+                                                    <StackPanel Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                        <Button  x:Name="btnTestInMetaTraderUP" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatrader, Converter={StaticResource InverseBooleanConverter}}">
+                                                            <Button.Content>
+                                                                <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}"/>
+                                                            </Button.Content>
+                                                            <behaviors:Interaction.Triggers>
+                                                                <behaviors:EventTrigger SourceName="btnTestInMetaTraderUP" EventName="Click">
+                                                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.NodeTestInMetatraderCommand}">
+                                                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                                                            <Binding Path="."/>
+                                                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                                                    </behaviors:InvokeCommandAction>
+                                                                </behaviors:EventTrigger>
+                                                            </behaviors:Interaction.Triggers>
+                                                        </Button>
+                                                    </StackPanel>
+                                                    <!--#endregion-->
                                                 </Grid>
                                             </StackPanel>
+                                            <!--#endregion-->
                                         </Grid>
                                     </Expander>
                                 </DataTemplate>
@@ -370,7 +372,6 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <!--#endregion-->
-
             </Grid>
         </Expander>
     </Grid>

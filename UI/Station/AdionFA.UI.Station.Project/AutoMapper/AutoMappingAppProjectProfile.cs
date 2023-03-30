@@ -18,6 +18,8 @@ using AdionFA.UI.Station.Infrastructure.Model.Organization;
 using AdionFA.TransferObject.Project;
 using AdionFA.TransferObject.ReferenceData;
 using AdionFA.UI.Station.Infrastructure.Model.ReferenceData;
+using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+using AdionFA.UI.Station.Project.Model.Weka;
 
 namespace AdionFA.UI.Station.Project.AutoMapper
 {
@@ -60,8 +62,7 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             // Reference Data
             CreateMap<CurrencyDTO, CurrencyVM>().ReverseMap();
 
-            #region Extractor & Strategy Builder
-            
+            // Extractor & Strategy Builder
             CreateMap<ProjectConfigurationVM, ProjectSettingsModel>().ReverseMap();
             CreateMap<ProjectScheduleConfigurationVM, ProjectScheduleConfigurationVM>().ReverseMap();
 
@@ -70,18 +71,13 @@ namespace AdionFA.UI.Station.Project.AutoMapper
 
             CreateMap<REPTreeOutputModel, REPTreeOutputModelVM>().ReverseMap();
             CreateMap<REPTreeNodeModel, REPTreeNodeModelVM>().ReverseMap();
-            
-            #endregion
 
-            #region Assembled Builder
-            
+            // Assembled Builder
             CreateMap<AssembledBuilderModel, AssembledBuilderBindableModel>().ReverseMap();
             CreateMap<NodeAssembledModel, NodeAssembledBindableModel>().ReverseMap();
             CreateMap<StartNodeAssembledModel, StartNodeAssembledBindableModel>().ReverseMap();
             CreateMap<EndNodeAssembledModel, EndNodeAssembledBindableModel>().ReverseMap();
             CreateMap<BacktestNodeAssembledModel, BacktestNodeAssembledBindableModel>().ReverseMap();
-            
-            #endregion
         }
     }
 }

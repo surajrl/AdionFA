@@ -13,6 +13,29 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
         public decimal Variation { get; set; }
 
         public List<string> Node { get; set; }
+
+        public int TotalOpportunity { get; set; }
+        public int TotalTrades { get; set; }
+        public int WinningTrades { get; set; }
+        public int LosingTrades { get; set; }
+
+        private double? percentSuccess;
+        public double PercentSuccess
+        {
+            get => percentSuccess ?? (TotalTrades > 0 && WinningTrades > 0 ? WinningTrades * 100 / TotalTrades : 0);
+            set => percentSuccess = value;
+        }
+
+        private double? progressiveness;
+        public double Progressiveness
+        {
+            get => progressiveness ?? (TotalTrades > 0 && TotalOpportunity > 0 ? TotalTrades * 100 / TotalOpportunity : 0);
+            set => progressiveness = value;
+        }
+
+        public bool CorrelationPass { get; set; }
+
+        public List<BacktestOperationModel> Backtests { get; set; }
         public string LastNode => Node.LastOrDefault();
         public string Name => NodeName();
         public string NodeName()
@@ -74,28 +97,5 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
 
             return string.Join("_", indicators); ;
         }
-
-        public int TotalOpportunity { get; set; }
-        public int TotalTrades { get; set; }
-        public int WinningTrades { get; set; }
-        public int LosingTrades { get; set; }
-
-        private double? percentSuccess;
-        public double PercentSuccess
-        {
-            get => percentSuccess ?? (TotalTrades > 0 && WinningTrades > 0 ? WinningTrades * 100 / TotalTrades : 0);
-            set { percentSuccess = value; }
-        }
-
-        private double? progressiveness;
-        public double Progressiveness
-        {
-            get => progressiveness ?? (TotalTrades > 0 && TotalOpportunity > 0 ? TotalTrades * 100 / TotalOpportunity : 0);
-            set => progressiveness = value;
-        }
-
-        public bool CorrelationPass { get; set; }
-
-        public List<BacktestOperationModel> Backtests { get; set; }
     }
 }

@@ -7,14 +7,14 @@
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:AdionFA.UI.Station.Project.MetaTrader"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True"
              Position="Right" Theme="Adapt" Width="1200" CloseButtonIsCancel="True"
              Header="{x:Static commonResources:CommonResources.NodesUnderTest}" IsModal="True">
-    
+
     <metro:Flyout.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
@@ -24,9 +24,9 @@
         <Expander Margin="0"
                   Header="{x:Static commonResources:CommonResources.Tree}"
                   IsExpanded="True">
-            <DataGrid 
+            <DataGrid
                 IsReadOnly="True"
-                AutoGenerateColumns="False" 
+                AutoGenerateColumns="False"
                 RowHeaderWidth="0"
                 ItemsSource="{Binding NodeOutput}">
                 <DataGrid.Resources>
@@ -46,8 +46,8 @@
                         <Setter Property="Foreground" Value="Black"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="BorderBrush" Value="Gray" />
-                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="BorderBrush" Value="Gray"/>
+                                <Setter Property="BorderThickness" Value="0"/>
                                 <Setter Property="Foreground" Value="Black"/>
                             </Trigger>
                         </Style.Triggers>
@@ -65,12 +65,12 @@
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding WinningStrategy}" Value="True">
-                                                            <Setter Property="FontWeight" Value="Bold" />
-                                                            <Setter Property="Foreground" Value="Green" />
+                                                            <Setter Property="FontWeight" Value="Bold"/>
+                                                            <Setter Property="Foreground" Value="Green"/>
                                                         </DataTrigger>
 
                                                         <DataTrigger Binding="{Binding WinningStrategy}" Value="False">
-                                                            <Setter Property="Foreground" Value="Gray" />
+                                                            <Setter Property="Foreground" Value="Gray"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -167,7 +167,7 @@
                                                     <ColumnDefinition/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <!--<TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Years}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
@@ -178,7 +178,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding TotalDaysIs, Mode=OneWay}"/>
-                                                </TextBlock>
+                                                </TextBlock>-->
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
@@ -212,7 +212,7 @@
                                                     <Run Text="%"/>
                                                 </TextBlock>
 
-                                                <TextBlock Grid.Row="0" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <!--<TextBlock Grid.Row="0" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Years}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
@@ -223,7 +223,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding TotalDaysOs, Mode=OneWay}"/>
-                                                </TextBlock>
+                                                </TextBlock>-->
                                                 <TextBlock Grid.Row="2" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
@@ -284,14 +284,14 @@
                                         <StackPanel Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Right" Visibility="{Binding WinningStrategy, Converter={StaticResource BooleanToVisibilityConverter}}">
                                             <Button  x:Name="testInMetatraderBtn" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatrader}">
                                                 <Button.Content>
-                                                    <TextBlock Text="{x:Static commonResources:CommonResources.OffTest}" />
+                                                    <TextBlock Text="{x:Static commonResources:CommonResources.OffTest}"/>
                                                 </Button.Content>
                                                 <behaviors:Interaction.Triggers>
                                                     <behaviors:EventTrigger SourceName="testInMetatraderBtn" EventName="Click">
-                                                        <behaviors:InvokeCommandAction 
+                                                        <behaviors:InvokeCommandAction
                                                                                 Command="{x:Static infrastructure:ApplicationCommands.NodeTestInMetatraderCommand}">
                                                             <behaviors:InvokeCommandAction.CommandParameter>
-                                                                <Binding Path="." />
+                                                                <Binding Path="."/>
                                                             </behaviors:InvokeCommandAction.CommandParameter>
                                                         </behaviors:InvokeCommandAction>
                                                     </behaviors:EventTrigger>

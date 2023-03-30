@@ -24,25 +24,18 @@ namespace AdionFA.Infrastructure.Common.Base
         public readonly string _ownerId;
         public readonly string _owner;
 
-        #region Infrastructure
+        // Infrastructure
 
         private AdionIdentity Identity => SecurityHelper.Identity;
 
         public IComparator Comparator => IoC.Get<IComparator>();
-
         public IMapper Mapper => IoC.Get<IMapper>();
-
         public IKernel Kernel => IoC.Get<IKernel>();
-
         public ILoggerHandler Logger => IoC.Get<ILoggerHandler>();
 
-        #endregion
-
-        #region Ctor
-
         public InfrastructureServiceBase(
-            [CallerMemberName] string memberName = "", 
-            [CallerLineNumber] int lineNumber = 0, 
+            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string sourceFilePath = "")
         {
             try
@@ -52,30 +45,28 @@ namespace AdionFA.Infrastructure.Common.Base
                 _owner = Identity.Owner;
 
                 Type type = AuthorizationMgmt.AuthorizeCall(_tenantId, _ownerId, _owner, sourceFilePath);
-                
+
                 //LogInfo
                 MethodInfo m = typeof(InfrastructureServiceBase).GetMethod(nameof(InfrastructureServiceBase.LogInfoGet));
                 m.MakeGenericMethod(type).Invoke(this, new object[] { new LogModel
-                { 
-                    _tenantId = _tenantId, 
-                    _owner = _owner 
+                {
+                    _tenantId = _tenantId,
+                    _owner = _owner
                 }, memberName, lineNumber, sourceFilePath });
             }
             catch (Exception ex)
             {
-                LogException<Exception>(ex, new LogModel 
-                { 
-                    _tenantId = _tenantId, 
-                    _owner = _owner 
+                LogException<Exception>(ex, new LogModel
+                {
+                    _tenantId = _tenantId,
+                    _owner = _owner
                 }, memberName, lineNumber, sourceFilePath);
 
                 throw;
             }
         }
 
-        #endregion
-
-        #region Logger
+        // Logger
 
         public void LogInfoGet<T>(LogModel model = null,
             [CallerMemberName] string memberName = "", [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
@@ -118,7 +109,5 @@ namespace AdionFA.Infrastructure.Common.Base
                 param0 = ex.ToString(),
             }, LogActionEnum.Exception, memberName, lineNumber, filePath);
         }
-
-        #endregion
     }
 }

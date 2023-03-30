@@ -24,13 +24,9 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
 {
     public class ExtractorService : InfrastructureServiceBase, IExtractorService
     {
-        #region Ctor
-
         public ExtractorService() : base()
         {
         }
-
-        #endregion Ctor
 
         /// <summary>
         /// Gets a list with all the indicators used in one extraction template CSV file.
@@ -183,7 +179,8 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     MathOperatorEnum? optor = null;
                     string[] divisions = null;
 
-                    #region Operator Split
+                    // Operator Split
+
                     if (f.Contains(">="))
                     {
                         optor = MathOperatorEnum.GreaterThanOrEqual;
@@ -209,9 +206,8 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                         optor = MathOperatorEnum.Equal;
                         divisions = f.Split("=");
                     }
-                    #endregion Operator Split
 
-                    #region Params Split
+                    // Params Split
                     if (divisions.Length == 2)
                     {
                         string[] indicatorParams = divisions[0].Split("_");
@@ -474,7 +470,6 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                             }
                         }
                     }
-                    #endregion Params Split
                 }
 
                 return indicators;

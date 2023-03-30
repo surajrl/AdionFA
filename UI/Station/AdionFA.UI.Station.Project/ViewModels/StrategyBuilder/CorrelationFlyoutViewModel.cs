@@ -1,47 +1,49 @@
 ﻿using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Project.AutoMapper;
+using AdionFA.UI.Station.Project.Model.StrategyBuilder;
+using AdionFA.UI.Station.Project.Model.Weka;
 using AdionFA.UI.Station.Project.Services;
 using AutoMapper;
+using DynamicData;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
     public class CorrelationFlyoutViewModel : ViewModelBase
     {
-        public readonly IMapper Mapper;
-
-        private readonly IProjectServiceAgent _projectService;
-
-        private ProjectVM Project;
+        private readonly IMapper _mapper;
 
         public CorrelationFlyoutViewModel(IApplicationCommands applicationCommands)
         {
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            Mapper = new MapperConfiguration(mc =>
+            _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
         }
 
-        #region Commands
+        // Flyout Command
 
         private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        private void ShowFlyout(FlyoutModel flyoutModel)
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleCorrelation))
             {
@@ -50,18 +52,14 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             }
         }
 
-        #endregion Commands
-
-        public async void PopulateViewModel()
+        private void PopulateViewModel()
         {
             try
             {
-                Project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
-
                 if (CorrelationModel.Success)
                 {
-                    UPNodes = new ObservableCollection<BacktestModel>(CorrelationModel.BacktestUP);
-                    DOWNNodes = new ObservableCollection<BacktestModel>(CorrelationModel.BacktestDOWN);
+                    NodesUP = new(_mapper.Map<List<REPTreeNodeModel>, List<REPTreeNodeModelVM>>(CorrelationModel.BacktestUP));
+                    NodesDOWN = new(_mapper.Map<List<REPTreeNodeModel>, List<REPTreeNodeModelVM>>(CorrelationModel.BacktestDOWN));
                 }
             }
             catch (Exception ex)
@@ -71,48 +69,41 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             }
         }
 
-        #region Bindable Model
+        // Bindable Model
 
-        private CorrelationModel correlationModel;
-
+        private CorrelationModel _correlationModel;
         public CorrelationModel CorrelationModel
         {
-            get => correlationModel;
-            set => SetProperty(ref correlationModel, value);
+            get => _correlationModel;
+            set => SetProperty(ref _correlationModel, value);
         }
 
-        private bool hasTestInMetatraderUP;
-
+        private bool _hasTestInMetatraderUP;
         public bool HasTestInMetatraderUP
         {
-            get => hasTestInMetatraderUP;
-            set => SetProperty(ref hasTestInMetatraderUP, value);
+            get => _hasTestInMetatraderUP;
+            set => SetProperty(ref _hasTestInMetatraderUP, value);
         }
 
-        private ObservableCollection<BacktestModel> uPNodes;
-
-        public ObservableCollection<BacktestModel> UPNodes
+        private ObservableCollection<REPTreeNodeModelVM> _nodesUP;
+        public ObservableCollection<REPTreeNodeModelVM> NodesUP
         {
-            get => uPNodes;
-            set => SetProperty(ref uPNodes, value);
+            get => _nodesUP;
+            set => SetProperty(ref _nodesUP, value);
         }
 
-        private bool hasTestInMetatraderDOWN;
-
+        private bool _hasTestInMetatraderDOWN;
         public bool HasTestInMetatraderDOWN
         {
-            get => hasTestInMetatraderDOWN;
-            set => SetProperty(ref hasTestInMetatraderDOWN, value);
+            get => _hasTestInMetatraderDOWN;
+            set => SetProperty(ref _hasTestInMetatraderDOWN, value);
         }
 
-        private ObservableCollection<BacktestModel> dOWNNodes;
-
-        public ObservableCollection<BacktestModel> DOWNNodes
+        private ObservableCollection<REPTreeNodeModelVM> _nodesDown;
+        public ObservableCollection<REPTreeNodeModelVM> NodesDOWN
         {
-            get => dOWNNodes;
-            set => SetProperty(ref dOWNNodes, value);
+            get => _nodesDown;
+            set => SetProperty(ref _nodesDown, value);
         }
-
-        #endregion Bindable Model
     }
 }

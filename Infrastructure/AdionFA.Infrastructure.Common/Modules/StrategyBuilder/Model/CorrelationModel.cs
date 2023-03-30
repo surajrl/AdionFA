@@ -1,19 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using AdionFA.Infrastructure.Common.Weka.Model;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
 {
     public class CorrelationModel
     {
-        public bool Success => BacktestUP.Any() || BacktestDOWN.Any();
+        public bool Success => ISBacktestUP.Any() || ISBacktestDOWN.Any();
 
         public CorrelationModel()
         {
-            BacktestUP = new List<BacktestModel>();
-            BacktestDOWN = new List<BacktestModel>();
+            ISBacktestUP = new List<BacktestModel>();
+            ISBacktestDOWN = new List<BacktestModel>();
+
+            BacktestUP = new List<REPTreeNodeModel>();
+            BacktestDOWN = new List<REPTreeNodeModel>();
         }
 
-        public List<BacktestModel> BacktestUP { get; set; }
-        public List<BacktestModel> BacktestDOWN { get; set; }
+        public List<BacktestModel> ISBacktestUP { get; set; }
+        public List<BacktestModel> ISBacktestDOWN { get; set; }
+
+        public List<REPTreeNodeModel> BacktestUP { get; set; }
+        public List<REPTreeNodeModel> BacktestDOWN { get; set; }
     }
 }

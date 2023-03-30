@@ -36,6 +36,7 @@ using System.Windows.Input;
 using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
 using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.UI.Station.Project.Model.Weka;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -49,7 +50,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private readonly IEventAggregator _eventAggregator;
 
-        private ProjectVM Project;
+        private ProjectVM _project;
 
         public MetaTraderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
@@ -84,7 +85,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }, (s) => true);//item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, (s) => true); //item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         private CancellationTokenSource ctsTask;
 
@@ -102,13 +103,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var requestSocketProgress = new Progress<ZmqMsgModel>();
                 requestSocketProgress.ProgressChanged += (senderOfProgressChanged, nextItem) =>
                 {
-                    MessageOutput.Insert(0, nextItem);  // Adds the message to be sent to MetaTrader.
+                    MessageOutput.Insert(0, nextItem);
                 };
 
                 var pullSocketProgress = new Progress<ZmqMsgModel>();
                 pullSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
                 {
-                    MessageInput.Insert(0, nextItem);   // Adds the received message from MetaTrader.
+                    MessageInput.Insert(0, nextItem);
                     await RequestSocket(requestSocketProgress, ctsTask);
                 };
 
@@ -136,7 +137,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             await Task.Factory.StartNew(() =>
             {
-                using var receiver = new PullSocket(">tcp://localhost:5556");
+                using var receiver = new PullSocket(">tcp://192.168.50.137:5555"); // Port where messages are received
 
                 try
                 {
@@ -145,21 +146,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     while (true)
                     {
-                        progress.Report(new ZmqMsgModel
-                        {
-                            Open = 15,
-                            High = 30,
-                            Low = 10,
-                            Close = 12
-                        });
-
                         if (token.IsCancellationRequested)
                             token.ThrowIfCancellationRequested();
 
                         //Start our clock now
                         var watch = Stopwatch.StartNew();
-
                         var ts = TimeSpan.FromMilliseconds(1000);
+
                         if (receiver.TryReceiveFrameString(ts, out string workload) && !string.IsNullOrWhiteSpace(workload))
                         {
                             watch.Stop();
@@ -194,7 +187,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         /// <summary>
-        /// Triggered when a message from MetaTrader is received.
+        /// Triggered when a ZmqMessageModel is reported by the pull socket.
         /// </summary>
         /// <param name="progress"></param>
         /// <param name="ctsTask"></param>
@@ -203,7 +196,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             await Task.Factory.StartNew(() =>
             {
-                using var requestSocket = new RequestSocket(">tcp://localhost:5555");
+                using var requestSocket = new RequestSocket(">tcp://localhost:5555"); // Port where messages are sent
 
                 try
                 {
@@ -213,7 +206,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     if (token.IsCancellationRequested)
                         token.ThrowIfCancellationRequested();
 
-                    ZmqMsgModel lastMessageInput = MessagesFromCurrentPeriod > MaximumMessagesRequired ? MessageInput.FirstOrDefault() : null;
+                    ZmqMsgModel lastMessageInput =
+                    MessagesFromCurrentPeriod > MaximumMessagesRequired ?
+                    MessageInput.FirstOrDefault() : null;
 
                     if (Nodes.Any())
                     {
@@ -554,17 +549,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 Nodes ??= new ObservableCollection<REPTreeNodeModelVM>();
 
-                var n = Nodes.FirstOrDefault(_n => _n.NodeWithoutFormat == node.NodeWithoutFormat);
-                if (n != null)
+                foreach (var n in Nodes)
                 {
-                    Nodes.Remove(node);
-                }
-                else
-                {
-                    Nodes.Add(node);
+                    if (n.Node == node.Node)
+                    {
+                        Nodes.Remove(node);
+                        return;
+                    }
                 }
 
-                MaximumMessagesRequired = MaxMessagesRequired();
+                Nodes.Add(node);
             }
             catch (Exception ex)
             {
@@ -577,8 +571,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                Project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
-                Configuration = Project?.ProjectConfigurations.FirstOrDefault();
+                _project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                Configuration = _project?.ProjectConfigurations.FirstOrDefault();
 
                 if (!Timeframes.Any())
                 {
@@ -777,9 +771,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _nodesAny, value);
         }
 
-        /// <summary>
-        /// List of nodes, each node representing a group of indicators.
-        /// </summary>
         private ObservableCollection<REPTreeNodeModelVM> _nodes;
         public ObservableCollection<REPTreeNodeModelVM> Nodes
         {
@@ -794,9 +785,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _messageInputAny, value);
         }
 
-        /// <summary>
-        /// Messages received from MetaTrader.
-        /// </summary>
         private ObservableCollection<ZmqMsgModel> _messageInput;
         public ObservableCollection<ZmqMsgModel> MessageInput
         {
@@ -811,9 +799,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _messageOutputAny, value);
         }
 
-        /// <summary>
-        /// Messages sent to MetaTrader.
-        /// </summary>
         private ObservableCollection<ZmqMsgModel> _messageOutput;
         public ObservableCollection<ZmqMsgModel> MessageOutput
         {

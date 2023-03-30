@@ -28,6 +28,13 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
 
         // Strategy
 
+        /// <summary>
+        /// Checks if the correlation requirement is met, and deletes the nodes that dont meet them.
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="correlation"></param>
+        /// <param name="entityType"></param>
+        /// <returns>A list of UP and DOWN nodes that meet the correlation requirements.</returns>
         public CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType)
         {
             try
@@ -46,22 +53,22 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                         break;
                 }
 
-                // UP
+                // UP Nodes
 
                 ProjectDirectoryService.GetFilesInPath(directoryUP, "*.xml")
                     .ToList().ForEach(fi =>
                     {
                         BacktestModel model = BacktestDeserialize(fi.FullName);
-                        int? indexOf = IndexOfCorrelation(correlationDetail.BacktestUP, model, correlation);
+                        int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestUP, model, correlation);
 
                         model.CorrelationPass = indexOf != null;
 
                         if (model.CorrelationPass)
                         {
                             if ((indexOf ?? -1) >= 0)
-                                correlationDetail.BacktestUP.Insert(indexOf.Value, model);
+                                correlationDetail.ISBacktestUP.Insert(indexOf.Value, model);
                             if ((indexOf ?? 0) == -1)
-                                correlationDetail.BacktestUP.Add(model);
+                                correlationDetail.ISBacktestUP.Add(model);
                         }
                         else
                         {
@@ -75,16 +82,16 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                     .ToList().ForEach(fi =>
                     {
                         BacktestModel model = BacktestDeserialize(fi.FullName);
-                        int? indexOf = IndexOfCorrelation(correlationDetail.BacktestDOWN, model, correlation);
+                        int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestDOWN, model, correlation);
 
                         model.CorrelationPass = indexOf != null;
 
                         if (model.CorrelationPass)
                         {
                             if ((indexOf ?? -1) >= 0)
-                                correlationDetail.BacktestDOWN.Insert(indexOf.Value, model);
+                                correlationDetail.ISBacktestDOWN.Insert(indexOf.Value, model);
                             if ((indexOf ?? 0) == -1)
-                                correlationDetail.BacktestDOWN.Add(model);
+                                correlationDetail.ISBacktestDOWN.Add(model);
                         }
                         else
                         {
@@ -107,12 +114,14 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
 
             foreach (var btItem in backtests)
             {
-                List<BacktestOperationModel> coincidences = btItem.Backtests.Where(
-                    _btoItem => btModel.Backtests.Any(_bto => _bto.Date == _btoItem.Date)).ToList();
+                List<BacktestOperationModel> coincidences =
+                    btItem.Backtests
+                    .Where(_btoItem => btModel.Backtests
+                    .Any(_bto => _bto.Date == _btoItem.Date)).ToList();
 
-                int totalCoincidences = coincidences.Count();
-                int btItemCount = btItem.Backtests.Count();
-                int btModelCount = btModel.Backtests.Count();
+                int totalCoincidences = coincidences.Count;
+                int btItemCount = btItem.Backtests.Count;
+                int btModelCount = btModel.Backtests.Count;
 
                 decimal percentBtItem = totalCoincidences * 100 / btItemCount;
                 decimal percentBtModel = totalCoincidences * 100 / btModelCount;
@@ -211,7 +220,14 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
 
                 if (rules.Any())
                 {
-                    List<IndicatorBase> extractorResult = ExtractorService.ExtractorExecute(fromDate, toDate, rules, data, periodId, variation);
+                    List<IndicatorBase> extractorResult = ExtractorService.ExtractorExecute(
+                        fromDate,
+                        toDate,
+                        rules,
+                        data,
+                        periodId,
+                        variation);
+
                     if (extractorResult.Any())
                     {
                         int totalRules = extractorResult.Count;
@@ -252,9 +268,12 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                                 }
                             }
 
+                            // Rules from the node have been satisfied.
                             if (passed == totalRules)
                             {
                                 bk.TotalTrades++;
+
+                                // Check if the candle went UP or DOWN
                                 bool isWinner = bk.Label.ToLower() == upOrDown.ToLower();
                                 if (isWinner)
                                 {

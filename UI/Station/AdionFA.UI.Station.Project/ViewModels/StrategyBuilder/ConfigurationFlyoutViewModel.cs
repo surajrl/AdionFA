@@ -16,26 +16,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using System.Runtime.CompilerServices;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
     public class ConfigurationFlyoutViewModel : ViewModelBase
     {
-        #region AutoMapper
-
-        public readonly IMapper Mapper;
-
-        #endregion AutoMapper
-
-        #region Services
-
+        private readonly IMapper _mapper;
         private readonly IProjectServiceAgent _projectService;
-
-        #endregion Services
-
-        private ProjectVM Project;
-
-        #region Ctor
+        private ProjectVM _project;
 
         public ConfigurationFlyoutViewModel(IApplicationCommands applicationCommands)
         {
@@ -44,19 +33,14 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            Mapper = new MapperConfiguration(mc =>
+            _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
         }
 
-        #endregion Ctor
-
-        #region Commands
-
         private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        private void ShowFlyout(FlyoutModel flyoutModel)
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAutoConfiguration))
             {
@@ -65,14 +49,12 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             }
         }
 
-        #endregion Commands
-
-        public async void PopulateViewModel()
+        private async void PopulateViewModel()
         {
             try
             {
-                Project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
-                Configuration = Project?.ProjectConfigurations.FirstOrDefault();
+                _project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                Configuration = _project?.ProjectConfigurations.FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -81,24 +63,20 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             }
         }
 
-        #region Bindable Model
+        // Bindable Model
 
         private ConfigurationBaseVM _configuration;
-
         public ConfigurationBaseVM Configuration
         {
             get => _configuration;
             set => SetProperty(ref _configuration, value);
         }
 
-        private List<AutoAdjustConfigModel> autoAdjustConfigs;
-
+        private List<AutoAdjustConfigModel> _autoAdjustConfigs;
         public List<AutoAdjustConfigModel> AutoAdjustConfigs
         {
-            get => autoAdjustConfigs;
-            set => SetProperty(ref autoAdjustConfigs, value);
+            get => _autoAdjustConfigs;
+            set => SetProperty(ref _autoAdjustConfigs, value);
         }
-
-        #endregion Bindable Model
     }
 }

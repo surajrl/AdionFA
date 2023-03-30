@@ -15,15 +15,13 @@ using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Project.Model.Weka;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
     public class WekaTreeFlyoutViewModel : ViewModelBase
     {
-        public readonly IMapper Mapper;
-
         private readonly IProjectServiceAgent _projectService;
-
         private ProjectVM Project;
 
         public WekaTreeFlyoutViewModel(IApplicationCommands applicationCommands)
@@ -35,16 +33,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
             AddOrRemoveNodeForTestCommand = new DelegateCommand<REPTreeNodeModelVM>(AddOrRemoveNodeForTest);
             applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(AddOrRemoveNodeForTestCommand);
-
-            Mapper = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
-            }).CreateMapper();
         }
-
-        #region Commands
-
-        #region FlyoutCommand
 
         private ICommand FlyoutCommand { get; set; }
 
@@ -55,32 +44,26 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                 PopulateViewModel();
 
                 var projection = ((ObservableCollection<REPTreeNodeModelVM>)flyoutModel.Model)
-                    .Where(m => m.Winner).OrderByDescending(n => n.Winner).ThenByDescending(n => n.WinningStrategy).ToList();
+                    .Where(m => m.Winner)
+                    .OrderByDescending(n => n.Winner)
+                    .ThenByDescending(n => n.WinningStrategy)
+                    .ToList();
+
                 projection.ForEach(m =>
                 {
                     m.Node = new ObservableCollection<string>(m.Node.OrderByDescending(n => n).ToList());
                 });
+
                 NodeOutput = new ObservableCollection<REPTreeNodeModelVM>(projection);
             }
         }
 
-        #endregion FlyoutCommand
-
-        #region AddOrRemoveNodeForTestCommand
-
         private ICommand AddOrRemoveNodeForTestCommand { get; set; }
-
-        public void AddOrRemoveNodeForTest(REPTreeNodeModelVM node)
+        private void AddOrRemoveNodeForTest(REPTreeNodeModelVM node)
         {
             try
             {
-                foreach (var n in NodeOutput)
-                {
-                    if (n.NodeWithoutFormat == node.NodeWithoutFormat)
-                    {
-                        n.HasTestInMetatrader = !n.HasTestInMetatrader;
-                    }
-                }
+                node.HasTestInMetatrader = true;
             }
             catch (Exception ex)
             {
@@ -88,10 +71,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                 throw;
             }
         }
-
-        #endregion AddOrRemoveNodeForTestCommand
-
-        #endregion Commands
 
         public async void PopulateViewModel()
         {
@@ -107,7 +86,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             }
         }
 
-        #region Bindable Model
+        // Bindable Model
 
         private ConfigurationBaseVM _configuration;
 
@@ -126,13 +105,10 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         }
 
         private ObservableCollection<REPTreeNodeModelVM> nodeOutput;
-
         public ObservableCollection<REPTreeNodeModelVM> NodeOutput
         {
             get => nodeOutput;
             set => SetProperty(ref nodeOutput, value);
         }
-
-        #endregion Bindable Model
     }
 }
