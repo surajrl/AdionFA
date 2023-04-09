@@ -5,11 +5,11 @@ namespace AdionFA.UI.Station.Project.Model.MetaTrader
 {
     public class ZmqMsgModel : ViewModelBase
     {
-        public int id;
-        public int Id 
+        private int _id;
+        public int Id
         {
-            get => id; 
-            set => SetProperty(ref id, value);
+            get => _id;
+            set => SetProperty(ref _id, value);
         }
 
         public int Temporality { get; set; }
@@ -34,14 +34,12 @@ namespace AdionFA.UI.Station.Project.Model.MetaTrader
         public decimal Low { get; set; }
         public string Label { get; set; }
 
-
         public decimal Bid { get; set; }
         public decimal Ask { get; set; }
 
-
         private bool isRequired;
-        public bool IsRequired 
-        { 
+        public bool IsRequired
+        {
             get => isRequired;
             set => SetProperty(ref isRequired, value);
         }

@@ -1,5 +1,5 @@
 ﻿using AdionFA.TransferObject.Base;
-using AdionFA.TransferObject.Market;
+using AdionFA.TransferObject.MarketData;
 using System.Collections.Generic;
 
 namespace AdionFA.TransferObject.Project

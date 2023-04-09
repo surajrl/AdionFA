@@ -63,22 +63,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Templates\MetaTrader\ProjectMetaTraderExpertTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ProjectMetaTraderExpertTemplate.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Templates\MetaTrader\ProjectMetaTraderExpertTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>ProjectMetaTraderExpertTemplate.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>

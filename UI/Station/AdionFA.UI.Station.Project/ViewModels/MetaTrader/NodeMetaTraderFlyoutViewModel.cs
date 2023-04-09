@@ -14,13 +14,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Project.Model.Weka;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
 
 namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
 {
     public class NodeMetaTraderFlyoutViewModel : ViewModelBase
     {
-        private readonly IMapper _mapper;
         private readonly IProjectServiceAgent _projectService;
 
         private ProjectVM Project;
@@ -32,21 +31,11 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            AddOrRemoveNodeForTestCommand = new DelegateCommand<REPTreeNodeModelVM>(AddOrRemoveNodeForTest);
+            AddOrRemoveNodeForTestCommand = new DelegateCommand<BacktestModelVM>(AddOrRemoveNodeForTest);
             applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(AddOrRemoveNodeForTestCommand);
-
-            _mapper = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
-            }).CreateMapper();
         }
 
-        #region Commands
-
-        #region FlyoutCommand
-
         private ICommand FlyoutCommand { get; set; }
-
         public void ShowFlyout(FlyoutModel flyoutModel)
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleNodeMetaTrader))
@@ -54,25 +43,20 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
                 PopulateViewModel();
 
                 if ((NodeOutput?.Count ?? 0) == 0)
-                    NodeOutput = new ObservableCollection<REPTreeNodeModelVM>();
+                    NodeOutput = new ObservableCollection<BacktestModelVM>();
             }
         }
 
-        #endregion FlyoutCommand
-
-        #region AddOrRemoveNodeForTestCommand
-
         private ICommand AddOrRemoveNodeForTestCommand { get; set; }
-
-        public void AddOrRemoveNodeForTest(REPTreeNodeModelVM node)
+        public void AddOrRemoveNodeForTest(BacktestModelVM node)
         {
             try
             {
-                NodeOutput ??= new ObservableCollection<REPTreeNodeModelVM>();
+                NodeOutput ??= new ObservableCollection<BacktestModelVM>();
 
                 foreach (var n in NodeOutput)
                 {
-                    if (n.Node == node.Node)
+                    if (n.BacktestModel.Node == node.BacktestModel.Node)
                     {
                         NodeOutput.Remove(node);
                         return;
@@ -88,10 +72,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
             }
         }
 
-        #endregion AddOrRemoveNodeForTestCommand
-
-        #endregion Commands
-
         public async void PopulateViewModel()
         {
             try
@@ -106,7 +86,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
             }
         }
 
-        #region Bindable Model
+        // Bindable Model
 
         private ConfigurationBaseVM _configuration;
         public ConfigurationBaseVM Configuration
@@ -115,13 +95,11 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
             set => SetProperty(ref _configuration, value);
         }
 
-        private ObservableCollection<REPTreeNodeModelVM> nodeOutput;
-        public ObservableCollection<REPTreeNodeModelVM> NodeOutput
+        private ObservableCollection<BacktestModelVM> _nodeOutput;
+        public ObservableCollection<BacktestModelVM> NodeOutput
         {
-            get => nodeOutput;
-            set => SetProperty(ref nodeOutput, value);
+            get => _nodeOutput;
+            set => SetProperty(ref _nodeOutput, value);
         }
-
-        #endregion Bindable Model
     }
 }

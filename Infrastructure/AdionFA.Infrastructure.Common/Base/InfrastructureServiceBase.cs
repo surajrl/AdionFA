@@ -46,7 +46,7 @@ namespace AdionFA.Infrastructure.Common.Base
 
                 Type type = AuthorizationMgmt.AuthorizeCall(_tenantId, _ownerId, _owner, sourceFilePath);
 
-                //LogInfo
+                // Log Info
                 MethodInfo m = typeof(InfrastructureServiceBase).GetMethod(nameof(InfrastructureServiceBase.LogInfoGet));
                 m.MakeGenericMethod(type).Invoke(this, new object[] { new LogModel
                 {

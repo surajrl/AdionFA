@@ -15,7 +15,7 @@ namespace AdionFA.Core.Application.Services.Commons
         [Inject]
         public IRepository<EntityServiceHost> EntityServiceHostRepository { get; set; }
 
-        #endregion
+        #endregion Repostories
 
         #region Ctor
 
@@ -23,14 +23,14 @@ namespace AdionFA.Core.Application.Services.Commons
         {
         }
 
-        #endregion
+        #endregion Ctor
 
         public EntityServiceHostDTO GetEntityServiceHost(int entityTypeId, int entityId)
         {
             try
             {
                 EntityServiceHost ehost = EntityServiceHostRepository.FirstOrDefault(
-                        esh => esh.EntityTypeId == entityTypeId && 
+                        esh => esh.EntityTypeId == entityTypeId &&
                                esh.EntityId == entityId);
 
                 EntityServiceHostDTO dto = Mapper.Map<EntityServiceHostDTO>(ehost);

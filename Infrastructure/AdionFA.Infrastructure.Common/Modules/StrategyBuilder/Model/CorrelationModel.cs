@@ -13,14 +13,14 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
             ISBacktestUP = new List<BacktestModel>();
             ISBacktestDOWN = new List<BacktestModel>();
 
-            BacktestUP = new List<REPTreeNodeModel>();
-            BacktestDOWN = new List<REPTreeNodeModel>();
+            OSBacktestUP = new List<BacktestModel>();
+            OSBacktestDOWN = new List<BacktestModel>();
         }
 
         public List<BacktestModel> ISBacktestUP { get; set; }
         public List<BacktestModel> ISBacktestDOWN { get; set; }
 
-        public List<REPTreeNodeModel> BacktestUP { get; set; }
-        public List<REPTreeNodeModel> BacktestDOWN { get; set; }
+        public List<BacktestModel> OSBacktestUP { get; set; }
+        public List<BacktestModel> OSBacktestDOWN { get; set; }
     }
 }

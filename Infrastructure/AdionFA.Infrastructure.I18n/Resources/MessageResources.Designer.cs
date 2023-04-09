@@ -97,7 +97,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Was successfully saved!.
+        ///   Looks up a localized string similar to Successfully Saved!.
         /// </summary>
         public static string EntitySaveSuccess {
             get {
@@ -115,7 +115,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Market Data file is empty.
+        ///   Looks up a localized string similar to Historical Data file is empty.
         /// </summary>
         public static string MarketDataFileEmpty {
             get {
@@ -124,7 +124,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Market Data Period cannot be null.
+        ///   Looks up a localized string similar to Timeframe cannot be null.
         /// </summary>
         public static string MarketDataPeriodCannotBeNull {
             get {

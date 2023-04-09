@@ -22,17 +22,16 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
 
         public ServiceClientCredentials Credentials { get; private set; }
 
-
         #region Methods
 
         public async Task<HttpOperationResponse<IList<REPTreeOutputModel>>> GetREPTreeClassifierWithHttpMessagesAsync(
-            string path, 
-            int? maxDepth = default(int?), 
-            int? numDecimalPlaces = default(int?), 
+            string path,
+            int? maxDepth = default(int?),
+            int? numDecimalPlaces = default(int?),
             int? minSeed = default(int?),
             int? maxSeed = default(int?),
-            int? instances = default(int?), 
-            double? ratio = default(double?), 
+            int? instances = default(int?),
+            double? ratio = default(double?),
             double? total = default(double?),
             bool? isAssembled = default(bool?),
             Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -43,23 +42,25 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             if (_shouldTrace)
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
-                Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("path", path);
-                tracingParameters.Add("maxDepth", maxDepth);
-                tracingParameters.Add("numDecimalPlaces", numDecimalPlaces);
-                tracingParameters.Add("minSeed", minSeed);
-                tracingParameters.Add("maxSeed", maxSeed);
-                tracingParameters.Add("instances", instances);
-                tracingParameters.Add("ratio", ratio);
-                tracingParameters.Add("total", total);
-                tracingParameters.Add("isAssembled", isAssembled);
-                tracingParameters.Add("cancellationToken", cancellationToken);
+                Dictionary<string, object> tracingParameters = new Dictionary<string, object>
+                {
+                    { "path", path },
+                    { "maxDepth", maxDepth },
+                    { "numDecimalPlaces", numDecimalPlaces },
+                    { "minSeed", minSeed },
+                    { "maxSeed", maxSeed },
+                    { "instances", instances },
+                    { "ratio", ratio },
+                    { "total", total },
+                    { "isAssembled", isAssembled },
+                    { "cancellationToken", cancellationToken }
+                };
                 ServiceClientTracing.Enter(_invocationId, this, "GetREPTreeClassifier", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = this.BaseUri.AbsoluteUri;
+            var _baseUrl = BaseUri.AbsoluteUri;
             var _url = new Uri(new Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "weka.reptree").ToString();
-            List<string> _queryParameters = new List<string>();
+            var _queryParameters = new List<string>();
             _queryParameters.Add(string.Format("path={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(path, this.SerializationSettings).Trim('"'))));
             if (maxDepth != null)
             {
@@ -67,33 +68,33 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             }
             if (numDecimalPlaces != null)
             {
-                _queryParameters.Add(string.Format("numDecimalPlaces={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(numDecimalPlaces, this.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("numDecimalPlaces={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(numDecimalPlaces, SerializationSettings).Trim('"'))));
             }
             if (minSeed != null)
             {
-                _queryParameters.Add(string.Format("minSeed={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(minSeed, this.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("minSeed={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(minSeed, SerializationSettings).Trim('"'))));
             }
             if (maxSeed != null)
             {
-                _queryParameters.Add(string.Format("maxSeed={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(maxSeed, this.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("maxSeed={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(maxSeed, SerializationSettings).Trim('"'))));
             }
             if (instances != null)
             {
-                _queryParameters.Add(string.Format("instances={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(instances, this.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("instances={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(instances, SerializationSettings).Trim('"'))));
             }
             if (ratio != null)
             {
-                _queryParameters.Add(string.Format("ratio={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(ratio, this.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("ratio={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(ratio, SerializationSettings).Trim('"'))));
             }
             if (total != null)
             {
-                _queryParameters.Add(string.Format("total={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(total, this.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("total={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(total, SerializationSettings).Trim('"'))));
             }
             if (isAssembled != null)
             {
-                _queryParameters.Add(string.Format("isAssembled={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(isAssembled, this.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("isAssembled={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(isAssembled, SerializationSettings).Trim('"'))));
             }
-            
+
             if (_queryParameters.Count > 0)
             {
                 _url += "?" + string.Join("&", _queryParameters);
@@ -183,9 +184,8 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             }
             return _result;
         }
-        
-        #endregion
 
+        #endregion Methods
 
         /// <summary>
         /// Initializes a new instance of the WekaApiClient class.
@@ -363,14 +363,14 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
 
         /// <summary>
         /// An optional partial-method to perform custom initialization.
-        ///</summary> 
+        ///</summary>
         partial void CustomInitialize();
         /// <summary>
         /// Initializes client properties.
         /// </summary>
         private void Initialize()
         {
-            this.BaseUri = new Uri("http://localhost:8080");
+            BaseUri = new Uri("http://localhost:8080");
             SerializationSettings = new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,

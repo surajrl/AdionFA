@@ -15,21 +15,13 @@ namespace AdionFA.Core.Domain.Services.Projects
 {
     public class ProjectDomainService : DomainServiceBase, IProjectDomainService
     {
-        #region Repositories
+        // Repositories
 
         private readonly IRepository<Project> ProjectRepository;
-
         private readonly IRepository<ProjectGlobalConfiguration> ProjectGlobalConfigurationRepository;
-
         private readonly IRepository<ProjectConfiguration> ProjectConfigurationRepository;
-
         private readonly IRepository<ProjectScheduleConfiguration> ProjectScheduleConfigurationRepository;
-
         private readonly IRepository<EntityServiceHost> EntityServiceHostRepository;
-
-        #endregion Repositories
-
-        #region Ctor
 
         public ProjectDomainService(string tenantId, string ownerId, string owner,
             IRepository<Project> projectRepository,
@@ -44,8 +36,6 @@ namespace AdionFA.Core.Domain.Services.Projects
             ProjectScheduleConfigurationRepository = projectScheduleConfigurationRepository;
             EntityServiceHostRepository = entityServiceHostRepository;
         }
-
-        #endregion Ctor
 
         public IList<Project> GetAllProjects()
         {

@@ -18,7 +18,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
     {
         #region Services
 
-        public readonly IHistoricalDataServiceAgent HistoricalDataService;
+        public readonly IMarketDataServiceAgent HistoricalDataService;
         public readonly IProjectServiceAgent ProjectService;
 
         #endregion Services
@@ -32,7 +32,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         #region Constructor
 
         public SettingService(
-            IHistoricalDataServiceAgent historicalDataService,
+            IMarketDataServiceAgent historicalDataService,
             IProjectServiceAgent projectService)
         {
             HistoricalDataService = historicalDataService;

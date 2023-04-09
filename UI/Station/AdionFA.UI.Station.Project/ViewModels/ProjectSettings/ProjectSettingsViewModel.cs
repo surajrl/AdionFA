@@ -28,7 +28,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         #region Services
 
         private readonly IAppProjectService _appProjectService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IProjectServiceAgent _projectService;
         private readonly IEventAggregator _eventAggregator;
 
@@ -39,7 +39,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public ProjectSettingsViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IHistoricalDataServiceAgent>();
+            _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();

@@ -1,12 +1,16 @@
-﻿using AdionFA.Core.Application.Contracts.Security;
-using AdionFA.Core.Domain.Aggregates.Core;
+﻿using AdionFA.Core.Domain.Aggregates.Core;
 using AdionFA.Core.Domain.Contracts.Security;
+using AdionFA.Core.Application.Contracts.Security;
+
 using AdionFA.Infrastructure.Common.Security.Attributes;
-using Ninject;
-using System;
-using System.Diagnostics;
+
 using AdionFA.TransferObject.Core;
 using AdionFA.TransferObject.Base;
+
+using Ninject;
+
+using System;
+using System.Diagnostics;
 
 namespace AdionFA.Core.Application.Services.Security
 {
@@ -18,7 +22,7 @@ namespace AdionFA.Core.Application.Services.Security
         [Inject]
         public ISecurityDomainService SecurityDomainService { get; set; }
 
-        #endregion
+        #endregion Domain Services
 
         #region Ctor
 
@@ -26,7 +30,7 @@ namespace AdionFA.Core.Application.Services.Security
         {
         }
 
-        #endregion
+        #endregion Ctor
 
         #region User
 
@@ -53,7 +57,7 @@ namespace AdionFA.Core.Application.Services.Security
                 var response = new ResponseDTO { IsSuccess = false };
 
                 CoreUser entity = Mapper.Map<CoreUser>(user);
-                
+
                 response.IsSuccess = SecurityDomainService.CreateUser(entity) != null;
 
                 if (response.IsSuccess)
@@ -71,6 +75,6 @@ namespace AdionFA.Core.Application.Services.Security
             }
         }
 
-        #endregion
+        #endregion User
     }
 }

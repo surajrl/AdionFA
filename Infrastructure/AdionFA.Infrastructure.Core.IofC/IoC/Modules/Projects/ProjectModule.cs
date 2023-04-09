@@ -1,10 +1,14 @@
 ﻿using AdionFA.Core.API.Contracts.Projects;
 using AdionFA.Core.API.Projects;
+
 using AdionFA.Core.Application.Contracts.Projects;
 using AdionFA.Core.Application.Services.Projects;
+
 using AdionFA.Core.Domain.Contracts.Projects;
 using AdionFA.Core.Domain.Services.Projects;
+
 using AdionFA.Infrastructure.Common.IofC;
+
 using Ninject.Modules;
 
 namespace AdionFA.Infrastructure.Core.IofC.Modules.Projects
@@ -13,20 +17,16 @@ namespace AdionFA.Infrastructure.Core.IofC.Modules.Projects
     {
         public override void Load()
         {
-            #region API
+            // API
 
             Kernel.Bind(typeof(IProjectAPI)).To(typeof(ProjectAPI));
 
-            #endregion API
-
-            #region Application
+            // Application
 
             Kernel.Bind(typeof(IProjectAppService)).To(typeof(ProjectAppService));
             Kernel.Bind(typeof(IGlobalConfigurationAppService)).To(typeof(GlobalConfigurationAppService));
 
-            #endregion Application
-
-            #region Domain
+            // Domain
 
             Kernel.Bind(typeof(IProjectDomainService)).To(typeof(ProjectDomainService))
                 .WithConstructorArgument("tenantId", ctx => IoC.GetArgument(ctx, "tenantId"))
@@ -37,8 +37,6 @@ namespace AdionFA.Infrastructure.Core.IofC.Modules.Projects
                 .WithConstructorArgument("tenantId", ctx => IoC.GetArgument(ctx, "tenantId"))
                 .WithConstructorArgument("ownerId", ctx => IoC.GetArgument(ctx, "ownerId"))
                 .WithConstructorArgument("owner", ctx => IoC.GetArgument(ctx, "owner"));
-
-            #endregion Domain
         }
     }
 }

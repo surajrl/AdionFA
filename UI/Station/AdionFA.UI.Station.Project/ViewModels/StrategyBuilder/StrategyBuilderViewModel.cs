@@ -1,42 +1,48 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+﻿using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
+
 using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.StrategyBuilder;
-using AdionFA.UI.Station.Project.Services;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
+
 using AutoMapper;
+
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
+
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
 using System.Threading;
+using System.Windows.Input;
+
+using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
 using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using AdionFA.UI.Station.Infrastructure.Helpers;
+
 using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
-using AdionFA.TransferObject.Base;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
-using System.IO;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Project.Model.Weka;
+using AdionFA.TransferObject.Base;
+
 using DynamicData;
 
 namespace AdionFA.UI.Station.Project.ViewModels
@@ -49,7 +55,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IStrategyBuilderService _strategyBuilderService;
 
         private readonly IProjectServiceAgent _projectService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _marketDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -59,8 +65,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
             _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
+
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IHistoricalDataServiceAgent>();
+            _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
@@ -90,7 +97,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, (s) => true); //item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
+        public ICommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
@@ -109,7 +116,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Historical Data
 
-                HistoricalDataVM projectHistoricalData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
+                HistoricalDataVM projectHistoricalData = await _marketDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
                 IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataDetails.Select(
                         h => new Candle
                         {
@@ -136,7 +143,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                         AutoAdjustConfigModel c = Configurations[idx];
 
-                        // Async - DataMine
+                        // Async - Data Mine
 
                         if (Configuration.AsynchronousMode)
                         {
@@ -145,7 +152,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Task.WaitAll(pool.ToArray());
                         }
 
-                        // Sync - DataMine
+                        // Sync - Data Mine
                         else
                         {
                             var sync = SynchronousMode(c, candles);
@@ -159,7 +166,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             (Configuration.WinningStrategyTotalUP > WinningStrategyTotalUP
                                 || Configuration.WinningStrategyTotalDOWN > WinningStrategyTotalDOWN))
                         {
-                            List<REPTreeNodeModelVM> nodes = StrategyBuilderProcessList.SelectMany(
+                            List<REPTreeNodeVM> nodes = StrategyBuilderProcessList.SelectMany(
                                 st => st.InstancesList.SelectMany(i => i.NodeOutput.Where(n => !n.WinningStrategy).Select(n => n))
                             ).ToList();
 
@@ -190,64 +197,20 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         ProcessArgs.ProjectName,
                         Configuration.MaxPercentCorrelation,
                         EntityTypeEnum.StrategyBuilder);
+
                     IsCorrelationDetail = CorrelationModel.Success;
                 });
 
-                // UP OS
-                foreach (var sbm in StrategyBuilderProcessList)
-                {
-                    var successTrees = sbm.InstancesList.FirstOrDefault(instance => instance.IsSuccess);
-                    if (successTrees == null)
-                        continue;
-
-                    var successNodes = successTrees.NodeOutput.Where(node => node.Winner && node.Label.ToLower() == "up").ToList();
-                    if (successNodes == null)
-                        continue;
-
-                    if (successNodes.Any())
-                    {
-                        successNodes.ForEach(node =>
-                        {
-                            var nodeIs = CorrelationModel.ISBacktestUP.FirstOrDefault(backtest => backtest.LastNode == node.LastNode);
-                            if (nodeIs != null)
-                            {
-                                CorrelationModel.BacktestUP.Add(Mapper.Map<REPTreeNodeModelVM, REPTreeNodeModel>(node));
-                            }
-                        });
-                    }
-                }
-
-                // DOWN OS
-                foreach (var sbm in StrategyBuilderProcessList)
-                {
-                    var successTrees = sbm.InstancesList.FirstOrDefault(instance => instance.IsSuccess);
-                    if (successTrees == null)
-                        continue;
-
-                    var successNodes = successTrees.NodeOutput.Where(node => node.Winner && node.Label.ToLower() == "down").ToList();
-                    if (successNodes == null)
-                        continue;
-
-                    if (successNodes.Any())
-                    {
-                        successNodes.ForEach(node =>
-                        {
-                            var nodeIs = CorrelationModel.ISBacktestDOWN.FirstOrDefault(backtest => backtest.LastNode == node.LastNode);
-                            if (nodeIs != null)
-                            {
-                                CorrelationModel.BacktestDOWN.Add(Mapper.Map<REPTreeNodeModelVM, REPTreeNodeModel>(node));
-                            }
-                        });
-                    }
-                }
-
-                UpdateWinnerStrategyTotal(CorrelationModel?.ISBacktestUP?.Count ?? 0, CorrelationModel?.ISBacktestDOWN?.Count ?? 0, true);
+                UpdateWinnerStrategyTotal(
+                    CorrelationModel?.ISBacktestUP?.Count ?? 0,
+                    CorrelationModel?.ISBacktestDOWN?.Count ?? 0,
+                    true);
 
                 IsTransactionActive = false;
-                bool result = !StrategyBuilderProcessList.Any(e => e.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name);
 
                 // Results Message
 
+                bool result = !StrategyBuilderProcessList.Any(e => e.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name);
                 string msg = result ? MessageResources.StrategyBuilderCompleted : MessageResources.EntityErrorTransaction;
 
                 if (result && !IsCorrelationDetail)
@@ -321,14 +284,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     AddItemToStrategyBuilderProcessList(
                         model.TemplateName,
-                        responseWeka.Select(Mapper.Map<REPTreeOutputModel, REPTreeOutputModelVM>)
+                        responseWeka.Select(Mapper.Map<REPTreeOutputModel, REPTreeOutputVM>)
                         .ToList());
 
                     if (model.InstancesList.Count > 0)
                     {
                         foreach (var instance in model.InstancesList)
                         {
-                            List<REPTreeNodeModelVM> winningNodes = instance.NodeOutput.Where(m => m.Winner).ToList();
+                            List<REPTreeNodeVM> winningNodes = instance.NodeOutput.Where(m => m.Winner).ToList();
                             winningNodes.ForEach(m =>
                             {
                                 m.Node = new ObservableCollection<string>(m.Node.OrderByDescending(n => n).ToList());
@@ -350,11 +313,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                                 // IS
 
-                                UpdateREPTreeNodeModelVM(node, stb.IS, false);
+                                UpdateTreeNodeVM(node, stb.IS, false);
 
                                 // OS
 
-                                UpdateREPTreeNodeModelVM(node, stb.OS, true);
+                                UpdateTreeNodeVM(node, stb.OS, true);
 
                                 // Strategy
 
@@ -378,7 +341,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                                 if (node.WinningStrategy)
                                 {
-                                    _strategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS);
+                                    _strategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb);
                                 }
                             }
 
@@ -408,7 +371,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private void UpdateREPTreeNodeModelVM(REPTreeNodeModelVM node, BacktestModel bkm, bool IsOSample)
+        private void UpdateTreeNodeVM(REPTreeNodeVM node, BacktestModel bkm, bool IsOSample)
         {
             if (!IsOSample)
             {
@@ -432,7 +395,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private void AdjustConfigurationBuilder(List<REPTreeNodeModelVM> nodes, AutoAdjustConfigModel autoAdjustConfig)
+        private void AdjustConfigurationBuilder(List<REPTreeNodeVM> nodes, AutoAdjustConfigModel autoAdjustConfig)
         {
             try
             {
@@ -442,23 +405,23 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 int TargetDown = Configuration.WinningStrategyTotalDOWN > WinningStrategyTotalDOWN ?
                     Configuration.WinningStrategyTotalDOWN - WinningStrategyTotalDOWN : 0;
 
-                List<REPTreeNodeModelVM> filteredNodes = nodes.Where(
+                List<REPTreeNodeVM> filteredNodes = nodes.Where(
                     n => n.PercentSuccessIs >= (double)autoAdjustConfig.MinPercentSuccessIS &&
                          n.PercentSuccessOs >= (double)autoAdjustConfig.MinPercentSuccessOS &&
                          n.VariationPercent <= (double)autoAdjustConfig.VariationTransaction &&
                          (!Configuration.IsProgressiveness || n.Progressiveness <= (double)autoAdjustConfig.Progressiveness)
                 ).ToList().OrderByDescending(n => n.WinningTradesIs).ThenByDescending(n => n.PercentSuccessIs).ToList();
 
-                List<REPTreeNodeModelVM> nodesUp = filteredNodes.Where(n => n.Label.ToLower() == "up").ToList();
+                List<REPTreeNodeVM> nodesUp = filteredNodes.Where(n => n.Label.ToLower() == "up").ToList();
                 if (nodesUp.Count > 0)
                     nodesUp = nodesUp.GetRange(0, nodesUp.Count > TargetUp ? TargetUp : nodesUp.Count);
 
-                List<REPTreeNodeModelVM> nodesDown = filteredNodes.Where(n => n.Label.ToLower() == "down").ToList();
+                List<REPTreeNodeVM> nodesDown = filteredNodes.Where(n => n.Label.ToLower() == "down").ToList();
                 if (nodesDown.Count > 0)
                     nodesDown = nodesDown.GetRange(0, nodesDown.Count > TargetDown ? TargetDown : nodesDown.Count);
 
-                REPTreeNodeModelVM upLast = nodesUp.LastOrDefault();
-                REPTreeNodeModelVM downLast = nodesDown.LastOrDefault();
+                REPTreeNodeVM upLast = nodesUp.LastOrDefault();
+                REPTreeNodeVM downLast = nodesDown.LastOrDefault();
 
                 int WinningTradesOs = 0;
                 int WinningTradesIs = 0;
@@ -496,7 +459,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private void AdjustConfigurationWeka(List<REPTreeNodeModelVM> nodes, AutoAdjustConfigModel autoAdjustConfig)
+        private void AdjustConfigurationWeka(List<REPTreeNodeVM> nodes, AutoAdjustConfigModel autoAdjustConfig)
         {
             try
             {
@@ -509,14 +472,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 int ntotalesUp = 0;
                 int ntotalesDown = 0;
 
-                List<REPTreeNodeModelVM> nodesGraterThanRationMax = nodes.Where(n => !n.Winner && n.RatioMax >= (double)autoAdjustConfig.MaxRatioTree).ToList();
-                List<REPTreeNodeModelVM> resultNodes = new();
+                List<REPTreeNodeVM> nodesGraterThanRationMax = nodes.Where(n => !n.Winner && n.RatioMax >= (double)autoAdjustConfig.MaxRatioTree).ToList();
+                List<REPTreeNodeVM> resultNodes = new();
 
                 if (nodesGraterThanRationMax.Count > 0)
                 {
                     // UP
 
-                    List<REPTreeNodeModelVM> nodesOrderByTotalUpDesc = nodesGraterThanRationMax.Where(n => n.Label.ToLower() == "up").OrderByDescending(n => n.TotalUP).ToList();
+                    List<REPTreeNodeVM> nodesOrderByTotalUpDesc = nodesGraterThanRationMax.Where(n => n.Label.ToLower() == "up").OrderByDescending(n => n.TotalUP).ToList();
                     if (nodesOrderByTotalUpDesc.Count > 0)
                         nodesOrderByTotalUpDesc = nodesOrderByTotalUpDesc.GetRange(0, nodesOrderByTotalUpDesc.Count > lookingForTargetUp ? lookingForTargetUp : nodesOrderByTotalUpDesc.Count - 1);
 
@@ -530,7 +493,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     // DOWN
 
-                    List<REPTreeNodeModelVM> nodesOrderByTotalDownDesc = nodesGraterThanRationMax.Where(n => n.Label.ToLower() == "down").OrderByDescending(n => n.TotalDOWN).ToList();
+                    List<REPTreeNodeVM> nodesOrderByTotalDownDesc = nodesGraterThanRationMax.Where(n => n.Label.ToLower() == "down").OrderByDescending(n => n.TotalDOWN).ToList();
                     if (nodesOrderByTotalDownDesc.Count > 0)
                         nodesOrderByTotalDownDesc = nodesOrderByTotalDownDesc.GetRange(0, nodesOrderByTotalDownDesc.Count > lookingForTargetDown ? lookingForTargetDown : nodesOrderByTotalDownDesc.Count - 1);
                     resultNodes.AddRange(nodesOrderByTotalDownDesc);
@@ -572,7 +535,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         // ReloadBtnCommand
 
-        public DelegateCommand ReloadBtnCommand => new DelegateCommand(() =>
+        public ICommand ReloadBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -647,7 +610,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Status = StrategyBuilderStatusEnum.NoStarted.GetMetadata().Name,
                             IsEnabled = false,
                             IsExpanded = false,
-                            InstancesList = new ObservableCollection<REPTreeOutputModelVM>()
+                            InstancesList = new ObservableCollection<REPTreeOutputVM>()
                         });
                     });
                 }
@@ -663,7 +626,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private void AddItemToStrategyBuilderProcessList(string templateName, List<REPTreeOutputModelVM> modelList)
+        private void AddItemToStrategyBuilderProcessList(string templateName, List<REPTreeOutputVM> modelList)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -692,6 +655,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 WinningStrategyTotalUP = WinningStrategyTotalDOWN = 0;
             }
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 WinningStrategyTotalUP += winningStrategyTotalUP;

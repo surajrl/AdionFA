@@ -11,14 +11,10 @@ namespace AdionFA.Core.Domain.Aggregates.MetaTrader
         public int ExpertAdvisorId { get; set; }
 
         public string Name { get; set; }
-        public string Protocol { get; set; }
-        public string HostName { get; set; }
-        public int REPPort { get; set; }
-        public int PUSHPort { get; set; }
-        public int Timer { get; set; }
-        public int MagicNumber { get; set; }
-        public int MaximumOrders { get; set; }
-        public double MaximumLotSize { get; set; }
+        public ulong MagicNumber { get; set; }
+        public string Host { get; set; }
+        public ushort ResponsePort { get; set; }
+        public ushort PushPort { get; set; }
 
         public int ProjectId { get; set; }
 

@@ -1,43 +1,44 @@
 ﻿using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Weka.Model;
+
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Project.AutoMapper;
-using AdionFA.UI.Station.Project.Model.StrategyBuilder;
-using AdionFA.UI.Station.Project.Model.Weka;
-using AdionFA.UI.Station.Project.Services;
+
 using AutoMapper;
-using DynamicData;
-using Prism.Commands;
+
 using Prism.Ioc;
+using Prism.Commands;
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Windows.Documents;
 using System.Windows.Input;
+using System.Linq;
+using DynamicData;
+using AdionFA.UI.Station.Project.Model.StrategyBuilder;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
     public class CorrelationFlyoutViewModel : ViewModelBase
     {
-        private readonly IMapper _mapper;
-
         public CorrelationFlyoutViewModel(IApplicationCommands applicationCommands)
         {
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            _mapper = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
-            }).CreateMapper();
+            AddNodeForTestCommand = new DelegateCommand<BacktestModelVM>(AddNode);
+            applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(AddNodeForTestCommand);
+        }
+
+        private ICommand AddNodeForTestCommand { get; set; }
+        public void AddNode(BacktestModelVM backtest)
+        {
+            backtest.HasTestInMetaTrader = true;
         }
 
         // Flyout Command
@@ -58,8 +59,11 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             {
                 if (CorrelationModel.Success)
                 {
-                    NodesUP = new(_mapper.Map<List<REPTreeNodeModel>, List<REPTreeNodeModelVM>>(CorrelationModel.BacktestUP));
-                    NodesDOWN = new(_mapper.Map<List<REPTreeNodeModel>, List<REPTreeNodeModelVM>>(CorrelationModel.BacktestDOWN));
+                    NodesUP = new();
+                    CorrelationModel.ISBacktestUP.ForEach(backtest => NodesUP.Add(new BacktestModelVM { BacktestModel = backtest }));
+
+                    NodesDOWN = new();
+                    CorrelationModel.ISBacktestDOWN.ForEach(backtest => NodesDOWN.Add(new BacktestModelVM { BacktestModel = backtest }));
                 }
             }
             catch (Exception ex)
@@ -78,29 +82,15 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             set => SetProperty(ref _correlationModel, value);
         }
 
-        private bool _hasTestInMetatraderUP;
-        public bool HasTestInMetatraderUP
-        {
-            get => _hasTestInMetatraderUP;
-            set => SetProperty(ref _hasTestInMetatraderUP, value);
-        }
-
-        private ObservableCollection<REPTreeNodeModelVM> _nodesUP;
-        public ObservableCollection<REPTreeNodeModelVM> NodesUP
+        private ObservableCollection<BacktestModelVM> _nodesUP;
+        public ObservableCollection<BacktestModelVM> NodesUP
         {
             get => _nodesUP;
             set => SetProperty(ref _nodesUP, value);
         }
 
-        private bool _hasTestInMetatraderDOWN;
-        public bool HasTestInMetatraderDOWN
-        {
-            get => _hasTestInMetatraderDOWN;
-            set => SetProperty(ref _hasTestInMetatraderDOWN, value);
-        }
-
-        private ObservableCollection<REPTreeNodeModelVM> _nodesDown;
-        public ObservableCollection<REPTreeNodeModelVM> NodesDOWN
+        private ObservableCollection<BacktestModelVM> _nodesDown;
+        public ObservableCollection<BacktestModelVM> NodesDOWN
         {
             get => _nodesDown;
             set => SetProperty(ref _nodesDown, value);

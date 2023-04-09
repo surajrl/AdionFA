@@ -1,16 +1,19 @@
 ﻿using AdionFA.Core.API.Contracts.Projects;
 using AdionFA.Core.Application.Contracts.Projects;
+
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Core.Data.Persistence.Contract;
+
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Project;
+
 using System.Collections.Generic;
 
 namespace AdionFA.Core.API.Projects
 {
     public class ProjectAPI : IProjectAPI
     {
-        #region Global Configuration
+        // Project Global Configuration
 
         public IList<ProjectGlobalConfigurationDTO> GetAllGlobalConfigurations(bool includeGraph = false)
         {
@@ -33,9 +36,7 @@ namespace AdionFA.Core.API.Projects
             }
         }
 
-        #endregion
-
-        #region Project
+        // Project
 
         public IList<ProjectDTO> GetAllProjects()
         {
@@ -60,14 +61,12 @@ namespace AdionFA.Core.API.Projects
         {
             using (var service = IoC.Get<IProjectAppService>())
             using (service.Transaction<IAdionFADbContext>())
-            { 
+            {
                 return service.UpdateProject(project);
             }
         }
 
-        #endregion
-
-        #region Project Configuration
+        // Project Configuration
 
         public ProjectConfigurationDTO GetProjectConfiguration(int projectId, bool includeGraph = false)
         {
@@ -102,9 +101,7 @@ namespace AdionFA.Core.API.Projects
             }
         }
 
-        #endregion
-
-        #region Shell module
+        // Shell Module
 
         public ResponseDTO PinnedProject(int projectId, bool isPinned)
         {
@@ -114,7 +111,7 @@ namespace AdionFA.Core.API.Projects
                 return service.PinnedProject(projectId, isPinned);
             }
         }
-        
+
         public ResponseDTO UpdateProcessId(int projectId, long? processId)
         {
             using (var service = IoC.Get<IProjectAppService>())
@@ -123,7 +120,5 @@ namespace AdionFA.Core.API.Projects
                 return service.UpdateProcessId(projectId, processId);
             }
         }
-
-        #endregion
     }
 }

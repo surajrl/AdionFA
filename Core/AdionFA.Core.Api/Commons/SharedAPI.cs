@@ -10,28 +10,26 @@ namespace AdionFA.Core.API.Commons
 {
     public class SharedAPI : ISharedAPI
     {
-        #region ServiceHost
+        // Service Host
 
         public EntityServiceHostDTO GetEntityServiceHost(int entityTypeId, int entityId)
         {
-            using (var service = IoC.Get<ISharedAppService>())
-                return service.GetEntityServiceHost(entityTypeId, entityId);
+            using var service = IoC.Get<ISharedAppService>();
+            return service.GetEntityServiceHost(entityTypeId, entityId);
         }
-        
-        #endregion
 
-        #region Settings
+        // App Settings
 
         public IList<SettingDTO> GetAllAppSetting()
         {
-            using (var service = IoC.Get<IAppSettingAppService>())
-                return service.GetAllAppSetting();
+            using var service = IoC.Get<IAppSettingAppService>();
+            return service.GetAllAppSetting();
         }
 
         public SettingDTO GetSetting(int settingId, string keySetting = null)
         {
-            using (var service = IoC.Get<IAppSettingAppService>())
-                return service.GetSetting(settingId, keySetting);
+            using var service = IoC.Get<IAppSettingAppService>();
+            return service.GetSetting(settingId, keySetting);
         }
 
         public ResponseDTO CreateAppSetting(SettingDTO setting)
@@ -51,7 +49,5 @@ namespace AdionFA.Core.API.Commons
                 return service.UpdateAppSetting(setting);
             }
         }
-        
-        #endregion
     }
 }

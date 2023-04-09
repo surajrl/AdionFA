@@ -41,7 +41,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services
                 List<Process> processes = Process.GetProcessesByName("AdionFA.UI.Station.Project").ToList();
                 if (!processes.Any(p => p.Id == currentProjectProcessId))
                 {
-                    ProcessStartInfo st = new ProcessStartInfo
+                    var st = new ProcessStartInfo
                     {
                         FileName = "AdionFA.UI.Station.Project.exe",
                         Arguments = $"{projectId}_AdionFA.UI.Station.Project_{project.ProjectName}",
@@ -58,7 +58,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services
             ProcessStartInfo st = new()
             {
                 FileName = "java.exe",
-                Arguments = "-jar " + Directory.GetCurrentDirectory() + "\\Weka\\AdionFA.WekaLibrary-0.0.1-SNAPSHOT.jar",
+                Arguments = "-jar " + Directory.GetCurrentDirectory() + "\\Resources\\Weka\\AdionFA.WekaLibrary-0.0.1-SNAPSHOT.jar",
                 CreateNoWindow = true
             };
             Process.Start(st);

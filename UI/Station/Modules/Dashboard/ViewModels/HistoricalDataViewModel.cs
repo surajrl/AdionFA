@@ -21,11 +21,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
     public class HistoricalDataViewModel : ViewModelBase
     {
         private readonly ISettingService _settingService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _historicalDataService;
 
         public HistoricalDataViewModel(
             ISettingService settingService,
-            IHistoricalDataServiceAgent historicalDataService,
+            IMarketDataServiceAgent historicalDataService,
             IApplicationCommands applicationCommands)
         {
             _settingService = settingService;
@@ -36,8 +36,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
             applicationCommands.LoadHistoricalData.RegisterCommand(HistoricalDataFilterCommand);
         }
-
-        #region Commands
 
         private ICommand FlyoutCommand { get; set; }
 
@@ -50,8 +48,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         public ICommand HistoricalDataFilterCommand => new DelegateCommand(LoadHistoricalData);
-
-        #endregion Commands
 
         private async void PopulateViewModel()
         {

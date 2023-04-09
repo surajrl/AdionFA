@@ -6,8 +6,8 @@ namespace AdionFA.UI.Station.Infrastructure.Helpers
 {
     public static class MessageHelper
     {
-        readonly static IDialogCoordinator Dialog = new DialogCoordinator();
-        readonly static MetroDialogSettings _setting;
+        private static readonly IDialogCoordinator Dialog = new DialogCoordinator();
+        private static readonly MetroDialogSettings _setting;
 
         static MessageHelper()
         {
@@ -21,8 +21,8 @@ namespace AdionFA.UI.Station.Infrastructure.Helpers
 
         public static async void ShowMessage(object context, string title, string message)
         {
-            await Dialog.ShowMessageAsync(context, 
-                title, $" - {message ?? string.Empty}", 
+            await Dialog.ShowMessageAsync(context,
+                title, $"{message ?? string.Empty}",
                 settings: _setting);
         }
 
@@ -30,7 +30,7 @@ namespace AdionFA.UI.Station.Infrastructure.Helpers
         {
             var megs = messages?.ToArray() ?? Array.Empty<string>();
             await Dialog.ShowMessageAsync(context,
-                title, string.Join(Environment.NewLine, messages.Select(m => $" - {m}")),
+                title, string.Join(Environment.NewLine, messages.Select(m => $"{m}")),
                 settings: _setting);
         }
     }

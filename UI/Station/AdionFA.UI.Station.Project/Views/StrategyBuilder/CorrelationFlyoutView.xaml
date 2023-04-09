@@ -73,17 +73,12 @@
                                 <DataTemplate>
                                     <Expander Style="{x:Null}">
 
+                                        <!--#region Header Title-->
                                         <Expander.Header>
                                             <StackPanel Orientation="Horizontal">
-                                                <!--#region Header Title-->
                                                 <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                <Run Text="{Binding Label}" FontWeight="SemiBold"/>
+                                                <Run Text="{Binding BacktestModel.Label}" FontWeight="SemiBold"/>
                                                 </TextBlock>
-
-                                                <!--<TextBlock Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{Binding Name, Mode=OneWay}"/>
-                                                </TextBlock>-->
-                                                <!--#endregion-->
                                             </StackPanel>
                                         </Expander.Header>
 
@@ -100,7 +95,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <!--#region Tree-->
-                                            <ListView Grid.Column="0" ItemsSource="{Binding Node}" Padding="20 1"/>
+                                            <ListView Grid.Column="0" ItemsSource="{Binding BacktestModel.Node}" Padding="20 1"/>
                                             <!--#endregion-->
 
                                             <!--#region Tree Information-->
@@ -120,20 +115,20 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <!--#region TotalOpportunity-->
-                                                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                    <TextBlock Grid.Row="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalOpportunityIs, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.TotalOpportunity, Mode=OneWay}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
                                                     <!--#region TotalTrades-->
-                                                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                    <TextBlock Grid.Row="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.TotalTrades}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -142,7 +137,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding WinningTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.WinningTrades}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -151,16 +146,16 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding LosingTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.LosingTrades}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
                                                     <!--#region PercentSuccess-->
-                                                    <TextBlock Grid.Row="4" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                    <TextBlock Grid.Row="4" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.PercentSuccess, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
@@ -170,14 +165,14 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.Progressiveness, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
                                                     <!--#region Test In MetaTrader-->
-                                                    <StackPanel Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
-                                                        <Button  x:Name="btnTestInMetaTraderUP" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatrader, Converter={StaticResource InverseBooleanConverter}}">
+                                                    <StackPanel Grid.Row="6" Margin="{StaticResource ColumnMargin}">
+                                                        <Button x:Name="btnTestInMetaTraderUP" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetaTrader, Converter={StaticResource InverseBooleanConverter}}">
                                                             <Button.Content>
                                                                 <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}"/>
                                                             </Button.Content>
@@ -241,20 +236,16 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Expander Style="{x:Null}">
+
+                                        <!--#region Header Title-->
                                         <Expander.Header>
                                             <StackPanel Orientation="Horizontal">
-
-                                                <!--#region Header Title-->
                                                 <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                <Run Text="{Binding Label}" FontWeight="SemiBold"/>
+                                                <Run Text="{Binding BacktestModel.Label}" FontWeight="SemiBold"/>
                                                 </TextBlock>
-
-                                                <!--<TextBlock Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{Binding Name, Mode=OneWay}"/>
-                                                </TextBlock>-->
-                                                <!--#endregion-->
                                             </StackPanel>
                                         </Expander.Header>
+
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
@@ -268,7 +259,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <!--#region Node-->
-                                            <ListView Grid.Column="0" ItemsSource="{Binding Node}" Padding="20 1"/>
+                                            <ListView Grid.Column="0" ItemsSource="{Binding BacktestModel.Node}" Padding="20 1"/>
                                             <!--#endregion-->
 
                                             <!--#region Tree Information-->
@@ -292,7 +283,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalOpportunityIs, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.TotalOpportunity, Mode=OneWay}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -301,7 +292,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.TotalTrades}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -310,7 +301,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding WinningTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.WinningTrades}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -319,7 +310,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding LosingTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.LosingTrades}"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
@@ -328,7 +319,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.PercentSuccess, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
@@ -338,14 +329,14 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding ProgressivenessIs, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.Progressiveness, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                     </TextBlock>
                                                     <!--#endregion-->
 
                                                     <!--#region Test In MetaTrader-->
                                                     <StackPanel Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
-                                                        <Button  x:Name="btnTestInMetaTraderUP" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatrader, Converter={StaticResource InverseBooleanConverter}}">
+                                                        <Button  x:Name="btnTestInMetaTraderUP" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetaTrader, Converter={StaticResource InverseBooleanConverter}}">
                                                             <Button.Content>
                                                                 <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}"/>
                                                             </Button.Content>

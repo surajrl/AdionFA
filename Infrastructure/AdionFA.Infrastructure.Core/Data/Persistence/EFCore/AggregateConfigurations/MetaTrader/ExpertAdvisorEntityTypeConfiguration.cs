@@ -10,8 +10,8 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence.EFCore.AggregateConfigura
         public void Configure(EntityTypeBuilder<ExpertAdvisor> builder)
         {
             builder.HasIndex(ea => ea.Name).IsUnique();
-            builder.HasIndex(ea => ea.REPPort).IsUnique();
-            builder.HasIndex(ea => ea.PUSHPort).IsUnique();
+            builder.HasIndex(ea => ea.ResponsePort).IsUnique();
+            builder.HasIndex(ea => ea.PushPort).IsUnique();
             builder.HasIndex(ea => ea.MagicNumber).IsUnique();
         }
     }

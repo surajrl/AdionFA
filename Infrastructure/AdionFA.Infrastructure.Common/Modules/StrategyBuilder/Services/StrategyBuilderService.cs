@@ -39,7 +39,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
         {
             try
             {
-                CorrelationModel correlationDetail = new CorrelationModel();
+                CorrelationModel correlationDetail = new();
 
                 // Output Directory
 
@@ -53,49 +53,77 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                         break;
                 }
 
-                // UP Nodes
+                // UP IS Nodes
 
                 ProjectDirectoryService.GetFilesInPath(directoryUP, "*.xml")
-                    .ToList().ForEach(fi =>
+                    .ToList().ForEach(file =>
                     {
-                        BacktestModel model = BacktestDeserialize(fi.FullName);
-                        int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestUP, model, correlation);
-
-                        model.CorrelationPass = indexOf != null;
-
-                        if (model.CorrelationPass)
+                        if (file.Name.Contains("IS"))
                         {
-                            if ((indexOf ?? -1) >= 0)
-                                correlationDetail.ISBacktestUP.Insert(indexOf.Value, model);
-                            if ((indexOf ?? 0) == -1)
-                                correlationDetail.ISBacktestUP.Add(model);
-                        }
-                        else
-                        {
-                            ProjectDirectoryService.DeleteFile(fi.FullName);
+                            var backtestIS = BacktestDeserialize(file.FullName);
+                            int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestUP, backtestIS, correlation);
+
+                            backtestIS.CorrelationPass = indexOf != null;
+
+                            var fileOS = file.FullName.Replace("IS", "OS");
+
+                            if (backtestIS.CorrelationPass)
+                            {
+                                var backtestOS = BacktestDeserialize(fileOS);
+
+                                if ((indexOf ?? -1) >= 0)
+                                {
+                                    correlationDetail.ISBacktestUP.Insert(indexOf.Value, backtestIS);
+                                    correlationDetail.OSBacktestUP.Insert(indexOf.Value, backtestOS);
+                                }
+                                if ((indexOf ?? 0) == -1)
+                                {
+                                    correlationDetail.ISBacktestUP.Add(backtestIS);
+                                    correlationDetail.OSBacktestUP.Add(backtestOS);
+                                }
+                            }
+                            else
+                            {
+                                ProjectDirectoryService.DeleteFile(file.FullName);
+                                ProjectDirectoryService.DeleteFile(fileOS);
+                            }
                         }
                     });
 
-                // DOWN
+                // DOWN IS Nodes
 
                 ProjectDirectoryService.GetFilesInPath(directoryDOWN, "*.xml")
-                    .ToList().ForEach(fi =>
+                    .ToList().ForEach(file =>
                     {
-                        BacktestModel model = BacktestDeserialize(fi.FullName);
-                        int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestDOWN, model, correlation);
-
-                        model.CorrelationPass = indexOf != null;
-
-                        if (model.CorrelationPass)
+                        if (file.Name.Contains("IS"))
                         {
-                            if ((indexOf ?? -1) >= 0)
-                                correlationDetail.ISBacktestDOWN.Insert(indexOf.Value, model);
-                            if ((indexOf ?? 0) == -1)
-                                correlationDetail.ISBacktestDOWN.Add(model);
-                        }
-                        else
-                        {
-                            ProjectDirectoryService.DeleteFile(fi.FullName);
+                            var backtestIS = BacktestDeserialize(file.FullName);
+                            int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestDOWN, backtestIS, correlation);
+
+                            backtestIS.CorrelationPass = indexOf != null;
+
+                            var fileOS = file.FullName.Replace("IS", "OS");
+
+                            if (backtestIS.CorrelationPass)
+                            {
+                                var backtestOS = BacktestDeserialize(fileOS);
+
+                                if ((indexOf ?? -1) >= 0)
+                                {
+                                    correlationDetail.ISBacktestDOWN.Insert(indexOf.Value, backtestIS);
+                                    correlationDetail.OSBacktestDOWN.Insert(indexOf.Value, backtestOS);
+                                }
+                                if ((indexOf ?? 0) == -1)
+                                {
+                                    correlationDetail.ISBacktestDOWN.Add(backtestIS);
+                                    correlationDetail.OSBacktestDOWN.Add(backtestOS);
+                                }
+                            }
+                            else
+                            {
+                                ProjectDirectoryService.DeleteFile(file.FullName);
+                                ProjectDirectoryService.DeleteFile(fileOS);
+                            }
                         }
                     });
 
@@ -204,7 +232,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
         {
             try
             {
-                BacktestModel bk = new BacktestModel
+                var bk = new BacktestModel
                 {
                     Label = label,
                     FromDate = fromDate,
@@ -314,19 +342,30 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                     bkmOS.PercentSuccess >= (double)config.MinPercentSuccessOS &&
                     variationPercent <= (double)config.VariationTransaction &&
 
-                    (config.IsProgressiveness ? progressiveness <= (double)config.Progressiveness : true);
+                    (!config.IsProgressiveness || progressiveness <= (double)config.Progressiveness);
         }
 
         // Backtest Serialization
 
-        public void BacktestSerialize(string projectName, BacktestModel model)
+        public void BacktestSerialize(string projectName, StrategyBuilderModel model)
         {
-            string directory = model.Label.ToLower() == "up"
-                                            ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-                                            : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+            // IS
+            var directory = model.IS.Label.ToLower() == "up"
+                ? projectName.ProjectStrategyBuilderNodesUPDirectory()
+                : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
 
-            SerializerHelper.XMLSerializeObject(model, string.Format(@"{0}\{1}.xml", directory,
-                                            RegexHelper.GetValidFileName(model.NodeName(), "_")));
+            SerializerHelper.XMLSerializeObject(
+                model.IS,
+                string.Format(@"{0}\{1}.xml", directory, "IS." + RegexHelper.GetValidFileName(model.IS.NodeName(), "_")));
+
+            // OS
+            directory = model.OS.Label.ToLower() == "up"
+                ? projectName.ProjectStrategyBuilderNodesUPDirectory()
+                : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+
+            SerializerHelper.XMLSerializeObject(
+                model.OS,
+                string.Format(@"{0}\{1}.xml", directory, "OS." + RegexHelper.GetValidFileName(model.OS.NodeName(), "_")));
         }
 
         public BacktestModel BacktestDeserialize(string path)

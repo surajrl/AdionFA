@@ -43,7 +43,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private readonly IAssembledBuilderService _assembledBuilderService;
         private readonly IProjectServiceAgent _projectService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IEventAggregator _eventAggregator;
 
         #endregion Services
@@ -58,7 +58,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _assembledBuilderService = IoC.Get<IAssembledBuilderService>();
 
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IHistoricalDataServiceAgent>();
+            _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);

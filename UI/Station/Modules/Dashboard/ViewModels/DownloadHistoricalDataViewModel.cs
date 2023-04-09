@@ -30,7 +30,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
     public class DownloadHistoricalDataViewModel : ViewModelBase
     {
         private readonly IMetaTraderService _metaTraderService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly ISettingService _settingService;
         private readonly IEventAggregator _eventAggregator;
 
@@ -42,7 +42,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             IApplicationCommands applicationCommands,
             IMetaTraderService metaTraderService,
             ISettingService settingService,
-            IHistoricalDataServiceAgent historicalDataService)
+            IMarketDataServiceAgent historicalDataService)
         {
             _metaTraderService = metaTraderService;
             _settingService = settingService;

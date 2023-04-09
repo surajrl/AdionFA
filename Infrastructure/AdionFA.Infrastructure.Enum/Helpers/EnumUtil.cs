@@ -40,34 +40,47 @@ namespace AdionFA.Infrastructure.Common.Helpers
 
         public static TimeframeEnum GetTimeframeEnum(int code)
         {
-            var result = TimeframeEnum.D1;
+            TimeframeEnum result;
+
             switch (code)
             {
                 case 1:
                     result = TimeframeEnum.M1;
                     break;
 
-                case 2:
+                case 5:
                     result = TimeframeEnum.M5;
                     break;
 
-                case 3:
+                case 15:
                     result = TimeframeEnum.M15;
                     break;
 
-                case 4:
+                case 30:
                     result = TimeframeEnum.M30;
                     break;
 
-                case 5:
+                case 16385:
                     result = TimeframeEnum.H1;
                     break;
 
-                case 6:
+                case 16388:
                     result = TimeframeEnum.H4;
                     break;
 
-                case 7:
+                case 16408:
+                    result = TimeframeEnum.D1;
+                    break;
+
+                case 32769:
+                    result = TimeframeEnum.W1;
+                    break;
+
+                case 49153:
+                    result = TimeframeEnum.M1;
+                    break;
+
+                default:
                     result = TimeframeEnum.D1;
                     break;
             }

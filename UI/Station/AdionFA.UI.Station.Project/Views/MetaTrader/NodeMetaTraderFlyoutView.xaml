@@ -64,12 +64,12 @@
                                             <StackPanel.Resources>
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding WinningStrategy}" Value="True">
+                                                        <DataTrigger Binding="{Binding BacktestModel.WinningStrategy}" Value="True">
                                                             <Setter Property="FontWeight" Value="Bold"/>
                                                             <Setter Property="Foreground" Value="Green"/>
                                                         </DataTrigger>
 
-                                                        <DataTrigger Binding="{Binding WinningStrategy}" Value="False">
+                                                        <DataTrigger Binding="{Binding BacktestModel.WinningStrategy}" Value="False">
                                                             <Setter Property="Foreground" Value="Gray"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -77,13 +77,13 @@
                                             </StackPanel.Resources>
 
                                             <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                <Run Text="{Binding Label}" FontWeight="SemiBold"/>
+                                                <Run Text="{Binding BacktestModel.Label}" FontWeight="SemiBold"/>
                                             </TextBlock>
 
                                             <TextBlock Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.WinningStrategy}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding WinningStrategy, Mode=OneWay}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.WinningStrategy, Mode=OneWay}"/>-->
                                             </TextBlock>
                                         </StackPanel>
                                     </Expander.Header>
@@ -100,7 +100,7 @@
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
 
-                                        <ListView Grid.Column="0" ItemsSource="{Binding Node}" Padding="20 1"/>
+                                        <ListView Grid.Column="0" ItemsSource="{Binding BacktestModel.Node}" Padding="20 1"/>
 
                                         <StackPanel Grid.Column="1">
                                             <Grid>
@@ -116,34 +116,34 @@
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalUP}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding TotalUP, StringFormat=N2}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.TotalUP, StringFormat=N2}"/>-->
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding TotalDOWN, StringFormat=N2}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.TotalDOWN, StringFormat=N2}"/>-->
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="0" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.NTotals}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding Total, StringFormat=N2}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.Total, StringFormat=N2}"/>-->
                                                 </TextBlock>
 
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioUP}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding RatioUP, StringFormat=N2}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.RatioUP, StringFormat=N2}"/>-->
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding RatioDOWN, StringFormat=N2}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.RatioDOWN, StringFormat=N2}"/>-->
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="2" Grid.Column="2" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioMax}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding RatioMax, StringFormat=N2}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.RatioMax, StringFormat=N2}"/>-->
                                                 </TextBlock>
                                             </Grid>
                                         </StackPanel>
@@ -167,93 +167,69 @@
                                                     <ColumnDefinition/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <!--<TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.Years}" FontWeight="SemiBold"/>
-                                                    <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding YearIs}"/>
-                                                </TextBlock>
-                                                <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
-                                                    <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding TotalDaysIs, Mode=OneWay}"/>
-                                                </TextBlock>-->
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding TotalTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.TotalTrades}"/>
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding WinningTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.WinningTrades}"/>
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="4" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding LosingTradesIs}"/>
+                                                    <Run Text="{Binding BacktestModel.LosingTrades}"/>
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="5" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.PercentSuccess, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="6" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
-                                                    <Run Text="{Binding ProgressivenessIs, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text="{Binding BacktestModel.Progressiveness, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                 </TextBlock>
 
-                                                <!--<TextBlock Grid.Row="0" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.Years}" FontWeight="SemiBold"/>
-                                                    <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding YearOs}"/>
-                                                </TextBlock>
-                                                <TextBlock Grid.Row="1" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
-                                                    <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding TotalDaysOs, Mode=OneWay}"/>
-                                                </TextBlock>-->
                                                 <TextBlock Grid.Row="2" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding TotalTradesOs}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding TotalTrades}"/>-->
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="3" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding WinningTradesOs}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding WinningTrades}"/>-->
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="4" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding LosingTradesOs}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding LosingTrades}"/>-->
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="5" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding PercentSuccessOs, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding PercentSuccess, StringFormat=N2, Mode=OneWay}"/>-->
                                                     <Run Text="%"/>
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding ProgressivenessOs, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}"/>-->
                                                     <Run Text="%"/>
                                                 </TextBlock>
 
@@ -261,28 +237,22 @@
 
                                                 <TextBlock Grid.Row="8" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding VariationPercent , StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.VariationPercent , StringFormat=N2, Mode=OneWay}"/>-->
                                                     <Run Text="%"/>
                                                 </TextBlock>
 
                                                 <TextBlock Grid.Row="8" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}"/>
+                                                    <Run Text=": TODO"/>
+                                                    <!--<Run Text="{Binding BacktestModel.Progressiveness, StringFormat=N2, Mode=OneWay}"/>-->
                                                     <Run Text="%"/>
-                                                </TextBlock>
-
-                                                <TextBlock Grid.Row="9" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategy}" FontWeight="SemiBold"/>
-                                                    <Run Text=":"/>
-                                                    <Run Text="{Binding WinningStrategy, Mode=OneWay}"/>
                                                 </TextBlock>
                                             </Grid>
                                         </StackPanel>
 
-                                        <StackPanel Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Right" Visibility="{Binding WinningStrategy, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                            <Button  x:Name="testInMetatraderBtn" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatrader}">
+                                        <StackPanel Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Right">
+                                            <Button  x:Name="testInMetatraderBtn" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetaTrader}">
                                                 <Button.Content>
                                                     <TextBlock Text="{x:Static commonResources:CommonResources.OffTest}"/>
                                                 </Button.Content>

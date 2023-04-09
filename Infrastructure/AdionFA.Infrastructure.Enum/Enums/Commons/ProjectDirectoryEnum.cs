@@ -11,7 +11,8 @@ namespace AdionFA.Infrastructure.Enums
         [Description(@"Projects")]
         Projects = 110,
 
-        #region Extractor
+        // Extractor
+
         [Description(@"{0}\Extractions")]
         Extractor = 120,
 
@@ -23,9 +24,9 @@ namespace AdionFA.Infrastructure.Enums
 
         [Description(@"{0}\Extractions\Templates")]
         ExtractorTemplate = 150,
-        #endregion
 
-        #region Strategy Builder
+        // Strategy Builder
+
         [Description(@"{0}\StrategyBuilder")]
         StrategyBuilder = 210,
 
@@ -37,9 +38,9 @@ namespace AdionFA.Infrastructure.Enums
 
         [Description(@"{0}\StrategyBuilder\Nodes\DOWN")]
         StrategyBuilderNodesDOWN = 240,
-        #endregion
 
-        #region Assembled Builder
+        // Assembled Builder
+
         [Description(@"{0}\AssembledBuilder")]
         AssembledBuilder = 310,
 
@@ -63,6 +64,5 @@ namespace AdionFA.Infrastructure.Enums
 
         [Description(@"{0}\AssembledBuilder\Nodes\DOWN")]
         AssembledBuilderNodesDOWN = 380,
-        #endregion
     }
 }

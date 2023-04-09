@@ -26,11 +26,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         internal readonly string EntityDescription = EntityTypeEnum.ProjectGlobalConfiguration.GetMetadata().Description;
 
         private readonly ISettingService _settingService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _historicalDataService;
 
         public ProjectGlobalConfigViewModel(
             ISettingService settingService,
-            IHistoricalDataServiceAgent historicalDataService,
+            IMarketDataServiceAgent historicalDataService,
             IApplicationCommands applicationCommands)
         {
             _settingService = settingService;

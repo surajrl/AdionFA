@@ -33,7 +33,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public List<IndicatorBase> BuildIndicators(string path)
+        public List<IndicatorBase> BuildIndicatorsFromCSV(string path)
         {
             try
             {
@@ -482,12 +482,13 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
         }
 
         public List<IndicatorBase> ExtractorExecute(
-            DateTime fromDate,
-            DateTime toDate,
+            DateTime from,
+            DateTime to,
             List<IndicatorBase> indicators,
             IEnumerable<Candle> candles,
             int timeframeId,
-            decimal variation = 0)
+            decimal variation = 0,
+            bool metaTraderTest = false)
         {
             try
             {
@@ -496,7 +497,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
 
                 List<IndicatorBase> extractions = new(indicators);
 
-                // Labels with UP or DOWN only those candles that meet the variation condition.
+                // Select candles that meet the variation condition
                 List<Candle> data = (from c in candles
                                      let v = int.Parse(c.Open.ToString(CultureInfo.InvariantCulture).Replace(".", string.Empty)) - int.Parse(c.Close.ToString(CultureInfo.InvariantCulture).Replace(".", string.Empty))
                                      where Math.Abs(v) >= (double)variation || variation == 0
@@ -517,16 +518,32 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                 double[] close = (from c in data select c.Close).ToArray();
                 double[] min = (from c in data select c.Low).ToArray();
 
-                // Gets only those candles that are within the start and end IS date.
-                IEnumerable<Candle> candlesRange = from c in data
-                                                   let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
-                                                   where dt >= fromDate && dt <= toDate
-                                                   select c;
+                // Select candles that are within the IS start and end dates
+                if (!metaTraderTest)
+                {
+                    IEnumerable<Candle> candlesRange = from c in data
+                                                       let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
+                                                       where dt >= @from && dt <= to
+                                                       select c;
 
-                int startIdx = Array.IndexOf(data.ToArray(), candlesRange.FirstOrDefault());
-                int endIdx = Array.IndexOf(data.ToArray(), candlesRange.LastOrDefault());
+                    int startIdx = Array.IndexOf(data.ToArray(), candlesRange.FirstOrDefault());
+                    int endIdx = Array.IndexOf(data.ToArray(), candlesRange.LastOrDefault());
 
-                ExtractorExecute(startIdx, endIdx, open, max, min, close, extractions, candlesRange, timeframeId);
+                    ExtractorExecute(startIdx, endIdx, open, max, min, close, extractions, candlesRange, timeframeId);
+                }
+
+                if (metaTraderTest)
+                {
+                    IEnumerable<Candle> candlesRange = from c in data
+                                                       let dt = c.Date
+                                                       where dt > @from && dt < to
+                                                       select c;
+
+                    int startIdx = Array.IndexOf(data.ToArray(), candlesRange.FirstOrDefault());
+                    int endIdx = Array.IndexOf(data.ToArray(), candlesRange.LastOrDefault());
+
+                    ExtractorExecute(startIdx, endIdx, open, max, min, close, extractions, candlesRange, timeframeId);
+                }
 
                 return extractions;
             }
@@ -761,83 +778,82 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                 (toRegionTime == 0 || il.Interval.Hour <= toRegionTime)
                     ).ToList().Count;
 
-                    using (var writer = new StreamWriter(path))
-                    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    using var writer = new StreamWriter(path);
+                    using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+                    string[] headers = new string[columnCount];
+                    object[,] items = new object[columnCount, rowCount];
+                    int iCounter = 0;
+                    foreach (var i in indicators)
                     {
-                        string[] headers = new string[columnCount];
-                        object[,] items = new object[columnCount, rowCount];
-                        int iCounter = 0;
-                        foreach (var i in indicators)
+                        PropertyInfo[] properties = i.GetType().GetFilteredProperties<IgnoreReflectionAttribute>();
+
+                        var parameters = string.Join("_", (from p in properties
+                                                           where p.PropertyType.Name == typeof(int).Name || p.PropertyType.Name == typeof(double).Name
+                                                           select p.GetValue(i)).ToList());
+
+                        headers[iCounter] = $"{i.Name.Replace("_", ".")}_{parameters}";
+
+                        if (i.Output.Count() > 0)
                         {
-                            PropertyInfo[] properties = i.GetType().GetFilteredProperties<IgnoreReflectionAttribute>();
-
-                            var parameters = string.Join("_", (from p in properties
-                                                               where p.PropertyType.Name == typeof(int).Name || p.PropertyType.Name == typeof(double).Name
-                                                               select p.GetValue(i)).ToList());
-
-                            headers[iCounter] = $"{i.Name.Replace("_", ".")}_{parameters}";
-
-                            if (i.Output.Count() > 0)
+                            int zzz = 0;
+                            for (int jCounter = 0; jCounter < i.Output.Length; jCounter++)
                             {
-                                int zzz = 0;
-                                for (int jCounter = 0; jCounter < i.Output.Length; jCounter++)
+                                DateTime dt = i.IntervalLabels[jCounter].Interval;
+                                if ((fromRegionTime == 0 || dt.Hour >= fromRegionTime) && (toRegionTime == 0 || dt.Hour <= toRegionTime))
                                 {
-                                    DateTime dt = i.IntervalLabels[jCounter].Interval;
-                                    if ((fromRegionTime == 0 || dt.Hour >= fromRegionTime) && (toRegionTime == 0 || dt.Hour <= toRegionTime))
-                                    {
-                                        items[iCounter, zzz] = i.Output[jCounter];
-                                        zzz++;
-                                    }
+                                    items[iCounter, zzz] = i.Output[jCounter];
+                                    zzz++;
                                 }
                             }
-                            iCounter++;
                         }
+                        iCounter++;
+                    }
 
-                        //Identify header duplicated
-                        var duplicates = headers.Select((t, i) => new { Index = i, Text = t })
-                            .GroupBy(g => g.Text).Where(g => g.Count() > 1);
+                    //Identify header duplicated
+                    var duplicates = headers.Select((t, i) => new { Index = i, Text = t })
+                        .GroupBy(g => g.Text).Where(g => g.Count() > 1);
 
-                        List<int> indexDuplicates = new List<int>();
+                    List<int> indexDuplicates = new();
 
-                        //Build csv
-                        csv.WriteField("Id");
-                        csv.WriteField("Fecha-Hora");
-                        for (int i = 0; i < headers.Length; i++)
+                    //Build csv
+                    csv.WriteField("Id");
+                    csv.WriteField("Fecha-Hora");
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        var h = headers[i];
+                        var d = duplicates.FirstOrDefault(_d => _d.Key == h);
+                        if (d == null || d.FirstOrDefault().Index == i)
                         {
-                            var h = headers[i];
-                            var d = duplicates.FirstOrDefault(_d => _d.Key == h);
-                            if (d == null || d.FirstOrDefault().Index == i)
+                            csv.WriteField(h);
+                        }
+                        else
+                        {
+                            indexDuplicates.Add(i);
+                        }
+                    }
+                    csv.WriteField("LABEL");
+                    csv.NextRecord();
+
+                    IntervalLabel[] intervals = indicators.FirstOrDefault().IntervalLabels.Where(
+                        il => (fromRegionTime == 0 || il.Interval.Hour >= fromRegionTime) &&
+                                (toRegionTime == 0 || il.Interval.Hour <= toRegionTime)
+                    ).ToArray();
+
+                    for (int i = 0; i < rowCount; i++)
+                    {
+                        csv.WriteField(i);
+                        csv.WriteField(intervals[i].Interval.ToString("yyyy.MM.dd HH:mm", CultureInfo.InvariantCulture));
+                        for (int j = 0; j < columnCount; j++)
+                        {
+                            if (!indexDuplicates.Contains(j))
                             {
-                                csv.WriteField(h);
-                            }
-                            else
-                            {
-                                indexDuplicates.Add(i);
+                                object record = Math.Round((double)items[j, i], 8);
+                                csv.WriteField(record);
                             }
                         }
-                        csv.WriteField("LABEL");
+                        csv.WriteField(intervals[i].Label);
                         csv.NextRecord();
-
-                        IntervalLabel[] intervals = indicators.FirstOrDefault().IntervalLabels.Where(
-                            il => (fromRegionTime == 0 || il.Interval.Hour >= fromRegionTime) &&
-                                    (toRegionTime == 0 || il.Interval.Hour <= toRegionTime)
-                        ).ToArray();
-
-                        for (int i = 0; i < rowCount; i++)
-                        {
-                            csv.WriteField(i);
-                            csv.WriteField(intervals[i].Interval.ToString("yyyy.MM.dd HH:mm", CultureInfo.InvariantCulture));
-                            for (int j = 0; j < columnCount; j++)
-                            {
-                                if (!indexDuplicates.Contains(j))
-                                {
-                                    object record = Math.Round((double)items[j, i], 8);
-                                    csv.WriteField(record);
-                                }
-                            }
-                            csv.WriteField(intervals[i].Label);
-                            csv.NextRecord();
-                        }
                     }
 
                     return true;
@@ -856,27 +872,26 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
         {
             try
             {
-                List<Candle> result = new List<Candle>();
+                List<Candle> result = new();
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     HasHeaderRecord = false,
                     MissingFieldFound = null,
                 };
 
-                using (var reader = new StreamReader(filePath))
-                using (var csv = new CsvReader(reader, config))
+                using var reader = new StreamReader(filePath);
+                using var csv = new CsvReader(reader, config);
+
+                csv.Context.RegisterClassMap<CandleMap>();
+
+                var candles = csv.GetRecords<Candle>();
+
+                foreach (var r in candles)
                 {
-                    csv.Context.RegisterClassMap<CandleMap>();
-
-                    var candles = csv.GetRecords<Candle>();
-
-                    foreach (var r in candles)
-                    {
-                        result.Add(r);
-                    }
-
-                    return result;
+                    result.Add(r);
                 }
+
+                return result;
             }
             catch (Exception ex)
             {

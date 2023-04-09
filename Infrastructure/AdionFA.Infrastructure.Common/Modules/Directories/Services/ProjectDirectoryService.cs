@@ -18,7 +18,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
         public ProjectDirectoryService() : base()
         {
         }
-        #endregion
+        #endregion Ctor
 
         public bool HasWritePermissionOnPath(string path)
         {
@@ -104,12 +104,12 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorWithoutSchedule.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectName));
-                        #endregion
+                        #endregion Extractor
 
                         #region StrategyBuilder
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectName));
-                        #endregion
+                        #endregion StrategyBuilder
 
                         #region AssembledBuilder
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUP.GetDescription(), projectName));
@@ -122,7 +122,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
-                        #endregion
+                        #endregion AssembledBuilder
                     }
                 }
                 return false;
@@ -185,9 +185,9 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                 {
                     using FileStream SourceStream = File.Open(fi.FullName, FileMode.Open);
                     using FileStream DestinationStream = File.Create(Path.Combine(targetDir, fi.Name));
-                    
+
                     await SourceStream.CopyToAsync(DestinationStream);
-                    
+
                     return true;
                 }
                 return false;
@@ -251,15 +251,15 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
         {
             try
             {
-                // Check if file exists with its full path    
+                // Check if file exists with its full path
                 if (File.Exists(path))
                 {
-                    // If file found, delete it    
+                    // If file found, delete it
                     File.Delete(path);
 
                     return true;
                 }
-                
+
                 return false;
             }
             catch (Exception ex)
@@ -272,7 +272,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
         public bool DeleteAllFiles(string sourceDir, string ext = "*.csv", SearchOption option = 0, bool overwrite = false, bool isBackup = true)
         {
             string backupDir = @$"{sourceDir}\Backup_" + DateTime.UtcNow.Ticks;
-            
+
             try
             {
                 string[] csvList = Directory.GetFiles(sourceDir, ext, option).Where(d => !d.Contains("Backup_")).ToArray();
@@ -282,7 +282,6 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                     // Copy text files.
                     foreach (string f in csvList)
                     {
-
                         // Remove path from the file name.
                         string fName = f[(sourceDir.Length + 1)..];
 
@@ -312,7 +311,6 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
                 return true;
             }
-
             catch (DirectoryNotFoundException dirNotFound)
             {
                 LogHelper.LogException<ProjectDirectoryService>(dirNotFound);
@@ -325,7 +323,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
     {
         public static string DefaultWorkspace { get; set; }
 
-        public static string DefaultDirectory() => 
+        public static string DefaultDirectory() =>
             string.Format(@"{0}\{1}", !string.IsNullOrWhiteSpace(DefaultWorkspace)
                 ? DefaultWorkspace
                 : Environment.GetFolderPath((Environment.SpecialFolder)ProjectDirectoryEnum.DefaultWorkspace)
@@ -338,7 +336,8 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(), projectNameFolder);
         }
 
-        #region Extrator
+        // Extractor
+
         public static string ProjectExtractorDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
@@ -369,7 +368,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
         public static string ProjectExtractorWithoutScheduleDirectory(this string projectNameFolder, string withFileName = null)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorWithoutSchedule.GetDescription(), projectNameFolder)) 
+                string.Format(ProjectDirectoryEnum.ExtractorWithoutSchedule.GetDescription(), projectNameFolder))
                 + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
 
@@ -378,9 +377,9 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectNameFolder));
         }
-        #endregion
 
-        #region Strategy Builder
+        // Strategy Builder
+
         public static string ProjectStrategyBuilderDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
@@ -395,25 +394,28 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
         public static string ProjectStrategyBuilderNodesUPDirectory(this string projectNameFolder)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectNameFolder));
         }
 
         public static string ProjectStrategyBuilderNodesDOWNDirectory(this string projectNameFolder)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectNameFolder));
         }
-        #endregion
 
-        #region Assembled Builder
+        // Assembled Builder
+
         public static string ProjectAssembledBuilderDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssembledBuilder.GetDescription(), projectNameFolder));
         }
 
-        #region Extractor
+        // Assembled Builder Extractor
+
         public static string ProjectAssembledBuilderExtractorUPDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
@@ -460,9 +462,9 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                 , MarketRegionEnum.Asia.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
-        #endregion
 
-        #region Nodes
+        // Assembled Builder Nodes
+
         public static string ProjectAssembledBuilderNodesDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
@@ -480,8 +482,5 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWN.GetDescription(), projectNameFolder));
         }
-        #endregion
-
-        #endregion
     }
 }

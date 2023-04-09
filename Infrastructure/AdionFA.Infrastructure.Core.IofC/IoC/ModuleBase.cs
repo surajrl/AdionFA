@@ -32,7 +32,7 @@ namespace AdionFA.Infrastructure.Core.IofC
             Kernel.Bind(typeof(IComparator)).To(typeof(Comparator)).InCallScope();
             Kernel.Bind(typeof(ILoggerHandler)).To(typeof(LoggerHandler)).InCallScope();
             Kernel.Bind<ILoggerFactory>().ToMethod(f => LoggerFactory.Create(b => b.AddDebug())).InSingletonScope();
-            
+
             Kernel.Bind<IMapper>().ToMethod(automapper => new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingDomainProfile());
@@ -40,7 +40,8 @@ namespace AdionFA.Infrastructure.Core.IofC
 
             Kernel.Bind(typeof(IMediator)).ToMethod(f => MediatRManager.BuildMediator(new WrappingWriter(Console.Out))).InSingletonScope();
 
-            #region Serilog
+            // Serilog
+
             //string templateSerilog = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception} {Properties:j}";
             Kernel.Bind<Serilog.ILogger>().ToMethod(x => new LoggerConfiguration()
                 .Enrich.WithExceptionDetails(new DestructuringOptionsBuilder()
@@ -55,18 +56,21 @@ namespace AdionFA.Infrastructure.Core.IofC
                     sinkMapCountLimit: 0
                 )
                 .CreateLogger()).InSingletonScope();
-            #endregion
 
-            #region Weka
+            // Weka
+
             Kernel.Bind(typeof(IWekaApiClient)).To(typeof(WekaApiClient)).InSingletonScope();
-            #endregion
+
+            // Database
 
             Kernel.Bind(typeof(IUnitOfWork<>)).To(typeof(UnitOfWork<>)).InCallScope()
                 .WithConstructorArgument("tenantId", ctx => IoC.GetArgument(ctx, "tenantId"))
                 .WithConstructorArgument("ownerId", ctx => IoC.GetArgument(ctx, "ownerId"))
                 .WithConstructorArgument("owner", ctx => IoC.GetArgument(ctx, "owner"));
+
             Kernel.Bind(typeof(AdionFADbContext)).ToSelf().WhenInjectedInto(typeof(IUnitOfWork<>)).InParentScope();
             Kernel.Bind(typeof(AdionSecurityDbContext)).ToSelf().WhenInjectedInto(typeof(IUnitOfWork<>)).InParentScope();
+
             Kernel.Bind(typeof(ITransaction)).To(typeof(Transaction));
             Kernel.Bind(typeof(IRepository<>)).To(typeof(Repository<>));
             Kernel.Bind(typeof(ISecurityRepository<>)).To(typeof(SecurityRepository<>));

@@ -1,56 +1,44 @@
-﻿using AdionFA.Core.Application.Contracts.Projects;
+﻿using AdionFA.Core.Application.Contracts.MarketData;
+using AdionFA.Core.Application.Contracts.Projects;
 using AdionFA.Core.Domain.Aggregates.Project;
+using AdionFA.Core.Domain.Contracts.Repositories;
 using AdionFA.Core.Domain.Contracts.Projects;
+
 using AdionFA.Infrastructure.Enums;
+
+using AdionFA.TransferObject.Project;
+using AdionFA.TransferObject.MarketData;
+using AdionFA.TransferObject.Base;
+
 using Ninject;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using AdionFA.TransferObject.Project;
-using AdionFA.Core.Application.Contracts.Markets;
-using AdionFA.TransferObject.Market;
-using AdionFA.TransferObject.Base;
 using System.Linq;
-using AdionFA.Core.Domain.Contracts.Repositories;
 
 namespace AdionFA.Core.Application.Services.Projects
 {
     public class ProjectAppService : AppServiceBase, IProjectAppService
     {
-        #region App Services
-
         [Inject]
         public IGlobalConfigurationAppService GlobalConfigurationAppService { get; set; }
 
         [Inject]
-        public IHistoricalDataAppService MarketDataAppService { get; set; }
-
-        #endregion App Services
-
-        #region Domain Services
+        public IMarketDataAppService MarketDataAppService { get; set; }
 
         [Inject]
         public IProjectDomainService ProjectDomainService { get; set; }
 
-        #endregion Domain Services
-
-        #region Repositories
-
         public IRepository<ProjectConfiguration> ProjectConfigurationRepository { get; set; }
 
-        #endregion Repositories
-
-        #region Ctor
-
-        public ProjectAppService(
-            IRepository<ProjectConfiguration> projectConfigurationRepository) : base()
+        public ProjectAppService(IRepository<ProjectConfiguration> projectConfigurationRepository)
+            : base()
         {
             ProjectConfigurationRepository = projectConfigurationRepository;
         }
 
-        #endregion Ctor
-
-        #region Project
+        // Project
 
         public IList<ProjectDTO> GetAllProjects()
         {
@@ -159,9 +147,7 @@ namespace AdionFA.Core.Application.Services.Projects
             }
         }
 
-        #endregion Project
-
-        #region Project Configuration
+        // Project Configuration
 
         public ProjectConfigurationDTO GetProjectConfiguration(int projectId, bool includeGraph = false)
         {
@@ -300,9 +286,7 @@ namespace AdionFA.Core.Application.Services.Projects
             return response;
         }
 
-        #endregion Project Configuration
-
-        #region Shell module
+        // Shell module
 
         public ResponseDTO PinnedProject(int projectId, bool isPinned)
         {
@@ -355,7 +339,5 @@ namespace AdionFA.Core.Application.Services.Projects
                 throw;
             }
         }
-
-        #endregion Shell module
     }
 }

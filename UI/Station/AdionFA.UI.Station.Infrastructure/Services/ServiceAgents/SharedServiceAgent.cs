@@ -7,21 +7,18 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Core.API.Contracts.Commons;
 using System.Collections.Generic;
 using System.Linq;
 using AdionFA.TransferObject.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
+using AdionFA.Core.API.Contracts.Commons;
 
 namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 {
     public class SharedServiceAgent : ISharedServiceAgent
     {
-        #region AutoMapper
         public readonly IMapper Mapper;
-        #endregion
 
-        #region Ctor
         public SharedServiceAgent()
         {
             Mapper = new MapperConfiguration(mc =>
@@ -29,17 +26,15 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
         }
-        #endregion
 
-        #region ServiceHost
         public async Task<EntityServiceHostVM> GetEntityServiceHost(int entityTypeId, int entityId)
         {
             try
             {
                 EntityServiceHostVM vm = null;
 
-                await Task.Run(() => {
-
+                await Task.Run(() =>
+                {
                     EntityServiceHostDTO dto = IoC.Get<ISharedAPI>().GetEntityServiceHost(entityTypeId, entityId);
 
                     vm = Mapper.Map<EntityServiceHostDTO, EntityServiceHostVM>(dto);
@@ -53,16 +48,15 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 throw;
             }
         }
-        #endregion
 
-        #region Setting
         public async Task<IList<SettingVM>> GetAllAppSetting()
         {
             try
             {
                 IList<SettingDTO> all = Array.Empty<SettingDTO>().ToList();
 
-                await Task.Run(() => {
+                await Task.Run(() =>
+                {
                     all = IoC.Get<ISharedAPI>().GetAllAppSetting();
                 });
 
@@ -158,6 +152,5 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 throw;
             }
         }
-        #endregion
     }
 }

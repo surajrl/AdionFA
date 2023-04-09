@@ -1,34 +1,31 @@
-﻿using AdionFA.Core.Application.Contracts.Commons;
-using AdionFA.Core.Domain.Aggregates.Common;
+﻿using AdionFA.Core.Domain.Aggregates.Common;
 using AdionFA.Core.Domain.Contracts.Commons;
+using AdionFA.Core.Application.Contracts.Commons;
+
+using AdionFA.TransferObject.Common;
+using AdionFA.TransferObject.Base;
+
 using Ninject;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using AdionFA.TransferObject.Common;
-using AdionFA.TransferObject.Base;
 
 namespace AdionFA.Core.Application.Services.Commons
 {
     public class AppSettingAppService : AppServiceBase, IAppSettingAppService
     {
-        #region Domain Services
+        // Domain Services
 
         [Inject]
         public IAppSettingDomainService AppSettingDomainService { get; set; }
-        
-        #endregion
 
-        #region Ctor
-        
         public AppSettingAppService() : base()
         {
         }
-        
-        #endregion
 
-        #region App Setting
-        
+        // App Setting
+
         public IList<SettingDTO> GetAllAppSetting()
         {
             try
@@ -95,7 +92,6 @@ namespace AdionFA.Core.Application.Services.Commons
 
                 Setting entity = Mapper.Map<Setting>(setting);
 
-
                 if (setting.SettingId > 0)
                     response.IsSuccess = AppSettingDomainService.UpdateAppSetting(entity);
                 else
@@ -115,7 +111,5 @@ namespace AdionFA.Core.Application.Services.Commons
                 throw;
             }
         }
-        
-        #endregion
     }
 }

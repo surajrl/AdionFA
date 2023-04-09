@@ -20,7 +20,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contract
 
         // Serialization
 
-        void BacktestSerialize(string projectName, BacktestModel model);
+        void BacktestSerialize(string projectName, StrategyBuilderModel model);
         BacktestModel BacktestDeserialize(string path);
     }
 }

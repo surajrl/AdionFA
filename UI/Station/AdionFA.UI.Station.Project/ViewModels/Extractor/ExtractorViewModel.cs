@@ -36,7 +36,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IAppProjectService _appProjectService;
 
         private readonly IProjectServiceAgent _projectService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _historicalDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -49,7 +49,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IHistoricalDataServiceAgent>();
+            _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
@@ -124,7 +124,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             //------------------------------------
                             model.Message = "Building Indicators";
-                            List<IndicatorBase> indicators = _extractorService.BuildIndicators(model.Path);
+                            List<IndicatorBase> indicators = _extractorService.BuildIndicatorsFromCSV(model.Path);
 
                             // Executing-------------------------------------
                             var executing = ExtractorStatusEnum.Executing.GetMetadata();

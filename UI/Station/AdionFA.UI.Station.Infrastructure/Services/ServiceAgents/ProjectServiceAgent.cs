@@ -1,28 +1,30 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Services;
+﻿using AdionFA.Core.API.Contracts.Projects;
+
+using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Directories.Services;
+using AdionFA.TransferObject.Base;
+
 using AdionFA.TransferObject.Project;
+
 using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.AutoMapper;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+
 using AutoMapper;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Core.API.Contracts.Projects;
-using AdionFA.TransferObject.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
 
 namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 {
     public class ProjectServiceAgent : IProjectServiceAgent
     {
-        #region Automapper
         private readonly IMapper Mapper;
-        #endregion
 
-        #region Ctor
         public ProjectServiceAgent()
         {
             Mapper = new MapperConfiguration(mc =>
@@ -30,9 +32,9 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
         }
-        #endregion
 
-        #region Project
+        // Project
+
         public async Task<IList<ProjectVM>> GetAllProjects()
         {
             try
@@ -45,7 +47,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                     projects = Mapper.Map<IList<ProjectDTO>, IList<ProjectVM>>(all);
                 });
-                
+
                 return projects;
             }
             catch (Exception ex)
@@ -84,7 +86,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 await Task.Run(() =>
                 {
                     ProjectConfigurationDTO dto = IoC.Get<IProjectAPI>().GetProjectConfiguration(projectId, includeGraph);
-                
+
                     project = Mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(dto);
                 });
 
@@ -106,7 +108,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 await Task.Run(() =>
                 {
                     ProjectConfigurationDTO config = Mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(configuration);
-                    
+
                     result = IoC.Get<IProjectAPI>().UpdateProjectConfiguration(config);
                 });
 
@@ -129,7 +131,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 {
                     result = IoC.Get<IProjectAPI>().RestoreProjectConfiguration(projectId);
                 });
-                
+
                 return Mapper.Map<ResponseDTO, ResponseVM>(result);
             }
             catch (Exception ex)
@@ -147,7 +149,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 ProjectDTO dto = Mapper.Map<ProjectVM, ProjectDTO>(project);
 
-                await Task.Run(() => 
+                await Task.Run(() =>
                 {
                     var service = FacadeService.ProjectAPI;
                     result = service.CreateProject(dto, globalConfigurationId, marketDataId);
@@ -158,7 +160,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                         if (int.TryParse(result.EntityId, out int pId))
                         {
                             var conf = service.GetProjectConfiguration(pId);
-                            if (conf != null) 
+                            if (conf != null)
                             {
                                 conf.WorkspacePath = ProjectDirectoryManager.DefaultDirectory();
                                 FacadeService.ProjectAPI.UpdateProjectConfiguration(conf);
@@ -166,7 +168,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                         }
                     }
                 });
-                
+
                 return Mapper.Map<ResponseDTO, ResponseVM>(result);
             }
             catch (Exception ex)
@@ -182,11 +184,11 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             {
                 var result = new ResponseDTO { IsSuccess = false };
 
-                await Task.Run(() => {
-                
+                await Task.Run(() =>
+                {
                     result = IoC.Get<IProjectAPI>().PinnedProject(projectId, isPinned);
                 });
-                
+
                 return Mapper.Map<ResponseDTO, ResponseVM>(result);
             }
             catch (Exception ex)
@@ -202,8 +204,8 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             {
                 var result = new ResponseDTO { IsSuccess = false };
 
-                await Task.Run(() => {
-                
+                await Task.Run(() =>
+                {
                     result = IoC.Get<IProjectAPI>().UpdateProcessId(projectId, processId);
                 });
 
@@ -215,16 +217,17 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 throw;
             }
         }
-        #endregion
 
-        #region Configuration
+        // Project Configuration
+
         public async Task<IList<ProjectGlobalConfigurationVM>> GetAllGlobalConfigurations(bool includeGraph = false)
         {
             try
             {
                 IList<ProjectGlobalConfigurationDTO> all = Array.Empty<ProjectGlobalConfigurationDTO>().ToList();
 
-                await Task.Run(() => {
+                await Task.Run(() =>
+                {
                     all = IoC.Get<IProjectAPI>().GetAllGlobalConfigurations(includeGraph);
                 });
 
@@ -264,8 +267,8 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             {
                 ProjectGlobalConfigurationDTO result = null;
 
-                await Task.Run(() => {
-
+                await Task.Run(() =>
+                {
                     result = IoC.Get<IProjectAPI>().GetGlobalConfiguration(configurationId, includeGraph);
                 });
 
@@ -300,6 +303,5 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 throw;
             }
         }
-        #endregion
     }
 }

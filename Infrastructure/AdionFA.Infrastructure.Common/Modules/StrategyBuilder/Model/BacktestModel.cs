@@ -6,18 +6,24 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
 {
     public class BacktestModel
     {
-        public string Label { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public int PeriodId { get; set; }
         public decimal Variation { get; set; }
+        public List<BacktestOperationModel> Backtests { get; set; }
+        public bool CorrelationPass { get; set; }
 
+        // Weka
+
+        public string Label { get; set; }
         public List<string> Node { get; set; }
 
-        public int TotalOpportunity { get; set; }
+        // Backtest
+
         public int TotalTrades { get; set; }
         public int WinningTrades { get; set; }
         public int LosingTrades { get; set; }
+        public int TotalOpportunity { get; set; }
 
         private double? percentSuccess;
         public double PercentSuccess
@@ -33,10 +39,6 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
             set => progressiveness = value;
         }
 
-        public bool CorrelationPass { get; set; }
-
-        public List<BacktestOperationModel> Backtests { get; set; }
-        public string LastNode => Node.LastOrDefault();
         public string Name => NodeName();
         public string NodeName()
         {
@@ -56,17 +58,17 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
                 {
                     divisions = f.Split("<=");
                 }
-                else if (f.Contains(">"))
+                else if (f.Contains('>'))
                 {
-                    divisions = f.Split(">");
+                    divisions = f.Split('>');
                 }
-                else if (f.Contains("<"))
+                else if (f.Contains('<'))
                 {
-                    divisions = f.Split("<");
+                    divisions = f.Split('<');
                 }
-                else if (f.Contains("="))
+                else if (f.Contains('='))
                 {
-                    divisions = f.Split("=");
+                    divisions = f.Split('=');
                 }
 
                 string name = divisions[0].Split("_")[0].Replace(".", string.Empty);
@@ -76,13 +78,13 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
                 {
                     string lastName = last.Split(".")[0];
                     int lastCount = 1;
-                    if (last.Contains("."))
+                    if (last.Contains('.'))
                     {
                         int.TryParse(last.Split(".")[1], out lastCount);
                     }
                     if (name == lastName)
                     {
-                        indicators[indicators.Count - 1] = string.Concat(name, ".", lastCount + 1);
+                        indicators[^1] = string.Concat(name, ".", lastCount + 1);
                     }
                     else
                     {

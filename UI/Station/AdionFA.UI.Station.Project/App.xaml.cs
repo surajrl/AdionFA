@@ -46,7 +46,7 @@ namespace AdionFA.UI.Station.Project
         {
             new IoC().Setup();
 
-            #region Identity
+            // Identity
 
             AdionIdentity Identity = new(SecurityHelper.DefaultTenantId, SecurityHelper.DefaultOwnerId, SecurityHelper.DefaultOwner);
             AdionPrincipal Principal = new()
@@ -55,36 +55,32 @@ namespace AdionFA.UI.Station.Project
             };
             AppDomain.CurrentDomain.SetThreadPrincipal(Principal);
 
-            #endregion Identity
-
-            #region Application commands
+            // Application commands
 
             containerRegistry.RegisterSingleton<IApplicationCommands, ApplicationCommandsProxy>();
             containerRegistry.RegisterSingleton<IAppProjectCommands, AppProjectCommandsProxy>();
 
-            #endregion Application commands
-
-            #region Infrastructure Services
+            // Infrastructure Services
 
             containerRegistry.RegisterSingleton<ISharedServiceAgent, SharedServiceAgent>();
+            containerRegistry.RegisterSingleton<IServiceAgent, ServiceAgent>();
             containerRegistry.RegisterSingleton<IProjectServiceAgent, ProjectServiceAgent>();
-            containerRegistry.RegisterSingleton<IHistoricalDataServiceAgent, HistoricalDataServiceAgent>();
-            containerRegistry.RegisterSingleton<IAppProjectService, AppProjectService>();
+            containerRegistry.RegisterSingleton<IMarketDataServiceAgent, MarketDataServiceAgent>();
 
             containerRegistry.RegisterInstance<IProcessService>(Container.Resolve<ProcessService>());
             containerRegistry.RegisterInstance<IFlyoutService>(Container.Resolve<FlyoutService>());
 
-            #endregion Infrastructure Services
+            // Application Services
 
-            #region FluentValidation
+            containerRegistry.RegisterSingleton<IAppProjectService, AppProjectService>();
+
+            // FluentValidation
 
             ValidatorOptions.Global.LanguageManager = new FluentValidatorLanguageManager();
 
-            #endregion FluentValidation
+            // Global Exception
 
-            #region Global Exception
-
-            Application.Current.DispatcherUnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs e) =>
+            Current.DispatcherUnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs e) =>
             {
                 e.Handled = true;
                 MessageBox.Show(e.Exception.Message);
@@ -94,8 +90,6 @@ namespace AdionFA.UI.Station.Project
             {
                 MessageBox.Show(e.ExceptionObject.ToString());
             });
-
-            #endregion Global Exception
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
@@ -112,7 +106,7 @@ namespace AdionFA.UI.Station.Project
         protected override void OnStartup(StartupEventArgs e)
         {
             //string arg = e.Args[0];
-            string arg = $"1_AdionFA.UI.Station.Project_test1";
+            string arg = $"1_AdionFA.UI.Station.Project_test";
             ProcessArgs.Args = arg;
             if (ProcessArgs.ProjectId > 0)
             {
@@ -132,7 +126,7 @@ namespace AdionFA.UI.Station.Project
                 {
                     try
                     {
-                        #region Theme
+                        // Theme
 
                         SettingVM themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
                         ThemeManager.Current.ChangeThemeBaseColor(Application.Current, themeSetting?.Value ?? "Light");
@@ -140,9 +134,7 @@ namespace AdionFA.UI.Station.Project
                         SettingVM colorSetting = settingService.GetSetting((int)SettingEnum.Color);
                         ThemeManager.Current.ChangeThemeColorScheme(Application.Current, colorSetting?.Value ?? "Orange");
 
-                        #endregion Theme
-
-                        #region Culture
+                        // Culture
 
                         IList<CultureInfo> cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList();
 
@@ -153,8 +145,6 @@ namespace AdionFA.UI.Station.Project
 
                         Thread.CurrentThread.CurrentCulture = Culture;
                         Thread.CurrentThread.CurrentUICulture = Culture;
-
-                        #endregion Culture
 
                         //esto va en projecto station
                         ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();

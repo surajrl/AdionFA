@@ -1,12 +1,15 @@
 ﻿using AdionFA.Core.Application.Contracts.Projects;
 using AdionFA.Core.Domain.Aggregates.Project;
 using AdionFA.Core.Domain.Contracts.Projects;
+
+using AdionFA.TransferObject.Base;
+
 using Ninject;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using AdionFA.TransferObject.Project;
-using AdionFA.TransferObject.Base;
 
 namespace AdionFA.Core.Application.Services.Projects
 {
@@ -17,15 +20,15 @@ namespace AdionFA.Core.Application.Services.Projects
         [Inject]
         public IGlobalConfigurationDomainService GlobalConfigurationDomainService { get; set; }
 
-        #endregion
+        #endregion Domain Services
 
         #region Ctor
 
         public GlobalConfigurationAppService() : base()
-        { 
+        {
         }
 
-        #endregion
+        #endregion Ctor
 
         #region Global Configurations
 
@@ -75,8 +78,8 @@ namespace AdionFA.Core.Application.Services.Projects
                 GlobalConfigurationDomainService.UpdateProjectGlobalConfiguration(gc);
 
                 response.IsSuccess = true;
-                
-                if(response.IsSuccess)
+
+                if (response.IsSuccess)
                     LogInfoUpdate<ProjectGlobalConfigurationDTO>();
 
                 return response;
@@ -89,6 +92,6 @@ namespace AdionFA.Core.Application.Services.Projects
             }
         }
 
-        #endregion
+        #endregion Global Configurations
     }
 }

@@ -13,11 +13,8 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 {
     public class SecurityServiceAgent : ISecurityServiceAgent
     {
-        #region Mapper
         private readonly IMapper Mapper;
-        #endregion
 
-        #region Ctor
         public SecurityServiceAgent()
         {
             Mapper = new MapperConfiguration(mc =>
@@ -25,16 +22,14 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
         }
-        #endregion
 
-        #region User
         public async Task<CoreUserVM> GetUserByUserName(string username)
         {
             try
             {
                 CoreUserVM result = null;
 
-                await Task.Run(() => 
+                await Task.Run(() =>
                 {
                     var api = IoC.Get<ISecurityAPI>();
                     var dto = api.GetUserByUserName(username);
@@ -49,6 +44,5 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 throw;
             }
         }
-        #endregion
     }
 }

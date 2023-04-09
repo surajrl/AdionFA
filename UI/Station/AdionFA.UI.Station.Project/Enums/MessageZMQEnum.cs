@@ -7,6 +7,7 @@ namespace AdionFA.UI.Station.Project.Enums
     {
         [Metadata("Input", "Input", resourceType: typeof(CommonResources))]
         Input = 1,
+
         [Metadata("Output", "Output", resourceType: typeof(CommonResources))]
         Output = 2,
     }
@@ -15,6 +16,7 @@ namespace AdionFA.UI.Station.Project.Enums
     {
         [Metadata("Buy", "Buy", resourceType: typeof(CommonResources))]
         Buy = 1,
+
         [Metadata("Sell", "Sell", resourceType: typeof(CommonResources))]
         Sell = 2,
     }

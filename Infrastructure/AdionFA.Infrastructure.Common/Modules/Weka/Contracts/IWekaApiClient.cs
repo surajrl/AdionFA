@@ -33,14 +33,15 @@ namespace AdionFA.Infrastructure.Common.Weka.Contracts
 
         Task<HttpOperationResponse<IList<REPTreeOutputModel>>> GetREPTreeClassifierWithHttpMessagesAsync(
             string path,
-            int? maxDepth = default(int?),
-            int? numDecimalPlaces = default(int?),
-            int? minSeed = default(int?),
-            int? maxSeed = default(int?),
-            int? instances = default(int?),
-            double? ratio = default(double?),
-            double? total = default(double?),
-            bool? isAssembled = default(bool?),
-            Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+            int? maxDepth = default,
+            int? numDecimalPlaces = default,
+            int? minSeed = default,
+            int? maxSeed = default,
+            int? instances = default,
+            double? ratio = default,
+            double? total = default,
+            bool? isAssembled = default,
+            Dictionary<string, List<string>> customHeaders = null,
+            CancellationToken cancellationToken = default);
     }
 }

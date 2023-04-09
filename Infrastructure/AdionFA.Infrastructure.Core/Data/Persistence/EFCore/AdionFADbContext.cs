@@ -1,15 +1,18 @@
 ﻿using AdionFA.Core.Domain.Aggregates.Common;
-using AdionFA.Core.Domain.Aggregates.Market;
+using AdionFA.Core.Domain.Aggregates.MarketData;
 using AdionFA.Core.Domain.Aggregates.MetaTrader;
 using AdionFA.Core.Domain.Aggregates.Organization;
 using AdionFA.Core.Domain.Aggregates.Project;
 using AdionFA.Core.Domain.Aggregates.ReferenceData;
+
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Core.Data.Persistence.Contract;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,9 +48,11 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
             // Entity Configuration
 
             Assembly assembly = Assembly.GetExecutingAssembly();
+
             List<Type> types = assembly.GetTypes().Where(
                 t => !t.IsInterface &&
                      typeof(IAdionFAETC).IsAssignableFrom(t)).ToList();
+
             types.ForEach(t =>
             {
                 var genericType = t.GetInterface(typeof(IEntityTypeConfiguration<>).FullName).GetGenericArguments().Single();
@@ -86,6 +91,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
             }
 
             // Setting
+
             foreach (var setting in Enum.GetValues(typeof(SettingEnum)))
             {
                 var meta = (Metadata)m.Invoke(setting, new object[] { setting });
@@ -107,6 +113,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
             }
 
             // Symbol
+
             modelBuilder.Entity<Symbol>().HasData(
                 new Symbol
                 {
@@ -125,6 +132,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 });
 
             // Timeframe
+
             foreach (var timeframe in Enum.GetValues(typeof(TimeframeEnum)))
             {
                 var meta = (Metadata)m.Invoke(timeframe, new object[] { timeframe });
@@ -151,6 +159,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
             }
 
             // Currency Spread
+
             foreach (var csp in Enum.GetValues(typeof(CurrencySpreadEnum)))
             {
                 var meta = (Metadata)m.Invoke(csp, new object[] { csp });
@@ -271,10 +280,10 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                 TotalInstanceWeka = 1,
 
-                DepthWeka = 10,
+                DepthWeka = 6,
                 MinAdjustDepthWeka = 5,
 
-                TotalDecimalWeka = 8,
+                TotalDecimalWeka = 5,
                 MinimalSeed = 100,
                 MaximumSeed = 1000000,
 
@@ -285,12 +294,12 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                 // Strategy Builder
 
-                MinTransactionCountIS = 600,
+                MinTransactionCountIS = 300,
                 MinAdjustMinTransactionCountIS = 360,
                 MinPercentSuccessIS = 55,
                 MinAdjustMinPercentSuccessIS = 50,
 
-                MinTransactionCountOS = 360,
+                MinTransactionCountOS = 100,
                 MinAdjustMinTransactionCountOS = 180,
                 MinPercentSuccessOS = 55,
                 MinAdjustMinPercentSuccessOS = 50,
@@ -454,11 +463,9 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
         public DbSet<EntityType> EntityTypes { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
-        // Historical Data
+        // Market Data
 
-        //public DbSet<CurrencyPair> CurrencyPairs { get; set; }
         public DbSet<Symbol> Symbols { get; set; }
-
         public DbSet<Timeframe> Timeframes { get; set; }
         public DbSet<CurrencySpread> CurrencySpreads { get; set; }
         public DbSet<Market> Markets { get; set; }

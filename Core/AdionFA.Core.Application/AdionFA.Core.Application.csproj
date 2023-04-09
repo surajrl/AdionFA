@@ -16,10 +16,7 @@
     <ProjectReference Include="..\..\Model\AdionFA.TransferObject\AdionFA.TransferObject.csproj">
       <PrivateAssets>none</PrivateAssets>
     </ProjectReference>
-    
-    <ProjectReference Include="..\AdionFA.Core.Application.Contract\AdionFA.Core.Application.Contract.csproj">
-      <PrivateAssets>none</PrivateAssets>
-    </ProjectReference>
+    <ProjectReference Include="..\AdionFA.Core.Application.Contract\AdionFA.Core.Application.Contract.csproj" />
   </ItemGroup>
 
 </Project>

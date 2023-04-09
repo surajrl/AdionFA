@@ -1,4 +1,5 @@
 ﻿using AdionFA.Core.Domain.Aggregates.MetaTrader;
+using AdionFA.Core.Domain.Aggregates.Project;
 using AdionFA.Core.Domain.Contracts.MetaTrader;
 using AdionFA.Core.Domain.Contracts.Repositories;
 using AdionFA.Core.Domain.Exceptions.MetaTrader;
@@ -11,23 +12,13 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
 {
     public class ExpertAdvisorDomainService : DomainServiceBase, IExpertAdvisorDomainService
     {
-        #region Repositories
-
         public IRepository<ExpertAdvisor> ExpertAdvisorRepository { get; set; }
 
-        #endregion Repositories
-
-        #region Ctor
-
-        public ExpertAdvisorDomainService(string tenantId, string ownerId, string owner,
-            IRepository<ExpertAdvisor> expertAdvisorRepository) : base(tenantId, ownerId, owner)
+        public ExpertAdvisorDomainService(string tenantId, string ownerId, string owner, IRepository<ExpertAdvisor> expertAdvisorRepository)
+            : base(tenantId, ownerId, owner)
         {
             ExpertAdvisorRepository = expertAdvisorRepository;
         }
-
-        #endregion Ctor
-
-        #region ExpertAdvisor
 
         public int? CreateExpertAdvisor(ExpertAdvisor advisor)
         {
@@ -36,7 +27,7 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
             {
                 if (advisor != null)
                 {
-                    if (advisor.PUSHPort == advisor.REPPort) throw new PropertiesWithSameValueAdionException();
+                    if (advisor.PushPort == advisor.ResponsePort) throw new PropertiesWithSameValueAdionException();
 
                     ExpertAdvisorRepository.Create(advisor);
                     eaId = advisor.ExpertAdvisorId;
@@ -72,6 +63,44 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
             }
         }
 
-        #endregion ExpertAdvisor
+        public bool UpdateExpertAdvisor(ExpertAdvisor expertAdvisor)
+        {
+            try
+            {
+                if (expertAdvisor.ExpertAdvisorId > 0)
+                {
+                    ExpertAdvisorRepository.Update(expertAdvisor);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                throw;
+            }
+        }
+
+        public ExpertAdvisor GetExpertAdvisor(int? projectId = null, bool includeGraph = false)
+        {
+            try
+            {
+                Expression<Func<ExpertAdvisor, bool>> predicate = p => p.ProjectId == projectId;
+
+                var includes = new List<Expression<Func<ExpertAdvisor, dynamic>>> { };
+                if (includeGraph)
+                {
+                    includes.Add(ea => ea.Project);
+                }
+
+                return ExpertAdvisorRepository.FirstOrDefault(predicate, includes.ToArray());
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                throw;
+            }
+        }
     }
 }

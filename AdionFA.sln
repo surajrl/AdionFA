@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.UI.Station.Module.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.UI.Station.Module.Trader", "UI\Station\Modules\Trader\AdionFA.UI.Station.Module.Trader.csproj", "{6D9F3EDB-415E-4775-BEDF-2690DB31DC9C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTest", "UnitTest", "{10513750-4463-425C-B5E9-CCA5A17BC02F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.Core.API", "Core\AdionFA.Core.Api\AdionFA.Core.API.csproj", "{F8443ED9-4948-4A60-B54B-C0A8DCC148FD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.Core.API.Contract", "Core\AdionFA.Core.Api.Contract\AdionFA.Core.API.Contract.csproj", "{8BF05ECB-2EF5-4457-AC74-41E2066DE370}"

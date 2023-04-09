@@ -1,5 +1,6 @@
 ﻿using AdionFA.Core.Domain.Aggregates.Base;
-using AdionFA.Core.Domain.Aggregates.Market;
+using AdionFA.Core.Domain.Aggregates.MarketData;
+
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,12 +26,12 @@ namespace AdionFA.Core.Domain.Aggregates.Project
         public bool IsFavorite { get; set; }
         public string WorkspacePath { get; set; }
 
-        #endregion
+        #endregion Properties
 
         #region Navegation Properties
 
         public ICollection<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
-        
-        #endregion
+
+        #endregion Navegation Properties
     }
 }

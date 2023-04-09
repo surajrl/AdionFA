@@ -1,7 +1,6 @@
 ﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Project.Enums;
-using AdionFA.UI.Station.Project.Model.Weka;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -82,8 +81,8 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
             set => SetProperty(ref winningTrees, value);
         }
 
-        private ObservableCollection<REPTreeOutputModelVM> instancesList;
-        public ObservableCollection<REPTreeOutputModelVM> InstancesList
+        private ObservableCollection<REPTreeOutputVM> instancesList;
+        public ObservableCollection<REPTreeOutputVM> InstancesList
         {
             get => instancesList;
             set => SetProperty(ref instancesList, value);
@@ -112,7 +111,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
             WinningStrategy = false;
             TotalWinningStrategy = TotalWinningStrategyUp = TotalWinningStrategyDown = 0;
             WinningTrees = 0;
-            InstancesList = new ObservableCollection<REPTreeOutputModelVM>();
+            InstancesList = new ObservableCollection<REPTreeOutputVM>();
         }
     }
 }

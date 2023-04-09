@@ -130,16 +130,16 @@
     <value>Transaction failed</value>
   </data>
   <data name="EntitySaveSuccess" xml:space="preserve">
-    <value>Was successfully saved!</value>
+    <value>Successfully Saved!</value>
   </data>
   <data name="ExtractionCompleted" xml:space="preserve">
     <value>Extraction Completed</value>
   </data>
   <data name="MarketDataFileEmpty" xml:space="preserve">
-    <value>Market Data file is empty</value>
+    <value>Historical Data file is empty</value>
   </data>
   <data name="MarketDataPeriodCannotBeNull" xml:space="preserve">
-    <value>Market Data Period cannot be null</value>
+    <value>Timeframe cannot be null</value>
   </data>
   <data name="SetCurrencyPairAndPeriodFromConfiguration" xml:space="preserve">
     <value>Set the Currency Pair and the Period from Configuration</value>

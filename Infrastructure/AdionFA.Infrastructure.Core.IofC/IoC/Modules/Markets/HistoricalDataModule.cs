@@ -1,9 +1,9 @@
-﻿using AdionFA.Core.API.Contracts.Markets;
-using AdionFA.Core.API.Markets;
-using AdionFA.Core.Application.Contracts.Markets;
+﻿using AdionFA.Core.API.Contracts.MarketData;
+using AdionFA.Core.API.MarketData;
+using AdionFA.Core.Application.Contracts.MarketData;
 using AdionFA.Core.Application.Services.Markets;
-using AdionFA.Core.Domain.Contracts.Markets;
-using AdionFA.Core.Domain.Services.Markets;
+using AdionFA.Core.Domain.Contracts.MarketData;
+using AdionFA.Core.Domain.Services.MarketData;
 using AdionFA.Infrastructure.Common.IofC;
 using Ninject.Modules;
 
@@ -13,26 +13,20 @@ namespace AdionFA.Infrastructure.Core.IofC.Modules.Markets
     {
         public override void Load()
         {
-            #region API
+            // API
 
-            Kernel.Bind(typeof(IHistoricalDataAPI)).To(typeof(HistoricalDataAPI));
+            Kernel.Bind(typeof(IMarketDataAPI)).To(typeof(MarketDataAPI));
 
-            #endregion API
+            // Application
 
-            #region Application
+            Kernel.Bind(typeof(IMarketDataAppService)).To(typeof(MarketDataAppService));
 
-            Kernel.Bind(typeof(IHistoricalDataAppService)).To(typeof(HistoricalDataAppService));
+            // Domain
 
-            #endregion Application
-
-            #region Domain
-
-            Kernel.Bind(typeof(IHistoricalDataDomainService)).To(typeof(HistoricalDataDomainService))
+            Kernel.Bind(typeof(IMarketDataDomainService)).To(typeof(MarketDataDomainService))
                 .WithConstructorArgument("tenantId", ctx => IoC.GetArgument(ctx, "tenantId"))
                 .WithConstructorArgument("ownerId", ctx => IoC.GetArgument(ctx, "ownerId"))
                 .WithConstructorArgument("owner", ctx => IoC.GetArgument(ctx, "owner"));
-
-            #endregion Domain
         }
     }
 }

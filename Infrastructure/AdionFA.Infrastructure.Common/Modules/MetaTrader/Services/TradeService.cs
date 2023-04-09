@@ -4,9 +4,12 @@ using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model;
 using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
+using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,35 +17,34 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Services
 {
     public class TradeService : ITradeService
     {
-        #region Services
-
-        private readonly IProjectDirectoryService ProjectDirectoryService;
-        private readonly IExtractorService ExtractorService;
-
-        #endregion Services
-
-        #region Ctor
+        private readonly IExtractorService _extractorService;
 
         public TradeService()
         {
-            ProjectDirectoryService = IoC.Get<IProjectDirectoryService>();
-            ExtractorService = IoC.Get<IExtractorService>();
+            _extractorService = IoC.Get<IExtractorService>();
         }
 
-        #endregion Ctor
-
-        public bool IsTrade(TimeframeEnum period, AssembledBuilderModel model, IEnumerable<Candle> candles)
+        public bool IsTrade(
+            TimeframeEnum period,
+            BacktestModel model,
+            IEnumerable<Candle> candles)
         {
-            /*
-            List<IndicatorBase> indicators = ExtractorService.BuildIndicatorsFromNode(node);
+            List<IndicatorBase> indicators = _extractorService.BuildIndicatorsFromNode(model.Node.ToList());
 
-            DateTime fromDateIS = candles.LastOrDefault().date.AddSeconds(-(period).ToSeconds());
-            DateTime toDateOS = candles.LastOrDefault().date.AddSeconds((period).ToSeconds());
-            List<IndicatorBase> extractorResult = ExtractorService.ExtractorExecute(fromDateIS, toDateOS, indicators, candles, 0);
+            DateTime from = candles.LastOrDefault().Date.AddSeconds(-period.ToSeconds());
+            DateTime to = candles.LastOrDefault().Date.AddSeconds(period.ToSeconds());
 
-            int nodeTotalRules = extractorResult.Count;
-            if (nodeTotalRules > 0)
+            List<IndicatorBase> extractorResult = _extractorService.ExtractorExecute(
+                from,
+                to,
+                indicators,
+                candles,
+                (int)period,
+                metaTraderTest: true);
+
+            if (extractorResult.Any())
             {
+                int totalRules = extractorResult.Count;
                 var temporalIndicator = extractorResult.FirstOrDefault();
                 int length = temporalIndicator.Output.Length;
 
@@ -75,7 +77,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Services
                         }
                     }
 
-                    if (passed == nodeTotalRules)
+                    if (passed == totalRules)
                     {
                         return true;
                     }
@@ -83,40 +85,33 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Services
                     counter++;
                 }
             }
-            */
+
             return false;
         }
 
-        public string OpenOperationMessage()
+        public ZmqMsgRequestModel OpenOperation(OrderTypeEnum buyOrSell = OrderTypeEnum.Buy)
         {
             var request = new ZmqMsgRequestModel
             {
                 UUID = Guid.NewGuid().ToString(),
-                SYMBOL = "EURUSD",
-                Request = "TRADE",
-                OrderType = "BUY",
-                Action = "CLOSE_ALL"
+                Action = "TRADE_ACTION_DEAL",   // Place a trade order for an immediate execution with the specified parameters(market order)
+                Symbol = "EURUSD",
+                OrderType = buyOrSell,
             };
 
-            return request.Message;
+            return request;
         }
 
-        /// <summary>
-        /// Prepares an output message to close all operations.
-        /// </summary>
-        /// <returns></returns>
-        public string CloseAllOperationMessage()
+        public ZmqMsgRequestModel CloseAllOperation()
         {
             var request = new ZmqMsgRequestModel
             {
                 UUID = Guid.NewGuid().ToString(),
-                SYMBOL = "EURUSD",
-                Request = "TRADE",
-                OrderType = string.Empty,
-                Action = "CLOSE_ALL"
+                Action = "TRADE_ACTION_CLOSE_BY",   // Close a position by an opposite one
+                OrderType = OrderTypeEnum.Close,    // Order to close a position by an opposite one
             };
 
-            return request.Message;
+            return request;
         }
     }
 }

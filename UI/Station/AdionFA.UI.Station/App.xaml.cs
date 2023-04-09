@@ -69,7 +69,7 @@ namespace AdionFA.UI.Station
 
             #region Infrastructure Services
 
-            containerRegistry.RegisterSingleton<IHistoricalDataServiceAgent, HistoricalDataServiceAgent>();
+            containerRegistry.RegisterSingleton<IMarketDataServiceAgent, MarketDataServiceAgent>();
             containerRegistry.RegisterSingleton<IProjectServiceAgent, ProjectServiceAgent>();
             containerRegistry.RegisterSingleton<ISecurityServiceAgent, SecurityServiceAgent>();
             containerRegistry.RegisterSingleton<ISharedServiceAgent, SharedServiceAgent>();

@@ -1,28 +1,36 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+﻿using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Extensions;
 using AdionFA.Infrastructure.Common.Extractor.Attributes;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.Templates.MetaTrader;
+using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
+using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Contracts;
+using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
+
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.Enums;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.MetaTrader;
-using AdionFA.UI.Station.Project.Model.StrategyBuilder;
-using AdionFA.UI.Station.Project.Services;
+using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.Infrastructure.Common.IofC;
+
 using NetMQ;
 using NetMQ.Sockets;
+using AutoMapper;
+using Newtonsoft.Json;
+using DynamicData;
+
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,41 +39,51 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Contracts;
-using AdionFA.Infrastructure.Common.Extractor.Model;
-using AdionFA.UI.Station.Project.Model.Weka;
+using AdionFA.Infrastructure.I18n.Resources;
+using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+using AdionFA.UI.Station.Project.Model.StrategyBuilder;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
     public class MetaTraderViewModel : MenuItemViewModel
     {
+        private readonly IMapper _mapper;
+
         private readonly IExtractorService _extractorService;
         private readonly ITradeService _tradeService;
 
         private readonly IProjectServiceAgent _projectService;
-        private readonly IHistoricalDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _historicalDataService;
+        private readonly IServiceAgent _serviceAgent;
 
         private readonly IEventAggregator _eventAggregator;
 
         private ProjectVM _project;
+        private CancellationTokenSource _cancellationTokenSrc;
 
         public MetaTraderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             _extractorService = IoC.Get<IExtractorService>();
             _tradeService = IoC.Get<ITradeService>();
 
+            _serviceAgent = ContainerLocator.Current.Resolve<IServiceAgent>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IHistoricalDataServiceAgent>();
+            _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            AddNodeForTestCommand = new DelegateCommand<REPTreeNodeModelVM>(AddNode);
+            AddNodeForTestCommand = new DelegateCommand<BacktestModelVM>(AddNode);
             ContainerLocator.Current.Resolve<IApplicationCommands>().NodeTestInMetatraderCommand.RegisterCommand(AddNodeForTestCommand);
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingAppProjectProfile());
+            }).CreateMapper();
 
             PopulateViewModel();
         }
@@ -85,11 +103,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }, (s) => true); //item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, (s) => true);
 
-        private CancellationTokenSource ctsTask;
+        public DelegateCommand StopProcessBtnCommand => new DelegateCommand(() =>
+        {
+            _cancellationTokenSrc.Cancel();
+        }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public DelegateCommand StopProcessBtnCommand => new(() => { ctsTask.Cancel(); }, () => true);
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
             try
@@ -97,8 +117,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
 
-                ctsTask = new CancellationTokenSource();
-                CancellationToken token = ctsTask.Token;
+                _cancellationTokenSrc = new CancellationTokenSource();
+                CancellationToken token = _cancellationTokenSrc.Token;
 
                 var requestSocketProgress = new Progress<ZmqMsgModel>();
                 requestSocketProgress.ProgressChanged += (senderOfProgressChanged, nextItem) =>
@@ -110,10 +130,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 pullSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
                 {
                     MessageInput.Insert(0, nextItem);
-                    await RequestSocket(requestSocketProgress, ctsTask);
+                    await RequestSocketAsync(requestSocketProgress, _cancellationTokenSrc);
                 };
 
-                await PullSocket(pullSocketProgress, ctsTask);
+                await PullSocketAsync(pullSocketProgress, _cancellationTokenSrc);
             }
             catch (Exception ex)
             {
@@ -121,57 +141,45 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             finally
             {
-                ctsTask.Dispose();
+                _cancellationTokenSrc.Dispose();
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        /// <summary>
-        /// Socket receiving messages from MetaTrader.
-        /// </summary>
-        /// <param name="progress"></param>
-        /// <param name="ctsTask"></param>
-        /// <returns></returns>
-        private async Task PullSocket(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
+        private async Task PullSocketAsync(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
         {
             await Task.Factory.StartNew(() =>
             {
-                using var receiver = new PullSocket(">tcp://192.168.50.137:5555"); // Port where messages are received
+                using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PushPort}");
+                subscriber.Subscribe("");
 
                 try
                 {
-                    ctsTask ??= new CancellationTokenSource();
-                    CancellationToken token = ctsTask.Token;
+                    _cancellationTokenSrc ??= new CancellationTokenSource();
+                    CancellationToken token = _cancellationTokenSrc.Token;
 
                     while (true)
                     {
                         if (token.IsCancellationRequested)
                             token.ThrowIfCancellationRequested();
 
-                        //Start our clock now
-                        var watch = Stopwatch.StartNew();
                         var ts = TimeSpan.FromMilliseconds(1000);
 
-                        if (receiver.TryReceiveFrameString(ts, out string workload) && !string.IsNullOrWhiteSpace(workload))
+                        if (subscriber.TryReceiveFrameString(ts, out var message) && !string.IsNullOrWhiteSpace(message))
                         {
-                            watch.Stop();
-                            ConsoleWriteLine(string.Format("Total elapsed time {0} msec", watch.ElapsedMilliseconds));
+                            var zmqModel = JsonConvert.DeserializeObject<ZmqMsgModel>(message);
+                            Debug.WriteLine("SubscriberSocket-Receive:" + message);
 
-                            // Parse the incoming message from MetaTrader5
-                            var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ZmqMsgModel>(workload);
-                            model.Id = CountMessagesCurrentPeriod() + 1;
-                            model.TemporalityName = EnumUtil.GetTimeframeEnum(model.Temporality).GetMetadata().Name;
-                            model.DateFormat = model.Date.AddSeconds(TimeSpan.Parse(model.Time).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss");
-                            model.PutType = (int)MessageZMQPutTypeEnum.Input;
-                            model.PutTypeName = MessageZMQPutTypeEnum.Input.GetMetadata().Name;
-                            model.Description = workload;
-                            model.IsRequired = true;
+                            zmqModel.Id = CountMessagesCurrentPeriod() + 1;
+                            zmqModel.TemporalityName = EnumUtil.GetTimeframeEnum(zmqModel.Temporality).GetMetadata().Name;
+                            zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss");
+                            zmqModel.PutType = (int)MessageZMQPutTypeEnum.Input;
+                            zmqModel.PutTypeName = MessageZMQPutTypeEnum.Input.GetMetadata().Name;
+                            zmqModel.Description = message;
+                            zmqModel.IsRequired = true;
 
-                            model.ElapsedMilliseconds = watch.ElapsedMilliseconds;
-                            model.ElapsedTimeFormated = TimeSpan.FromMilliseconds(model.ElapsedMilliseconds).ToString(@"hh\:mm\:ss");
-
-                            progress.Report(model);
+                            progress.Report(zmqModel);
                         }
                     }
                 }
@@ -186,17 +194,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        /// <summary>
-        /// Triggered when a ZmqMessageModel is reported by the pull socket.
-        /// </summary>
-        /// <param name="progress"></param>
-        /// <param name="ctsTask"></param>
-        /// <returns></returns>
-        private async Task RequestSocket(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
+        private async Task RequestSocketAsync(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
         {
             await Task.Factory.StartNew(() =>
             {
-                using var requestSocket = new RequestSocket(">tcp://localhost:5555"); // Port where messages are sent
+                using var requester = new RequestSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.ResponsePort}");
 
                 try
                 {
@@ -206,20 +208,21 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     if (token.IsCancellationRequested)
                         token.ThrowIfCancellationRequested();
 
-                    ZmqMsgModel lastMessageInput =
-                    MessagesFromCurrentPeriod > MaximumMessagesRequired ?
-                    MessageInput.FirstOrDefault() : null;
+                    ZmqMsgModel lastMessageInput = MessageInput.FirstOrDefault();
 
                     if (Nodes.Any())
                     {
-                        // Close All Operations
+                        // Close operation request --------------------------------------------
+                        requester.SendFrame(JsonConvert.SerializeObject(_tradeService.CloseAllOperation()));
+                        Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.CloseAllOperation())}");
 
-                        var closeAllMsg = _tradeService.CloseAllOperationMessage();
-                        requestSocket.SendFrame(closeAllMsg);
-                        string messageCloseAll = requestSocket.ReceiveFrameString();
+                        // Close operation response -------------------------------------------
+                        string closeAllRep = requester.ReceiveFrameString();
+                        Debug.WriteLine($"RequestSocket-Receive:{closeAllRep}");
+                        //---------------------------------------------------------------------
 
-                        // Create a candle from the received tick data from MetaTrader
-                        IEnumerable<Candle> candles = MessageInput.Take(MaximumMessagesRequired + 1).Select(m => new Candle
+                        // Perform algorithm --------------------------------------------------
+                        IEnumerable<Candle> candles = MessageInput.Select(m => new Candle
                         {
                             Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time).TotalSeconds),
                             Time = (long)TimeSpan.Parse(m.Time).TotalSeconds,
@@ -231,38 +234,42 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Label = m.Label
                         }).OrderBy(m => m.Date);
 
-                        // Perform operations from node to decide to trade or not
-                        //var isTrade = TradeService.IsTrade((CurrencyPeriodEnum)currencyPeriodId, Nodes, candles);
-                        if (true)
+                        var isTrade = _tradeService.IsTrade(
+                            (TimeframeEnum)TimeframeId,
+                            Nodes.FirstOrDefault().BacktestModel,
+                            candles);
+                        //---------------------------------------------------------------------
+
+                        if (isTrade)
                         {
-                            requestSocket.SendFrame(_tradeService.OpenOperationMessage());
-                            string message = requestSocket.ReceiveFrameString();
+                            // Open operation request -----------------------------------------------
+                            requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation()));
+                            Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation())}");
+                            //-----------------------------------------------------------------------
 
-                            try
+                            // Open operation response ----------------------------------------------
+                            string openOperationRep = requester.ReceiveFrameString();
+                            Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
+
+                            ZmqMsgRequestModel response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
+
+                            var model = new ZmqMsgModel
                             {
-                                ZmqMsgRequestModel response = Newtonsoft.Json.JsonConvert.DeserializeObject<ZmqMsgRequestModel>(message);
+                                Id = MessageOutput.Count + 1,
 
-                                var model = new ZmqMsgModel
-                                {
-                                    Id = MessageOutput.Count + 1,
+                                Date = lastMessageInput.Date,
+                                DateFormat = lastMessageInput.DateFormat,
 
-                                    Date = lastMessageInput.Date,
-                                    DateFormat = lastMessageInput.DateFormat,
+                                PutType = (int)MessageZMQPutTypeEnum.Output,
+                                PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
+                                PositionType = (int)response.OrderType,
+                                PositionTypeName = response.OrderType.GetMetadata().Name,
+                                Volume = decimal.Parse(response.Volume),
+                                Description = response.Comment,
+                            };
 
-                                    PutType = (int)MessageZMQPutTypeEnum.Output,
-                                    PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
-                                    PositionType = response.OrderType == "BUY" ? (int)MessageZMQPositionTypeEnum.Buy : (int)MessageZMQPositionTypeEnum.Sell,
-                                    PositionTypeName = response.OrderType == "BUY" ? MessageZMQPositionTypeEnum.Buy.GetMetadata().Name : MessageZMQPositionTypeEnum.Sell.GetMetadata().Name,
-                                    Volume = (decimal)0.5,
-                                    Description = "Open Position",
-                                };
-
-                                progress.Report(model);
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError(ex.Message);
-                            }
+                            progress.Report(model);
+                            //-----------------------------------------------------------------------
                         }
                     }
                 }
@@ -274,265 +281,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        /*
-        public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
-        {
-            try
-            {
-                ctsTask ??= new CancellationTokenSource();
-                CancellationToken token = ctsTask.Token;
-
-                LoopStop = false;
-
-                IsTransactionActive = true;
-                eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
-
-                MessageInput.Clear();
-
-                await Task.Factory.StartNew(() =>
-                {
-                    var messageInputTask = new Task(() =>
-                    {
-                        DateTime startTime = DateTime.Now;
-                        List<ZmqMsgModel> inputQueue = new List<ZmqMsgModel>();
-
-                        using (var receiver = new PullSocket(">tcp://localhost:5556"))
-                        {
-                            try
-                            {
-                                while (!LoopStop)
-                                {
-                                    if (token.IsCancellationRequested)
-                                        token.ThrowIfCancellationRequested();
-
-                                    string workload = receiver.ReceiveFrameString();
-
-                                    if (!string.IsNullOrWhiteSpace(workload))
-                                    {
-                                        var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ZmqMsgModel>(workload);
-                                        model.Id = CountMessagesCurrentPeriod() + 1;
-                                        model.TemporalityName = EnumUtil.GetPeriodEnum(model.Temporality).GetMetadata().Name;
-                                        model.DateFormat = model.Date.AddSeconds(TimeSpan.Parse(model.Time).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss");
-                                        model.PutType = (int)MessageZMQPutTypeEnum.Input;
-                                        model.PutTypeName = MessageZMQPutTypeEnum.Input.GetMetadata().Name;
-                                        model.Description = workload;
-                                        model.IsRequired = true;
-
-                                        if (CurrencyPeriodId == (int)EnumUtil.GetPeriodEnum(model.Temporality))
-                                        {
-                                            inputQueue.Insert(0, model);
-
-                                            if (true || Math.Round((DateTime.Now - startTime).TotalSeconds) % 3 == 0)
-                                            {
-                                                UpdateMessageInputQueue(inputQueue);
-                                                inputQueue.Clear();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError(ex.Message);
-                                ctsTask.Cancel();
-                            }
-                        }
-                    }, token);
-                    messageInputTask.Start();
-                    messageInputTask.Await();
-
-                    #region MessageOutputTask
-
-                    //var messageOutputTask = new Task(() =>
-                    //{
-                    //    DateTime startTime = DateTime.Now;
-                    //    List<ZmqMsgModel> outputQueue = new List<ZmqMsgModel>();
-
-                    //    using (var requestSocket = new RequestSocket(">tcp://localhost:5555"))
-                    //    {
-                    //        try
-                    //        {
-                    //            ZmqMsgModel lastMinp = null;
-                    //            while (!LoopStop)
-                    //            {
-                    //                if (token.IsCancellationRequested)
-                    //                    token.ThrowIfCancellationRequested();
-
-                    //                ZmqMsgModel lastMessageInput = MessagesFromCurrentPeriod > MaximumMessagesRequired ? MessageInput.FirstOrDefault() : null;
-
-                    //                if ((lastMessageInput?.Id ?? 0) > (lastMinp?.Id ?? 0)  && Nodes.Any())
-                    //                {
-                    //                    #region CloseAll
-                    //                    var msgCloseAllObj = new ZmqMsgRequestModel
-                    //                    {
-                    //                        UUID = Guid.NewGuid().ToString(),
-                    //                        SYMBOL = "EURUSD",
-                    //                        Request = "TRADE",
-                    //                        OrderType = string.Empty,
-                    //                        Action = "CLOSE_ALL"
-                    //                    };
-
-                    //                    string msgCloseAllReq = string.Join("|", msgCloseAllObj.GetType().GetProperties()
-                    //                    .Where(p => Attribute.IsDefined(p, typeof(OrderAttribute)))
-                    //                    .OrderBy(p => ((OrderAttribute)p.GetCustomAttributes(typeof(OrderAttribute), false).Single()).Order)
-                    //                    .Select(p => p.GetValue(msgCloseAllObj)).ToList());
-
-                    //                    requestSocket.SendFrame(msgCloseAllReq);
-                    //                    string messageCloseAll = requestSocket.ReceiveFrameString();
-                    //                    #endregion
-
-                    //                    lastMinp = MessageInput.FirstOrDefault();
-
-                    //                    IEnumerable<Candle> candles = MessageInput.Take(MaximumMessagesRequired + 1).Select(m => new Candle
-                    //                    {
-                    //                        date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time).TotalSeconds),
-                    //                        time = (long)TimeSpan.Parse(m.Time).TotalSeconds,
-                    //                        open = (double)m.Open,
-                    //                        max = (double)m.High,
-                    //                        min = (double)m.Low,
-                    //                        close = (double)m.Close,
-                    //                        volumen = (double)m.Volume,
-                    //                        label = m.Label
-                    //                    }).OrderBy(m => m.date);
-
-                    //                    List<IndicatorBase> indicators = ExtractorService.BuildIndicatorsFromNode(Nodes.SelectMany(n => n.Node.Select(_n => _n)).ToList());
-
-                    //                    DateTime fromDateIS = candles.LastOrDefault().date.AddSeconds(-((CurrencyPeriodEnum)CurrencyPeriodId).ToSeconds());
-                    //                    DateTime toDateOS = candles.LastOrDefault().date.AddSeconds(((CurrencyPeriodEnum)CurrencyPeriodId).ToSeconds());
-                    //                    List<IndicatorBase> extractorResultIs = ExtractorService.ExtractorExecute(fromDateIS, toDateOS, indicators, candles, 0);
-
-                    //                    int nodeTotalRulesIs = extractorResultIs.Count;
-                    //                    if (nodeTotalRulesIs > 0)
-                    //                    {
-                    //                        var temporalIndicator = extractorResultIs.FirstOrDefault();
-                    //                        int length = temporalIndicator.Output.Length;
-
-                    //                        int counter = 0;
-                    //                        while (counter < length)
-                    //                        {
-                    //                            int passed = 0;
-                    //                            string upOrDown = temporalIndicator.IntervalLabels[counter].Label;
-
-                    //                            foreach (var indicator in extractorResultIs)
-                    //                            {
-                    //                                double output = indicator.Output[counter];
-
-                    //                                switch (indicator.Operator)
-                    //                                {
-                    //                                    case MathOperatorEnum.GreaterThanOrEqual:
-                    //                                        passed += output >= indicator.Value ? 1 : 0;
-                    //                                        break;
-                    //                                    case MathOperatorEnum.LessThanOrEqual:
-                    //                                        passed += output <= indicator.Value ? 1 : 0;
-                    //                                        break;
-                    //                                    case MathOperatorEnum.GreaterThan:
-                    //                                        passed += output > indicator.Value ? 1 : 0;
-                    //                                        break;
-                    //                                    case MathOperatorEnum.LessThan:
-                    //                                        passed += output < indicator.Value ? 1 : 0;
-                    //                                        break;
-                    //                                    case MathOperatorEnum.Equal:
-                    //                                        passed += output == indicator.Value ? 1 : 0;
-                    //                                        break;
-                    //                                }
-                    //                            }
-
-                    //                            if (passed == nodeTotalRulesIs)
-                    //                            {
-                    //                                var msgObj = new ZmqMsgRequestModel
-                    //                                {
-                    //                                    UUID = Guid.NewGuid().ToString(),
-                    //                                    SYMBOL = "EURUSD",
-                    //                                    Request = "TRADE",
-                    //                                    OrderType = "BUY",
-                    //                                    Action = "CLOSE_ALL"
-                    //                                };
-
-                    //                                string msgReq = string.Join("|", msgObj.GetType().GetProperties()
-                    //                                .Where(p => Attribute.IsDefined(p, typeof(OrderAttribute)))
-                    //                                .OrderBy(p => ((OrderAttribute)p.GetCustomAttributes(typeof(OrderAttribute), false).Single()).Order)
-                    //                                .Select(p => p.GetValue(msgObj)).ToList());
-
-                    //                                requestSocket.SendFrame(msgReq);
-                    //                                string message = requestSocket.ReceiveFrameString();
-
-                    //                                try
-                    //                                {
-                    //                                    ZmqMsgRequestModel response = Newtonsoft.Json.JsonConvert.DeserializeObject<ZmqMsgRequestModel>(message);
-
-                    //                                    outputQueue.Add(new ZmqMsgModel
-                    //                                    {
-                    //                                        Id = MessageOutput.Count + 1,
-
-                    //                                        Date = lastMessageInput.Date,
-                    //                                        DateFormat = lastMessageInput.DateFormat,
-
-                    //                                        PutType = (int)MessageZMQPutTypeEnum.Output,
-                    //                                        PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
-                    //                                        PositionType = response.OrderType == "BUY" ? (int)MessageZMQPositionTypeEnum.Buy : (int)MessageZMQPositionTypeEnum.Sell,
-                    //                                        PositionTypeName = response.OrderType == "BUY" ? MessageZMQPositionTypeEnum.Buy.GetMetadata().Name : MessageZMQPositionTypeEnum.Sell.GetMetadata().Name,
-                    //                                        Volume = (decimal)0.5,
-                    //                                        Description = "Open Position",
-                    //                                    });
-                    //                                }
-                    //                                catch (Exception ex)
-                    //                                {
-                    //                                    Trace.TraceError(ex.Message);
-                    //                                }
-                    //                            }
-
-                    //                            counter++;
-                    //                        }
-                    //                    }
-
-                    //                    if (true || Math.Round((DateTime.Now - startTime).TotalSeconds) % 1 == 0)
-                    //                    {
-                    //                        UpdateMessageOutputQueue(outputQueue);
-                    //                        outputQueue.Clear();
-                    //                    }
-                    //                }
-                    //            }
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            Trace.TraceError(ex.Message);
-                    //            ctsTask.Cancel();
-                    //        }
-                    //    }
-                    //}, token);
-                    //messageOutputTask.Start();
-                    //messageOutputTask.Await();
-
-                    #endregion MessageOutputTask
-                }, token, TaskCreationOptions.None, TaskScheduler.Default);
-
-                //IsTransactionActive = false;
-            }
-            catch (OperationCanceledException e)
-            {
-                Console.WriteLine($"{nameof(OperationCanceledException)} thrown with message: {e.Message}");
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-                Trace.TraceError(ex.Message);
-            }
-            finally
-            {
-                //ctsTask.Dispose();
-                eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
-            }
-        }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
-        */
-
         public DelegateCommand CleanMessageInputCommand => new DelegateCommand(() =>
         {
-            CleanMessageInput();
+            MessageInput?.Clear();
         }).ObservesCanExecute(() => MessageInputAny);
 
-        public DelegateCommand CleanMessageOutputCommand => new DelegateCommand(() => { MessageOutput?.Clear(); }).ObservesCanExecute(() => MessageOutputAny);
+        public DelegateCommand CleanMessageOutputCommand => new DelegateCommand(() =>
+        {
+            MessageOutput?.Clear();
+        }).ObservesCanExecute(() => MessageOutputAny);
 
-        public ICommand CurrencyPeriodCommand => new DelegateCommand(() =>
+        public ICommand TimeframeCommand => new DelegateCommand(() =>
         {
             foreach (var item in MessageInput.Where(m => m.IsRequired))
             {
@@ -543,22 +302,24 @@ namespace AdionFA.UI.Station.Project.ViewModels
         });
 
         private ICommand AddNodeForTestCommand { get; set; }
-        public void AddNode(REPTreeNodeModelVM node)
+        public void AddNode(BacktestModelVM node)
         {
             try
             {
-                Nodes ??= new ObservableCollection<REPTreeNodeModelVM>();
+                Nodes ??= new ObservableCollection<BacktestModelVM>();
 
                 foreach (var n in Nodes)
                 {
-                    if (n.Node == node.Node)
+                    if (n.BacktestModel.Node == node.BacktestModel.Node)
                     {
                         Nodes.Remove(node);
+                        MaximumMessagesRequired = MaxMessagesRequired();
                         return;
                     }
                 }
 
                 Nodes.Add(node);
+                MaximumMessagesRequired = MaxMessagesRequired();
             }
             catch (Exception ex)
             {
@@ -567,12 +328,36 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
+        public ICommand SaveEACommand => new DelegateCommand(async () =>
+        {
+            try
+            {
+                ExpertAdvisor.ProjectId = _project.ProjectId;
+                ExpertAdvisor.Name = $"{_project.ProjectName}.EA.{ExpertAdvisor.MagicNumber}";
+
+                var response = await _serviceAgent.CreateExpertAdvisor(ExpertAdvisor);
+                MessageHelper.ShowMessage(this,
+                    "Expert Advisor Save",
+                    response.IsSuccess ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                throw;
+            }
+        });
+
         private async void PopulateViewModel()
         {
             try
             {
+                // Find the configuration of the project
                 _project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
                 Configuration = _project?.ProjectConfigurations.FirstOrDefault();
+
+                // Find the EA of the project
+                ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(_project.ProjectId);
+                ExpertAdvisor ??= new();
 
                 if (!Timeframes.Any())
                 {
@@ -587,20 +372,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     TimeframeId = Configuration?.TimeframeId ?? (int)TimeframeEnum.H1;
                 }
 
-                if (!IsTransactionActive)
-                {
-                    ProjectMetaTraderExpertTemplate template = new();
-                    string pageContent = template.TransformText();
-                    System.IO.File.WriteAllText("outputPage.txt", pageContent);
-                }
-
                 if (Nodes == null)
                 {
-                    Nodes = new ObservableCollection<REPTreeNodeModelVM>();
+                    Nodes = new ObservableCollection<BacktestModelVM>();
                     Nodes.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
                     {
                         NodesAny = Nodes.Count > 0;
                     };
+                    MaximumMessagesRequired = MaxMessagesRequired();
                 }
 
                 if (MessageInput == null)
@@ -609,13 +388,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     MessageInput.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
                     {
                         MessagesFromCurrentPeriod = CountMessagesCurrentPeriod();
-                        int max = MaxMessagesRequired();
-                        MessageInputAny = MessagesFromCurrentPeriod > max;
-
-                        if (MessageInput.Count > 0 && max > 0 && MessageInput.Count > MaximumMessagesRequired * 2)
-                        {
-                            CleanMessageInput();
-                        }
+                        MessageInputAny = MessageInput.Count > 0;
                     };
                 }
 
@@ -635,64 +408,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private static void ConsoleWriteLine(string msg)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Console.WriteLine(msg);
-            });
-        }
-
-        private void UpdateMessageInputQueue(List<ZmqMsgModel> inputQueue)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (inputQueue.Count > 0)
-                {
-                    if (MessageInput.Count > 0)
-                    {
-                        /*var firstInputQueue = inputQueue.FirstOrDefault();
-                        var firstMessageInput = MessageInput.FirstOrDefault();
-
-                        DateTime fiq = firstInputQueue.Date.AddSeconds(TimeSpan.Parse(firstInputQueue.Time).TotalSeconds);
-                        DateTime fmi = firstMessageInput.Date.AddSeconds(TimeSpan.Parse(firstMessageInput.Time).TotalSeconds);
-
-                        if ((fiq - fmi).TotalSeconds != ((CurrencyPeriodEnum)CurrencyPeriodId).ToSeconds())
-                        {
-                            foreach (var item in MessageInput.Where(m => m.IsRequired))
-                            {
-                                item.IsRequired = false;
-                            }
-                        }*/
-                    }
-
-                    foreach (var m in inputQueue)
-                    {
-                        MessageInput.Insert(0, m);
-                    }
-                }
-            });
-        }
-
-        private void UpdateMessageOutputQueue(List<ZmqMsgModel> outputQueue)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                foreach (var m in outputQueue)
-                {
-                    MessageOutput.Insert(0, m);
-                }
-            });
-        }
-
         private int MaxMessagesRequired()
         {
             if (Nodes.Count > 0)
             {
-                var indicators = _extractorService.BuildIndicatorsFromNode(Nodes.SelectMany(_n => _n.Node.Select(__n => __n)).ToList());
+                var indicators = _extractorService.BuildIndicatorsFromNode(Nodes.SelectMany(_n => _n.BacktestModel.Node.Select(__n => __n)).ToList());
 
-                List<int> valueProperties = indicators.SelectMany(_i => _i.GetType().GetByAttributeProperties(typeof(IndicatorPeriodAttribute))
-                    .Where(prop => prop.PropertyType.Name == typeof(int).Name).Select(prop => (int)prop.GetValue(_i))).OrderByDescending(pv => pv).ToList();
+                List<int> valueProperties = indicators
+                    .SelectMany(_i => _i.GetType().GetByAttributeProperties(typeof(IndicatorPeriodAttribute))
+                    .Where(prop => prop.PropertyType.Name == typeof(int).Name)
+                    .Select(prop => (int)prop.GetValue(_i))).OrderByDescending(pv => pv).ToList();
 
                 return valueProperties.OrderByDescending(vp => vp)?.FirstOrDefault() ?? 0;
             }
@@ -771,8 +496,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _nodesAny, value);
         }
 
-        private ObservableCollection<REPTreeNodeModelVM> _nodes;
-        public ObservableCollection<REPTreeNodeModelVM> Nodes
+        private ObservableCollection<BacktestModelVM> _nodes;
+        public ObservableCollection<BacktestModelVM> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);
@@ -814,5 +539,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         public ObservableCollection<Metadata> Timeframes { get; } = new ObservableCollection<Metadata>();
+
+        // Expert Advisor Configuration
+
+        private ExpertAdvisorVM _expertAdvisor;
+        public ExpertAdvisorVM ExpertAdvisor
+        {
+            get => _expertAdvisor;
+            set => SetProperty(ref _expertAdvisor, value);
+        }
     }
 }

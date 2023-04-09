@@ -12,6 +12,6 @@ namespace AdionFA.Infrastructure.Common.Attributes
             order_ = order;
         }
 
-        public int Order { get { return order_; } }
+        public int Order => order_;
     }
 }

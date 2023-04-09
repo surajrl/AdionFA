@@ -1,5 +1,6 @@
 ﻿using AdionFA.Core.Domain.Aggregates.Base;
-using AdionFA.Core.Domain.Aggregates.Market;
+using AdionFA.Core.Domain.Aggregates.MarketData;
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

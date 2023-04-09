@@ -11,11 +11,11 @@
               dialog:DialogParticipation.Register="{Binding}"
               prism:ViewModelLocator.AutoWireViewModel="True"
               mc:Ignorable="d"
-              d:DesignHeight="450" d:DesignWidth="800">
+              d:DesignHeight="800" d:DesignWidth="800">
 
     <StackPanel.Resources>
         <Style TargetType="Button" x:Key="DisableBorderRarioBtn">
-            <Setter Property="Padding" Value="5,0,5,0" />
+            <Setter Property="Padding" Value="5,0,5,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -25,19 +25,19 @@
                                               Content="{TemplateBinding Content}"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               Margin="{TemplateBinding Padding}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background">
                                     <Setter.Value>
                                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                            <GradientStop Color="#FF5BB75B" Offset="0" />
-                                            <GradientStop Color="#FF398239" Offset="1" />
+                                            <GradientStop Color="#FF5BB75B" Offset="0"/>
+                                            <GradientStop Color="#FF398239" Offset="1"/>
                                         </LinearGradientBrush>
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="Cursor" Value="Hand" />
+                                <Setter Property="Cursor" Value="Hand"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -47,76 +47,76 @@
     </StackPanel.Resources>
 
     <StackPanel HorizontalAlignment="Center">
-        <Image Source="{StaticResource Logo}" Height="50" Width="100" />
-        <Label Content="Financial Automat" FontSize="28" Margin="0 10 0 0" />
+        <Image Source="{StaticResource Logo}" Height="50" Width="100"/>
+        <Label Content="Financial Automat" FontSize="28" Margin="0 10 0 0"/>
         <Label Content="Version 2020.0.1" FontSize="11" FontWeight="SemiBold"
-               Foreground="{DynamicResource MahApps.Brushes.SystemControlForegroundBaseMedium}" HorizontalAlignment="Right" />
+               Foreground="{DynamicResource MahApps.Brushes.SystemControlForegroundBaseMedium}" HorizontalAlignment="Right"/>
 
         <!-- Theme -->
         <TextBlock VerticalAlignment="Center"
-                   Text="Theme" />
+                   Text="Theme"/>
         <ComboBox ItemsSource="{Binding Path=Themes, UpdateSourceTrigger=PropertyChanged}"
                   DisplayMemberPath="Name"
-                  SelectedItem="{Binding Path=SelectedTheme, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                  SelectedItem="{Binding Path=SelectedTheme, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <Separator Margin="5" Background="Transparent" />
+        <Separator Margin="5" Background="Transparent"/>
 
         <!-- Color -->
         <TextBlock VerticalAlignment="Center"
-                   Text="Color" />
+                   Text="Color"/>
         <ComboBox ItemsSource="{Binding Path=Colors, UpdateSourceTrigger=PropertyChanged}"
                   DisplayMemberPath="Name"
-                  SelectedItem="{Binding Path=SelectedColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                  SelectedItem="{Binding Path=SelectedColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <Separator Margin="5" Background="Transparent" />
+        <Separator Margin="5" Background="Transparent"/>
 
         <!-- Culture -->
         <TextBlock VerticalAlignment="Center"
-                   Text="Culture" />
+                   Text="Culture"/>
         <ComboBox ItemsSource="{Binding Path=Cultures, UpdateSourceTrigger=PropertyChanged}"
                   DisplayMemberPath="DisplayName"
-                  SelectedItem="{Binding Path=SelectedCulture, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                  SelectedItem="{Binding Path=SelectedCulture, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <Separator Margin="5" Background="Transparent" />
+        <Separator Margin="5" Background="Transparent"/>
 
         <!-- Default Workspace -->
         <StackPanel Orientation="Horizontal">
             <StackPanel Width="207">
-                <TextBlock VerticalAlignment="Center" Text="Default Workspace" />
-                <TextBox x:Name="txtPathWorkspace" Text="{Binding Path=DefaultWorkspace, UpdateSourceTrigger=PropertyChanged}" MouseDoubleClick="TextBox_MouseDoubleClick" />
+                <TextBlock VerticalAlignment="Center" Text="Default Workspace"/>
+                <TextBox x:Name="txtPathWorkspace" Text="{Binding Path=DefaultWorkspace, UpdateSourceTrigger=PropertyChanged}" MouseDoubleClick="TextBox_MouseDoubleClick"/>
             </StackPanel>
             <Button VerticalAlignment="Bottom" Style="{StaticResource DisableBorderRarioBtn}"
                     Command="{Binding UploadDefaultWorkspaceBtnCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <iconPacks:FontAwesome Kind="SaveSolid" Width="14" />
+                    <iconPacks:FontAwesome Kind="SaveSolid" Width="14"/>
                 </StackPanel>
             </Button>
         </StackPanel>
 
-        <Separator Margin="5" Background="Transparent" />
+        <Separator Margin="5" Background="Transparent"/>
 
         <!-- IP Address -->
         <TextBlock VerticalAlignment="Center"
-                   Text="IP Address" />
-        <TextBox Text="{Binding IPAddress}" />
+                   Text="IP Address"/>
+        <TextBox Text="{Binding IPAddress}"/>
 
-        <Separator Margin="5" Background="Transparent" />
+        <Separator Margin="5" Background="Transparent"/>
 
         <!-- Port -->
         <TextBlock VerticalAlignment="Center"
-                   Text="Port" />
-        <TextBox Text="{Binding Port}" />
+                   Text="Port"/>
+        <TextBox Text="{Binding Port}"/>
 
-        <Separator Margin="5" Background="Transparent" />
+        <Separator Margin="5" Background="Transparent"/>
 
         <Button Content="Connect to MetaTrader 5"
                 Command="{Binding ConnectCommand}"
-                IsEnabled="{Binding IsMetaTraderConnected, Converter={StaticResource InverseBooleanConverter}}" />
+                IsEnabled="{Binding IsMetaTraderConnected, Converter={StaticResource InverseBooleanConverter}}"/>
 
-        <Separator Margin="5" Background="Transparent" />
+        <Separator Margin="5" Background="Transparent"/>
 
         <Button Content="Disconnect from MetaTrader 5"
                 Command="{Binding DisconnectCommand}"
-                IsEnabled="{Binding IsMetaTraderConnected}" />
+                IsEnabled="{Binding IsMetaTraderConnected}"/>
     </StackPanel>
 </StackPanel>

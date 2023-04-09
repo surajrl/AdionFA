@@ -1,4 +1,4 @@
-﻿using AdionFA.TransferObject.Market;
+﻿using AdionFA.TransferObject.MarketData;
 using System;
 
 namespace AdionFA.TransferObject.Base

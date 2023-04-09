@@ -12,14 +12,14 @@ using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.TransferObject.Core;
 using AdionFA.UI.Station.Infrastructure.Model.Core;
 using AdionFA.UI.Station.Infrastructure.Model.Market;
-using AdionFA.TransferObject.Market;
+using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.Organization;
 using AdionFA.UI.Station.Infrastructure.Model.Organization;
 using AdionFA.TransferObject.Project;
 using AdionFA.TransferObject.ReferenceData;
 using AdionFA.UI.Station.Infrastructure.Model.ReferenceData;
 using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
-using AdionFA.UI.Station.Project.Model.Weka;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
 
 namespace AdionFA.UI.Station.Project.AutoMapper
 {
@@ -39,8 +39,7 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<CoreUserDTO, CoreUserVM>().ReverseMap();
             CreateMap<CoreUserTypeDTO, CoreUserTypeVM>().ReverseMap();
 
-            // Market
-            CreateMap<CurrencyPairDTO, CurrencyPairVM>().ReverseMap();
+            // Market Data
             CreateMap<TimeframeDTO, TimeframeVM>().ReverseMap();
             CreateMap<CurrencySpreadDTO, CurrencySpreadVM>().ReverseMap();
             CreateMap<MarketDTO, MarketVM>().ReverseMap();
@@ -69,8 +68,8 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<ConfigurationBaseDTO, ConfigurationBaseVM>().ReverseMap();
             CreateMap<AutoAdjustConfigModel, ConfigurationBaseVM>().ReverseMap();
 
-            CreateMap<REPTreeOutputModel, REPTreeOutputModelVM>().ReverseMap();
-            CreateMap<REPTreeNodeModel, REPTreeNodeModelVM>().ReverseMap();
+            CreateMap<REPTreeOutputModel, REPTreeOutputVM>().ReverseMap();
+            CreateMap<REPTreeNodeModel, REPTreeNodeVM>().ReverseMap();
 
             // Assembled Builder
             CreateMap<AssembledBuilderModel, AssembledBuilderBindableModel>().ReverseMap();

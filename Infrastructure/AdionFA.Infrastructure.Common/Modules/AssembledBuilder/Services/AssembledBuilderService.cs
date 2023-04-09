@@ -24,15 +24,11 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
 {
     public class AssembledBuilderService : IAssembledBuilderService
     {
-        #region Services
+        // Services
 
         private readonly IProjectDirectoryService ProjectDirectoryService;
         private readonly IExtractorService ExtractorService;
         private readonly IStrategyBuilderService StrategyBuilderService;
-        
-        #endregion
-
-        #region Ctor
 
         public AssembledBuilderService()
         {
@@ -41,30 +37,24 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
             StrategyBuilderService = IoC.Get<IStrategyBuilderService>();
         }
 
-        #endregion
-
-        #region Assembled
-
         public AssembledBuilderModel LoadStrategyModel(string projectName)
         {
             try
             {
                 var model = new AssembledBuilderModel();
 
-                #region UP
+                // UP
 
                 StartNodeAssembledModel upNodeStart = AssembledBuilderModel.Start("UP");
                 EndNodeAssembledModel upNodeEnd = AssembledBuilderModel.End("UP");
 
                 upNodeStart.Nodes = LoadNodes(projectName, "up");
                 upNodeStart.Nodes.ForEach(n => n.Nodes.Add(upNodeEnd));
-                
-                if(upNodeStart.Nodes.Count > 0)
+
+                if (upNodeStart.Nodes.Count > 0)
                     model.UPNode = upNodeStart;
 
-                #endregion
-
-                #region DOWN
+                // DOWN
 
                 StartNodeAssembledModel downNodeStart = AssembledBuilderModel.Start("DOWN");
                 EndNodeAssembledModel downNodeEnd = AssembledBuilderModel.End("DOWN");
@@ -75,8 +65,6 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                 if (downNodeStart.Nodes.Count > 0)
                     model.DOWNNode = downNodeStart;
 
-                #endregion
-
                 return model;
             }
             catch (Exception ex)
@@ -85,7 +73,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                 throw;
             }
 
-            //Load Notes
+            // Load Nodes
             List<NodeAssembledModel> LoadNodes(string projectName, string label)
             {
                 try
@@ -124,12 +112,11 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
         {
             try
             {
-                if(model?.UPNode?.Nodes?.Any() ?? false)
+                if (model?.UPNode?.Nodes?.Any() ?? false)
                     Extractor("up");
-                
+
                 if (model?.DOWNNode?.Nodes?.Any() ?? false)
                     Extractor("down");
-
 
                 void Extractor(string label)
                 {
@@ -158,7 +145,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 },
                             fi =>
                             {
-                                List<IndicatorBase> indicators = ExtractorService.BuildIndicators(fi.FullName);
+                                List<IndicatorBase> indicators = ExtractorService.BuildIndicatorsFromCSV(fi.FullName);
 
                                 List<IndicatorBase> extractions = ExtractorService.ExtractorExecute(
                                     first, last, indicators, candles, config.TimeframeId, config.Variation);
@@ -166,17 +153,17 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                                 foreach (var ex in extractions)
                                 {
                                     var intervals = (from il in ex.IntervalLabels.Select((_il, _idx) => new { _idx, _il })
-                                                    let ops = operations.Where(op => op.Date == il._il.Interval)
-                                                    where ops.Any()
-                                                    select new
-                                                    {
-                                                        idx = il._idx,
-                                                        il = new IntervalLabel 
-                                                        {
-                                                            Interval = il._il.Interval,
-                                                            Label = ops.Any(op => op.IsWinner) ? "WINNER" : "LOSER"
-                                                        }, 
-                                                    }).ToList();
+                                                     let ops = operations.Where(op => op.Date == il._il.Interval)
+                                                     where ops.Any()
+                                                     select new
+                                                     {
+                                                         idx = il._idx,
+                                                         il = new IntervalLabel
+                                                         {
+                                                             Interval = il._il.Interval,
+                                                             Label = ops.Any(op => op.IsWinner) ? "WINNER" : "LOSER"
+                                                         },
+                                                     }).ToList();
 
                                     ex.IntervalLabels = intervals.Select(a => a.il).ToArray();
 
@@ -206,7 +193,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                                         indicators,
                                         FromTimeInSecondsAmerica.Hour, ToTimeInSecondsAmerica.Hour
                                     );
-                                    #endregion
+                                    #endregion America
 
                                     #region Europe
                                     config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Europe,
@@ -217,7 +204,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                                         indicators,
                                         FromTimeInSecondsEurope.Hour, ToTimeInSecondsEurope.Hour
                                     );
-                                    #endregion
+                                    #endregion Europe
 
                                     #region Asia
                                     config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Asia,
@@ -228,9 +215,8 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                                         indicators,
                                         FromTimeInSecondsAsia.Hour, ToTimeInSecondsAsia.Hour
                                     );
-                                    #endregion
+                                    #endregion Asia
                                 }
-
                             });
                     }
                 }
@@ -257,8 +243,8 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                     {
                         Parallel.ForEach(extractions,
                             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 },
-                            ext => {
-
+                            ext =>
+                            {
                                 #region Weka
 
                                 var wekaApi = new WekaApiClient();
@@ -273,14 +259,15 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                                     true
                                 );
 
-                                #endregion
+                                #endregion Weka
 
                                 #region Strategy
 
                                 foreach (var instance in responseWeka)
                                 {
                                     List<REPTreeNodeModel> winningNodes = instance.NodeOutput.Where(m => m.Winner).ToList();
-                                    winningNodes.ForEach(m => {
+                                    winningNodes.ForEach(m =>
+                                    {
                                         m.Node = new List<string>(m.Node.OrderByDescending(n => n).ToList());
                                     });
 
@@ -295,11 +282,11 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                                             BacktestSerialize(projectName, stb.IS);
                                         }
 
-                                        #endregion
+                                        #endregion Serialization
                                     }
                                 }
 
-                                #endregion
+                                #endregion Strategy
                             });
                     }
                 }
@@ -310,17 +297,15 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
                 throw;
             }
         }
-        
-        #endregion
 
-        #region Serialization
+        // Serialization
 
         public void BacktestSerialize(string projectName, BacktestModel model)
         {
             string directory = model.Label.ToLower() == "up"
                                         ? projectName.ProjectAssembledBuilderNodesUPDirectory()
                                         : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
-            
+
             SerializerHelper.XMLSerializeObject(model, string.Format(@"{0}\{1}.xml", directory,
                                             RegexHelper.GetValidFileName(model.NodeName(), "_")));
         }
@@ -329,7 +314,5 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
         {
             return SerializerHelper.XMLDeSerializeObject<BacktestModel>(path);
         }
-        
-        #endregion
     }
 }

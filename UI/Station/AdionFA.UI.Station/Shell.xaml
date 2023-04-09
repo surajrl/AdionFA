@@ -10,21 +10,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdionFA.UI.Station"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Financial Automat" WindowState="Maximized" Icon="\Assets\logo.jpg">
+        Title="Financial Automat" WindowState="Maximized" Icon="Resources\Assets\logo.jpg">
 
     <!-- RightWindow Commands -->
     <metro:MetroWindow.RightWindowCommands>
-        <metro:WindowCommands x:Name="rightWindowCommandsRegion" />
+        <metro:WindowCommands x:Name="rightWindowCommandsRegion"/>
     </metro:MetroWindow.RightWindowCommands>
-    
+
     <!-- Flyouts -->
     <metro:MetroWindow.Flyouts>
-        <metro:FlyoutsControl x:Name="flyoutsControlRegion" />
+        <metro:FlyoutsControl x:Name="flyoutsControlRegion"/>
     </metro:MetroWindow.Flyouts>
 
     <Grid>
         <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:AppRegions.ShellModule}"/>
     </Grid>
-    
 </metro:MetroWindow>
-
