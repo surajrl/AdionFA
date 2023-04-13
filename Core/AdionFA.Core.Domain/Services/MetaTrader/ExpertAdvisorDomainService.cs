@@ -67,13 +67,17 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
         {
             try
             {
-                if (expertAdvisor.ExpertAdvisorId > 0)
+                var ea = ExpertAdvisorRepository.FirstOrDefault(ea => ea.ProjectId == expertAdvisor.ProjectId);
+
+                if (ea is not null && ea.ExpertAdvisorId > 0)
                 {
+                    expertAdvisor.ExpertAdvisorId = ea.ExpertAdvisorId;
                     ExpertAdvisorRepository.Update(expertAdvisor);
                     return true;
                 }
 
-                return false;
+                ExpertAdvisorRepository.Create(expertAdvisor);
+                return true;
             }
             catch (Exception ex)
             {

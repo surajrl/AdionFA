@@ -13,7 +13,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Model
         public VAR()
         {
             Type = IndicatorEnum.VAR;
-            PriceType = (int)PriceTypeEnum.HIGH_PRICE;
+            PriceType = (int)PriceTypeEnum.HIGH;
             OptInTimePeriod = 5;
         }
     }

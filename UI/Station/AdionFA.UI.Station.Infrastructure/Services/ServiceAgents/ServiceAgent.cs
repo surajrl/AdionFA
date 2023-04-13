@@ -77,10 +77,10 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
         public async Task<ResponseVM> UpdateExpertAdvisor(ExpertAdvisorVM expertAdvisor)
         {
             var response = new ResponseDTO { IsSuccess = false };
-            var dto = Mapper.Map<ExpertAdvisorVM, ExpertAdvisorDTO>(expertAdvisor);
 
             await Task.Run(() =>
             {
+                var dto = Mapper.Map<ExpertAdvisorVM, ExpertAdvisorDTO>(expertAdvisor);
                 response = IoC.Get<IExpertAdvisorAPI>().UpdateExpertAdvisor(dto);
             });
 

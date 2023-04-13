@@ -42,8 +42,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
 using AdionFA.UI.Station.Project.Model.StrategyBuilder;
 
 namespace AdionFA.UI.Station.Project.ViewModels
@@ -243,8 +241,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         if (isTrade)
                         {
                             // Open operation request -----------------------------------------------
-                            requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation()));
-                            Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation())}");
+                            if (Nodes.First().BacktestModel.Label.ToLower() == "up")
+                            {
+                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
+                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
+                            }
+                            else
+                            {
+                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
+                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
+                            }
                             //-----------------------------------------------------------------------
 
                             // Open operation response ----------------------------------------------
@@ -332,10 +338,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
+                // TODO: Validate all required boxes are filled
+
                 ExpertAdvisor.ProjectId = _project.ProjectId;
                 ExpertAdvisor.Name = $"{_project.ProjectName}.EA.{ExpertAdvisor.MagicNumber}";
 
-                var response = await _serviceAgent.CreateExpertAdvisor(ExpertAdvisor);
+                var response = await _serviceAgent.UpdateExpertAdvisor(ExpertAdvisor);
                 MessageHelper.ShowMessage(this,
                     "Expert Advisor Save",
                     response.IsSuccess ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);

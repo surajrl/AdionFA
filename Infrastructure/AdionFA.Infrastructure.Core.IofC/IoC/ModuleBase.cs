@@ -1,4 +1,5 @@
 ﻿using AdionFA.Core.Domain.Contracts.Repositories;
+
 using AdionFA.Infrastructure.Common.Comparators;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Contracts;
@@ -10,8 +11,8 @@ using AdionFA.Infrastructure.Common.Weka.Contracts;
 using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.Core.AutoMappers;
 using AdionFA.Infrastructure.Core.Data.Persistence;
-using AdionFA.Infrastructure.Core.Data.Persistence.EFCore;
 using AdionFA.Infrastructure.Core.Data.Repositories;
+
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -69,11 +70,9 @@ namespace AdionFA.Infrastructure.Core.IofC
                 .WithConstructorArgument("owner", ctx => IoC.GetArgument(ctx, "owner"));
 
             Kernel.Bind(typeof(AdionFADbContext)).ToSelf().WhenInjectedInto(typeof(IUnitOfWork<>)).InParentScope();
-            Kernel.Bind(typeof(AdionSecurityDbContext)).ToSelf().WhenInjectedInto(typeof(IUnitOfWork<>)).InParentScope();
 
             Kernel.Bind(typeof(ITransaction)).To(typeof(Transaction));
             Kernel.Bind(typeof(IRepository<>)).To(typeof(Repository<>));
-            Kernel.Bind(typeof(ISecurityRepository<>)).To(typeof(SecurityRepository<>));
         }
     }
 }

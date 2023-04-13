@@ -12,8 +12,6 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories.Extension
 {
     public static class RepositoryExtension
     {
-        #region CloseTemporalRecord
-
         public static TEntity CloseTemporalRecord<TEntity>(this IRepository<TEntity> repository) where TEntity : EntityBase, ITimeSensitive
         {
             var old = repository.LastTemporalRecord();
@@ -21,18 +19,15 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories.Extension
             {
                 repository.Update((TEntity)old.GetClosedTamporalRecord());
             }
-        
+
             return old;
         }
-
-        #endregion
-
 
         public static bool IsActive<TEntity>(this TEntity entity, DateTime? asOfDate = null) where TEntity : EntityBase, ITimeSensitive
         {
             DateTime dt = asOfDate ?? DateTime.UtcNow;
 
-            return 
+            return
                 (entity.StartDate.Date <= dt.Date &&
                 ((entity.EndDate ?? DateTime.MinValue) == DateTime.MinValue || entity.EndDate.Value.Date >= dt.Date)) ||
                 entity.StartDate.Date > dt.Date &&

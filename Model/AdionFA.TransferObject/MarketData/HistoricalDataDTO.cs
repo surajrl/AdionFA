@@ -16,6 +16,6 @@ namespace AdionFA.TransferObject.MarketData
         public int TimeframeId { get; set; }
         public TimeframeDTO Timeframe { get; set; }
 
-        public IList<HistoricalDataDetailDTO> HistoricalDataDetails { get; set; }
+        public IList<HistoricalDataCandleDTO> HistoricalDataCandles { get; set; }
     }
 }

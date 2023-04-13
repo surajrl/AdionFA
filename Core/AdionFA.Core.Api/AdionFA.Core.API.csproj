@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core\AdionFA.Infrastructure.Core.csproj" />
     <ProjectReference Include="..\AdionFA.Core.Api.Contract\AdionFA.Core.API.Contract.csproj" />
     <ProjectReference Include="..\AdionFA.Core.Application.Contract\AdionFA.Core.Application.Contract.csproj" />

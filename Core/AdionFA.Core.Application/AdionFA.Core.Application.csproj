@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Ninject" Version="3.3.6" PrivateAssets="none" />
   </ItemGroup>
 

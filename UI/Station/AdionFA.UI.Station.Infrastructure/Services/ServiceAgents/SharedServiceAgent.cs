@@ -140,7 +140,6 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 await Task.Run(() =>
                 {
                     SettingDTO dto = Mapper.Map<SettingVM, SettingDTO>(setting);
-
                     result = IoC.Get<ISharedAPI>().UpdateAppSetting(dto);
                 });
 

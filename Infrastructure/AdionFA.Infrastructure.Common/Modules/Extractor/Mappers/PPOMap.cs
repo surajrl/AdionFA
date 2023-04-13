@@ -32,19 +32,19 @@ namespace AdionFA.Infrastructure.Common.Extractor.Mappers
                 {
                     switch (parse)
                     {
-                        case PriceTypeEnum.OPEN_PRICE:
-                            return (int)PriceTypeEnum.OPEN_PRICE;
-                        case PriceTypeEnum.HIGH_PRICE:
-                            return (int)PriceTypeEnum.HIGH_PRICE;
-                        case PriceTypeEnum.LOW_PRICE:
-                            return (int)PriceTypeEnum.LOW_PRICE;
-                        case PriceTypeEnum.CLOSE_PRICE:
-                            return (int)PriceTypeEnum.CLOSE_PRICE;
+                        case PriceTypeEnum.OPEN:
+                            return (int)PriceTypeEnum.OPEN;
+                        case PriceTypeEnum.HIGH:
+                            return (int)PriceTypeEnum.HIGH;
+                        case PriceTypeEnum.LOW:
+                            return (int)PriceTypeEnum.LOW;
+                        case PriceTypeEnum.CLOSE:
+                            return (int)PriceTypeEnum.CLOSE;
                     }
                 }
                 else
                 {
-                    return (int)PriceTypeEnum.CLOSE_PRICE;
+                    return (int)PriceTypeEnum.CLOSE;
                 }
             }
             else if (memberMapData.Index == 3)

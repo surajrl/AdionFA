@@ -1,4 +1,5 @@
 ﻿using AdionFA.Core.Domain.Aggregates.Base;
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

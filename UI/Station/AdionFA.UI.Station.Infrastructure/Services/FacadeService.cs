@@ -1,7 +1,6 @@
 ﻿using AdionFA.Core.API.Contracts.Commons;
 using AdionFA.Core.API.Contracts.MarketData;
 using AdionFA.Core.API.Contracts.Projects;
-using AdionFA.Core.API.Contracts.Security;
 
 using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.IofC;
@@ -18,7 +17,6 @@ namespace AdionFA.UI.Station.Infrastructure.Services
 
         public static IMarketDataAPI MarketDataAPI => IoC.Get<IMarketDataAPI>();
         public static IProjectAPI ProjectAPI => IoC.Get<IProjectAPI>();
-        public static ISecurityAPI SecurityAPI => IoC.Get<ISecurityAPI>();
         public static ISharedAPI SharedAPI => IoC.Get<ISharedAPI>();
         public static IProjectDirectoryService DirectoryService => IoC.Get<IProjectDirectoryService>();
 
@@ -27,6 +25,5 @@ namespace AdionFA.UI.Station.Infrastructure.Services
         public static ISharedServiceAgent SharedServiceAgent => ContainerLocator.Current.Resolve<ISharedServiceAgent>();
         public static IProjectServiceAgent ProjectServiceAgent => ContainerLocator.Current.Resolve<IProjectServiceAgent>();
         public static IMarketDataServiceAgent MarketDataServiceAgent => ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
-        public static ISecurityServiceAgent SecurityServiceAgent => ContainerLocator.Current.Resolve<ISecurityServiceAgent>();
     }
 }

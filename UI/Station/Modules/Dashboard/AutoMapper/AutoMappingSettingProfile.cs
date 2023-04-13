@@ -13,7 +13,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.AutoMapper
             CreateMap<ProjectGlobalScheduleConfigurationVM, ProjectGlobalScheduleConfigurationVM>().ReverseMap();
 
             CreateMap<HistoricalDataVM, UploadHistoricalDataModel>().ReverseMap();
-            CreateMap<HistoricalDataDetailVM, HistoricalDataDetailSettingVM>()
+            CreateMap<HistoricalDataCandleVM, HistoricalDataCandleSettingVM>()
                 .ForMember(dest => dest.StartDateFormat, opt => opt.MapFrom(src => src.StartDate.ToString("yyyy.MM.dd"))).ReverseMap();
         }
     }

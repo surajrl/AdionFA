@@ -1,4 +1,6 @@
 ﻿using AdionFA.Core.Domain.Aggregates.Base;
+using AdionFA.Core.Domain.Aggregates.Project;
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,10 +13,10 @@ namespace AdionFA.Core.Domain.Aggregates.MetaTrader
         public int ExpertAdvisorId { get; set; }
 
         public string Name { get; set; }
-        public ulong MagicNumber { get; set; }
+        public string MagicNumber { get; set; }
         public string Host { get; set; }
-        public ushort ResponsePort { get; set; }
-        public ushort PushPort { get; set; }
+        public string ResponsePort { get; set; }
+        public string PushPort { get; set; }
 
         public int ProjectId { get; set; }
 

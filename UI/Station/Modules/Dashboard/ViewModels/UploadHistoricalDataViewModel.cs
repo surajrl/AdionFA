@@ -1,4 +1,5 @@
-﻿using AdionFA.Infrastructure.Common.Extractor.Model;
+﻿using AdionFA.Core.Domain.Aggregates.MarketData;
+using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
@@ -19,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
@@ -26,24 +28,21 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
     public class UploadHistoricalDataViewModel : ViewModelBase
     {
         public readonly ISettingService _settingService;
-        public readonly IMarketDataServiceAgent _historicalDataService;
+        public readonly IMarketDataServiceAgent _marketDataService;
 
         public UploadHistoricalDataViewModel(
             ISettingService settingService,
-            IMarketDataServiceAgent historicalDataService,
+            IMarketDataServiceAgent marketDataService,
             IApplicationCommands applicationCommands)
         {
             _settingService = settingService;
-            _historicalDataService = historicalDataService;
+            _marketDataService = marketDataService;
 
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
 
-        #region Commands
-
         private ICommand FlyoutCommand { get; set; }
-
         public void ShowFlyout(FlyoutModel flyoutModel)
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutUploadHistoricalData))
@@ -58,7 +57,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             {
                 IsTransactionActive = true;
 
-                var validator = _uploadHistoricalData.Validate();
+                var validator = UploadHistoricalData.Validate();
                 if (!validator.IsValid)
                 {
                     IsTransactionActive = false;
@@ -70,9 +69,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     return;
                 }
 
-                if (CreateHistory())
+                if (await CreateHistory())
                 {
-                    var result = await _settingService.CreateHistoricalData(_uploadHistoricalData);
+                    var result = await _settingService.CreateHistoricalData(UploadHistoricalData);
 
                     IsTransactionActive = false;
 
@@ -100,39 +99,49 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private bool CreateHistory()
+        private async Task<bool> CreateHistory()
         {
             try
             {
-                List<Candle> result = CandleHelper.GetHistoryCandles(_uploadHistoricalData.FilePathHistoricalData).ToList();
+                var result = CandleHelper.GetHistoryCandles(UploadHistoricalData.FilePathHistoricalData).ToList();
 
                 if (result.Count > 0)
                 {
                     result.ForEach(item =>
                     {
-                        _uploadHistoricalData.HistoricalDataDetails.Add(new HistoricalDataDetailVM
+                        UploadHistoricalData.HistoricalDataCandles.Add(new HistoricalDataCandleVM
                         {
                             StartDate = item.Date,
                             StartTime = item.Time,
-                            OpenPrice = item.Open,
-                            MaxPrice = item.High,
-                            MinPrice = item.Low,
-                            ClosePrice = item.Close,
+                            Open = item.Open,
+                            High = item.High,
+                            Low = item.Low,
+                            Close = item.Close,
                             Volume = item.Volume
                         });
                     });
 
                     string marketName = ((MarketEnum)UploadHistoricalData.MarketId).GetMetadata().Name;
-                    string symbolName = UploadHistoricalData.Symbol.Name;
-                    string timeframeCode = UploadHistoricalData.Timeframe.Code;
-                    UploadHistoricalData.Description = $"{marketName}.{symbolName}.{timeframeCode}";
+                    var symbol = await _marketDataService.GetSymbol(UploadHistoricalData.SymbolId);
+                    var timeframe = await _marketDataService.GetTimeframe(UploadHistoricalData.TimeframeId);
+
+                    var candlesOrdered = result.OrderByDescending(candle => candle.Date);
+                    var firstCandleDate = candlesOrdered.LastOrDefault().Date;
+                    var lastCandleDate = candlesOrdered.FirstOrDefault().Date;
+
+                    UploadHistoricalData.Description =
+                        $"{marketName}." +
+                        $"{symbol.Name}." +
+                        $"{timeframe.Code}." +
+                        $"{firstCandleDate:dd-MM-yyyy}." +
+                        $"{lastCandleDate:dd-MM-yyyy}";
 
                     return true;
                 }
 
                 MessageHelper.ShowMessage(this,
-                    EntityTypeEnum.MarketData.GetMetadata().Description,
-                    MessageResources.MarketDataFileEmpty);
+                EntityTypeEnum.MarketData.GetMetadata().Description,
+                MessageResources.MarketDataFileEmpty);
 
                 return false;
             }
@@ -143,15 +152,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }
 
-        #endregion Commands
-
         private async void PopulateViewModel()
         {
             if (!IsTransactionActive)
             {
                 UploadHistoricalData = new UploadHistoricalDataModel
                 {
-                    HistoricalDataDetails = Array.Empty<HistoricalDataDetailVM>().ToList()
+                    HistoricalDataCandles = Array.Empty<HistoricalDataCandleVM>().ToList()
                 };
             }
 
@@ -160,18 +167,18 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
             if (!Timeframes.Any())
             {
-                var timeframes = await _historicalDataService.GetAllTimeframe().ConfigureAwait(true);
+                var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
                 timeframes.ForEach(Timeframes.Add);
             }
 
             if (!Symbols.Any())
             {
-                var symbols = await _historicalDataService.GetAllSymbol().ConfigureAwait(true);
+                var symbols = await _marketDataService.GetAllSymbol().ConfigureAwait(true);
                 symbols.ForEach(Symbols.Add);
             }
         }
 
-        #region Bindable Model
+        // Bindable Model
 
         private bool istransactionActive;
         public bool IsTransactionActive
@@ -190,7 +197,5 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         public ObservableCollection<Metadata> Markets { get; } = new ObservableCollection<Metadata>();
         public ObservableCollection<SymbolVM> Symbols { get; } = new ObservableCollection<SymbolVM>();
         public ObservableCollection<TimeframeVM> Timeframes { get; } = new ObservableCollection<TimeframeVM>();
-
-        #endregion Bindable Model
     }
 }

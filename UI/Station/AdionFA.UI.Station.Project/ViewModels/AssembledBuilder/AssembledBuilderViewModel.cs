@@ -33,27 +33,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
 {
     public class AssembledBuilderViewModel : MenuItemViewModel
     {
-        #region AutoMapper
-
         public readonly IMapper Mapper;
-
-        #endregion AutoMapper
-
-        #region Services
 
         private readonly IAssembledBuilderService _assembledBuilderService;
         private readonly IProjectServiceAgent _projectService;
         private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IEventAggregator _eventAggregator;
 
-        #endregion Services
-
         private ProjectVM Project;
         private AssembledBuilderModel AssembledBuilderModel;
 
-        #region Ctor
-
-        public AssembledBuilderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
+        public AssembledBuilderViewModel(MainViewModel mainViewModel)
+            : base(mainViewModel)
         {
             _assembledBuilderService = IoC.Get<IAssembledBuilderService>();
 
@@ -74,12 +65,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             Model = new AssembledBuilderBindableModel();
         }
 
-        #endregion Ctor
-
-        #region Command
-
-        #region SelectItemHamburgerMenuCommand
-
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             try
@@ -97,15 +82,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, (s) => true); //item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        #endregion SelectItemHamburgerMenuCommand
-
-        #region ProcessBtnCommand
-
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
-                #region Validator
+                // Validator
 
                 if (!Validate(new AssembledBuilderValidator()).IsValid)
                 {
@@ -113,45 +94,37 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     return;
                 }
 
-                #endregion Validator
-
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
 
-                #region Market Data
+                // Historical Data
 
-                HistoricalDataVM projectMarketData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
+                var projectHistoricalData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
 
-                IEnumerable<Candle> candles = projectMarketData.HistoricalDataDetails.Select(
+                IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles.Select(
                         h => new Candle
                         {
                             Date = h.StartDate,
                             Time = h.StartTime,
-                            Open = h.OpenPrice,
-                            High = h.MaxPrice,
-                            Low = h.MinPrice,
-                            Close = h.ClosePrice,
+                            Open = h.Open,
+                            High = h.High,
+                            Low = h.Low,
+                            Close = h.Close,
                             Volume = h.Volume
                         }
                     ).OrderBy(d => d.Date).ThenBy(d => d.Time).ToList();
-
-                #endregion Market Data
 
                 await Task.Factory.StartNew(() =>
                 {
                     var config = Mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
 
-                    #region Extractor
+                    // Extractor
 
                     _assembledBuilderService.ExtractorExecute(ProcessArgs.ProjectName, AssembledBuilderModel, candles, config);
 
-                    #endregion Extractor
-
-                    #region Strategy
+                    // Strategy
 
                     _assembledBuilderService.Build(ProcessArgs.ProjectName, config, candles);
-
-                    #endregion Strategy
                 }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
 
                 IsTransactionActive = false;
@@ -177,10 +150,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        #endregion ProcessBtnCommand
-
-        #region ReloadBtnCommand
-
         public DelegateCommand ReloadBtnCommand => new DelegateCommand(() =>
         {
             try
@@ -194,10 +163,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 throw;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
-
-        #endregion ReloadBtnCommand
-
-        #region Tree Collapse/Expand All
 
         public ICommand TreeCollapseExpandAllBtnCommand => new DelegateCommand<string>(label =>
         {
@@ -218,10 +183,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 throw;
             }
         }, (item) => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
-
-        #endregion Tree Collapse/Expand All
-
-        #endregion Command
 
         public async void PopulateViewModel()
         {
@@ -250,8 +211,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        public NodeAssembledBindableModel MapToTreeObservableNode(NodeAssembledModel source
-            , bool isAllExpanded = false, bool isStartExpanded = false, bool isBacktestExpanded = false)
+        public NodeAssembledBindableModel MapToTreeObservableNode(
+            NodeAssembledModel source,
+            bool isAllExpanded = false,
+            bool isStartExpanded = false,
+            bool isBacktestExpanded = false)
         {
             NodeAssembledBindableModel node = Recursive(source);
             return node;
@@ -310,10 +274,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        #region Bindable Model
+        // Bindable Model
 
         private bool _istransactionActive;
-
         public bool IsTransactionActive
         {
             get => _istransactionActive;
@@ -321,7 +284,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _canExecute = true;
-
         public bool CanExecute
         {
             get => _canExecute;
@@ -329,7 +291,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ProjectConfigurationVM _configuration;
-
         public ProjectConfigurationVM Configuration
         {
             get => _configuration;
@@ -337,13 +298,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private AssembledBuilderBindableModel _model;
-
         public AssembledBuilderBindableModel Model
         {
             get => _model;
             set => SetProperty(ref _model, value);
         }
-
-        #endregion Bindable Model
     }
 }

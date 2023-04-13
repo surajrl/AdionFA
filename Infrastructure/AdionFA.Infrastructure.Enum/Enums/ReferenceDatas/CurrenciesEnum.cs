@@ -5,40 +5,37 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum CurrencyPairEnum
     {
-        [Metadata("EUR-USD", "EURUSD", resourceType: typeof(CurrenciesResources))]
+        [Metadata("EURUSD", "EURUSD", resourceType: typeof(CurrenciesResources))]
         EURUSD = 1,
-
-        [Metadata("GBP-USD", "GBPUSD", resourceType: typeof(CurrenciesResources))]
-        GBPUSD = 2
     }
 
     public enum TimeframeEnum
     {
-        [Metadata("M1", "M1", valueKey: "1", resourceType: typeof(EnumResources))]
+        [Metadata("M1", "M1", "1", resourceType: typeof(EnumResources))]
         M1 = 1,
 
-        [Metadata("M5", "M5", valueKey: "5", resourceType: typeof(EnumResources))]
+        [Metadata("M5", "M5", "5", resourceType: typeof(EnumResources))]
         M5 = 2,
 
-        [Metadata("M15", "M15", valueKey: "15", resourceType: typeof(EnumResources))]
+        [Metadata("M15", "M15", "15", resourceType: typeof(EnumResources))]
         M15 = 3,
 
-        [Metadata("M30", "M30", valueKey: "30", resourceType: typeof(EnumResources))]
+        [Metadata("M30", "M30", "30", resourceType: typeof(EnumResources))]
         M30 = 4,
 
-        [Metadata("H1", "H1", valueKey: "16385", resourceType: typeof(EnumResources))]
+        [Metadata("H1", "H1", "16385", resourceType: typeof(EnumResources))]
         H1 = 5,
 
-        [Metadata("H4", "H4", valueKey: "16388", resourceType: typeof(EnumResources))]
+        [Metadata("H4", "H4", "16388", resourceType: typeof(EnumResources))]
         H4 = 6,
 
-        [Metadata("D1", "D1", valueKey: "16408", resourceType: typeof(EnumResources))]
+        [Metadata("D1", "D1", "16408", resourceType: typeof(EnumResources))]
         D1 = 7,
 
-        [Metadata("W1", "W1", valueKey: "32769", resourceType: typeof(EnumResources))]
+        [Metadata("W1", "W1", "32769", resourceType: typeof(EnumResources))]
         W1 = 8,
 
-        [Metadata("MN1", "MN1", valueKey: "49153", resourceType: typeof(EnumResources))]
+        [Metadata("MN1", "MN1", "49153", resourceType: typeof(EnumResources))]
         MN1 = 9
     }
 

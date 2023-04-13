@@ -17,6 +17,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
+using TALib;
 
 namespace AdionFA.Infrastructure.Core.Data.Persistence
 {
@@ -57,15 +59,15 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
             {
                 var genericType = t.GetInterface(typeof(IEntityTypeConfiguration<>).FullName).GetGenericArguments().Single();
                 var entityConfiguration = assembly.CreateInstance(t.FullName);
-                MethodInfo m = typeof(ModelBuilder).GetMethod(nameof(ModelBuilder.ApplyConfiguration));
+                var m = typeof(ModelBuilder).GetMethod(nameof(ModelBuilder.ApplyConfiguration));
                 m.MakeGenericMethod(genericType).Invoke(modelBuilder, new object[] { entityConfiguration });
             });
 
             MethodInfo m = typeof(EnumExtension).GetMethod("GetMetadata");
 
-            string userId = "11111111-1111-1111-11111111111111111";
-            string username = "sysadmin";
-            string tenantId = "22222222-2222-2222-2222-222222222222";
+            var userId = "11111111-1111-1111-11111111111111111";
+            var username = "sysadmin";
+            var tenantId = "22222222-2222-2222-2222-222222222222";
 
             // Entity Type
 
@@ -99,8 +101,9 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     new Setting
                     {
                         SettingId = (int)setting,
-                        Key = meta.Code,
-                        Value = meta.Name,
+
+                        Code = meta.Code,
+                        Value = meta.Value,
 
                         IsDeleted = false,
                         Inaccesible = false,
@@ -131,33 +134,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     CreatedByUserName = username
                 });
 
-            // Timeframe
-
-            foreach (var timeframe in Enum.GetValues(typeof(TimeframeEnum)))
-            {
-                var meta = (Metadata)m.Invoke(timeframe, new object[] { timeframe });
-                modelBuilder.Entity<Timeframe>().HasData(
-                    new Timeframe
-                    {
-                        TimeframeId = (int)timeframe,
-
-                        Code = meta.Code,
-                        Name = meta.Name,
-                        Description = meta.Description,
-
-                        Value = meta.Value,
-                        Symbol = meta.Symbol,
-
-                        IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
-                        CreatedById = userId,
-                        CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
-                    }
-                );
-            }
-
             // Currency Spread
 
             foreach (var csp in Enum.GetValues(typeof(CurrencySpreadEnum)))
@@ -170,10 +146,33 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                         Code = meta.Code,
                         Name = meta.Name,
+                        Value = meta.Value,
                         Description = meta.Description,
 
+                        IsDeleted = false,
+                        Inaccesible = false,
+                        TenantId = tenantId,
+                        CreatedById = userId,
+                        CreatedOn = DateTime.UtcNow,
+                        CreatedByUserName = username
+                    }
+                );
+            }
+
+            // Timeframe
+
+            foreach (var timeframe in Enum.GetValues(typeof(TimeframeEnum)))
+            {
+                var meta = (Metadata)m.Invoke(timeframe, new object[] { timeframe });
+                modelBuilder.Entity<Timeframe>().HasData(
+                    new Timeframe
+                    {
+                        TimeframeId = (int)timeframe,
+
+                        Code = meta.Code,
+                        Name = meta.Name,
                         Value = meta.Value,
-                        Symbol = meta.Symbol,
+                        Description = meta.Description,
 
                         IsDeleted = false,
                         Inaccesible = false,
@@ -194,6 +193,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     new Market
                     {
                         MarketId = (int)market,
+
                         Code = meta.Code,
                         Name = meta.Name,
                         Description = meta.Description,
@@ -237,6 +237,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
             modelBuilder.Entity<Organization>().HasData(new Organization
             {
                 OrganizationId = tenantId,
+
                 Name = "AdionFA",
                 LegalName = "AdionFA",
 
@@ -442,9 +443,8 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                         Code = meta.Code,
                         Name = meta.Name,
-                        Description = meta.Description,
                         Value = meta.Value,
-                        Symbol = meta.Symbol,
+                        Description = meta.Description,
 
                         IsDeleted = false,
                         Inaccesible = false,
@@ -470,7 +470,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
         public DbSet<CurrencySpread> CurrencySpreads { get; set; }
         public DbSet<Market> Markets { get; set; }
         public DbSet<HistoricalData> HistoricalDatas { get; set; }
-        public DbSet<HistoricalDataDetail> HistoricalDataDetails { get; set; }
+        public DbSet<HistoricalDataCandle> HistoricalDataDetails { get; set; }
         public DbSet<MarketRegion> MarketRegions { get; set; }
 
         // MetaTrader

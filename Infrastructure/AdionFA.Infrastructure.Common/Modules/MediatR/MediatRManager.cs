@@ -10,8 +10,6 @@ namespace AdionFA.Infrastructure.Common.MediatR
     using global::Ninject.Extensions.Conventions;
     using global::Ninject.Planning.Bindings.Resolvers;
 
-
-
     public static class MediatRManager
     {
         public static IMediator BuildMediator(WrappingWriter writer)

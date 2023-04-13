@@ -5,17 +5,15 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 {
     public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbContext
     {
-        #region Identity
+        // Identity
 
         public string _tenantId { get; }
         public string _ownerId { get; }
         public string _owner { get; }
 
-        #endregion
+        public TContext _context { get; }
 
         private bool _disposed = false;
-        
-        public TContext _context { get; }
 
         public UnitOfWork(string tenantId, string ownerId, string owner, TContext context)
         {
@@ -62,7 +60,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
         public void Commit()
         {
-            if(!_disposed)
+            if (!_disposed)
                 _context.Database.CurrentTransaction?.Commit();
         }
 

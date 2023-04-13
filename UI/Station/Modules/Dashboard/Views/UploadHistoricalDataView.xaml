@@ -113,10 +113,11 @@
                                     <Run Text="*"/>
                                     </TextBlock>
                                 </Label>
-                                <ComboBox x:Name="SymbolCb" ItemsSource="{Binding Symbols}" MinWidth="225"
-                                        DisplayMemberPath="Name"
-                                        Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                        SelectedItem="{Binding UploadHistoricalData.Symbol, Mode=TwoWay}">
+                                <ComboBox ItemsSource="{Binding Symbols}" MinWidth="225"
+                                          DisplayMemberPath="Name"
+                                          SelectedValuePath="SymbolId"
+                                          Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                          SelectedValue="{Binding UploadHistoricalData.SymbolId, Mode=TwoWay}">
                                 </ComboBox>
                             </StackPanel>
                             <!--#endregion-->
@@ -129,10 +130,11 @@
                                         <Run Text="*"/>
                                     </TextBlock>
                                 </Label>
-                                <ComboBox x:Name="TimeframeCb" ItemsSource="{Binding Timeframes}" MinWidth="225"
-                                        DisplayMemberPath="Name"
-                                        Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                        SelectedItem="{Binding UploadHistoricalData.Timeframe, Mode=TwoWay}">
+                                <ComboBox ItemsSource="{Binding Timeframes}" MinWidth="225"
+                                          DisplayMemberPath="Name"
+                                          SelectedValuePath="TimeframeId"
+                                          Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                          SelectedValue="{Binding UploadHistoricalData.TimeframeId, Mode=TwoWay}">
                                 </ComboBox>
                             </StackPanel>
                             <!--#endregion-->
@@ -149,8 +151,8 @@
                                     </TextBlock>
                                 </Label>
                                 <TextBox x:Name="txtPathFile"
-                                            Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                            Text="{Binding UploadHistoricalData.FilePathHistoricalData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="700"/>
+                                         Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                         Text="{Binding UploadHistoricalData.FilePathHistoricalData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="700"/>
                             </StackPanel>
                             <Button x:Name="finPathFileBtn" VerticalAlignment="Bottom"
                                     Style="{StaticResource DisableBorderRarioBtn}" Click="finPathFileBtn_Click">

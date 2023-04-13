@@ -744,13 +744,13 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                 double[] inReal = high;
                 switch (priceType)
                 {
-                    case (int)PriceTypeEnum.LOW_PRICE:
+                    case (int)PriceTypeEnum.LOW:
                         inReal = low;
                         break;
-                    case (int)PriceTypeEnum.CLOSE_PRICE:
+                    case (int)PriceTypeEnum.CLOSE:
                         inReal = close;
                         break;
-                    case (int)PriceTypeEnum.OPEN_PRICE:
+                    case (int)PriceTypeEnum.OPEN:
                         inReal = open;
                         break;
                 }

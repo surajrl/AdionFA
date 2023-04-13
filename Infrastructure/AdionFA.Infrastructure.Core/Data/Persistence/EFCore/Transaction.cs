@@ -8,24 +8,20 @@ namespace AdionFA.Infrastructure.Common.Transaction.Services
 {
     public class Transaction : ITransaction
     {
-        private readonly IUnitOfWork<AdionSecurityDbContext> _adionSecurityUOfW;
         private readonly IUnitOfWork<AdionFADbContext> _adionFAUOfW;
 
         private bool _isCommit = true;
 
         #region Constructor
 
-        public Transaction(
-            IUnitOfWork<AdionSecurityDbContext> adionSecurityUOfW,
-            IUnitOfWork<AdionFADbContext> adionFAUOfW)
+        public Transaction(IUnitOfWork<AdionFADbContext> adionFAUOfW)
         {
-            _adionSecurityUOfW = adionSecurityUOfW;
             _adionFAUOfW = adionFAUOfW;
 
             AppDomain.CurrentDomain.FirstChanceException += FirstChanceException_Handler;
         }
-        
-        #endregion
+
+        #endregion Constructor
 
         private void FirstChanceException_Handler(object sender, EventArgs e)
         {
@@ -37,9 +33,6 @@ namespace AdionFA.Infrastructure.Common.Transaction.Services
         {
             if (typeof(T).FullName == typeof(IAdionFADbContext).FullName)
                 _adionFAUOfW.BeginTransaction();
-
-            if (typeof(T).FullName == typeof(IAdionSecurityDbContext).FullName)
-                _adionSecurityUOfW.BeginTransaction();
 
             return this;
         }
@@ -56,18 +49,12 @@ namespace AdionFA.Infrastructure.Common.Transaction.Services
         {
             if (_adionFAUOfW.HasTransactionActive())
                 _adionFAUOfW.Commit();
-
-            if (_adionSecurityUOfW.HasTransactionActive())
-                _adionSecurityUOfW.Commit();
         }
 
         public void Rollback()
         {
             if (_adionFAUOfW.HasTransactionActive())
                 _adionFAUOfW.Rollback();
-
-            if (_adionSecurityUOfW.HasTransactionActive())
-                _adionSecurityUOfW.Rollback();
         }
 
         public void Dispose()
@@ -82,16 +69,12 @@ namespace AdionFA.Infrastructure.Common.Transaction.Services
             }
 
             _adionFAUOfW.Dispose();
-            _adionSecurityUOfW.Dispose();
         }
 
         public void ReleaseDbContext()
         {
             if (!_adionFAUOfW.HasTransactionActive())
                 _adionFAUOfW.Dispose();
-
-            if (!_adionSecurityUOfW.HasTransactionActive())
-                _adionSecurityUOfW.Dispose();
         }
     }
 }

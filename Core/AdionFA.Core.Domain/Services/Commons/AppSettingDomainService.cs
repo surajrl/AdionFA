@@ -10,19 +10,16 @@ namespace AdionFA.Core.Domain.Services.Commons
 {
     public class AppSettingDomainService : DomainServiceBase, IAppSettingDomainService
     {
-        #region Repositories
         public IRepository<Setting> SettingRepository { get; set; }
-        #endregion
 
-        #region Ctor
         public AppSettingDomainService(string tenantId, string ownerId, string owner,
-            IRepository<Setting> settingRepository) : base(tenantId, ownerId, owner) 
+            IRepository<Setting> settingRepository) : base(tenantId, ownerId, owner)
         {
             SettingRepository = settingRepository;
         }
-        #endregion
 
-        #region Setting
+        // Setting
+
         public IList<Setting> GetAllAppSetting()
         {
             try
@@ -41,7 +38,7 @@ namespace AdionFA.Core.Domain.Services.Commons
             try
             {
                 Setting setting = SettingRepository.FirstOrDefault(
-                    s => s.SettingId == settingId && (keySetting == null || s.Key == keySetting)
+                    s => s.SettingId == settingId && (keySetting == null || s.Code == keySetting)
                 );
 
                 return setting;
@@ -81,6 +78,5 @@ namespace AdionFA.Core.Domain.Services.Commons
                 throw;
             }
         }
-        #endregion
     }
 }

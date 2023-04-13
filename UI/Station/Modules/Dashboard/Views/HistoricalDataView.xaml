@@ -136,10 +136,10 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1*" Binding="{Binding StartDateFormat}" Header="{x:Static commonResources:CommonResources.StartDate}" />
                 <DataGridTextColumn Width="1*" Binding="{Binding StartTime}" Header="{x:Static commonResources:CommonResources.StartTime}" />
-                <DataGridTextColumn Width="1*" Binding="{Binding OpenPrice}" Header="{x:Static commonResources:CommonResources.OpenPrice}" />
-                <DataGridTextColumn Width="1*" Binding="{Binding MaxPrice}" Header="{x:Static commonResources:CommonResources.MaxPrice}" />
-                <DataGridTextColumn Width="1*" Binding="{Binding MinPrice}" Header="{x:Static commonResources:CommonResources.MinPrice}" />
-                <DataGridTextColumn Width="1*" Binding="{Binding ClosePrice}" Header="{x:Static commonResources:CommonResources.ClosePrice}" />
+                <DataGridTextColumn Width="1*" Binding="{Binding Open}" Header="{x:Static commonResources:CommonResources.OpenPrice}" />
+                <DataGridTextColumn Width="1*" Binding="{Binding High}" Header="{x:Static commonResources:CommonResources.MaxPrice}" />
+                <DataGridTextColumn Width="1*" Binding="{Binding Low}" Header="{x:Static commonResources:CommonResources.MinPrice}" />
+                <DataGridTextColumn Width="1*" Binding="{Binding Close}" Header="{x:Static commonResources:CommonResources.ClosePrice}" />
                 <DataGridTextColumn Width="1*" Binding="{Binding Volume}" Header="{x:Static commonResources:CommonResources.Volume}" />
             </DataGrid.Columns>
         </DataGrid>

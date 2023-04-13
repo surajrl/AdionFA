@@ -16,20 +16,10 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 {
     public class SettingService : ISettingService
     {
-        #region Services
+        public readonly IMapper Mapper;
 
         public readonly IMarketDataServiceAgent HistoricalDataService;
         public readonly IProjectServiceAgent ProjectService;
-
-        #endregion Services
-
-        #region AutoMapper
-
-        public readonly IMapper Mapper;
-
-        #endregion AutoMapper
-
-        #region Constructor
 
         public SettingService(
             IMarketDataServiceAgent historicalDataService,
@@ -44,9 +34,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
             }).CreateMapper();
         }
 
-        #endregion Constructor
-
-        #region Configurations
+        // Global Configuration
 
         public async Task<IList<ProjectGlobalConfigurationVM>> GetAllGlobalConfigurations(bool includeGraph = false)
         {
@@ -100,7 +88,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
             {
                 int factor = 3600;
 
-                #region Convert Hours to Milliseconds Europe
+                // Convert Hours to Milliseconds Europe
 
                 var europa = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe
@@ -108,9 +96,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
                 europa.FromTimeInSeconds = config.FromTimeInSecondsEurope?.Hour * factor;
                 europa.ToTimeInSeconds = config.ToTimeInSecondsEurope?.Hour * factor;
 
-                #endregion Convert Hours to Milliseconds Europe
-
-                #region Convert Hours to Milliseconds America
+                // Convert Hours to Milliseconds America
 
                 var america = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.America
@@ -118,17 +104,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
                 america.FromTimeInSeconds = config.FromTimeInSecondsAmerica?.Hour * factor;
                 america.ToTimeInSeconds = config.ToTimeInSecondsAmerica?.Hour * factor;
 
-                #endregion Convert Hours to Milliseconds America
-
-                #region Convert Hours to Milliseconds Asia
+                // Convert Hours to Milliseconds Asia
 
                 var asia = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia
                     );
                 asia.FromTimeInSeconds = config.FromTimeInSecondsAsia?.Hour * factor;
                 asia.ToTimeInSeconds = config.ToTimeInSecondsAsia?.Hour * factor;
-
-                #endregion Convert Hours to Milliseconds Asia
 
                 var configVm = Mapper.Map<ProjectGlobalConfigurationVM, ProjectGlobalConfigModel>(config);
 
@@ -142,9 +124,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        #endregion Configurations
-
-        #region Market Data
+        // Historical Data
 
         public async Task<IList<HistoricalDataVM>> GetAllHistoricalData(bool includeGraph = false)
         {
@@ -167,13 +147,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
                 HistoricalDataVM vm = await HistoricalDataService.GetHistoricalData(marketId, symbolId, timeframeId);
 
                 var settingVm = Mapper.Map<HistoricalDataVM, UploadHistoricalDataModel>(vm) ?? new UploadHistoricalDataModel();
-                List<HistoricalDataDetailSettingVM> details = vm?.HistoricalDataDetails.Select(
-                   d => Mapper.Map<HistoricalDataDetailVM, HistoricalDataDetailSettingVM>(d))
+                List<HistoricalDataCandleSettingVM> details = vm?.HistoricalDataCandles.Select(
+                   d => Mapper.Map<HistoricalDataCandleVM, HistoricalDataCandleSettingVM>(d))
                             .OrderBy(h => h.StartDate).ThenBy(h => h.StartTime).ToList()
-                            ?? Array.Empty<HistoricalDataDetailSettingVM>().ToList();
+                            ?? Array.Empty<HistoricalDataCandleSettingVM>().ToList();
 
-                settingVm.HistoricalDataDetails?.Clear();
-                settingVm.HistoricalDataDetailSettings = details;
+                settingVm.HistoricalDataCandles?.Clear();
+                settingVm.HistoricalDataCandleSettings = details;
 
                 return settingVm;
             }
@@ -212,18 +192,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        #endregion Market Data
-
-        #region Project
-
-        public async Task<bool> CreateProject(CreateProjectModel project)
+        public async Task<bool> UpdateHistoricalData(DownloadHistoricalDataModel vm)
         {
             try
             {
-                var result = await ProjectService.CreateProject(
-                    project,
-                    project.ConfigurationId ?? 0,
-                    project.HistoricalDataId ?? 0);
+                var result = await HistoricalDataService.CreateHistoricalData(vm);
                 return result.IsSuccess;
             }
             catch (Exception ex)
@@ -233,6 +206,24 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        #endregion Project
+        // Project
+
+        public async Task<bool> CreateProject(CreateProjectModel project)
+        {
+            try
+            {
+                var result = await ProjectService.CreateProject(
+                    project,
+                    project.ConfigurationId ?? 0,
+                    project.HistoricalDataId ?? 0);
+
+                return result.IsSuccess;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                throw;
+            }
+        }
     }
 }

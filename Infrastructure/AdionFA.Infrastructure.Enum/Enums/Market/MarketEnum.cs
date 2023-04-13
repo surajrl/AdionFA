@@ -5,7 +5,7 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum MarketEnum
     {
-        [Metadata(codeKey: "Forex", nameKey: "Forex", resourceType: typeof(EnumResources))]
+        [Metadata("Forex", "Forex", resourceType: typeof(EnumResources))]
         Forex = 1,
     }
 }

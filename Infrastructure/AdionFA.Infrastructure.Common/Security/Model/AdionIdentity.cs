@@ -14,7 +14,6 @@ namespace AdionFA.Infrastructure.Common.Security.Model
         [IoCArgument]
         public string Owner { get; }
 
-        #region Ctor
         public AdionIdentity()
         {
         }
@@ -25,7 +24,6 @@ namespace AdionFA.Infrastructure.Common.Security.Model
             OwnerId = ownerId;
             Owner = owner;
         }
-        #endregion
     }
 
     public class AnonymousIdentity : AdionIdentity

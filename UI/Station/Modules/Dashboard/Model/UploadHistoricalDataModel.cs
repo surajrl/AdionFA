@@ -9,23 +9,20 @@ namespace AdionFA.UI.Station.Module.Dashboard.Model
     public class UploadHistoricalDataModel : HistoricalDataVM, IModelValidator
     {
         private string _filePathHistoricalData;
-
         public string FilePathHistoricalData
         {
             get => _filePathHistoricalData;
             set => SetProperty(ref _filePathHistoricalData, value);
         }
 
-        public IList<HistoricalDataDetailSettingVM> HistoricalDataDetailSettings { get; set; }
+        public IList<HistoricalDataCandleSettingVM> HistoricalDataCandleSettings { get; set; }
 
-        #region Validation
+        // Validation
 
         public ValidationResult GetValidationResult()
         {
             UploadHistoricalDataVMValidator v = new();
             return v.Validate(this);
         }
-
-        #endregion Validation
     }
 }

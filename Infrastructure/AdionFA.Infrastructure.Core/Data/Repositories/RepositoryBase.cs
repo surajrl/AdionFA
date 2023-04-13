@@ -2,26 +2,27 @@
 using AdionFA.Core.Domain.Contracts.Bases;
 using AdionFA.Core.Domain.Contracts.Repositories;
 using AdionFA.Core.Domain.Extensions;
-using AdionFA.Infrastructure.Core.Data.Repositories.Extension;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AdionFA.Infrastructure.Core.Data.Repositories
 {
     public abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : EntityBase
     {
-        #region Identity
+        // Identity
 
         public string _tenantId { get; set; }
         public string _ownerId { get; set; }
         public string _owner { get; set; }
 
-        #endregion Identity
+        // Database
 
         protected DbContext DatabaseContext;
 
@@ -37,7 +38,7 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
                 entity.Inaccesible = false;
                 entity.CreatedOn = DateTime.UtcNow;
 
-                DatabaseContext.Set<TEntity>().Update(entity);
+                DatabaseContext.Set<TEntity>().Add(entity);
 
                 if (autoSave)
                     DatabaseContext.SaveChanges();
@@ -53,7 +54,6 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
         {
             entity.UpdatedById = _ownerId;
             entity.UpdatedByUserName = _owner;
-
             entity.UpdatedOn = DateTime.UtcNow;
 
             var entry = DatabaseContext.Entry(entity);
@@ -101,7 +101,7 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
             return query.Any();
         }
 
-        #region Get All
+        // Get All
 
         public virtual IQueryable<TEntity> AsNoTracking()
         {
@@ -173,9 +173,7 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
             return query;
         }
 
-        #endregion Get All
-
-        #region FirstOrDefault
+        // FirstOrDefault
 
         public virtual TEntity FirstOrDefault()
         {
@@ -207,9 +205,7 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
             return query.FirstOrDefault();
         }
 
-        #endregion FirstOrDefault
-
-        #region Temporal Patterns
+        // Temporal Patterns
 
         public TEntity LastTemporalRecord()
         {
@@ -221,65 +217,7 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
             return null;
         }
 
-        #endregion Temporal Patterns
-
-        #region Audit
-
-        /*private void FillAuditProperties(
-            string tenantId, string ownerId, string owner, DateTime? TPT = null, bool? deepFill = true)
-        {
-            DateTime dt = DateTime.UtcNow;
-
-            FillProperties(entity);
-
-            if (deepFill ?? false)
-            {
-                var properties = entity.GetType().GetProperties().Where(p => p.CanWrite).ToList();
-                foreach (var info in properties)
-                {
-                    if (info.PropertyType.IsSubclassOf(typeof(EntityBase)))
-                    {
-                        FillAuditProperties(((EntityBase)info.GetValue(entity, null)),
-                            tenantId, ownerId, owner, dt, deepFill);
-                    }
-                    if (info.GetValue(entity, null) is ICollection items &&
-                            info.PropertyType.IsGenericType && info.PropertyType.GetGenericArguments()[0].IsSubclassOf(typeof(EntityBase)))
-                    {
-                        foreach (var item in items)
-                        {
-                            FillAuditProperties(((EntityBase)item), tenantId, ownerId, owner, dt, deepFill);
-                        }
-                    }
-                }
-            }
-
-            void FillProperties(Object obj)
-            {
-                if (obj is EntityBase eb)
-                {
-                    eb.IsDeleted = false;
-                    eb.Inaccesible = false;
-
-                    eb.TenantId = tenantId;
-
-                    eb.CreatedById = ownerId;
-                    eb.CreatedByUserName = owner;
-                    eb.CreatedOn = dt;
-
-                    eb.UpdatedById = ownerId;
-                    eb.UpdatedByUserName = owner;
-                    eb.UpdatedOn = dt;
-                }
-
-                if (obj is ITimeSensitive ts && TPT != null)
-                {
-                    ts.StartDate = TPT.Value;
-                    ts.EndDate = null;
-                }
-            }
-    }*/
-
-        #endregion Audit
+        // Save
 
         public void SaveChanges()
         {

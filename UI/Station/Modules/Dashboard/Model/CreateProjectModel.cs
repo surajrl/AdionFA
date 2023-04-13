@@ -8,7 +8,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.Model
     public class CreateProjectModel : ProjectVM, IModelValidator
     {
         private int? _configurationId;
-
         public int? ConfigurationId
         {
             get => _configurationId;
@@ -16,7 +15,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.Model
         }
 
         private int? _historicalDataId;
-
         public int? HistoricalDataId
         {
             get => _historicalDataId;

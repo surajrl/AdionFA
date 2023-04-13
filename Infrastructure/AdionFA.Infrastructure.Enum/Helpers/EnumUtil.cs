@@ -12,11 +12,9 @@ namespace AdionFA.Infrastructure.Common.Helpers
     {
         public static IEnumerable<Metadata> ToEnumerable<T>(bool insertNullable = false)
         {
-            MethodInfo m = typeof(EnumExtension).GetMethod("GetMetadata");
-            if (m == null)
-                throw new NullReferenceException("Method GetMetadata not found...");
-
+            MethodInfo m = typeof(EnumExtension).GetMethod("GetMetadata") ?? throw new NullReferenceException("Method GetMetadata not found...");
             IList<Metadata> result = Array.Empty<Metadata>().ToList();
+
             foreach (var item in Enum.GetValues(typeof(T)))
             {
                 var metadata = (Metadata)m.Invoke(item, new object[] { item });
@@ -40,51 +38,19 @@ namespace AdionFA.Infrastructure.Common.Helpers
 
         public static TimeframeEnum GetTimeframeEnum(int code)
         {
-            TimeframeEnum result;
-
-            switch (code)
+            var result = code switch
             {
-                case 1:
-                    result = TimeframeEnum.M1;
-                    break;
-
-                case 5:
-                    result = TimeframeEnum.M5;
-                    break;
-
-                case 15:
-                    result = TimeframeEnum.M15;
-                    break;
-
-                case 30:
-                    result = TimeframeEnum.M30;
-                    break;
-
-                case 16385:
-                    result = TimeframeEnum.H1;
-                    break;
-
-                case 16388:
-                    result = TimeframeEnum.H4;
-                    break;
-
-                case 16408:
-                    result = TimeframeEnum.D1;
-                    break;
-
-                case 32769:
-                    result = TimeframeEnum.W1;
-                    break;
-
-                case 49153:
-                    result = TimeframeEnum.M1;
-                    break;
-
-                default:
-                    result = TimeframeEnum.D1;
-                    break;
-            }
-
+                1 => TimeframeEnum.M1,
+                5 => TimeframeEnum.M5,
+                15 => TimeframeEnum.M15,
+                30 => TimeframeEnum.M30,
+                16385 => TimeframeEnum.H1,
+                16388 => TimeframeEnum.H4,
+                16408 => TimeframeEnum.D1,
+                32769 => TimeframeEnum.W1,
+                49153 => TimeframeEnum.M1,
+                _ => TimeframeEnum.D1,
+            };
             return result;
         }
     }

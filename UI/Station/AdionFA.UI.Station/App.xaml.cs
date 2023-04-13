@@ -71,7 +71,6 @@ namespace AdionFA.UI.Station
 
             containerRegistry.RegisterSingleton<IMarketDataServiceAgent, MarketDataServiceAgent>();
             containerRegistry.RegisterSingleton<IProjectServiceAgent, ProjectServiceAgent>();
-            containerRegistry.RegisterSingleton<ISecurityServiceAgent, SecurityServiceAgent>();
             containerRegistry.RegisterSingleton<ISharedServiceAgent, SharedServiceAgent>();
             containerRegistry.RegisterSingleton<IMetaTraderService, MetaTraderService>();
 
@@ -153,7 +152,7 @@ namespace AdionFA.UI.Station
             ContainerLocator.Current.Resolve<IApplicationCommands>().EndAllProcessProjectCommand.Execute(false);
 
             ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
-            ContainerLocator.Current.Resolve<IProcessService>().StartProcessMetaTrader();
+            //ContainerLocator.Current.Resolve<IProcessService>().StartProcessMetaTrader();
 
             /*server = new Server
             {

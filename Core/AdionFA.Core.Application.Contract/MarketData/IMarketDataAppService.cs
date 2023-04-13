@@ -12,6 +12,7 @@ namespace AdionFA.Core.Application.Contracts.MarketData
         HistoricalDataDTO GetHistoricalData(int historicalDataId, bool includeGraph = false);
         HistoricalDataDTO GetHistoricalData(int marketId, int symbolId, int timeframeId);
         ResponseDTO CreateHistoricalData(HistoricalDataDTO historicalData);
+        ResponseDTO UpdateHistoricalData(HistoricalDataDTO historicalData);
 
         // Timeframe
 

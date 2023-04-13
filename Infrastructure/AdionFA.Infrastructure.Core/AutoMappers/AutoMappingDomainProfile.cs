@@ -1,5 +1,4 @@
 ﻿using AdionFA.Core.Domain.Aggregates.Common;
-using AdionFA.Core.Domain.Aggregates.Core;
 using AdionFA.Core.Domain.Aggregates.MarketData;
 using AdionFA.Core.Domain.Aggregates.MetaTrader;
 using AdionFA.Core.Domain.Aggregates.Organization;
@@ -7,7 +6,6 @@ using AdionFA.Core.Domain.Aggregates.Project;
 using AdionFA.Core.Domain.Aggregates.ReferenceData;
 
 using AdionFA.TransferObject.Common;
-using AdionFA.TransferObject.Core;
 using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.MetaTrader;
 using AdionFA.TransferObject.Organization;
@@ -27,17 +25,13 @@ namespace AdionFA.Infrastructure.Core.AutoMappers
             CreateMap<EntityType, EntityTypeDTO>().ReverseMap();
             CreateMap<Setting, SettingDTO>().ReverseMap();
 
-            // Core
-            CreateMap<CoreUser, CoreUserDTO>().ReverseMap();
-            CreateMap<CoreUserType, CoreUserTypeDTO>().ReverseMap();
-
             // Market
             CreateMap<Symbol, SymbolDTO>().ReverseMap();
             CreateMap<Timeframe, TimeframeDTO>().ReverseMap();
             CreateMap<CurrencySpread, CurrencySpreadDTO>().ReverseMap();
             CreateMap<Market, MarketDTO>().ReverseMap();
             CreateMap<HistoricalData, HistoricalDataDTO>().ReverseMap();
-            CreateMap<HistoricalDataDetail, HistoricalDataDetailDTO>().ReverseMap();
+            CreateMap<HistoricalDataCandle, HistoricalDataCandleDTO>().ReverseMap();
             CreateMap<MarketRegion, MarketRegionDTO>().ReverseMap();
 
             // MetaTrader

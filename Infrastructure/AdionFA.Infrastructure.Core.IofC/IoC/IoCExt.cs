@@ -1,5 +1,4 @@
-﻿using AdionFA.Infrastructure.Core.IofC.Modules.Security;
-using AdionFA.Infrastructure.Core.IofC.Modules.Projects;
+﻿using AdionFA.Infrastructure.Core.IofC.Modules.Projects;
 using AdionFA.Infrastructure.Core.IofC.Modules.Commons;
 using AdionFA.Infrastructure.Core.IofC.Modules.Markets;
 using AdionFA.Infrastructure.Core.IofC.Modules.Extractor;
@@ -24,7 +23,6 @@ namespace AdionFA.Infrastructure.Core.IofCExt
             ioC.Load(new AssembledBuilderModule());
             ioC.Load(new HistoricalDataModule());
             ioC.Load(new ProjectModule());
-            ioC.Load(new SecurityModule());
             ioC.Load(new TradeModule());
         }
     }

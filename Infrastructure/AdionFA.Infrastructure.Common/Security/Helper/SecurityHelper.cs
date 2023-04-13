@@ -20,14 +20,14 @@ namespace AdionFA.Infrastructure.Common.Security.Helper
 
         public static Dictionary<string, string> IdentityToArguments()
         {
-            Dictionary<string, string> arguments = new Dictionary<string, string>();
+            var arguments = new Dictionary<string, string>();
 
             List<PropertyInfo> properties = typeof(AdionIdentity).GetFilteredProperties<IoCArgumentAttribute>(true).ToList();
             properties.ForEach(p =>
             {
                 var pValue = p.GetValue(Identity);
-                if(pValue != null)
-                    arguments.Add(p.Name.ToLower(), pValue?.ToString());    
+                if (pValue != null)
+                    arguments.Add(p.Name.ToLower(), pValue?.ToString());
             });
 
             return arguments;

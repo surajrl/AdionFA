@@ -53,7 +53,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                     MessageHelper.ShowMessages(this,
                         EntityTypeEnum.Project.GetMetadata().Description,
-                            validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
                 }

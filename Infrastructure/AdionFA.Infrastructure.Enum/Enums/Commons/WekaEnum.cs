@@ -5,6 +5,6 @@ namespace AdionFA.Infrastructure.Enums
     public enum WekaEnum
     {
         [Description("REPTree")]
-        REPTree
+        REPTree = 0
     }
 }

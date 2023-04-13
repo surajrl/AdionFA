@@ -10,7 +10,6 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Project
         public int ProjectId { get; set; }
 
         private string _projectName;
-
         public string ProjectName
         {
             get => _projectName;

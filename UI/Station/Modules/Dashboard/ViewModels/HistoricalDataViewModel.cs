@@ -82,12 +82,15 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             {
                 IsTransactionActive = true;
                 HistoricalDataDetails?.Clear();
+
+                if (Symbol == null || Timeframe == null) return;
+
                 var vm = await _settingService.GetHistoricalData(
                                     MarketId ?? 0,
                                     Symbol.SymbolId,
                                     Timeframe.TimeframeId);
 
-                HistoricalDataDetails = new ObservableCollection<HistoricalDataDetailSettingVM>(vm.HistoricalDataDetailSettings);
+                HistoricalDataDetails = new ObservableCollection<HistoricalDataCandleSettingVM>(vm.HistoricalDataCandleSettings);
             }
             catch (Exception ex)
             {
@@ -131,8 +134,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             set => SetProperty(ref _timeframe, value);
         }
 
-        private ObservableCollection<HistoricalDataDetailSettingVM> _historicalDataDetails;
-        public ObservableCollection<HistoricalDataDetailSettingVM> HistoricalDataDetails
+        private ObservableCollection<HistoricalDataCandleSettingVM> _historicalDataDetails;
+        public ObservableCollection<HistoricalDataCandleSettingVM> HistoricalDataDetails
         {
             get => _historicalDataDetails;
             set => SetProperty(ref _historicalDataDetails, value);

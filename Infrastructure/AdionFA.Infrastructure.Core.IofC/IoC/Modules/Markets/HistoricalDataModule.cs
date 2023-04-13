@@ -1,7 +1,7 @@
 ﻿using AdionFA.Core.API.Contracts.MarketData;
 using AdionFA.Core.API.MarketData;
 using AdionFA.Core.Application.Contracts.MarketData;
-using AdionFA.Core.Application.Services.Markets;
+using AdionFA.Core.Application.Services.MarketData;
 using AdionFA.Core.Domain.Contracts.MarketData;
 using AdionFA.Core.Domain.Services.MarketData;
 using AdionFA.Infrastructure.Common.IofC;

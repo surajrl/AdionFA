@@ -4,13 +4,13 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum NodeAssembledTypeEnum
     {
-        [Metadata("Start")]
+        [Metadata(codeKey: "Start")]
         Start = 1,
 
-        [Metadata("End")] 
+        [Metadata(codeKey: "End")]
         End = 2,
 
-        [Metadata("Backtest")]
+        [Metadata(codeKey: "Backtest")]
         Backtest = 3,
     }
 }

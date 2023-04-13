@@ -2,7 +2,7 @@
 
 namespace AdionFA.TransferObject.ReferenceData
 {
-    public class CurrencyDTO : ReferenceDataBaseExtendedDTO
+    public class CurrencyDTO : ReferenceDataBaseDTO
     {
         public int CurrencyId { get; set; }
     }

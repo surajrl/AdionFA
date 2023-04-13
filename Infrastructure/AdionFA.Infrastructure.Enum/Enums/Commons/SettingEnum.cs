@@ -10,17 +10,17 @@ namespace AdionFA.Infrastructure.Enums
 
         [Metadata("Theme", "Theme", "Light", resourceType: typeof(EnumResources))]
         Theme = 2,
-        
+
         [Metadata("Color", "Color", "Orange", resourceType: typeof(EnumResources))]
         Color = 3,
 
-        [Metadata("DefaultWorkspace", "DefaultWorkspace", resourceType: typeof(EnumResources))]
+        [Metadata("DefaultWorkspace", "DefaultWorkspace", "", resourceType: typeof(EnumResources))]
         DefaultWorkspace = 4,
 
-        [Metadata("IPAddress", "IPAddress", resourceType: typeof(EnumResources))]
-        IPAddress = 5,
-        
-        [Metadata("Port", "Port", resourceType: typeof(EnumResources))]
+        [Metadata("Host", "Host", "127.0.0.1", resourceType: typeof(EnumResources))]
+        Host = 5,
+
+        [Metadata("Port", "Port", "5555", resourceType: typeof(EnumResources))]
         Port = 6,
     }
 }

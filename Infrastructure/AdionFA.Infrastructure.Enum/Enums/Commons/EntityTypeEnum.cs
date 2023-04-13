@@ -5,52 +5,34 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum EntityTypeEnum
     {
-        #region Common 1 - 99
+        // Common 1 - 99
 
-        [Metadata("SETT", "Setting", "Setting", resourceType: typeof(EnumResources))]
+        [Metadata("SETT", "Setting", descriptionKey: "Setting", resourceType: typeof(EnumResources))]
         Setting = 1,
 
-        #endregion  
+        // Market 400 - 499
 
-        #region Core 100 - 199
-
-        #endregion
-
-        #region Contact 200 - 299
-
-        #endregion
-
-        #region Organization 300 - 399
-
-        #endregion
-
-        #region Market 400 - 499
-
-        [Metadata("MKDT", "MarketData", "Market Data", resourceType: typeof(EnumResources))]
+        [Metadata("MKDT", "MarketData", descriptionKey: "Market Data", resourceType: typeof(EnumResources))]
         MarketData = 400,
 
-        #endregion
+        // Project 500 - 599
 
-        #region Project 500 - 599
-
-        [Metadata("PROJ", "Project", "Project", resourceType: typeof(EnumResources))]
+        [Metadata("PROJ", "Project", descriptionKey: "Project", resourceType: typeof(EnumResources))]
         Project = 500,
 
-        [Metadata("PROJCONFIG", "ProjectConfiguration", "Project Configuration", resourceType: typeof(EnumResources))]
+        [Metadata("PROJCONFIG", "ProjectConfiguration", descriptionKey: "Project Configuration", resourceType: typeof(EnumResources))]
         ProjectConfiguration = 501,
 
-        [Metadata("CONFIG", "ProjectGlobalConfiguration", "Project Global Configuration", resourceType: typeof(EnumResources))]
+        [Metadata("CONFIG", "ProjectGlobalConfiguration", descriptionKey: "Project Global Configuration", resourceType: typeof(EnumResources))]
         ProjectGlobalConfiguration = 502,
-        
-        [Metadata("EXT", "Extractor", "Extractor", resourceType: typeof(EnumResources))]
+
+        [Metadata("EXT", "Extractor", descriptionKey: "Extractor", resourceType: typeof(EnumResources))]
         Extractor = 503,
 
-        [Metadata("STRBUILD", "StrategyBuilder", "Strategy Builder", resourceType: typeof(EnumResources))]
+        [Metadata("STRBUILD", "StrategyBuilder", descriptionKey: "Strategy Builder", resourceType: typeof(EnumResources))]
         StrategyBuilder = 504,
 
-        [Metadata("ASSBUILD", "AssembledBuilder", "Assembled Builder", resourceType: typeof(EnumResources))]
+        [Metadata("ASSBUILD", "AssembledBuilder", descriptionKey: "Assembled Builder", resourceType: typeof(EnumResources))]
         AssembledBuilder = 505,
-
-        #endregion
     }
 }

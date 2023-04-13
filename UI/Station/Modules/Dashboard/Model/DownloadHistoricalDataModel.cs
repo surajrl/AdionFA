@@ -14,7 +14,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Model
     {
         public string FilePathHistoricalData { get; set; }
 
-        public IList<HistoricalDataDetailSettingVM> HistoricalDataDetailSettings { get; set; }
+        public IList<HistoricalDataCandleSettingVM> HistoricalDataCandleSettings { get; set; }
 
         public ValidationResult GetValidationResult()
         {

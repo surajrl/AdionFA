@@ -13,18 +13,12 @@ namespace AdionFA.UI.Station.Infrastructure.Contracts.AppServices
 
         #endregion ServiceHost
 
-        #region Setting
+        // Setting
 
         Task<IList<SettingVM>> GetAllAppSetting();
-
         SettingVM GetSetting(int settingId, string keySetting = null);
-
         Task<SettingVM> GetSettingAsync(int settingId, string keySetting = null);
-
         Task<ResponseVM> CreateAppSetting(SettingVM setting);
-
         Task<ResponseVM> UpdateAppSetting(SettingVM setting);
-
-        #endregion Setting
     }
 }

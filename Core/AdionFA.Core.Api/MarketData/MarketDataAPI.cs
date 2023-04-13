@@ -30,12 +30,21 @@ namespace AdionFA.Core.API.MarketData
             return service.GetHistoricalData(marketId, symbolId, currencyPeriodId);
         }
 
-        public ResponseDTO CreateHistoricalData(HistoricalDataDTO market)
+        public ResponseDTO CreateHistoricalData(HistoricalDataDTO historicalData)
         {
             using (var service = IoC.Get<IMarketDataAppService>())
             using (service.Transaction<IAdionFADbContext>())
             {
-                return service.CreateHistoricalData(market);
+                return service.CreateHistoricalData(historicalData);
+            }
+        }
+
+        public ResponseDTO UpdateHistoricalData(HistoricalDataDTO historicalData)
+        {
+            using (var service = IoC.Get<IMarketDataAppService>())
+            using (service.Transaction<IAdionFADbContext>())
+            {
+                return service.UpdateHistoricalData(historicalData);
             }
         }
 

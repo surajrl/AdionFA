@@ -12,6 +12,7 @@ namespace AdionFA.Core.Domain.Contracts.MarketData
         HistoricalData GetHistoricalData(int historicalDataId, bool includeGraph = false);
         HistoricalData GetHistoricalData(int marketId, int currencyPairId, int timeframeId);
         int CreateHistoricalData(HistoricalData historicalData);
+        int UpdateHistoricalData(HistoricalData historicalData);
 
         // Timeframe
 

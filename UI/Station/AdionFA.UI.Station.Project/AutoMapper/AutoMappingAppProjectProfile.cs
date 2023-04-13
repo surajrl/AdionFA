@@ -9,7 +9,6 @@ using AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model;
 using AdionFA.UI.Station.Project.Model.AssembledBuilder;
 using AdionFA.TransferObject.Common;
 using AdionFA.UI.Station.Infrastructure.Model.Common;
-using AdionFA.TransferObject.Core;
 using AdionFA.UI.Station.Infrastructure.Model.Core;
 using AdionFA.UI.Station.Infrastructure.Model.Market;
 using AdionFA.TransferObject.MarketData;
@@ -35,16 +34,12 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<EntityTypeDTO, EntityTypeVM>().ReverseMap();
             CreateMap<SettingDTO, SettingVM>().ReverseMap();
 
-            // Core
-            CreateMap<CoreUserDTO, CoreUserVM>().ReverseMap();
-            CreateMap<CoreUserTypeDTO, CoreUserTypeVM>().ReverseMap();
-
             // Market Data
             CreateMap<TimeframeDTO, TimeframeVM>().ReverseMap();
             CreateMap<CurrencySpreadDTO, CurrencySpreadVM>().ReverseMap();
             CreateMap<MarketDTO, MarketVM>().ReverseMap();
             CreateMap<HistoricalDataDTO, HistoricalDataVM>().ReverseMap();
-            CreateMap<HistoricalDataDetailDTO, HistoricalDataDetailVM>().ReverseMap();
+            CreateMap<HistoricalDataCandleDTO, HistoricalDataCandleVM>().ReverseMap();
             CreateMap<MarketRegionDTO, MarketRegionVM>().ReverseMap();
 
             // Organization

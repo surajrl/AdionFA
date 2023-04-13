@@ -97,8 +97,8 @@
 
         <!-- IP Address -->
         <TextBlock VerticalAlignment="Center"
-                   Text="IP Address"/>
-        <TextBox Text="{Binding IPAddress}"/>
+                   Text="Host"/>
+        <TextBox Text="{Binding Host}"/>
 
         <Separator Margin="5" Background="Transparent"/>
 
@@ -106,17 +106,5 @@
         <TextBlock VerticalAlignment="Center"
                    Text="Port"/>
         <TextBox Text="{Binding Port}"/>
-
-        <Separator Margin="5" Background="Transparent"/>
-
-        <Button Content="Connect to MetaTrader 5"
-                Command="{Binding ConnectCommand}"
-                IsEnabled="{Binding IsMetaTraderConnected, Converter={StaticResource InverseBooleanConverter}}"/>
-
-        <Separator Margin="5" Background="Transparent"/>
-
-        <Button Content="Disconnect from MetaTrader 5"
-                Command="{Binding DisconnectCommand}"
-                IsEnabled="{Binding IsMetaTraderConnected}"/>
     </StackPanel>
 </StackPanel>

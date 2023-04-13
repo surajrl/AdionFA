@@ -37,11 +37,4 @@
             </behaviors:EventTrigger>
         </behaviors:Interaction.Triggers>
     </Button>
-
-    <!-- MetaTrader Connection Status -->
-    <StackPanel>
-        <TextBlock Text="MetaTrader Connection Status" />
-        <StatusBar Width="100" Height="10"
-                   Background="{Binding IsMetaTraderConnected, Converter={StaticResource BooleanToBrushConverter}}" />
-    </StackPanel>
 </StackPanel>

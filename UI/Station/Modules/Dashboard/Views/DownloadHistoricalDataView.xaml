@@ -70,7 +70,6 @@
         <Grid Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button x:Name="RefreshBtn" Width="100" Height="40" Margin="0, 10, 0, 0"
                     Command="{Binding RefreshBtnCommand}"
-                    IsEnabled="{Binding IsMetaTraderConnected}"
                     HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal"
                             Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -87,7 +86,6 @@
         <Grid Grid.Row="0" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button x:Name="DownloadBtn" Width="100" Height="40" Margin="0, 10, 0, 0"
                     Command="{Binding DownloadBtnCommand}"
-                    IsEnabled="{Binding IsMetaTraderConnected}"
                     HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal"
                             Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -140,10 +138,10 @@
                                     <Run Text="Symbol *"/>
                                     </TextBlock>
                                 </Label>
-                                <ComboBox x:Name="SymbolCb"
-                                          ItemsSource="{Binding Symbols}" MinWidth="150"
+                                <ComboBox ItemsSource="{Binding Symbols}" MinWidth="150"
                                           DisplayMemberPath="Name"
-                                          SelectedItem="{Binding DownloadHistoricalDataModel.Symbol, Mode=TwoWay}"
+                                          SelectedValuePath="SymbolId"
+                                          SelectedValue="{Binding DownloadHistoricalDataModel.SymbolId, Mode=TwoWay}"
                                           Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                                 </ComboBox>
                             </StackPanel>
@@ -156,11 +154,11 @@
                                         <Run Text="Timeframe *"/>
                                     </TextBlock>
                                 </Label>
-                                <ComboBox x:Name="TimeframeCb" MinWidth="150"
-                                          ItemsSource="{Binding Timeframes}"
+                                <ComboBox ItemsSource="{Binding Timeframes}" MinWidth="150"
                                           DisplayMemberPath="Name"
-                                          Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                          SelectedItem="{Binding DownloadHistoricalDataModel.Timeframe, Mode=TwoWay}">
+                                          SelectedValuePath="TimeframeId"
+                                          SelectedValue="{Binding DownloadHistoricalDataModel.TimeframeId, Mode=TwoWay}"
+                                          Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                                 </ComboBox>
                             </StackPanel>
                             <!--#endregion-->

@@ -2,7 +2,7 @@
 
 namespace AdionFA.UI.Station.Infrastructure.Model.Market
 {
-    public class CurrencySpreadVM : ReferenceDataBaseExtendedVM
+    public class CurrencySpreadVM : ReferenceDataBaseVM
     {
         public int CurrencySpreadId { get; set; }
     }

@@ -24,15 +24,20 @@ using AdionFA.Infrastructure.I18n.Resources;
 using System.Diagnostics;
 using AdionFA.UI.Station.Module.Dashboard.Services;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using NetMQ.Sockets;
+using NetMQ;
+using Newtonsoft.Json;
+using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
+using DynamicData;
+using System.Threading.Tasks;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
     public class DownloadHistoricalDataViewModel : ViewModelBase
     {
-        private readonly IMetaTraderService _metaTraderService;
-        private readonly IMarketDataServiceAgent _historicalDataService;
+        private readonly ISharedServiceAgent _sharedService;
+        private readonly IMarketDataServiceAgent _marketDataService;
         private readonly ISettingService _settingService;
-        private readonly IEventAggregator _eventAggregator;
 
         private ICommand FlyoutCommand { get; }
         public ICommand DownloadBtnCommand { get; }
@@ -40,20 +45,17 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
         public DownloadHistoricalDataViewModel(
             IApplicationCommands applicationCommands,
-            IMetaTraderService metaTraderService,
             ISettingService settingService,
-            IMarketDataServiceAgent historicalDataService)
+            IMarketDataServiceAgent marketDataService,
+            ISharedServiceAgent sharedService)
         {
-            _metaTraderService = metaTraderService;
+            _sharedService = sharedService;
             _settingService = settingService;
-            _historicalDataService = historicalDataService;
+            _marketDataService = marketDataService;
 
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             DownloadBtnCommand = new DelegateCommand(OnDownloadAsync);
             RefreshBtnCommand = new DelegateCommand(OnRefreshAsync);
-
-            _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<MetaTraderConnectedEvent>().Subscribe(p => IsMetaTraderConnected = p);
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
@@ -70,41 +72,64 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         {
             IsTransactionActive = true;
 
-            var validator = DownloadHistoricalDataModel.Validate();
-            if (!validator.IsValid)
-            {
-                IsTransactionActive = false;
-
-                MessageHelper.ShowMessages(this,
-                    "Historical Data Download Configuration - Error",
-                    validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
-
-                return;
-            }
-
-            var symbol = await _historicalDataService.GetSymbol(DownloadHistoricalDataModel.Symbol.Name);
-            DownloadHistoricalDataModel.Symbol = symbol;
-
-            DateTime modifiedStart = new(
-                DownloadHistoricalDataModel.StartDate.Year - 3,
-                DownloadHistoricalDataModel.StartDate.Month,
-                DownloadHistoricalDataModel.StartDate.Day,
-                DownloadHistoricalDataModel.StartDate.Hour,
-                DownloadHistoricalDataModel.StartDate.Minute,
-                DownloadHistoricalDataModel.StartDate.Second);
             try
             {
-                var filepath = await _metaTraderService.DownloadHistoricalDataAsync(
-                DownloadHistoricalDataModel.Symbol.Name,
-                int.Parse(DownloadHistoricalDataModel.Timeframe.Value),
-                DownloadHistoricalDataModel.StartDate,
-                DownloadHistoricalDataModel.EndDate).ConfigureAwait(true);
-
-                DownloadHistoricalDataModel.FilePathHistoricalData = filepath.Replace("\r\0", string.Empty);
-
-                if (CreateHistory())
+                var validator = DownloadHistoricalDataModel.Validate();
+                if (!validator.IsValid)
                 {
-                    var result = await _settingService.CreateHistoricalData(DownloadHistoricalDataModel);
+                    IsTransactionActive = false;
+
+                    MessageHelper.ShowMessages(this,
+                        "Historical Data Download Configuration - Error",
+                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+
+                    return;
+                }
+
+                DateTime modifiedStart = new(
+                    DownloadHistoricalDataModel.StartDate.Year - 3,
+                    DownloadHistoricalDataModel.StartDate.Month,
+                    DownloadHistoricalDataModel.StartDate.Day,
+                    DownloadHistoricalDataModel.StartDate.Hour,
+                    DownloadHistoricalDataModel.StartDate.Minute,
+                    DownloadHistoricalDataModel.StartDate.Second);
+
+                var symbol = await _marketDataService.GetSymbol(DownloadHistoricalDataModel.SymbolId).ConfigureAwait(true);
+                var timeframe = await _marketDataService.GetTimeframe(DownloadHistoricalDataModel.TimeframeId).ConfigureAwait(true);
+
+                var host = await _sharedService.GetSettingAsync((int)SettingEnum.Host).ConfigureAwait(true);
+                var port = await _sharedService.GetSettingAsync((int)SettingEnum.Port).ConfigureAwait(true);
+
+                using var requester = new RequestSocket($">tcp://{host.Value}:{port.Value}");
+
+                // Send request-----------------------------------------------------------------------------------------
+                var request = JsonConvert.SerializeObject(new ZmqDownloadHistoricalDataRequest
+                {
+                    Symbol = symbol.Name,
+                    Timeframe = (TimeframeEnum)int.Parse(timeframe.Value),
+                    Start = modifiedStart,
+                    End = DownloadHistoricalDataModel.EndDate,
+                });
+                requester.SendFrame(request);
+                Debug.WriteLine($"RequestSocket-Send:{request}");
+                // -----------------------------------------------------------------------------------------------------
+
+                // Receive response-------------------------------------------------------------------------------------
+                var timeout = new TimeSpan(0, 0, 5);
+                if (!requester.TryReceiveFrameString(timeout, out var response))
+                {
+                    throw new Exception($"Response not received from MetaTrader after {timeout.ToString("hh:mm:ss")}");
+                }
+
+                Debug.WriteLine($"RequestSocket-Receive:{response}");
+                // -----------------------------------------------------------------------------------------------------
+
+                var json = JsonConvert.DeserializeObject<ZmqResponse>(response);
+                DownloadHistoricalDataModel.FilePathHistoricalData = json.Data;
+
+                if (await CreateHistory().ConfigureAwait(true))
+                {
+                    var result = await _settingService.CreateHistoricalData(DownloadHistoricalDataModel).ConfigureAwait(true);
 
                     IsTransactionActive = false;
 
@@ -122,21 +147,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 IsTransactionActive = false;
             }
-            catch (SocketException ex)
-            {
-                MessageHelper.ShowMessage(this,
-                    "MetaTrader 5 Server",
-                    $"{ex.Message}"
-                    );
-
-                IsTransactionActive = false;
-            }
             catch (Exception ex)
             {
                 MessageHelper.ShowMessage(this,
                     "Error",
-                    $"{ex.Message}"
-                    );
+                    $"{ex.Message}");
 
                 IsTransactionActive = false;
             }
@@ -152,31 +167,44 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 try
                 {
-                    var symbols = await _metaTraderService.LoadSymbolListAsync().ConfigureAwait(true);
+                    var host = await _sharedService.GetSettingAsync((int)SettingEnum.Host).ConfigureAwait(true);
+                    var port = await _sharedService.GetSettingAsync((int)SettingEnum.Port).ConfigureAwait(true);
+
+                    using var requester = new RequestSocket($">tcp://{host.Value}:{port.Value}");
+
+                    // Send request-----------------------------------------------------------------------------------------
+                    requester.SendFrame(JsonConvert.SerializeObject(new ZmqLoadSymbolListRequest()));
+                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(new ZmqLoadSymbolListRequest())}");
+                    // -----------------------------------------------------------------------------------------------------
+
+                    // Receive response-------------------------------------------------------------------------------------
+
+                    var timeout = new TimeSpan(0, 0, 5);
+                    if (!requester.TryReceiveFrameString(timeout, out var response))
+                    {
+                        throw new Exception($"Response not received from MetaTrader");
+                    }
+
+                    Debug.WriteLine($"RequestSocket-Receive:{response}");
+                    // -----------------------------------------------------------------------------------------------------
+
+                    var json = JsonConvert.DeserializeObject<ZmqResponse>(response);
+                    var symbols = json.Data.Split(',').ToList();
+
                     symbols.ForEach(symbol =>
                     {
-                        symbol = symbol.Replace("\0", string.Empty);
-
-                        var newSymbol = new SymbolVM
-                        {
-                            Code = symbol,
-                            Name = symbol
-                        };
-
-                        _historicalDataService.CreateSymbol(newSymbol);
-                        Symbols.Add(newSymbol);
+                        _marketDataService.CreateSymbol(new SymbolVM { Name = symbol, Code = symbol });
                     });
 
                     IsTransactionActive = false;
 
                     PopulateViewModel();
                 }
-                catch (SocketException ex)
+                catch (Exception ex)
                 {
                     MessageHelper.ShowMessage(this,
-                        "MetaTrader 5 Server",
-                        $"{ex.Message}"
-                        );
+                        "Error",
+                        $"{ex.Message}");
 
                     IsTransactionActive = false;
                 }
@@ -189,47 +217,64 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             {
                 DownloadHistoricalDataModel = new DownloadHistoricalDataModel()
                 {
-                    HistoricalDataDetails = Array.Empty<HistoricalDataDetailVM>().ToList()
+                    HistoricalDataCandles = Array.Empty<HistoricalDataCandleVM>().ToList()
                 };
             }
 
-            // TODO: Load the markets from the database
             if (!Markets.Any())
                 Markets.AddRange(EnumUtil.ToEnumerable<MarketEnum>());
 
             if (!Timeframes.Any())
             {
-                var timeframes = await _historicalDataService.GetAllTimeframe().ConfigureAwait(true);
+                var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
                 timeframes.ForEach(Timeframes.Add);
+            }
+
+            if (!Symbols.Any())
+            {
+                var symbols = await _marketDataService.GetAllSymbol().ConfigureAwait(true);
+                symbols.ForEach(Symbols.Add);
             }
         }
 
-        private bool CreateHistory()
+        private async Task<bool> CreateHistory()
         {
             try
             {
-                List<Candle> result = CandleHelper.GetHistoryCandles(DownloadHistoricalDataModel.FilePathHistoricalData).ToList();
+                var result = CandleHelper.GetHistoryCandles(DownloadHistoricalDataModel.FilePathHistoricalData).ToList();
 
                 if (result.Count > 0)
                 {
                     result.ForEach(item =>
                     {
-                        DownloadHistoricalDataModel.HistoricalDataDetails.Add(new HistoricalDataDetailVM
+                        DownloadHistoricalDataModel.HistoricalDataCandles.Add(new HistoricalDataCandleVM
                         {
                             StartDate = item.Date,
                             StartTime = item.Time,
-                            OpenPrice = item.Open,
-                            MaxPrice = item.High,
-                            MinPrice = item.Low,
-                            ClosePrice = item.Close,
+                            Open = item.Open,
+                            High = item.High,
+                            Low = item.Low,
+                            Close = item.Close,
                             Volume = item.Volume
                         });
                     });
 
                     string marketName = ((MarketEnum)DownloadHistoricalDataModel.MarketId).GetMetadata().Name;
-                    string symbolName = DownloadHistoricalDataModel.Symbol.Name;
-                    string timeframeName = DownloadHistoricalDataModel.Timeframe.Code;
-                    DownloadHistoricalDataModel.Description = $"{marketName}.{symbolName}.{timeframeName}";
+                    var symbol = await _marketDataService.GetSymbol(DownloadHistoricalDataModel.SymbolId).ConfigureAwait(true);
+                    var timeframe = await _marketDataService.GetTimeframe(DownloadHistoricalDataModel.TimeframeId).ConfigureAwait(true);
+
+                    var candlesOrdered = result.OrderByDescending(candle => candle.Date);
+                    var firstCandleDate = candlesOrdered.LastOrDefault().Date;
+                    var lastCandleDate = candlesOrdered.FirstOrDefault().Date;
+
+                    DownloadHistoricalDataModel.EndDate = null;
+
+                    DownloadHistoricalDataModel.Description =
+                        $"{marketName}." +
+                        $"{symbol.Name}." +
+                        $"{timeframe.Code}." +
+                        $"{firstCandleDate:dd-MM-yyyy}." +
+                        $"{lastCandleDate:dd-MM-yyyy}";
 
                     return true;
                 }
@@ -250,23 +295,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         // View Bindings
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
             set => SetProperty(ref _isTransactionActive, value);
         }
 
-        private bool _isMetaTraderConnected;
-
-        public bool IsMetaTraderConnected
-        {
-            get => _isMetaTraderConnected;
-            set => SetProperty(ref _isMetaTraderConnected, value);
-        }
-
         private DownloadHistoricalDataModel _downloadHistoricalDataModel;
-
         public DownloadHistoricalDataModel DownloadHistoricalDataModel
         {
             get => _downloadHistoricalDataModel;

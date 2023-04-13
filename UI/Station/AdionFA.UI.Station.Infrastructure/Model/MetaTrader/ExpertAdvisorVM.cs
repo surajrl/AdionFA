@@ -10,8 +10,8 @@ namespace AdionFA.UI.Station.Infrastructure.Model.MetaTrader
 
         public string Name { get; set; }
 
-        private ulong _magicNumber;
-        public ulong MagicNumber
+        private string _magicNumber;
+        public string MagicNumber
         {
             get => _magicNumber;
             set => SetProperty(ref _magicNumber, value);
@@ -24,15 +24,15 @@ namespace AdionFA.UI.Station.Infrastructure.Model.MetaTrader
             set => SetProperty(ref _host, value);
         }
 
-        private ushort _responsePort;
-        public ushort ResponsePort
+        private string _responsePort;
+        public string ResponsePort
         {
             get => _responsePort;
             set => SetProperty(ref _responsePort, value);
         }
 
-        private int _pushPort;
-        public int PushPort
+        private string _pushPort;
+        public string PushPort
         {
             get => _pushPort;
             set => SetProperty(ref _pushPort, value);

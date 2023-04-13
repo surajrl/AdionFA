@@ -27,7 +27,8 @@ namespace AdionFA.Infrastructure.Common.Managements
     {
         public string DefaultConnection { get; set; }
         public string SecurityConnection { get; set; }
-        public bool IsMetaTraderConnected { get; set; }
         public string Cultures { get; set; }
+        public string MetaTraderHost { get; set; }
+        public int MetaTraderPort { get; set; }
     }
 }

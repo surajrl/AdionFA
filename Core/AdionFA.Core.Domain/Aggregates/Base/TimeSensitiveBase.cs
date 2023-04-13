@@ -1,4 +1,5 @@
 ﻿using AdionFA.Core.Domain.Contracts.Bases;
+
 using System;
 
 namespace AdionFA.Core.Domain.Aggregates.Base

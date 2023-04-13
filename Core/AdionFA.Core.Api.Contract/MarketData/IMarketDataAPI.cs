@@ -10,8 +10,9 @@ namespace AdionFA.Core.API.Contracts.MarketData
 
         IList<HistoricalDataDTO> GetAllHistoricalData(bool includeGraph = false);
         HistoricalDataDTO GetHistoricalData(int marketDataId, bool includeGraph = false);
-        HistoricalDataDTO GetHistoricalData(int marketId, int symbolId, int currencyPeriodId);
-        ResponseDTO CreateHistoricalData(HistoricalDataDTO market);
+        HistoricalDataDTO GetHistoricalData(int marketId, int symbolId, int timeframeId);
+        ResponseDTO CreateHistoricalData(HistoricalDataDTO historicalData);
+        ResponseDTO UpdateHistoricalData(HistoricalDataDTO historicalData);
 
         // Timeframe
 

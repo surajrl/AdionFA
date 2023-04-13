@@ -10,12 +10,11 @@ namespace AdionFA.Core.Domain.Contracts.Repositories
     {
         void Create(T entity, bool autoSave = true);
         void Update(T entity, bool autoSave = true);
-        void Delete(IEnumerable<T> entities, bool softDelete = true);
-        void Delete(T entity, bool softDelete = true);
+        void Delete(IEnumerable<T> entities, bool autoSave = true);
+        void Delete(T entity, bool autoSave = true);
         bool Any(Expression<Func<T, bool>> predicate);
 
         IQueryable<T> AsNoTracking();
-
 
         IQueryable<T> GetAll();
         IQueryable<T> GetAll(params string[] include);

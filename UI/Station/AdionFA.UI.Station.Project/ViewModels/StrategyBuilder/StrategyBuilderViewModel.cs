@@ -117,15 +117,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 // Historical Data
 
                 HistoricalDataVM projectHistoricalData = await _marketDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
-                IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataDetails.Select(
+                IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles.Select(
                         h => new Candle
                         {
                             Date = h.StartDate,
                             Time = h.StartTime,
-                            Open = h.OpenPrice,
-                            High = h.MaxPrice,
-                            Low = h.MinPrice,
-                            Close = h.ClosePrice,
+                            Open = h.Open,
+                            High = h.High,
+                            Low = h.Low,
+                            Close = h.Close,
                             Volume = h.Volume
                         }
                     ).OrderBy(d => d.Date)

@@ -2,7 +2,7 @@
 
 namespace AdionFA.TransferObject.MarketData
 {
-    public class TimeframeDTO : ReferenceDataBaseExtendedDTO
+    public class TimeframeDTO : ReferenceDataBaseDTO
     {
         public int TimeframeId { get; set; }
     }

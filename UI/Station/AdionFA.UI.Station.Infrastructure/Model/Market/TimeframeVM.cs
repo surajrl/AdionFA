@@ -2,7 +2,7 @@
 
 namespace AdionFA.UI.Station.Infrastructure.Model.Market
 {
-    public class TimeframeVM : ReferenceDataBaseExtendedVM
+    public class TimeframeVM : ReferenceDataBaseVM
     {
         public int TimeframeId { get; set; }
     }

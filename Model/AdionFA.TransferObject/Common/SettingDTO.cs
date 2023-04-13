@@ -2,12 +2,8 @@
 
 namespace AdionFA.TransferObject.Common
 {
-    public class SettingDTO : EntityBaseDTO
+    public class SettingDTO : ReferenceDataBaseDTO
     {
         public int SettingId { get; set; }
-
-        public string Key { get; set; }
-
-        public string Value { get; set; }
     }
 }

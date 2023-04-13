@@ -1,6 +1,7 @@
 ﻿using AdionFA.Core.Domain.Aggregates.MarketData;
 using AdionFA.Core.Domain.Contracts.MarketData;
 using AdionFA.Core.Domain.Contracts.Repositories;
+using AdionFA.Infrastructure.Core.Data.Repositories.Extension;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,18 +15,18 @@ namespace AdionFA.Core.Domain.Services.MarketData
         // Repositories
 
         public IRepository<HistoricalData> HistoricalDataRepository { get; set; }
-        public IRepository<HistoricalDataDetail> HistoricalDataDetailRepository { get; set; }
+        public IRepository<HistoricalDataCandle> HistoricalDataCandleRepository { get; set; }
         public IRepository<Timeframe> TimeframeRepository { get; set; }
         public IRepository<Symbol> SymbolRepository { get; set; }
 
         public MarketDataDomainService(string tenantId, string ownerId, string owner,
             IRepository<HistoricalData> marketDataRepository,
-            IRepository<HistoricalDataDetail> marketDataDetailRepository,
+            IRepository<HistoricalDataCandle> marketDataDetailRepository,
             IRepository<Timeframe> timeframeRepository,
             IRepository<Symbol> symbolRepository) : base(tenantId, ownerId, owner)
         {
             HistoricalDataRepository = marketDataRepository;
-            HistoricalDataDetailRepository = marketDataDetailRepository;
+            HistoricalDataCandleRepository = marketDataDetailRepository;
             TimeframeRepository = timeframeRepository;
             SymbolRepository = symbolRepository;
         }
@@ -36,9 +37,10 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                Expression<Func<HistoricalData, dynamic>>[] includes = { md => md.HistoricalDataDetails };
+                Expression<Func<HistoricalData, bool>> projection = hd => (hd.EndDate ?? DateTime.MinValue) == DateTime.MinValue;
+                Expression<Func<HistoricalData, dynamic>>[] includes = { hd => hd.HistoricalDataCandles };
 
-                IList<HistoricalData> result = HistoricalDataRepository.GetAll(includeGraph ? includes : null).ToList();
+                var result = HistoricalDataRepository.GetAll(projection, includeGraph ? includes : null).ToList();
 
                 return result;
             }
@@ -53,11 +55,13 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                Expression<Func<HistoricalData, bool>> predicate = hd => hd.HistoricalDataId == historicalDataId;
+                Expression<Func<HistoricalData, bool>> predicate =
+                    hd =>
+                    hd.HistoricalDataId == historicalDataId &&
+                    (hd.EndDate ?? DateTime.MinValue) == DateTime.MinValue;
 
-                HistoricalData h = includeGraph ?
-                    HistoricalDataRepository.FirstOrDefault(predicate, hd => hd.HistoricalDataDetails)
-                    : HistoricalDataRepository.FirstOrDefault(predicate);
+                var h = includeGraph ?
+                    HistoricalDataRepository.FirstOrDefault(predicate, hd => hd.HistoricalDataCandles) : HistoricalDataRepository.FirstOrDefault(predicate);
 
                 return h;
             }
@@ -72,11 +76,13 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                HistoricalData h = HistoricalDataRepository.GetAll(
-                        h => h.MarketId == marketId &&
-                        h.SymbolId == symbolId &&
-                        h.TimeframeId == timeframeId,
-                        h => h.HistoricalDataDetails
+                var h = HistoricalDataRepository.GetAll(
+                    h => h.MarketId == marketId &&
+                    h.SymbolId == symbolId &&
+                    h.TimeframeId == timeframeId &&
+                    h.EndDate == null,
+
+                    h => h.HistoricalDataCandles
                     ).FirstOrDefault();
 
                 return h;
@@ -88,25 +94,79 @@ namespace AdionFA.Core.Domain.Services.MarketData
             }
         }
 
-        public int CreateHistoricalData(HistoricalData market)
+        public int CreateHistoricalData(HistoricalData historicalData)
         {
             try
             {
-                market.StartDate = DateTime.UtcNow;
+                var exisitingHd = HistoricalDataRepository.GetAll(hd =>
+                hd.MarketId == historicalData.MarketId &&
+                hd.TimeframeId == historicalData.TimeframeId &&
+                hd.SymbolId == historicalData.SymbolId);
 
-                foreach (var psch in market.HistoricalDataDetails)
+                // Close historical data records with the same market, timeframe and symbol
+                if (exisitingHd.Any())
                 {
-                    psch.IsDeleted = false;
-                    psch.Inaccesible = false;
-                    psch.TenantId = _tenantId;
-                    psch.CreatedById = _ownerId;
-                    psch.CreatedByUserName = _owner;
-                    psch.CreatedOn = DateTime.UtcNow;
+                    foreach (var hd in exisitingHd)
+                    {
+                        hd.EndDate = DateTime.UtcNow.AddDays(-1);
+                        HistoricalDataRepository.Update(hd);
+                    }
                 }
 
-                HistoricalDataRepository.Create(market);
+                historicalData.StartDate = DateTime.UtcNow;
 
-                return market.HistoricalDataId;
+                foreach (var candle in historicalData.HistoricalDataCandles)
+                {
+                    candle.IsDeleted = false;
+                    candle.Inaccesible = false;
+                    candle.TenantId = _tenantId;
+                    candle.CreatedById = _ownerId;
+                    candle.CreatedByUserName = _owner;
+                    candle.CreatedOn = DateTime.UtcNow;
+                }
+
+                HistoricalDataRepository.Create(historicalData);
+
+                return historicalData.HistoricalDataId;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                throw;
+            }
+        }
+
+        public int UpdateHistoricalData(HistoricalData historicalData)
+        {
+            try
+            {
+                var hdId = HistoricalDataRepository.FirstOrDefault(hd =>
+                hd.MarketId == historicalData.MarketId &&
+                hd.SymbolId == historicalData.SymbolId &&
+                hd.TimeframeId == historicalData.TimeframeId)?.HistoricalDataId;
+
+                if (hdId != null && hdId > 0)
+                {
+                    historicalData.HistoricalDataId = (int)hdId;
+                    var hdCandles = HistoricalDataCandleRepository.GetAll(candle => candle.HistoricalDataId == hdId);
+                    HistoricalDataCandleRepository.Delete(hdCandles);
+
+                    HistoricalDataRepository.Delete(historicalData);
+                }
+
+                foreach (var candle in historicalData.HistoricalDataCandles)
+                {
+                    candle.IsDeleted = false;
+                    candle.Inaccesible = false;
+                    candle.TenantId = _tenantId;
+                    candle.CreatedById = _ownerId;
+                    candle.CreatedByUserName = _owner;
+                    candle.CreatedOn = DateTime.UtcNow;
+                }
+
+                HistoricalDataRepository.Create(historicalData);
+
+                return historicalData.HistoricalDataId;
             }
             catch (Exception ex)
             {

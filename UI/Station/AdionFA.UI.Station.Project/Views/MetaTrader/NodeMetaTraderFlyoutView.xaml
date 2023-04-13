@@ -61,7 +61,7 @@
                                 <Expander Style="{x:Null}">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
-                                            <StackPanel.Resources>
+                                            <!--<StackPanel.Resources>
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding BacktestModel.WinningStrategy}" Value="True">
@@ -74,7 +74,7 @@
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </StackPanel.Resources>
+                                            </StackPanel.Resources>-->
 
                                             <TextBlock Margin="{StaticResource ColumnMargin}">
                                                 <Run Text="{Binding BacktestModel.Label}" FontWeight="SemiBold"/>

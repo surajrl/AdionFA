@@ -4,13 +4,13 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum NodeAssembledOperatorEnum
     {
-        [Metadata("AND")]
+        [Metadata(codeKey: "AND")]
         AND = 1,
 
-        [Metadata("OR")]
+        [Metadata(codeKey: "OR")]
         OR = 2,
 
-        [Metadata("XOR")]
+        [Metadata(codeKey: "XOR")]
         XOR = 3,
     }
 }

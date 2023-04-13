@@ -28,6 +28,8 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using AdionFA.UI.Station.Infrastructure.EventAggregator;
+using AdionFA.Core.Domain.Aggregates.MetaTrader;
+using NetMQ.Sockets;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
@@ -38,16 +40,12 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         private readonly ISharedServiceAgent _sharedService;
         private readonly IProjectServiceAgent _projectService;
         private readonly IProcessService _processService;
-        private readonly IMetaTraderService _metaTraderService;
-
-        private readonly IEventAggregator _eventAggregator;
 
         public AppSettingViewModel(
             IApplicationCommands applicationCommands,
             ISharedServiceAgent sharedService,
             IProjectServiceAgent projectService,
-            IProcessService processService,
-            IMetaTraderService metaTraderService)
+            IProcessService processService)
         {
             // Infrastructure Common
             _directoryService = IoC.Get<IProjectDirectoryService>();
@@ -56,10 +54,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             _sharedService = sharedService;
             _projectService = projectService;
             _processService = processService;
-            _metaTraderService = metaTraderService;
-
-            _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<MetaTraderConnectedEvent>().Subscribe(p => IsMetaTraderConnected = p);
 
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
@@ -84,7 +78,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     var result = await _sharedService.UpdateAppSetting(new SettingVM
                     {
                         SettingId = (int)SettingEnum.DefaultWorkspace,
-                        Key = SettingEnum.DefaultWorkspace.GetMetadata().Name,
+                        Name = SettingEnum.DefaultWorkspace.GetMetadata().Name,
                         Value = DefaultWorkspace
                     });
 
@@ -93,11 +87,15 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                         if (_directoryService.CreateDefaultWorkspace())
                         {
                             IList<ProjectVM> projects = await _projectService.GetAllProjects();
+
                             foreach (var p in projects)
                             {
                                 _directoryService.CreateDefaultProjectWorkspace(p.ProjectName);
                             }
-                            MessageHelper.ShowMessage(this, nameof(EntityTypeEnum.Setting), "Default Workspace was updated.");
+
+                            MessageHelper.ShowMessage(this,
+                                nameof(EntityTypeEnum.Setting),
+                                "Default workspace was updated.");
                         }
                     }
                 }
@@ -105,57 +103,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 {
                     MessageHelper.ShowMessage(this,
                         EntityTypeEnum.Setting.GetMetadata().Description,
-                            "Close all running Projects to run the operation.");
+                        "Close all running projects to run the operation.");
                 }
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
                 throw;
-            }
-        });
-
-        public DelegateCommand ConnectCommand => new DelegateCommand(async () =>
-        {
-            try
-            {
-                await _metaTraderService.ConnectAsync(IPAddress, Port);
-                IsMetaTraderConnected = true;
-                MessageHelper.ShowMessage(
-                    this,
-                    "MetaTrader 5 Server",
-                    $"Connected to: {_metaTraderService.RemoteEndPoint}"
-                    );
-            }
-            catch (SocketException ex)
-            {
-                MessageHelper.ShowMessage(
-                    this,
-                    "MetaTrader 5 Server",
-                    $"{ex.Message}"
-                    );
-            }
-        });
-
-        public DelegateCommand DisconnectCommand => new(() =>
-        {
-            try
-            {
-                _metaTraderService.Disconnect();
-                IsMetaTraderConnected = false;
-                MessageHelper.ShowMessage(
-                    this,
-                    "MetaTrader 5 Server",
-                    $"Disconnected"
-                    );
-            }
-            catch (Exception ex)
-            {
-                MessageHelper.ShowMessage(
-                    this,
-                    "MetaTrader 5 Server",
-                    $"{ex.Message}"
-                    );
             }
         });
 
@@ -177,31 +131,32 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
             var themeSetting = await _sharedService.GetSettingAsync((int)SettingEnum.Theme);
             SelectedTheme = themeSetting != null
-                ? Themes.FirstOrDefault(th => th.Name == themeSetting.Value) : Themes.FirstOrDefault();
+                ? Themes.FirstOrDefault(th => th.Name == themeSetting.Value)
+                : Themes.FirstOrDefault();
 
             var colorSetting = await _sharedService.GetSettingAsync((int)SettingEnum.Color);
             SelectedColor = colorSetting != null
-                ? Colors.FirstOrDefault(ac => ac.Name == colorSetting.Value) : Colors.FirstOrDefault();
+                ? Colors.FirstOrDefault(ac => ac.Name == colorSetting.Value)
+                : Colors.FirstOrDefault();
 
             var cultureSetting = await _sharedService.GetSettingAsync((int)SettingEnum.Culture);
             SelectedCulture = cultureSetting != null
                 ? Cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == cultureSetting.Value)
-                    : Cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
+                : Cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
 
-            var df = await _sharedService.GetSettingAsync((int)SettingEnum.DefaultWorkspace);
-            DefaultWorkspace = (df?.Value ?? string.Empty).Length > 0 ? df.Value : ProjectDirectoryManager.DefaultDirectory();
+            var defaultWorkspace = await _sharedService.GetSettingAsync((int)SettingEnum.DefaultWorkspace);
+            DefaultWorkspace = defaultWorkspace?.Value;
 
-            var ipaddress = await _sharedService.GetSettingAsync((int)SettingEnum.IPAddress);
-            IPAddress = (ipaddress?.Value ?? string.Empty).Length > 0 ? ipaddress.Value : string.Empty;
+            var host = await _sharedService.GetSettingAsync((int)SettingEnum.Host);
+            Host = host?.Value;
 
             var port = await _sharedService.GetSettingAsync((int)SettingEnum.Port);
-            Port = int.TryParse(port?.Value, out var portInt) ? portInt : 5555;
+            Port = port?.Value;
         }
 
-        #region Properties
+        // Properties
 
         private IList<CultureInfo> _cultures;
-
         public IList<CultureInfo> Cultures
         {
             get => _cultures;
@@ -209,7 +164,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private IList<ApplicationTheme> _themes;
-
         public IList<ApplicationTheme> Themes
         {
             get => _themes;
@@ -217,7 +171,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private IList<AccentColor> _colors;
-
         public IList<AccentColor> Colors
         {
             get => _colors;
@@ -225,7 +178,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private CultureInfo _selectedCulture;
-
         public CultureInfo SelectedCulture
         {
             get => _selectedCulture;
@@ -239,7 +191,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     _sharedService.UpdateAppSetting(new SettingVM
                     {
                         SettingId = (int)SettingEnum.Culture,
-                        Key = SettingEnum.Culture.GetMetadata().Name,
+                        Name = SettingEnum.Culture.GetMetadata().Name,
                         Value = SelectedCulture.ThreeLetterISOLanguageName
                     });
                 }
@@ -247,7 +199,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private ApplicationTheme _selectedTheme;
-
         public ApplicationTheme SelectedTheme
         {
             get => _selectedTheme;
@@ -259,7 +210,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     _sharedService.UpdateAppSetting(new SettingVM
                     {
                         SettingId = (int)SettingEnum.Theme,
-                        Key = SettingEnum.Theme.GetMetadata().Name,
+                        Name = SettingEnum.Theme.GetMetadata().Name,
                         Value = value.Name
                     });
                 }
@@ -267,7 +218,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private AccentColor _selectedColor;
-
         public AccentColor SelectedColor
         {
             get => _selectedColor;
@@ -279,7 +229,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     _sharedService.UpdateAppSetting(new SettingVM
                     {
                         SettingId = (int)SettingEnum.Color,
-                        Key = SettingEnum.Color.GetMetadata().Name,
+                        Name = SettingEnum.Color.GetMetadata().Name,
                         Value = value.Name
                     });
                 }
@@ -287,35 +237,32 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private string _defaultWorkspace;
-
         public string DefaultWorkspace
         {
             get => _defaultWorkspace;
             set => SetProperty(ref _defaultWorkspace, value);
         }
 
-        private string _ipAddress;
-
-        public string IPAddress
+        private string _host;
+        public string Host
         {
-            get => _ipAddress;
+            get => _host;
             set
             {
-                if (SetProperty(ref _ipAddress, value))
+                if (SetProperty(ref _host, value))
                 {
                     _sharedService.UpdateAppSetting(new SettingVM
                     {
-                        SettingId = (int)SettingEnum.IPAddress,
-                        Key = SettingEnum.IPAddress.GetMetadata().Name,
-                        Value = IPAddress
+                        SettingId = (int)SettingEnum.Host,
+                        Name = SettingEnum.Host.GetMetadata().Name,
+                        Value = Host
                     });
                 }
             }
         }
 
-        private int _port;
-
-        public int Port
+        private string _port;
+        public string Port
         {
             get => _port;
             set
@@ -325,21 +272,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     _sharedService.UpdateAppSetting(new SettingVM
                     {
                         SettingId = (int)SettingEnum.Port,
-                        Key = SettingEnum.Port.GetMetadata().Name,
-                        Value = Port.ToString()
+                        Name = SettingEnum.Port.GetMetadata().Name,
+                        Value = Port
                     });
                 }
             }
         }
-
-        private bool _isMetaTraderConnected;
-
-        public bool IsMetaTraderConnected
-        {
-            get => _isMetaTraderConnected;
-            set => SetProperty(ref _isMetaTraderConnected, value);
-        }
-
-        #endregion Properties
     }
 }

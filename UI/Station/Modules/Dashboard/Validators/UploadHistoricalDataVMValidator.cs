@@ -11,10 +11,10 @@ namespace AdionFA.UI.Station.Module.Dashboard.Validators
             RuleFor(model => model.MarketId).NotNull().NotEqual(0)
                 .WithMessage(string.Format(ValidationResources.IsRequired, CommonResources.Market));
 
-            RuleFor(model => model.Symbol).NotNull()
+            RuleFor(model => model.SymbolId).NotNull()
                 .WithMessage(string.Format(ValidationResources.IsRequired, CommonResources.Symbols));
 
-            RuleFor(model => model.Timeframe).NotNull()
+            RuleFor(model => model.TimeframeId).NotNull()
                 .WithMessage(string.Format(ValidationResources.IsRequired, CommonResources.Timeframe));
 
             RuleFor(model => model.FilePathHistoricalData).NotEmpty().NotNull().WithName(CommonResources.FilePath);

@@ -8,8 +8,8 @@ namespace AdionFA.Infrastructure.Common.Security.Model
 
         public new AdionIdentity Identity
         {
-            get { return _identity ?? new AnonymousIdentity(); }
-            set { _identity = value; }
+            get => _identity ?? new AnonymousIdentity();
+            set => _identity = value;
         }
     }
 }

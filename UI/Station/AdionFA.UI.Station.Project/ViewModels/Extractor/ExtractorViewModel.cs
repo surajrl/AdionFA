@@ -97,15 +97,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     HistoricalDataVM projectHistoricalData = await _historicalDataService.GetHistoricalData(pconfig.HistoricalDataId.Value, true);
 
                     // Gets all the candles from the corresponding historical data.
-                    IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataDetails.Select(
+                    IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles.Select(
                             h => new Candle
                             {
                                 Date = h.StartDate,
                                 Time = h.StartTime,
-                                Open = h.OpenPrice,
-                                High = h.MaxPrice,
-                                Low = h.MinPrice,
-                                Close = h.ClosePrice,
+                                Open = h.Open,
+                                High = h.High,
+                                Low = h.Low,
+                                Close = h.Close,
                                 Volume = h.Volume
                             }
                         ).OrderBy(d => d.Date).ThenBy(d => d.Time).ToList();
