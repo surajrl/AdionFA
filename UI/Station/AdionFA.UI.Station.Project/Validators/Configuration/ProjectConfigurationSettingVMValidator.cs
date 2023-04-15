@@ -10,26 +10,20 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
     {
         public ProjectConfigurationSettingVMValidator()
         {
-            #region Market Data
+            // Historical Data
 
             RuleFor(m => m.HistoricalDataId).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.CannotBeNull, FluentPlaceholders.PropertyName));
 
-            #endregion Market Data
-
-            #region Configuration Name
+            // Configuration Name
 
             RuleFor(m => m.Description).NotNull().NotEmpty();
 
-            #endregion Configuration Name
-
-            #region Extractor
+            // Extractor
 
             RuleFor(m => m.Variation).NotNull().NotEmpty();
 
-            #endregion Extractor
-
-            #region Period
+            // Period
 
             RuleFor(m => m.FromDateIS).NotNull().NotEmpty()
                 .Must((m, fdis) => fdis < m.ToDateIS && fdis < DateTime.UtcNow).WithMessage(m =>
@@ -47,9 +41,7 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
                 .Must((m, tdos) => tdos > m.FromDateOS && tdos < DateTime.UtcNow).WithMessage(m =>
                     string.Format(ValidationResources.MustBeGreaterThanOneAndLessThanTow, ValidationResources.Value, nameof(m.FromDateOS), nameof(DateTime.Today)));
 
-            #endregion Period
-
-            #region Schedules
+            // Schedules
 
             When(m => !m.WithoutSchedule, () =>
             {
@@ -63,9 +55,7 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
                 RuleFor(m => m.ToTimeInSecondsEurope).NotNull().NotEmpty();
             });
 
-            #endregion Schedules
-
-            #region Currency
+            // Currency
 
             RuleFor(m => m.SymbolId).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.CannotBeNull, FluentPlaceholders.PropertyName));
@@ -76,9 +66,7 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
             RuleFor(m => m.CurrencySpreadId).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.CannotBeNull, FluentPlaceholders.PropertyName));
 
-            #endregion Currency
-
-            #region Weka
+            // Weka
 
             RuleFor(m => m.TotalInstanceWeka).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
@@ -110,9 +98,7 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
                 .When(m => m.AutoAdjustConfig)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            #endregion Weka
-
-            #region Strategy Builder
+            // Strategy Builder
 
             RuleFor(m => m.MinTransactionCountIS).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
@@ -164,9 +150,7 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
                 .When(m => m.AutoAdjustConfig)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            #endregion Strategy Builder
-
-            #region Assembled Builder
+            // Assembled Builder
 
             RuleFor(m => m.TransactionTarget).GreaterThan(0)
                  .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
@@ -176,8 +160,6 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
 
             RuleFor(m => m.TotalAssemblyIterations).GreaterThan(0)
                  .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
-
-            #endregion Assembled Builder
         }
     }
 }

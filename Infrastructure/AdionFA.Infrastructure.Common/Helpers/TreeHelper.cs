@@ -1,4 +1,4 @@
-﻿using AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model;
+﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,12 +85,12 @@ namespace AdionFA.Infrastructure.Common.Helpers
         public static List<TBase> ConvertTreeToList<TBase, TResult>(this TBase tbase)
             where TBase : NodeAssembledModel where TResult : NodeAssembledModel
         {
-            List<TBase> res = new List<TBase>();
+            var res = new List<TBase>();
             if (tbase != null && tbase is TResult)
             {
                 res.Add(tbase);
             }
-            else if(tbase.Nodes.Count == 0)
+            else if (tbase.Nodes.Count == 0)
             {
                 return null;
             }

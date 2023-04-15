@@ -25,7 +25,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Model
 
         public ValidationResult GetValidationResult()
         {
-            CrateProjectVMValidator v = new();
+            CreateProjectVMValidator v = new();
             return v.Validate(this);
         }
     }

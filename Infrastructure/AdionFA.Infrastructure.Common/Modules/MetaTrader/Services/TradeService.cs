@@ -1,19 +1,17 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Extractor.Contracts;
+﻿using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
-using AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Contracts;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
+using AdionFA.Infrastructure.Common.MetaTrader.Model;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
+
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
+using AdionFA.Infrastructure.Common.Weka.Model;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Services
+namespace AdionFA.Infrastructure.Common.MetaTrader.Services
 {
     public class TradeService : ITradeService
     {
@@ -26,15 +24,15 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Services
 
         public bool IsTrade(
             TimeframeEnum period,
-            BacktestModel model,
+            REPTreeNodeModel model,
             IEnumerable<Candle> candles)
         {
-            List<IndicatorBase> indicators = _extractorService.BuildIndicatorsFromNode(model.Node.ToList());
+            var indicators = _extractorService.BuildIndicatorsFromNode(model.Node.ToList());
 
             DateTime from = candles.LastOrDefault().Date.AddSeconds(-period.ToSeconds());
             DateTime to = candles.LastOrDefault().Date.AddSeconds(period.ToSeconds());
 
-            List<IndicatorBase> extractorResult = _extractorService.ExtractorExecute(
+            var extractorResult = _extractorService.ExtractorExecute(
                 from,
                 to,
                 indicators,

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
+namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
 {
     public class BacktestOperationModel
     {

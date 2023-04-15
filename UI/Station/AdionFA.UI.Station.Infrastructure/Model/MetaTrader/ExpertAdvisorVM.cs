@@ -1,6 +1,9 @@
-﻿using AdionFA.TransferObject.Project;
+﻿using AdionFA.Core.Domain.Aggregates.MetaTrader;
+using AdionFA.TransferObject.Project;
+using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
+using FluentValidation.Results;
 
 namespace AdionFA.UI.Station.Infrastructure.Model.MetaTrader
 {

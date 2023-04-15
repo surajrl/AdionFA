@@ -3,10 +3,10 @@ using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Contracts;
-using AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
+using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Weka.Model;
@@ -20,7 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Services
+namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 {
     public class AssembledBuilderService : IAssembledBuilderService
     {
@@ -167,7 +167,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Service
 
                                     ex.IntervalLabels = intervals.Select(a => a.il).ToArray();
 
-                                    List<double> outputExtraction = new List<double>();
+                                    var outputExtraction = new List<double>();
                                     foreach (var idx in intervals.Select(a => a.idx))
                                     {
                                         outputExtraction.Add(ex.Output[idx]);

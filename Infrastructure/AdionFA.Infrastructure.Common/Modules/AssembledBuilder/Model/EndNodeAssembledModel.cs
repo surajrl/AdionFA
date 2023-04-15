@@ -1,4 +1,4 @@
-﻿namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model
+﻿namespace AdionFA.Infrastructure.Common.AssembledBuilder.Model
 {
     public class EndNodeAssembledModel : NodeAssembledModel
     {

@@ -1,11 +1,11 @@
-﻿namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model
+﻿namespace AdionFA.Infrastructure.Common.AssembledBuilder.Model
 {
     public class AssembledBuilderModel
     {
         public NodeAssembledModel UPNode { get; set; }
         public NodeAssembledModel DOWNNode { get; set; }
 
-        #region Start & End 
+        #region Start & End
 
         public static StartNodeAssembledModel Start(string label = null)
         {
@@ -24,6 +24,6 @@
             };
         }
 
-        #endregion
+        #endregion Start & End
     }
 }

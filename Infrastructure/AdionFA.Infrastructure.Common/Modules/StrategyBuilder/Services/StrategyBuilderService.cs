@@ -1,19 +1,21 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Base;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.Weka.Model;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
+namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 {
     public class StrategyBuilderService : IStrategyBuilderService
     {
@@ -28,23 +30,17 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
 
         // Strategy
 
-        /// <summary>
-        /// Checks if the correlation requirement is met, and deletes the nodes that dont meet them.
-        /// </summary>
-        /// <param name="projectName"></param>
-        /// <param name="correlation"></param>
-        /// <param name="entityType"></param>
-        /// <returns>A list of UP and DOWN nodes that meet the correlation requirements.</returns>
         public CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType)
         {
             try
             {
-                CorrelationModel correlationDetail = new();
+                var correlationDetail = new CorrelationModel();
 
                 // Output Directory
 
-                string directoryUP = projectName.ProjectStrategyBuilderNodesUPDirectory();
-                string directoryDOWN = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                var directoryUP = projectName.ProjectStrategyBuilderNodesUPDirectory();
+                var directoryDOWN = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+
                 switch (entityType)
                 {
                     case EntityTypeEnum.AssembledBuilder:
@@ -58,35 +54,25 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                 ProjectDirectoryService.GetFilesInPath(directoryUP, "*.xml")
                     .ToList().ForEach(file =>
                     {
-                        if (file.Name.Contains("IS"))
+                        var backtestIS = BacktestDeserialize(file.FullName);
+                        var indexOf = IndexOfCorrelation(correlationDetail.ISBacktestUP, backtestIS, correlation);
+
+                        backtestIS.CorrelationPass = indexOf != null;
+
+                        if (backtestIS.CorrelationPass)
                         {
-                            var backtestIS = BacktestDeserialize(file.FullName);
-                            int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestUP, backtestIS, correlation);
-
-                            backtestIS.CorrelationPass = indexOf != null;
-
-                            var fileOS = file.FullName.Replace("IS", "OS");
-
-                            if (backtestIS.CorrelationPass)
+                            if ((indexOf ?? -1) >= 0)
                             {
-                                var backtestOS = BacktestDeserialize(fileOS);
-
-                                if ((indexOf ?? -1) >= 0)
-                                {
-                                    correlationDetail.ISBacktestUP.Insert(indexOf.Value, backtestIS);
-                                    correlationDetail.OSBacktestUP.Insert(indexOf.Value, backtestOS);
-                                }
-                                if ((indexOf ?? 0) == -1)
-                                {
-                                    correlationDetail.ISBacktestUP.Add(backtestIS);
-                                    correlationDetail.OSBacktestUP.Add(backtestOS);
-                                }
+                                correlationDetail.ISBacktestUP.Insert(indexOf.Value, backtestIS);
                             }
-                            else
+                            if ((indexOf ?? 0) == -1)
                             {
-                                ProjectDirectoryService.DeleteFile(file.FullName);
-                                ProjectDirectoryService.DeleteFile(fileOS);
+                                correlationDetail.ISBacktestUP.Add(backtestIS);
                             }
+                        }
+                        else
+                        {
+                            ProjectDirectoryService.DeleteFile(file.FullName);
                         }
                     });
 
@@ -95,35 +81,25 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                 ProjectDirectoryService.GetFilesInPath(directoryDOWN, "*.xml")
                     .ToList().ForEach(file =>
                     {
-                        if (file.Name.Contains("IS"))
+                        var backtestIS = BacktestDeserialize(file.FullName);
+                        var indexOf = IndexOfCorrelation(correlationDetail.ISBacktestDOWN, backtestIS, correlation);
+
+                        backtestIS.CorrelationPass = indexOf != null;
+
+                        if (backtestIS.CorrelationPass)
                         {
-                            var backtestIS = BacktestDeserialize(file.FullName);
-                            int? indexOf = IndexOfCorrelation(correlationDetail.ISBacktestDOWN, backtestIS, correlation);
-
-                            backtestIS.CorrelationPass = indexOf != null;
-
-                            var fileOS = file.FullName.Replace("IS", "OS");
-
-                            if (backtestIS.CorrelationPass)
+                            if ((indexOf ?? -1) >= 0)
                             {
-                                var backtestOS = BacktestDeserialize(fileOS);
-
-                                if ((indexOf ?? -1) >= 0)
-                                {
-                                    correlationDetail.ISBacktestDOWN.Insert(indexOf.Value, backtestIS);
-                                    correlationDetail.OSBacktestDOWN.Insert(indexOf.Value, backtestOS);
-                                }
-                                if ((indexOf ?? 0) == -1)
-                                {
-                                    correlationDetail.ISBacktestDOWN.Add(backtestIS);
-                                    correlationDetail.OSBacktestDOWN.Add(backtestOS);
-                                }
+                                correlationDetail.ISBacktestDOWN.Insert(indexOf.Value, backtestIS);
                             }
-                            else
+                            if ((indexOf ?? 0) == -1)
                             {
-                                ProjectDirectoryService.DeleteFile(file.FullName);
-                                ProjectDirectoryService.DeleteFile(fileOS);
+                                correlationDetail.ISBacktestDOWN.Add(backtestIS);
                             }
+                        }
+                        else
+                        {
+                            ProjectDirectoryService.DeleteFile(file.FullName);
                         }
                     });
 
@@ -136,23 +112,23 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
             }
         }
 
-        private int? IndexOfCorrelation(List<BacktestModel> backtests, BacktestModel btModel, decimal correlation)
+        private int? IndexOfCorrelation(IList<BacktestModel> backtests, BacktestModel btModel, decimal correlation)
         {
             int? indexOf = !backtests.Any() ? -1 : null;
 
             foreach (var btItem in backtests)
             {
-                List<BacktestOperationModel> coincidences =
+                var coincidences =
                     btItem.Backtests
-                    .Where(_btoItem => btModel.Backtests
-                    .Any(_bto => _bto.Date == _btoItem.Date)).ToList();
+                    .Where(_btoItem => btModel.Backtests.Any(_bto => _bto.Date == _btoItem.Date))
+                    .ToList();
 
-                int totalCoincidences = coincidences.Count;
-                int btItemCount = btItem.Backtests.Count;
-                int btModelCount = btModel.Backtests.Count;
+                var totalCoincidences = coincidences.Count;
+                var btItemCount = btItem.Backtests.Count;
+                var btModelCount = btModel.Backtests.Count;
 
-                decimal percentBtItem = totalCoincidences * 100 / btItemCount;
-                decimal percentBtModel = totalCoincidences * 100 / btModelCount;
+                var percentBtItem = totalCoincidences * 100 / btItemCount;
+                var percentBtModel = totalCoincidences * 100 / btModelCount;
 
                 if (totalCoincidences == 0 && btModelCount > btItemCount)
                 {
@@ -181,7 +157,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
         {
             try
             {
-                BacktestModel bkmIS = BacktestExecute(
+                var bkmIS = BacktestExecute(
                     label,
                     config.FromDateIS.Value,
                     config.ToDateIS.Value,
@@ -190,7 +166,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
                     config.TimeframeId,
                     config.Variation);
 
-                BacktestModel bkmOS = BacktestExecute(
+                var bkmOS = BacktestExecute(
                     label,
                     config.FromDateOS.Value,
                     config.ToDateOS.Value,
@@ -347,25 +323,16 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services
 
         // Backtest Serialization
 
-        public void BacktestSerialize(string projectName, StrategyBuilderModel model)
+        public void BacktestSerialize(string projectName, BacktestModel model)
         {
             // IS
-            var directory = model.IS.Label.ToLower() == "up"
+            var directory = model.Label.ToLower() == "up"
                 ? projectName.ProjectStrategyBuilderNodesUPDirectory()
                 : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
 
             SerializerHelper.XMLSerializeObject(
-                model.IS,
-                string.Format(@"{0}\{1}.xml", directory, "IS." + RegexHelper.GetValidFileName(model.IS.NodeName(), "_")));
-
-            // OS
-            directory = model.OS.Label.ToLower() == "up"
-                ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-                : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-
-            SerializerHelper.XMLSerializeObject(
-                model.OS,
-                string.Format(@"{0}\{1}.xml", directory, "OS." + RegexHelper.GetValidFileName(model.OS.NodeName(), "_")));
+                model,
+                string.Format(@"{0}\{1}.xml", directory, RegexHelper.GetValidFileName(model.NodeName(), "_")));
         }
 
         public BacktestModel BacktestDeserialize(string path)

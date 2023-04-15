@@ -5,7 +5,7 @@ using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AutoMapper;
 using AdionFA.UI.Station.Project.Model.Configuration;
 using AdionFA.TransferObject.Base;
-using AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model;
+using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
 using AdionFA.UI.Station.Project.Model.AssembledBuilder;
 using AdionFA.TransferObject.Common;
 using AdionFA.UI.Station.Infrastructure.Model.Common;
@@ -17,7 +17,7 @@ using AdionFA.UI.Station.Infrastructure.Model.Organization;
 using AdionFA.TransferObject.Project;
 using AdionFA.TransferObject.ReferenceData;
 using AdionFA.UI.Station.Infrastructure.Model.ReferenceData;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.UI.Station.Infrastructure.Model.Weka;
 
 namespace AdionFA.UI.Station.Project.AutoMapper

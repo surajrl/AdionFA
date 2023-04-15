@@ -105,8 +105,8 @@ namespace AdionFA.UI.Station.Project
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            //string arg = e.Args[0];
-            string arg = $"1_AdionFA.UI.Station.Project_test1";
+            string arg = e.Args[0];
+            //string arg = $"1_AdionFA.UI.Station.Project_test";
             ProcessArgs.Args = arg;
             if (ProcessArgs.ProjectId > 0)
             {
@@ -119,7 +119,7 @@ namespace AdionFA.UI.Station.Project
                 if (!directoryService.IsValidProjectDiractory(ProcessArgs.ProjectName))
                 {
                     if (!directoryService.IsValidProjectDiractory(ProcessArgs.ProjectName))
-                        MessageBox.Show("Loaded Project Error (Modified Directory)");
+                        MessageBox.Show("Error Loading Project (Modified Directory)");
                     Current.Shutdown();
                 }
                 else
@@ -128,23 +128,23 @@ namespace AdionFA.UI.Station.Project
                     {
                         // Theme
 
-                        SettingVM themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
+                        var themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
                         ThemeManager.Current.ChangeThemeBaseColor(Application.Current, themeSetting?.Value ?? "Light");
 
-                        SettingVM colorSetting = settingService.GetSetting((int)SettingEnum.Color);
+                        var colorSetting = settingService.GetSetting((int)SettingEnum.Color);
                         ThemeManager.Current.ChangeThemeColorScheme(Application.Current, colorSetting?.Value ?? "Orange");
 
                         // Culture
 
                         IList<CultureInfo> cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList();
 
-                        SettingVM cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
+                        var cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
 
-                        CultureInfo Culture = cultures.FirstOrDefault(
+                        var culture = cultures.FirstOrDefault(
                             c => c.ThreeLetterISOLanguageName == cultureSetting?.Value) ?? cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
 
-                        Thread.CurrentThread.CurrentCulture = Culture;
-                        Thread.CurrentThread.CurrentUICulture = Culture;
+                        Thread.CurrentThread.CurrentCulture = culture;
+                        Thread.CurrentThread.CurrentUICulture = culture;
 
                         //esto va en projecto station
                         ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
@@ -155,19 +155,17 @@ namespace AdionFA.UI.Station.Project
                         throw;
                     }
 
-                    #region RPC
+                    // RPC
 
                     //var response = ProjectRPCClientService.LoadProjectRequest(projectId, true);
                     //IProjectService service = ServiceLocator.Current.GetInstance<IKernel>().Get<IProjectService>();
                     //ProjectVM project = await service.GetProject(projectId, true);
                     //ProcessArgs.project = project;
-
-                    #endregion RPC
                 }
             }
             else
             {
-                MessageBox.Show("Loaded Project Error");
+                MessageBox.Show("Error loading project");
                 Current.Shutdown();
             }
         }

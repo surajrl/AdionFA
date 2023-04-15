@@ -131,7 +131,7 @@
                             </StackPanel>
                             <!--#endregion-->
 
-                            <!--#region Symbol-->
+                            <!--#region SymbolId-->
                             <StackPanel Margin="{StaticResource ControlMargin}">
                                 <Label>
                                     <TextBlock>
@@ -147,7 +147,7 @@
                             </StackPanel>
                             <!--#endregion-->
 
-                            <!--#region Timeframe-->
+                            <!--#region TimeframeId-->
                             <StackPanel Margin="{StaticResource ControlMargin}">
                                 <Label>
                                     <TextBlock>
@@ -165,7 +165,7 @@
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Margin="{StaticResource ColumnMargin}" Orientation="Horizontal">
-                            <!--#region StartDateTime-->
+                            <!--#region Start-->
                             <StackPanel Margin="{StaticResource ControlMargin}">
                                 <Label>
                                     <TextBlock>
@@ -174,11 +174,11 @@
                                 </Label>
                                 <metro:DateTimePicker SelectedTimeFormat="Short" Culture="(Default)"
                                                       Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                      SelectedDateTime="{Binding DownloadHistoricalDataModel.StartDate, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}"/>
+                                                      SelectedDateTime="{Binding DownloadHistoricalDataModel.Start, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}"/>
                             </StackPanel>
                             <!--#endregion-->
 
-                            <!--#region EndDateTime-->
+                            <!--#region End-->
                             <StackPanel Margin="{StaticResource ControlMargin}">
                                 <Label>
                                     <TextBlock>
@@ -187,7 +187,7 @@
                                 </Label>
                                 <metro:DateTimePicker SelectedTimeFormat="Short" Culture="(Default)"
                                                       Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                      SelectedDateTime="{Binding DownloadHistoricalDataModel.EndDate, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}"/>
+                                                      SelectedDateTime="{Binding DownloadHistoricalDataModel.End, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}"/>
                             </StackPanel>
                             <!--#endregion-->
                         </StackPanel>

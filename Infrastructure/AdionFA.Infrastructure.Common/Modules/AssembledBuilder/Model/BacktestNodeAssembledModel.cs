@@ -1,6 +1,6 @@
-﻿using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.AssembledBuilder.Model
+namespace AdionFA.Infrastructure.Common.AssembledBuilder.Model
 {
     public class BacktestNodeAssembledModel : NodeAssembledModel
     {

@@ -1,5 +1,5 @@
-﻿using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Contracts;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Services;
+﻿using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
+using AdionFA.Infrastructure.Common.MetaTrader.Services;
 using Ninject.Modules;
 
 namespace AdionFA.Infrastructure.Core.IofC.Modules.Trade

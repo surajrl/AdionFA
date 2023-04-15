@@ -31,7 +31,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            AddOrRemoveNodeForTestCommand = new DelegateCommand<BacktestModelVM>(AddOrRemoveNodeForTest);
+            AddOrRemoveNodeForTestCommand = new DelegateCommand<REPTreeNodeVM>(AddOrRemoveNodeForTest);
             applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(AddOrRemoveNodeForTestCommand);
         }
 
@@ -43,20 +43,20 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
                 PopulateViewModel();
 
                 if ((NodeOutput?.Count ?? 0) == 0)
-                    NodeOutput = new ObservableCollection<BacktestModelVM>();
+                    NodeOutput = new ObservableCollection<REPTreeNodeVM>();
             }
         }
 
         private ICommand AddOrRemoveNodeForTestCommand { get; set; }
-        public void AddOrRemoveNodeForTest(BacktestModelVM node)
+        public void AddOrRemoveNodeForTest(REPTreeNodeVM node)
         {
             try
             {
-                NodeOutput ??= new ObservableCollection<BacktestModelVM>();
+                NodeOutput ??= new ObservableCollection<REPTreeNodeVM>();
 
                 foreach (var n in NodeOutput)
                 {
-                    if (n.BacktestModel.Node == node.BacktestModel.Node)
+                    if (n.Node == node.Node)
                     {
                         NodeOutput.Remove(node);
                         return;
@@ -95,8 +95,8 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
             set => SetProperty(ref _configuration, value);
         }
 
-        private ObservableCollection<BacktestModelVM> _nodeOutput;
-        public ObservableCollection<BacktestModelVM> NodeOutput
+        private ObservableCollection<REPTreeNodeVM> _nodeOutput;
+        public ObservableCollection<REPTreeNodeVM> NodeOutput
         {
             get => _nodeOutput;
             set => SetProperty(ref _nodeOutput, value);

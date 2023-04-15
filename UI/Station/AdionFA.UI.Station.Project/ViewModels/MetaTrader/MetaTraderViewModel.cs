@@ -3,8 +3,8 @@ using AdionFA.Infrastructure.Common.Extensions;
 using AdionFA.Infrastructure.Common.Extractor.Attributes;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Contracts;
+using AdionFA.Infrastructure.Common.MetaTrader.Model;
+using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
@@ -17,7 +17,6 @@ using AdionFA.UI.Station.Project.Model.MetaTrader;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 
@@ -43,6 +42,11 @@ using System.Windows.Input;
 using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Project.Model.StrategyBuilder;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using AdionFA.Infrastructure.Common.Weka.Model;
+using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
+using AdionFA.UI.Station.Project.Validators.MetaTrader;
+using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -75,7 +79,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            AddNodeForTestCommand = new DelegateCommand<BacktestModelVM>(AddNode);
+            AddNodeForTestCommand = new DelegateCommand<REPTreeNodeVM>(AddNode);
             ContainerLocator.Current.Resolve<IApplicationCommands>().NodeTestInMetatraderCommand.RegisterCommand(AddNodeForTestCommand);
 
             _mapper = new MapperConfiguration(mc =>
@@ -220,6 +224,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         //---------------------------------------------------------------------
 
                         // Perform algorithm --------------------------------------------------
+                        var timer = new Stopwatch();
+                        timer.Start();
+
                         IEnumerable<Candle> candles = MessageInput.Select(m => new Candle
                         {
                             Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time).TotalSeconds),
@@ -234,14 +241,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                         var isTrade = _tradeService.IsTrade(
                             (TimeframeEnum)TimeframeId,
-                            Nodes.FirstOrDefault().BacktestModel,
+                            _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(Nodes.FirstOrDefault()),
                             candles);
+
+                        timer.Stop();
+                        Debug.WriteLine(timer.ElapsedMilliseconds);
                         //---------------------------------------------------------------------
 
                         if (isTrade)
                         {
                             // Open operation request -----------------------------------------------
-                            if (Nodes.First().BacktestModel.Label.ToLower() == "up")
+                            if (Nodes.First().Label.ToLower() == "up")
                             {
                                 requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
                                 Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
@@ -308,15 +318,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
         });
 
         private ICommand AddNodeForTestCommand { get; set; }
-        public void AddNode(BacktestModelVM node)
+        public void AddNode(REPTreeNodeVM node)
         {
             try
             {
-                Nodes ??= new ObservableCollection<BacktestModelVM>();
+                Nodes ??= new ObservableCollection<REPTreeNodeVM>();
 
                 foreach (var n in Nodes)
                 {
-                    if (n.BacktestModel.Node == node.BacktestModel.Node)
+                    if (n.Node == node.Node)
                     {
                         Nodes.Remove(node);
                         MaximumMessagesRequired = MaxMessagesRequired();
@@ -338,14 +348,22 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                // TODO: Validate all required boxes are filled
+                var validator = Validate(new ExpertAdvisorValidator());
+                if (!validator.IsValid)
+                {
+                    IsTransactionActive = false;
+                    MessageHelper.ShowMessages(this,
+                        "MetaTrader - Expert Advisor",
+                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+                    return;
+                }
 
                 ExpertAdvisor.ProjectId = _project.ProjectId;
                 ExpertAdvisor.Name = $"{_project.ProjectName}.EA.{ExpertAdvisor.MagicNumber}";
 
                 var response = await _serviceAgent.UpdateExpertAdvisor(ExpertAdvisor);
                 MessageHelper.ShowMessage(this,
-                    "Expert Advisor Save",
+                    "MetaTrader - Expert Advisor",
                     response.IsSuccess ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
             }
             catch (Exception ex)
@@ -382,7 +400,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (Nodes == null)
                 {
-                    Nodes = new ObservableCollection<BacktestModelVM>();
+                    Nodes = new ObservableCollection<REPTreeNodeVM>();
                     Nodes.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
                     {
                         NodesAny = Nodes.Count > 0;
@@ -420,7 +438,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             if (Nodes.Count > 0)
             {
-                var indicators = _extractorService.BuildIndicatorsFromNode(Nodes.SelectMany(_n => _n.BacktestModel.Node.Select(__n => __n)).ToList());
+                var indicators = _extractorService.BuildIndicatorsFromNode(Nodes.SelectMany(_n => _n.Node.Select(__n => __n)).ToList());
 
                 List<int> valueProperties = indicators
                     .SelectMany(_i => _i.GetType().GetByAttributeProperties(typeof(IndicatorPeriodAttribute))
@@ -504,8 +522,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _nodesAny, value);
         }
 
-        private ObservableCollection<BacktestModelVM> _nodes;
-        public ObservableCollection<BacktestModelVM> Nodes
+        private ObservableCollection<REPTreeNodeVM> _nodes;
+        public ObservableCollection<REPTreeNodeVM> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);

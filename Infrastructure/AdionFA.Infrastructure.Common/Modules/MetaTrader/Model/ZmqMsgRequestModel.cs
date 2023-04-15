@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model
+namespace AdionFA.Infrastructure.Common.MetaTrader.Model
 {
     public class ZmqMsgRequestModel
     {

@@ -1,11 +1,11 @@
 ﻿using AdionFA.Infrastructure.Common.Extractor.Model;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Base;
 using System;
 using System.Collections.Generic;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contracts
+namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 {
     public interface IStrategyBuilderService
     {
@@ -20,7 +20,7 @@ namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contract
 
         // Serialization
 
-        void BacktestSerialize(string projectName, StrategyBuilderModel model);
+        void BacktestSerialize(string projectName, BacktestModel model);
         BacktestModel BacktestDeserialize(string path);
     }
 }

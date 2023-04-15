@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model
+namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
 {
     public class BacktestModel
     {

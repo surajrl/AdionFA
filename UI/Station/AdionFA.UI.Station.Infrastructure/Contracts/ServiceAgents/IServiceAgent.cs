@@ -1,8 +1,5 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AdionFA.UI.Station.Infrastructure.Contracts.AppServices

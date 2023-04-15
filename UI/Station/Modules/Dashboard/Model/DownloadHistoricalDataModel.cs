@@ -13,12 +13,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.Model
     public class DownloadHistoricalDataModel : HistoricalDataVM, IModelValidator
     {
         public string FilePathHistoricalData { get; set; }
-
+        public DateTime? Start { get; set; }
+        public DateTime? End { get; set; }
         public IList<HistoricalDataCandleSettingVM> HistoricalDataCandleSettings { get; set; }
 
         public ValidationResult GetValidationResult()
         {
-            DownloadMarketDataVMValidator v = new();
+            DownloadHistoricalDataVMValidator v = new();
             return v.Validate(this);
         }
     }

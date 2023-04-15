@@ -16,6 +16,7 @@
     <PackageReference Include="MaterialDesignColors" Version="2.1.2" />
     <PackageReference Include="MaterialDesignThemes" Version="4.8.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Prism.Unity" Version="8.1.97" />
     <PackageReference Include="protobuf-net" Version="3.2.16" />
     <PackageReference Include="ReactiveUI" Version="18.4.26" />

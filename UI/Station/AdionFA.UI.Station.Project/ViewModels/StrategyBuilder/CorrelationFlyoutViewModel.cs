@@ -1,26 +1,19 @@
-﻿using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Model;
+﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
-using AdionFA.Infrastructure.Common.Weka.Model;
 
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Project.AutoMapper;
+using AdionFA.UI.Station.Project.Model.StrategyBuilder;
 
-using AutoMapper;
-
-using Prism.Ioc;
 using Prism.Commands;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Linq;
-using DynamicData;
-using AdionFA.UI.Station.Project.Model.StrategyBuilder;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
@@ -31,14 +24,17 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            AddNodeForTestCommand = new DelegateCommand<BacktestModelVM>(AddNode);
+            AddNodeForTestCommand = new DelegateCommand<REPTreeNodeVM>(AddNode);
             applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(AddNodeForTestCommand);
+
+            CorrelationNodesUP = new();
+            CorrelationNodesDOWN = new();
         }
 
         private ICommand AddNodeForTestCommand { get; set; }
-        public void AddNode(BacktestModelVM backtest)
+        public void AddNode(REPTreeNodeVM node)
         {
-            backtest.HasTestInMetaTrader = true;
+            node.HasTestInMetaTrader = true;
         }
 
         // Flyout Command
@@ -48,7 +44,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleCorrelation))
             {
-                CorrelationModel = flyoutModel.Model != null ? (CorrelationModel)flyoutModel.Model : new CorrelationModel();
+                AllWinningNodes = flyoutModel.Model != null ? (ObservableCollection<REPTreeNodeVM>)flyoutModel.Model : new ObservableCollection<REPTreeNodeVM>();
                 PopulateViewModel();
             }
         }
@@ -57,13 +53,23 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         {
             try
             {
-                if (CorrelationModel.Success)
-                {
-                    NodesUP = new();
-                    CorrelationModel.ISBacktestUP.ForEach(backtest => NodesUP.Add(new BacktestModelVM { BacktestModel = backtest }));
+                CorrelationNodesUP.Clear();
+                CorrelationNodesDOWN.Clear();
 
-                    NodesDOWN = new();
-                    CorrelationModel.ISBacktestDOWN.ForEach(backtest => NodesDOWN.Add(new BacktestModelVM { BacktestModel = backtest }));
+                foreach (var node in AllWinningNodes)
+                {
+                    if (node.CorrelationPass)
+                    {
+                        switch (node.Label.ToLower())
+                        {
+                            case "up":
+                                CorrelationNodesUP.Add(node);
+                                break;
+                            case "down":
+                                CorrelationNodesDOWN.Add(node);
+                                break;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -75,25 +81,25 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         // Bindable Model
 
-        private CorrelationModel _correlationModel;
-        public CorrelationModel CorrelationModel
+        private ObservableCollection<REPTreeNodeVM> _allNodes;
+        public ObservableCollection<REPTreeNodeVM> AllWinningNodes
         {
-            get => _correlationModel;
-            set => SetProperty(ref _correlationModel, value);
+            get => _allNodes;
+            set => SetProperty(ref _allNodes, value);
         }
 
-        private ObservableCollection<BacktestModelVM> _nodesUP;
-        public ObservableCollection<BacktestModelVM> NodesUP
+        private ObservableCollection<REPTreeNodeVM> _correlationNodesUP;
+        public ObservableCollection<REPTreeNodeVM> CorrelationNodesUP
         {
-            get => _nodesUP;
-            set => SetProperty(ref _nodesUP, value);
+            get => _correlationNodesUP;
+            set => SetProperty(ref _correlationNodesUP, value);
         }
 
-        private ObservableCollection<BacktestModelVM> _nodesDown;
-        public ObservableCollection<BacktestModelVM> NodesDOWN
+        private ObservableCollection<REPTreeNodeVM> _correlationNodesDOWN;
+        public ObservableCollection<REPTreeNodeVM> CorrelationNodesDOWN
         {
-            get => _nodesDown;
-            set => SetProperty(ref _nodesDown, value);
+            get => _correlationNodesDOWN;
+            set => SetProperty(ref _correlationNodesDOWN, value);
         }
     }
 }

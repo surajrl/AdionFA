@@ -1,5 +1,5 @@
-﻿using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.Common.Infrastructures.StrategyBuilder.Services;
+﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Services;
 using Ninject.Modules;
 
 namespace AdionFA.Infrastructure.Core.IofC.Modules.StrategyBuilder

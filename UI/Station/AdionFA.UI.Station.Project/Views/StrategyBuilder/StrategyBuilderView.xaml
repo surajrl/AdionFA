@@ -79,7 +79,7 @@
         <!--#region ProcessBtn-->
         <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0 20 10 0">
             <Button x:Name="ProcessBtn" Width="80" Height="40" IsEnabled="{Binding CanExecute}"
-                    Command="{Binding ProcessBtnCommand}"
+                    Command="{Binding ProcessCommand}"
                     HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal" Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <iconPacks:FontAwesome Kind="PlaySolid" Width="14"/>
@@ -372,25 +372,26 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <!--#region WinningStrategyTotalUP-->
+                        <!--#region TotalCorrelationUP-->
                         <TextBlock Grid.Column="0" Grid.Row="0" Margin="0 5 10 5">
                             <Run Text="{x:Static commonResources:CommonResources.CorrelationUP}" FontWeight="SemiBold"/>
                             <Run Text=":"/>
                         </TextBlock>
                         <TextBlock Grid.Column="1" Grid.Row="0" Margin="0 5 10 5">
-                            <Run Text="{Binding WinningStrategyTotalUP}"/>
+                            <Run Text="{Binding TotalCorrelationUP}"/>
                         </TextBlock>
                         <!--#endregion-->
 
-                        <!--#region WinningStrategyTotalDOWN-->
+                        <!--#region TotalCorrelationDOWN-->
                         <TextBlock Grid.Column="0" Grid.Row="1" Margin="0 5 10 5">
                             <Run Text="{x:Static commonResources:CommonResources.CorrelationDOWN}" FontWeight="SemiBold"/>
                             <Run Text=":"/>
                         </TextBlock>
                         <TextBlock Grid.Column="1" Grid.Row="1" Margin="0 5 10 5">
-                            <Run Text="{Binding WinningStrategyTotalDOWN}"/>
+                            <Run Text="{Binding TotalCorrelationDOWN}"/>
                         </TextBlock>
                         <!--#endregion-->
                     </Grid>
@@ -447,7 +448,7 @@
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                         <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}"/>
-                                        <Binding Path="CorrelationModel"/>
+                                        <Binding Path="WinningNodes"/>
                                     </MultiBinding>
                                 </behaviors:InvokeCommandAction.CommandParameter>
                             </behaviors:InvokeCommandAction>
@@ -478,17 +479,17 @@
                 </Button>
                 <!--#endregion-->
 
-                <!--#region reloadStrategyBuilderBtn-->
-                <Button x:Name="reloadStrategyBuilderBtn" Grid.Column="4" Width="80" Height="40" Margin="10 0 0 0"
+                <!--#region refreshStrategyBuilderBtn-->
+                <Button x:Name="refreshStrategyBuilderBtn" Grid.Column="4" Width="80" Height="40" Margin="10 0 0 0"
                         IsEnabled="{Binding CanExecute}">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <iconPacks:PackIconFontAwesome Kind="RedoSolid" Width="14"/>
                         <Label Content="Refresh" FontSize="11"/>
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="reloadStrategyBuilderBtn" EventName="Click">
+                        <behaviors:EventTrigger SourceName="refreshStrategyBuilderBtn" EventName="Click">
                             <behaviors:InvokeCommandAction
-                                Command="{Binding ReloadBtnCommand}"/>
+                                Command="{Binding RefreshCommand}"/>
                         </behaviors:EventTrigger>
                     </behaviors:Interaction.Triggers>
                 </Button>

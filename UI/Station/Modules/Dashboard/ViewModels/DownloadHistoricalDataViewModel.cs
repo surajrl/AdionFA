@@ -3,23 +3,17 @@ using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts;
-using AdionFA.UI.Station.Infrastructure.EventAggregator;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AdionFA.UI.Station.Modules.Trader.Infrastructure;
 using Prism.Ioc;
 using Prism.Commands;
-using Prism.Events;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Sockets;
 using System.Windows.Input;
 using AdionFA.UI.Station.Infrastructure.Model.Market;
-using System.Collections.Generic;
-using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.I18n.Resources;
 using System.Diagnostics;
 using AdionFA.UI.Station.Module.Dashboard.Services;
@@ -27,9 +21,9 @@ using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using NetMQ.Sockets;
 using NetMQ;
 using Newtonsoft.Json;
-using AdionFA.Infrastructure.Common.Infrastructures.MetaTrader.Model;
 using DynamicData;
 using System.Threading.Tasks;
+using AdionFA.Infrastructure.Common.MetaTrader.Model;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
@@ -58,13 +52,15 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             RefreshBtnCommand = new DelegateCommand(OnRefreshAsync);
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
+
+            PopulateViewModel();
         }
 
         public void ShowFlyout(FlyoutModel flyoutModel)
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutDownloadHistoricalData))
             {
-                PopulateViewModel();
+                //PopulateViewModel();
             }
         }
 
@@ -80,19 +76,19 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     IsTransactionActive = false;
 
                     MessageHelper.ShowMessages(this,
-                        "Historical Data Download Configuration - Error",
+                        "Download Historical Data",
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
                 }
 
                 DateTime modifiedStart = new(
-                    DownloadHistoricalDataModel.StartDate.Year - 3,
-                    DownloadHistoricalDataModel.StartDate.Month,
-                    DownloadHistoricalDataModel.StartDate.Day,
-                    DownloadHistoricalDataModel.StartDate.Hour,
-                    DownloadHistoricalDataModel.StartDate.Minute,
-                    DownloadHistoricalDataModel.StartDate.Second);
+                    DownloadHistoricalDataModel.Start.Value.Year - 3,
+                    DownloadHistoricalDataModel.Start.Value.Month,
+                    DownloadHistoricalDataModel.Start.Value.Day,
+                    DownloadHistoricalDataModel.Start.Value.Hour,
+                    DownloadHistoricalDataModel.Start.Value.Minute,
+                    DownloadHistoricalDataModel.Start.Value.Second);
 
                 var symbol = await _marketDataService.GetSymbol(DownloadHistoricalDataModel.SymbolId).ConfigureAwait(true);
                 var timeframe = await _marketDataService.GetTimeframe(DownloadHistoricalDataModel.TimeframeId).ConfigureAwait(true);
@@ -108,7 +104,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     Symbol = symbol.Name,
                     Timeframe = (TimeframeEnum)int.Parse(timeframe.Value),
                     Start = modifiedStart,
-                    End = DownloadHistoricalDataModel.EndDate,
+                    End = DownloadHistoricalDataModel.End.Value,
                 });
                 requester.SendFrame(request);
                 Debug.WriteLine($"RequestSocket-Send:{request}");
@@ -118,13 +114,19 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 var timeout = new TimeSpan(0, 0, 5);
                 if (!requester.TryReceiveFrameString(timeout, out var response))
                 {
-                    throw new Exception($"Response not received from MetaTrader after {timeout.ToString("hh:mm:ss")}");
+                    throw new Exception($"Response not received from MetaTrader.");
                 }
 
                 Debug.WriteLine($"RequestSocket-Receive:{response}");
                 // -----------------------------------------------------------------------------------------------------
 
                 var json = JsonConvert.DeserializeObject<ZmqResponse>(response);
+
+                if (json.Status == 0)
+                {
+                    throw new Exception(json.Message);
+                }
+
                 DownloadHistoricalDataModel.FilePathHistoricalData = json.Data;
 
                 if (await CreateHistory().ConfigureAwait(true))
@@ -150,7 +152,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             catch (Exception ex)
             {
                 MessageHelper.ShowMessage(this,
-                    "Error",
+                    "Download Historical Data",
                     $"{ex.Message}");
 
                 IsTransactionActive = false;
@@ -178,7 +180,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     // -----------------------------------------------------------------------------------------------------
 
                     // Receive response-------------------------------------------------------------------------------------
-
                     var timeout = new TimeSpan(0, 0, 5);
                     if (!requester.TryReceiveFrameString(timeout, out var response))
                     {
@@ -266,8 +267,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     var candlesOrdered = result.OrderByDescending(candle => candle.Date);
                     var firstCandleDate = candlesOrdered.LastOrDefault().Date;
                     var lastCandleDate = candlesOrdered.FirstOrDefault().Date;
-
-                    DownloadHistoricalDataModel.EndDate = null;
 
                     DownloadHistoricalDataModel.Description =
                         $"{marketName}." +
