@@ -18,6 +18,7 @@ mono_crash.*
 
 # Build results
 AdionFA-Debug-AnyCPU/
+AdionFA-Release-AnyCPU/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
