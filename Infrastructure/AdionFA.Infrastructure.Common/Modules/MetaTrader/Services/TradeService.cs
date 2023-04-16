@@ -42,17 +42,18 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
 
             if (extractorResult.Any())
             {
-                int totalRules = extractorResult.Count;
+                var totalRules = extractorResult.Count;
                 var temporalIndicator = extractorResult.FirstOrDefault();
-                int length = temporalIndicator.Output.Length;
+                var length = temporalIndicator.Output.Length;
 
-                int counter = 0;
+                var counter = 0;
                 while (counter < length)
                 {
-                    int passed = 0;
+                    var passed = 0;
 
                     foreach (var indicator in extractorResult)
                     {
+                        // use as index the index of the candle being calculated from the overall data?
                         double output = indicator.Output[counter];
 
                         switch (indicator.Operator)

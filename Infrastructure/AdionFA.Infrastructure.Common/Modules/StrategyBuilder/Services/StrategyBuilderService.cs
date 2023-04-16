@@ -229,8 +229,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         toDate,
                         rules,
                         data,
-                        periodId,
-                        variation);
+                        periodId);
 
                     if (extractorResult.Any())
                     {
@@ -309,8 +308,12 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        private static bool ApplyWinningStrategyRules(BacktestModel bkmIS, BacktestModel bkmOS, ConfigurationBaseDTO config,
-            double variationPercent, double progressiveness)
+        private static bool ApplyWinningStrategyRules(
+            BacktestModel bkmIS,
+            BacktestModel bkmOS,
+            ConfigurationBaseDTO config,
+            double variationPercent,
+            double progressiveness)
         {
             return bkmIS.WinningTrades >= config.MinTransactionCountIS &&
                     bkmIS.PercentSuccess >= (double)config.MinPercentSuccessIS &&

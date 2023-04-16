@@ -59,6 +59,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
                     if (n.Node == node.Node)
                     {
                         NodeOutput.Remove(node);
+                        node.HasTestInMetaTrader = false;
                         return;
                     }
                 }

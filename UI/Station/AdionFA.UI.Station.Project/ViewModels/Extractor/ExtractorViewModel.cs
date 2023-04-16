@@ -71,13 +71,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }, (s) => true); //item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, (s) => true);
 
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
                 // Validator
+
                 if (!Validate(new ExtractorValidator()).IsValid)
                 {
                     IsTransactionActive = false;
@@ -85,6 +86,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
 
                 // Process
+
                 if (_projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorWithoutScheduleDirectory()) &&
                     _projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorAmericaDirectory()) &&
                     _projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorEuropeDirectory()) &&
@@ -93,10 +95,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     IsTransactionActive = true;
                     _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
 
-                    ProjectSettingsModel pconfig = await _appProjectService.GetProjectConfiguration(_project.ProjectId, true);
-                    HistoricalDataVM projectHistoricalData = await _historicalDataService.GetHistoricalData(pconfig.HistoricalDataId.Value, true);
+                    var projectConfig = await _appProjectService.GetProjectConfiguration(_project.ProjectId, true);
+                    var projectHistoricalData = await _historicalDataService.GetHistoricalData(projectConfig.HistoricalDataId.Value, true);
 
-                    // Gets all the candles from the corresponding historical data.
+                    // Gets all the candles from the corresponding historical data
                     IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles.Select(
                             h => new Candle
                             {
@@ -130,7 +132,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             var executing = ExtractorStatusEnum.Executing.GetMetadata();
                             model.Status = executing.Name;
                             model.Message = executing.Description;
-                            List<IndicatorBase> extractions = _extractorService.ExtractorExecute(StartDate.Value, EndDate.Value, indicators, candles, pconfig.TimeframeId, pconfig.Variation);
+                            List<IndicatorBase> extractions = _extractorService.ExtractorExecute(StartDate.Value, EndDate.Value, indicators, candles, projectConfig.TimeframeId, projectConfig.Variation);
 
                             //-------------------------------------
                             model.Message = "Writing Extraction File";
@@ -144,14 +146,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             model.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
 
-                            if (!pconfig.WithoutSchedule)
+                            if (!projectConfig.WithoutSchedule)
                             {
                                 // America
                                 model.Message = "Writing Extraction File America";
                                 _extractorService.ExtractorWrite(
                                     _project.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
                                     indicators,
-                                    pconfig.FromTimeInSecondsAmerica.Hour, pconfig.ToTimeInSecondsAmerica.Hour
+                                    projectConfig.FromTimeInSecondsAmerica.Hour, projectConfig.ToTimeInSecondsAmerica.Hour
                                 );
 
                                 // Europe
@@ -159,7 +161,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 _extractorService.ExtractorWrite(
                                     _project.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
                                     indicators,
-                                    pconfig.FromTimeInSecondsEurope.Hour, pconfig.ToTimeInSecondsEurope.Hour
+                                    projectConfig.FromTimeInSecondsEurope.Hour, projectConfig.ToTimeInSecondsEurope.Hour
                                 );
 
                                 // Asia
@@ -167,7 +169,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 _extractorService.ExtractorWrite(
                                     _project.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
                                     indicators,
-                                    pconfig.FromTimeInSecondsAsia.Hour, pconfig.ToTimeInSecondsAsia.Hour
+                                    projectConfig.FromTimeInSecondsAsia.Hour, projectConfig.ToTimeInSecondsAsia.Hour
                                 );
                             }
 
@@ -182,7 +184,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         }
                     }
 
-                    Task[] pool = ExtractionProcessList.Select(e => new Task(action, e)).ToArray();
+                    var pool = ExtractionProcessList.Select(e => new Task(action, e)).ToArray();
                     foreach (var t in pool)
                     {
                         t.Start();
