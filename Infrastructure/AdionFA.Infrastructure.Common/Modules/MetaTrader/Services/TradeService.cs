@@ -29,63 +29,48 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
         {
             var indicators = _extractorService.BuildIndicatorsFromNode(model.Node.ToList());
 
-            DateTime from = candles.LastOrDefault().Date.AddSeconds(-period.ToSeconds());
-            DateTime to = candles.LastOrDefault().Date.AddSeconds(period.ToSeconds());
-
-            var extractorResult = _extractorService.ExtractorExecute(
-                from,
-                to,
+            var extractorResult = _extractorService.ExtractorMetaTrader(
+                candles.LastOrDefault(),
                 indicators,
-                candles,
-                (int)period,
-                metaTraderTest: true);
+                candles);
 
-            if (extractorResult.Any())
+            if (!extractorResult.Any())
             {
-                var totalRules = extractorResult.Count;
-                var temporalIndicator = extractorResult.FirstOrDefault();
-                var length = temporalIndicator.Output.Length;
+                return false;
+            }
 
-                var counter = 0;
-                while (counter < length)
+            var totalRules = extractorResult.Count;
+            var passed = 0;
+
+            foreach (var indicator in extractorResult)
+            {
+                var output = indicator.Output[0];
+
+                switch (indicator.Operator)
                 {
-                    var passed = 0;
+                    case MathOperatorEnum.GreaterThanOrEqual:
+                        passed += output >= indicator.Value ? 1 : 0;
+                        break;
 
-                    foreach (var indicator in extractorResult)
-                    {
-                        // use as index the index of the candle being calculated from the overall data?
-                        double output = indicator.Output[counter];
+                    case MathOperatorEnum.LessThanOrEqual:
+                        passed += output <= indicator.Value ? 1 : 0;
+                        break;
 
-                        switch (indicator.Operator)
-                        {
-                            case MathOperatorEnum.GreaterThanOrEqual:
-                                passed += output >= indicator.Value ? 1 : 0;
-                                break;
-                            case MathOperatorEnum.LessThanOrEqual:
-                                passed += output <= indicator.Value ? 1 : 0;
-                                break;
-                            case MathOperatorEnum.GreaterThan:
-                                passed += output > indicator.Value ? 1 : 0;
-                                break;
-                            case MathOperatorEnum.LessThan:
-                                passed += output < indicator.Value ? 1 : 0;
-                                break;
-                            case MathOperatorEnum.Equal:
-                                passed += output == indicator.Value ? 1 : 0;
-                                break;
-                        }
-                    }
+                    case MathOperatorEnum.GreaterThan:
+                        passed += output > indicator.Value ? 1 : 0;
+                        break;
 
-                    if (passed == totalRules)
-                    {
-                        return true;
-                    }
+                    case MathOperatorEnum.LessThan:
+                        passed += output < indicator.Value ? 1 : 0;
+                        break;
 
-                    counter++;
+                    case MathOperatorEnum.Equal:
+                        passed += output == indicator.Value ? 1 : 0;
+                        break;
                 }
             }
 
-            return false;
+            return passed == totalRules;
         }
 
         public ZmqMsgRequestModel OpenOperation(OrderTypeEnum buyOrSell = OrderTypeEnum.Buy)

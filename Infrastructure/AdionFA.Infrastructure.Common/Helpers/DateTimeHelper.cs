@@ -7,7 +7,7 @@ namespace AdionFA.Infrastructure.Common.Helpers
     {
         public static DateTime BuildDateTime(int periodId, DateTime dt, long time, bool isTicks = false)
         {
-            TimeSpan ts = new TimeSpan(0, 0, 0, 0);
+            var ts = new TimeSpan(0, 0, 0, 0);
             if (isTicks)
             {
                 return dt.AddTicks(time);

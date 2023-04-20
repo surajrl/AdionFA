@@ -126,7 +126,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             High = h.High,
                             Low = h.Low,
                             Close = h.Close,
-                            Volume = h.Volume
+                            Volume = h.Volume,
+                            Label = h.Close > h.Open ? "UP" : "DOWN"
                         }
                     ).OrderBy(d => d.Date)
                     .ThenBy(d => d.Time).ToList();
@@ -153,6 +154,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         }
 
                         // Synchronous - Data Mine
+
                         else
                         {
                             var sync = SynchronousMode(c, candles);
@@ -307,6 +309,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     if (model.InstancesList.Count > 0)
                     {
+                        // Winning Nodes is global so it gets modified when doing async
                         WinningNodes ??= new();
 
                         foreach (var instance in model.InstancesList)

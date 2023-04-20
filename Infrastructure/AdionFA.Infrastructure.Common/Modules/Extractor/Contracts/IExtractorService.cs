@@ -19,6 +19,17 @@ namespace AdionFA.Infrastructure.Common.Extractor.Contracts
             decimal variation = 0,
             bool metaTraderTest = false);
 
+        List<IndicatorBase> ExtractorBacktest(
+            Candle candleToTest,
+            List<IndicatorBase> indicators,
+            IEnumerable<Candle> candles,
+            int timeframeId);
+
+        List<IndicatorBase> ExtractorMetaTrader(
+            Candle candleToTest,
+            List<IndicatorBase> indicators,
+            IEnumerable<Candle> candles);
+
         IEnumerable<Candle> GetCandles(string historyFilePath);
 
         bool ExtractorWrite(string path, List<IndicatorBase> indicators, int fromTime = 0, int toTime = 0);

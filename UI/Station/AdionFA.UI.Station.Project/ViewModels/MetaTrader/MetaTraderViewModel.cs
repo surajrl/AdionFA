@@ -224,9 +224,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         //---------------------------------------------------------------------
 
                         // Perform algorithm --------------------------------------------------
-                        var timer = new Stopwatch();
-                        timer.Start();
-
                         IEnumerable<Candle> candles = MessageInput.Select(m => new Candle
                         {
                             Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time).TotalSeconds),
@@ -239,13 +236,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Label = m.Label
                         }).OrderBy(m => m.Date);
 
+                        var data = new List<Candle>(candles);
+
                         var isTrade = _tradeService.IsTrade(
                             (TimeframeEnum)TimeframeId,
                             _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(Nodes.FirstOrDefault()),
-                            candles);
-
-                        timer.Stop();
-                        Debug.WriteLine(timer.ElapsedMilliseconds);
+                            data);
                         //---------------------------------------------------------------------
 
                         if (isTrade)
