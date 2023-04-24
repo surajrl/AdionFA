@@ -30,6 +30,15 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
+
+            NodeTestInMetatraderCommand = new DelegateCommand<REPTreeNodeVM>(AddNode);
+            applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(NodeTestInMetatraderCommand);
+        }
+
+        private ICommand NodeTestInMetatraderCommand { get; set; }
+        public void AddNode(REPTreeNodeVM node)
+        {
+            node.HasTestInMetaTrader = true;
         }
 
         private ICommand FlyoutCommand { get; set; }

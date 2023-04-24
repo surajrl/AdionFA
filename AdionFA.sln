@@ -59,6 +59,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.UI.Station", "UI\St
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.UI.Station.Project", "UI\Station\AdionFA.UI.Station.Project\AdionFA.UI.Station.Project.csproj", "{626517EF-06AE-47B0-BAA7-D5E20D5E8BED}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmark", "Benchmark", "{BC8724B2-F035-40CF-8F62-9CDC46C35553}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdionFA.Benchmark", "Benchmark\AdionFA.Benchmark\AdionFA.Benchmark.csproj", "{74EDB065-B989-43D6-9F4E-E94DF4E64050}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +149,10 @@ Global
 		{626517EF-06AE-47B0-BAA7-D5E20D5E8BED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{626517EF-06AE-47B0-BAA7-D5E20D5E8BED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{626517EF-06AE-47B0-BAA7-D5E20D5E8BED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74EDB065-B989-43D6-9F4E-E94DF4E64050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74EDB065-B989-43D6-9F4E-E94DF4E64050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74EDB065-B989-43D6-9F4E-E94DF4E64050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74EDB065-B989-43D6-9F4E-E94DF4E64050}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -174,6 +182,7 @@ Global
 		{5CDB80F4-08B1-4445-843D-CE2EFBB64DEE} = {7B54A614-A09E-43A9-8016-33C9BF405193}
 		{57DECA38-3A24-4516-8555-8248C09B53AE} = {02618E2B-1DAF-4028-B97A-30C1CAC0C704}
 		{626517EF-06AE-47B0-BAA7-D5E20D5E8BED} = {02618E2B-1DAF-4028-B97A-30C1CAC0C704}
+		{74EDB065-B989-43D6-9F4E-E94DF4E64050} = {BC8724B2-F035-40CF-8F62-9CDC46C35553}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C55CA892-37CA-4AB8-BE61-0D39E9BC1049}

@@ -16,18 +16,12 @@ namespace AdionFA.Infrastructure.Common.Extractor.Contracts
             List<IndicatorBase> indicators,
             IEnumerable<Candle> candles,
             int timeframeId,
-            decimal variation = 0,
-            bool metaTraderTest = false);
+            decimal variation = 0);
 
         List<IndicatorBase> ExtractorBacktest(
-            Candle candleToTest,
-            List<IndicatorBase> indicators,
-            IEnumerable<Candle> candles,
-            int timeframeId);
-
-        List<IndicatorBase> ExtractorMetaTrader(
-            Candle candleToTest,
-            List<IndicatorBase> indicators,
+            Candle firstCandle,
+            Candle currentCandle,
+            IEnumerable<IndicatorBase> indicators,
             IEnumerable<Candle> candles);
 
         IEnumerable<Candle> GetCandles(string historyFilePath);

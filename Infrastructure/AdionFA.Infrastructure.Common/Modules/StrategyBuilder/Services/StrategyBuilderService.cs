@@ -18,6 +18,7 @@ using System.Reflection.Metadata;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 {
@@ -30,6 +31,27 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         {
             ProjectDirectoryService = IoC.Get<IProjectDirectoryService>();
             ExtractorService = IoC.Get<IExtractorService>();
+        }
+
+        public IList<REPTreeNodeModel> GetBacktests()
+        {
+            var allBacktests = new List<BacktestModel>();
+            var allNodes = new List<REPTreeNodeModel>();
+
+            var directoryOS = Path.Combine(ProjectDirectoryManager.DefaultDirectory(), "OS");
+            var directoryIS = Path.Combine(ProjectDirectoryManager.DefaultDirectory(), "IS");
+
+            ProjectDirectoryService.GetFilesInPath(directoryOS, "*.xml").ToList().ForEach(file =>
+            {
+                allBacktests.Add(BacktestDeserialize(file.FullName));
+            });
+
+            ProjectDirectoryService.GetFilesInPath(directoryIS, "*.xml").ToList().ForEach(file =>
+            {
+                allBacktests.Add(BacktestDeserialize(file.FullName));
+            });
+
+            return allNodes;
         }
 
         // Strategy
@@ -157,37 +179,38 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             string nodeLabel,
             List<string> node,
             ConfigurationBaseDTO config,
-            IEnumerable<Candle> candles)
+            IEnumerable<Candle> allCandles)
         {
             try
             {
-                var bkmIS = BacktestExecute(
+                var backtestIS = ExecuteBacktest(
                     nodeLabel,
                     config.FromDateIS.Value,
                     config.ToDateIS.Value,
                     node.ToList(),
-                    candles,
+                    allCandles,
                     config.TimeframeId);
 
-                var bkmOS = BacktestExecute(
+                var backtestOS = ExecuteBacktest(
                     nodeLabel,
                     config.FromDateOS.Value,
                     config.ToDateOS.Value,
                     node.ToList(),
-                    candles,
+                    allCandles,
                     config.TimeframeId);
 
-                //BacktestSerializeOs(bkmOS);
+                BacktestSerializeOs(backtestOS);
+                BacktestSerializeIs(backtestIS);
 
                 var stb = new StrategyBuilderModel
                 {
-                    IS = bkmIS,
-                    OS = bkmOS
+                    IS = backtestIS,
+                    OS = backtestOS
                 };
 
                 stb.WinningStrategy = ApplyWinningStrategyRules(
-                    bkmIS,
-                    bkmOS,
+                    backtestIS,
+                    backtestOS,
                     config,
                     stb.VariationPercent,
                     stb.Progressiveness);
@@ -201,24 +224,17 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        private void BacktestSerializeOs(BacktestModel backtest)
-        {
-            SerializerHelper.XMLSerializeObject(
-                backtest,
-                Path.Combine(ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(backtest.Name, "_")));
-        }
-
-        public BacktestModel BacktestExecute(
+        public BacktestModel ExecuteBacktest(
             string nodeLabel,
             DateTime fromDate,
             DateTime toDate,
             List<string> node,
-            IEnumerable<Candle> candles,
+            IEnumerable<Candle> allCandles,
             int timeframeId)
         {
             try
             {
-                var bk = new BacktestModel
+                var backtest = new BacktestModel
                 {
                     Label = nodeLabel,
                     FromDate = fromDate,
@@ -229,107 +245,122 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     Backtests = new List<BacktestOperationModel>()
                 };
 
-                List<IndicatorBase> rules = ExtractorService.BuildIndicatorsFromNode(node);
+                var indicators = ExtractorService.BuildIndicatorsFromNode(node);
 
-                if (rules.Any())
+                if (indicators.Any())
                 {
-                    // Get the candles between the from and to date
-                    List<Candle> candlesRange = (from c in candles
-                                                 let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
-                                                 where dt >= fromDate && dt <= toDate
-                                                 select c).ToList();
+                    var candlesFromTo = (from c in allCandles
+                                         let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
+                                         where dt >= fromDate && dt <= toDate
+                                         select c)
+                                         .ToList();
 
-                    bk.TotalOpportunity = candlesRange.Count;
+                    backtest.TotalOpportunity = candlesFromTo.Count;
 
-                    candlesRange.ForEach(candleToTest =>
+                    for (var idx = 0; idx < candlesFromTo.Count - 1; idx++)
                     {
-                        // Select the candle range from the first one until the candle being tested
-                        var fromDt = DateTimeHelper.BuildDateTime(timeframeId, candlesRange.FirstOrDefault().Date, candlesRange.FirstOrDefault().Time);
-                        var toDt = DateTimeHelper.BuildDateTime(timeframeId, candleToTest.Date, candleToTest.Time);
+                        var firstCandle = candlesFromTo[0];
+                        var nextCandle = candlesFromTo[idx + 1];
 
-                        IEnumerable<Candle> range = from c in candlesRange
-                                                    let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
-                                                    where dt >= fromDt && dt <= toDt
-                                                    select c;
-
-                        List<IndicatorBase> extractorResult = ExtractorService.ExtractorBacktest(
-                            candleToTest,
-                            rules,
-                            range,
-                            timeframeId);
-
-                        if (extractorResult.Any())
+                        var currentCandle = new Candle
                         {
-                            var totalRules = extractorResult.Count;
-                            var temporalIndicator = extractorResult.FirstOrDefault();
-                            var length = temporalIndicator.Output.Length;
+                            Date = candlesFromTo[idx].Date,
+                            Time = candlesFromTo[idx].Time,
+                            Open = candlesFromTo[idx].Open,
+                            High = candlesFromTo[idx].Open,
+                            Low = candlesFromTo[idx].Open,
+                            Close = candlesFromTo[idx].Open,
+                        };
 
-                            int counter = 0;
-                            while (counter < length)
+                        var firstCandleDt = DateTimeHelper.BuildDateTime(timeframeId, firstCandle.Date, firstCandle.Time);
+                        var currentCandleDt = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time);
+
+                        var candlesRange = (from c in candlesFromTo
+                                            let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
+                                            where dt >= firstCandleDt && dt < currentCandleDt
+                                            select c).ToList();
+
+                        candlesRange.Add(currentCandle);
+
+                        var extractorResult = ExtractorService.ExtractorBacktest(
+                            firstCandle,
+                            currentCandle,
+                            indicators,
+                            candlesRange);
+
+                        if (!extractorResult.Any())
+                        {
+                            continue;
+                        }
+
+                        var passed = 0;
+
+                        foreach (var indicator in extractorResult)
+                        {
+                            if (indicator.OutNBElement == 0)
                             {
-                                var il = temporalIndicator.IntervalLabels[counter];
-                                var upOrDown = il.Label;
+                                continue;
+                            }
 
-                                var passed = 0;
+                            var output = indicator.Output[indicator.OutNBElement - 1];
 
-                                foreach (var indicator in rules)
-                                {
-                                    var output = indicator.Output[counter];
+                            switch (indicator.Operator)
+                            {
+                                case MathOperatorEnum.GreaterThanOrEqual:
+                                    passed += output >= indicator.Value ? 1 : 0;
+                                    break;
 
-                                    switch (indicator.Operator)
-                                    {
-                                        case MathOperatorEnum.GreaterThanOrEqual:
-                                            passed += output >= indicator.Value ? 1 : 0;
-                                            break;
+                                case MathOperatorEnum.LessThanOrEqual:
+                                    passed += output <= indicator.Value ? 1 : 0;
+                                    break;
 
-                                        case MathOperatorEnum.LessThanOrEqual:
-                                            passed += output <= indicator.Value ? 1 : 0;
-                                            break;
+                                case MathOperatorEnum.GreaterThan:
+                                    passed += output > indicator.Value ? 1 : 0;
+                                    break;
 
-                                        case MathOperatorEnum.GreaterThan:
-                                            passed += output > indicator.Value ? 1 : 0;
-                                            break;
+                                case MathOperatorEnum.LessThan:
+                                    passed += output < indicator.Value ? 1 : 0;
+                                    break;
 
-                                        case MathOperatorEnum.LessThan:
-                                            passed += output < indicator.Value ? 1 : 0;
-                                            break;
-
-                                        case MathOperatorEnum.Equal:
-                                            passed += output == indicator.Value ? 1 : 0;
-                                            break;
-                                    }
-                                }
-
-                                // Rules from the node have been satisfied.
-                                if (passed == totalRules)
-                                {
-                                    bk.TotalTrades++;
-
-                                    // Check if the candle went UP or DOWN
-                                    bool isWinner = bk.Label.ToLower() == upOrDown.ToLower();
-                                    if (isWinner)
-                                    {
-                                        bk.WinningTrades++;
-                                    }
-                                    else
-                                    {
-                                        bk.LosingTrades++;
-                                    }
-
-                                    bk.Backtests.Add(new BacktestOperationModel
-                                    {
-                                        Date = il.Interval,
-                                        IsWinner = isWinner
-                                    });
-                                }
-
-                                counter++;
+                                case MathOperatorEnum.Equal:
+                                    passed += output == indicator.Value ? 1 : 0;
+                                    break;
                             }
                         }
-                    });
+
+                        if (passed == extractorResult.Count)
+                        {
+                            backtest.TotalTrades++;
+
+                            bool isWinnerTrade = false;
+                            if (backtest.Label.ToLower() == "up")
+                            {
+                                isWinnerTrade = currentCandle.Open < nextCandle.Open;
+                            }
+                            else
+                            {
+                                isWinnerTrade = currentCandle.Open > nextCandle.Open;
+                            }
+
+                            if (isWinnerTrade)
+                            {
+                                backtest.WinningTrades++;
+                            }
+                            else
+                            {
+                                backtest.LosingTrades++;
+                            }
+
+                            backtest.Backtests.Add(new BacktestOperationModel
+                            {
+                                Date = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time),
+                                IsWinner = isWinnerTrade
+                            });
+                        }
+                    }
                 }
 
-                return bk;
+                return backtest;
             }
             catch (Exception ex)
             {
@@ -356,9 +387,22 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest Serialization
 
+        private void BacktestSerializeOs(BacktestModel model)
+        {
+            SerializerHelper.XMLSerializeObject(
+                model,
+                string.Format(@"{0}\OS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
+        }
+
+        private void BacktestSerializeIs(BacktestModel model)
+        {
+            SerializerHelper.XMLSerializeObject(
+                model,
+                string.Format(@"{0}\IS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
+        }
+
         public void BacktestSerialize(string projectName, BacktestModel model)
         {
-            // IS
             var directory = model.Label.ToLower() == "up"
                 ? projectName.ProjectStrategyBuilderNodesUPDirectory()
                 : projectName.ProjectStrategyBuilderNodesDOWNDirectory();

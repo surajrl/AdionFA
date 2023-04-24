@@ -44,6 +44,45 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
 
                 if ((NodeOutput?.Count ?? 0) == 0)
                     NodeOutput = new ObservableCollection<REPTreeNodeVM>();
+
+                // TESTING NODE
+                //var nodes = new ObservableCollection<string>
+                //    {
+                //        "STOCHRSI_3_27_9_12_1_1 < 96.50599",
+                //        "|   STOCHRSI_3_27_9_12_1_1 >= 3.20718",
+                //        "|   |   STOCH_7_5_5_13_7 >= 48.84577",
+                //        "|   |   |   AROON_12_1 >= 87.5",
+                //        "|   |   |   |   STOCHF_37_14_1_1 < 92.31229",
+                //        "|   |   |   |   |   RSI_3_22 >= 45.34515",
+                //    };
+
+                //NodeOutput.Add(new REPTreeNodeVM
+                //{
+                //    Node = nodes,
+                //    TotalUP = 82,
+                //    TotalDOWN = 400,
+                //    RatioUP = 0.20,
+                //    RatioDOWN = 4.88,
+                //    RatioMax = 4.88,
+                //    Label = "DOWN",
+                //    Total = 482,
+                //    Winner = true,
+                //    TotalTradesIs = 228,
+                //    WinningTradesIs = 125,
+                //    LosingTradesIs = 103,
+                //    TotalOpportunityIs = 7811,
+                //    PercentSuccessIs = 54,
+                //    ProgressivenessIs = 2,
+                //    TotalTradesOs = 47,
+                //    WinningTradesOs = 29,
+                //    LosingTradesOs = 18,
+                //    TotalOpportunityOs = 1559,
+                //    PercentSuccessOs = 61,
+                //    ProgressivenessOs = 3,
+                //    WinningStrategy = true,
+                //    HistoricalData = "Forex.EURUSD.H4.05-05-2003.22-12-2022",
+                //    HasTestInMetaTrader = true
+                //});
             }
         }
 

@@ -97,6 +97,7 @@
         </metro:MetroHeader>
         <!--#endregion-->
 
+        <!--#region Buttons-->
         <Grid HorizontalAlignment="Right" Margin="0 20 10 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -120,6 +121,7 @@
             </Button>
             <metro:ProgressRing Grid.Column="1" IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
+        <!--#endregion-->
 
         <metro:MetroHeader Grid.Row="1" Margin="0 10 10 10" Header="{x:Static commonResources:CommonResources.TestInMetaTrader}">
             <Grid Margin="0 10 0 0">
@@ -135,19 +137,13 @@
                 <StackPanel Margin="{StaticResource ControlMargin}">
                     <Label>
                         <TextBlock>
-                        <Run Text="{x:Static commonResources:CommonResources.Timeframe}"/>
-                        <Run Text=""/>
+                            <Run Text="{x:Static commonResources:CommonResources.Timeframe}"/>
                         </TextBlock>
                     </Label>
                     <ComboBox x:Name="PeriodFilterCb" ItemsSource="{Binding Timeframes}" MinWidth="225"
                             DisplayMemberPath="Name"
                             SelectedValuePath="Id"
                             SelectedValue="{Binding TimeframeId, Mode=TwoWay}">
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="PeriodFilterCb" EventName="SelectionChanged">
-                                <behaviors:InvokeCommandAction Command="{Binding TimeframeCommand}"/>
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
                     </ComboBox>
                 </StackPanel>
                 <Button x:Name="nodesUnderTestBtn" Grid.Column="2" Width="160" Height="40" Margin="10 0 0 0" IsEnabled="{Binding NodesAny}">
@@ -176,24 +172,19 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <UniformGrid Columns="2" Rows="2">
-                    <TextBlock>
-                        <Run Text="{x:Static commonResources:CommonResources.MaximumMessagesRequired}" FontWeight="SemiBold"/>
-                        <Run Text=":" FontWeight="SemiBold"/>
-                    </TextBlock>
-                    <TextBlock>
-                        <Run Text="{Binding MaximumMessagesRequired}"/>
-                    </TextBlock>
+
+            <!--#region MessagesFromCurrentPeriod-->
+            <StackPanel>
+                <UniformGrid Rows="1">
                     <TextBlock>
                         <Run Text="{x:Static commonResources:CommonResources.MessagesFromCurrentPeriod}" FontWeight="SemiBold"/>
                         <Run Text=":" FontWeight="SemiBold"/>
-                    </TextBlock>
-                    <TextBlock>
                         <Run Text="{Binding MessagesFromCurrentPeriod}"/>
                     </TextBlock>
                 </UniformGrid>
             </StackPanel>
+            <!--#endregion-->
+
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 15 0">
                 <Button x:Name="CleanMessageInputBtn" Command="{Binding CleanMessageInputCommand}">
                     <StackPanel Orientation="Horizontal">
@@ -202,6 +193,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
+
             <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 10 0">
                 <Button x:Name="CleanMessageOutputBtn" Command="{Binding CleanMessageOutputCommand}">
                     <StackPanel Orientation="Horizontal">
@@ -241,17 +233,8 @@
                 </Grid>
                 <metro:MetroHeader Margin="0 0 15 10" Header="{x:Static commonResources:CommonResources.MessageInput}">
                     <ListView Margin="2"
-                                ItemsSource="{Binding MessageInput}"
-                                Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsRequired}" Value="False">
-                                        <Setter Property="Foreground" Value="Gray"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                              ItemsSource="{Binding MessageInput}"
+                              Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="{Binding ElementName=dummywidth0, Path=ActualWidth}"

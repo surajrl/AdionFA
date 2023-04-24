@@ -27,8 +27,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
     public class UploadHistoricalDataViewModel : ViewModelBase
     {
-        public readonly ISettingService _settingService;
-        public readonly IMarketDataServiceAgent _marketDataService;
+        private readonly ISettingService _settingService;
+        private readonly IMarketDataServiceAgent _marketDataService;
 
         public UploadHistoricalDataViewModel(
             ISettingService settingService,

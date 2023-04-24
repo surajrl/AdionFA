@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Common\AdionFA.Infrastructure.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core.IofC\AdionFA.Infrastructure.Core.IofC.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core\AdionFA.Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Enum\AdionFA.Infrastructure.Enum.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.I18n\AdionFA.Infrastructure.I18n.csproj" />
+    <ProjectReference Include="..\..\UI\Station\AdionFA.UI.Station.Project\AdionFA.UI.Station.Project.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -32,9 +32,7 @@ using System.Threading;
 using System.Windows.Input;
 
 using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
 using AdionFA.UI.Station.Infrastructure.Model.Weka;
-using AdionFA.UI.Station.Infrastructure.Helpers;
 
 using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.Common.Weka.Model;
@@ -44,12 +42,15 @@ using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.TransferObject.Base;
 
 using DynamicData;
+using System.Collections.Concurrent;
+using BenchmarkDotNet.Attributes;
+using AdionFA.UI.Station.Infrastructure.Helpers;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
     public class StrategyBuilderViewModel : MenuItemViewModel
     {
-        public readonly IMapper Mapper;
+        private readonly IMapper _mapper;
 
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IStrategyBuilderService _strategyBuilderService;
@@ -74,7 +75,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            Mapper = new MapperConfiguration(mc =>
+            _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
@@ -117,20 +118,20 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 // Historical Data
 
                 var projectHistoricalData = await _marketDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
-                IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles.Select(
-                        h => new Candle
-                        {
-                            Date = h.StartDate,
-                            Time = h.StartTime,
-                            Open = h.Open,
-                            High = h.High,
-                            Low = h.Low,
-                            Close = h.Close,
-                            Volume = h.Volume,
-                            Label = h.Close > h.Open ? "UP" : "DOWN"
-                        }
-                    ).OrderBy(d => d.Date)
-                    .ThenBy(d => d.Time).ToList();
+                IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles
+                .Select(hdCandle => new Candle
+                {
+                    Date = hdCandle.StartDate,
+                    Time = hdCandle.StartTime,
+                    Open = hdCandle.Open,
+                    High = hdCandle.High,
+                    Low = hdCandle.Low,
+                    Close = hdCandle.Close,
+                    Volume = hdCandle.Volume,
+                    Label = hdCandle.Close > hdCandle.Open ? "UP" : "DOWN"
+                })
+                .OrderBy(d => d.Date)
+                .ThenBy(d => d.Time).ToList();
 
                 // Data Mine (Generate Weka Tree and Backtest of IS and OS)
 
@@ -145,7 +146,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         var c = Configurations[idx];
 
                         // Asynchronous - Data Mine
-
                         if (Configuration.AsynchronousMode)
                         {
                             var pool = AsynchronousMode(c, candles);
@@ -154,7 +154,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         }
 
                         // Synchronous - Data Mine
-
                         else
                         {
                             var sync = SynchronousMode(c, candles);
@@ -171,7 +170,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 st => st.InstancesList.SelectMany(i => i.NodeOutput.Where(n => !n.WinningStrategy).Select(n => n))
                             ).ToList();
 
-                            var autoAdjustConfig = Mapper.Map<ConfigurationBaseVM, AutoAdjustConfigModel>(
+                            var autoAdjustConfig = _mapper.Map<ConfigurationBaseVM, AutoAdjustConfigModel>(
                                     Configurations.Any() ? Configurations.LastOrDefault() : Configuration);
 
                             if (!c.IsDefault)
@@ -208,6 +207,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     true);
 
                 // Update REP Tree Node VM with correlation pass results
+
                 CorrelationModel.ISBacktestUP.ForEach(backtestUP =>
                 {
                     var correspondingNode = WinningNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestUP.Node));
@@ -230,8 +230,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Results Message
 
-                bool result = !StrategyBuilderProcessList.Any(e => e.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name);
-                string msg = result ? MessageResources.StrategyBuilderCompleted : MessageResources.EntityErrorTransaction;
+                var result = !StrategyBuilderProcessList.Any(e => e.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name);
+                var msg = result ? MessageResources.StrategyBuilderCompleted : MessageResources.EntityErrorTransaction;
 
                 if (result && !IsCorrelationDetail)
                 {
@@ -264,32 +264,32 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             return new Task(() =>
             {
-                foreach (var model in StrategyBuilderProcessList)
+                foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
                 {
-                    DataMine(config, model, candles);
+                    DataMine(config, strategyBuilderProcess, candles);
                 }
             }, TaskCreationOptions.AttachedToParent);
         }
 
-        private bool DataMine(ConfigurationBaseVM config, StrategyBuilderProcessModel model, IEnumerable<Candle> candles)
+        private bool DataMine(ConfigurationBaseVM config, StrategyBuilderProcessModel strategyBuilderProcess, IEnumerable<Candle> candles)
         {
             try
             {
                 // Beginning
 
                 var beginning = StrategyBuilderStatusEnum.Beginning.GetMetadata();
-                model.Status = beginning.Name;
-                model.Message = $"{beginning.Description}";
+                strategyBuilderProcess.Status = beginning.Name;
+                strategyBuilderProcess.Message = $"{beginning.Description}";
 
                 // Weka
 
                 var weka = StrategyBuilderStatusEnum.ExecutingWeka.GetMetadata();
-                model.Status = weka.Name;
-                model.Message = $"{weka.Description}";
+                strategyBuilderProcess.Status = weka.Name;
+                strategyBuilderProcess.Message = $"{weka.Description}";
 
                 var wekaApi = new WekaApiClient();
                 IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
-                    model.Path,
+                    strategyBuilderProcess.Path,
                     config.DepthWeka,
                     config.TotalDecimalWeka,
                     config.MinimalSeed,
@@ -298,30 +298,32 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     (double)config.MaxRatioTree,
                     (double)config.NTotalTree
                 );
-                model.Message = $"Pruning Tree";
 
+                strategyBuilderProcess.Message = $"Pruning Tree";
                 if (responseWeka.Any())
                 {
                     AddItemToStrategyBuilderProcessList(
-                        model.TemplateName,
-                        responseWeka.Select(Mapper.Map<REPTreeOutputModel, REPTreeOutputVM>)
-                        .ToList());
+                        strategyBuilderProcess.TemplateName,
+                        responseWeka.Select(_mapper.Map<REPTreeOutputModel, REPTreeOutputVM>).ToList());
 
-                    if (model.InstancesList.Count > 0)
+                    if (strategyBuilderProcess.InstancesList.Count > 0)
                     {
-                        // Winning Nodes is global so it gets modified when doing async
-                        WinningNodes ??= new();
-
-                        foreach (var instance in model.InstancesList)
+                        foreach (var instance in strategyBuilderProcess.InstancesList)
                         {
-                            WinningNodes.Add(instance.NodeOutput.Where(m => m.Winner).ToList());
-                            WinningNodes.ToList().ForEach(winningNode =>
+                            var winningNodes = new List<REPTreeNodeVM>
+                            {
+                                instance.NodeOutput.Where(m => m.Winner).ToList()
+                            };
+
+                            winningNodes.ForEach(winningNode =>
                             {
                                 winningNode.Node = new ObservableCollection<string>(winningNode.Node.OrderByDescending(n => n).ToList());
                             });
 
-                            foreach (var node in WinningNodes)
+                            foreach (var node in winningNodes)
                             {
+                                WinningNodes.Add(node);
+
                                 if (node.HasBacktest)
                                 {
                                     continue;
@@ -336,7 +338,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 var stb = _strategyBuilderService.BacktestBuild(
                                     node.Label,
                                     node.Node.ToList(),
-                                    Mapper.Map<ConfigurationBaseVM, ConfigurationBaseDTO>(config),
+                                    _mapper.Map<ConfigurationBaseVM, ConfigurationBaseDTO>(config),
                                     candles);
 
                                 node.HasBacktest = true;
@@ -377,17 +379,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             // Update Winning Strategy Variables
 
-                            model.WinningStrategy = instance.TotalWinningStrategy > 0;
-                            model.TotalWinningStrategyUp += instance.TotalWinningStrategyUP;
-                            model.TotalWinningStrategyDown += instance.TotalWinningStrategyDOWN;
-                            model.TotalWinningStrategy = model.TotalWinningStrategyUp + model.TotalWinningStrategyDown;
+                            strategyBuilderProcess.WinningStrategy = instance.TotalWinningStrategy > 0;
+                            strategyBuilderProcess.TotalWinningStrategyUp += instance.TotalWinningStrategyUP;
+                            strategyBuilderProcess.TotalWinningStrategyDown += instance.TotalWinningStrategyDOWN;
+                            strategyBuilderProcess.TotalWinningStrategy = strategyBuilderProcess.TotalWinningStrategyUp + strategyBuilderProcess.TotalWinningStrategyDown;
                         }
                     }
                 }
 
                 var completed = StrategyBuilderStatusEnum.Completed.GetMetadata();
-                model.Status = completed.Name;
-                model.Message = $"{completed.Description}";
+                strategyBuilderProcess.Status = completed.Name;
+                strategyBuilderProcess.Message = $"{completed.Description}";
 
                 return true;
             }
@@ -395,8 +397,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 LogHelper.LogException<StrategyBuilderViewModel>(ex);
                 var error = StrategyBuilderStatusEnum.Error.GetMetadata();
-                model.Status = error.Name;
-                model.Message = ex.Message;
+                strategyBuilderProcess.Status = error.Name;
+                strategyBuilderProcess.Message = ex.Message;
                 return false;
             }
         }
@@ -431,32 +433,32 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                int TargetUp = Configuration.WinningStrategyTotalUP > TotalCorrelationUP ?
+                var TargetUp = Configuration.WinningStrategyTotalUP > TotalCorrelationUP ?
                     Configuration.WinningStrategyTotalUP - TotalCorrelationUP : 0;
 
-                int TargetDown = Configuration.WinningStrategyTotalDOWN > TotalCorrelationDOWN ?
+                var TargetDown = Configuration.WinningStrategyTotalDOWN > TotalCorrelationDOWN ?
                     Configuration.WinningStrategyTotalDOWN - TotalCorrelationDOWN : 0;
 
-                List<REPTreeNodeVM> filteredNodes = nodes.Where(
+                var filteredNodes = nodes.Where(
                     n => n.PercentSuccessIs >= (double)autoAdjustConfig.MinPercentSuccessIS &&
                          n.PercentSuccessOs >= (double)autoAdjustConfig.MinPercentSuccessOS &&
                          n.VariationPercent <= (double)autoAdjustConfig.VariationTransaction &&
                          (!Configuration.IsProgressiveness || n.Progressiveness <= (double)autoAdjustConfig.Progressiveness)
                 ).ToList().OrderByDescending(n => n.WinningTradesIs).ThenByDescending(n => n.PercentSuccessIs).ToList();
 
-                List<REPTreeNodeVM> nodesUp = filteredNodes.Where(n => n.Label.ToLower() == "up").ToList();
+                var nodesUp = filteredNodes.Where(n => n.Label.ToLower() == "up").ToList();
                 if (nodesUp.Count > 0)
                     nodesUp = nodesUp.GetRange(0, nodesUp.Count > TargetUp ? TargetUp : nodesUp.Count);
 
-                List<REPTreeNodeVM> nodesDown = filteredNodes.Where(n => n.Label.ToLower() == "down").ToList();
+                var nodesDown = filteredNodes.Where(n => n.Label.ToLower() == "down").ToList();
                 if (nodesDown.Count > 0)
                     nodesDown = nodesDown.GetRange(0, nodesDown.Count > TargetDown ? TargetDown : nodesDown.Count);
 
-                REPTreeNodeVM upLast = nodesUp.LastOrDefault();
-                REPTreeNodeVM downLast = nodesDown.LastOrDefault();
+                var upLast = nodesUp.LastOrDefault();
+                var downLast = nodesDown.LastOrDefault();
 
-                int WinningTradesOs = 0;
-                int WinningTradesIs = 0;
+                var WinningTradesOs = 0;
+                var WinningTradesIs = 0;
                 if ((upLast?.WinningTradesOs ?? 0) > 0 && (downLast?.WinningTradesOs ?? 0) > 0)
                 {
                     WinningTradesOs = upLast.WinningTradesOs > downLast.WinningTradesOs ? downLast.WinningTradesOs : upLast.WinningTradesOs;
@@ -709,7 +711,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 Configurations = new ObservableCollection<AutoAdjustConfigModel>
                 {
-                    Mapper.Map<ConfigurationBaseVM, AutoAdjustConfigModel>(Configuration)
+                    _mapper.Map<ConfigurationBaseVM, AutoAdjustConfigModel>(Configuration)
                 };
 
                 CurrentConfiguration = 1;
@@ -738,7 +740,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        public ObservableCollection<REPTreeNodeVM> WinningNodes { get; set; }
+        private ObservableCollection<REPTreeNodeVM> _winnginNodes;
+        public ObservableCollection<REPTreeNodeVM> WinningNodes
+        {
+            get => _winnginNodes;
+            set => SetProperty(ref _winnginNodes, value);
+        }
 
         private ProjectConfigurationVM _configuration;
         public ProjectConfigurationVM Configuration

@@ -10,10 +10,11 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<OutputPath>$(SolutionDir)AdionFA-$(Configuration)-$(Platform)\</OutputPath>
+		<OutputPath>$(SolutionDir)AdionFA-$(Configuration)\</OutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.9" />
 		<PackageReference Include="NetMQ" Version="4.0.1.11" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

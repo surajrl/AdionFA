@@ -12,6 +12,8 @@ namespace AdionFA.UI.Station.Project.Model.MetaTrader
             set => SetProperty(ref _id, value);
         }
 
+        public bool IsNewCandle { get; set; }
+
         public int Temporality { get; set; }
         public string TemporalityName { get; set; }
 
@@ -32,19 +34,5 @@ namespace AdionFA.UI.Station.Project.Model.MetaTrader
         public decimal Open { get; set; }
         public decimal Close { get; set; }
         public decimal Low { get; set; }
-        public string Label { get; set; }
-
-        public decimal Bid { get; set; }
-        public decimal Ask { get; set; }
-
-        private bool isRequired;
-        public bool IsRequired
-        {
-            get => isRequired;
-            set => SetProperty(ref isRequired, value);
-        }
-
-        public long ElapsedMilliseconds { get; set; }
-        public string ElapsedTimeFormated { get; set; }
     }
 }

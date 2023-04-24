@@ -13,26 +13,26 @@ namespace AdionFA.UI.Station.Infrastructure.Base
             RegionManager = ContainerLocator.Current.Resolve<IRegionManager>();
             EventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
         }
-        
-        #region RegionManager
+
+        // RegionManager
+
         private IRegionManager regionManager;
-        public IRegionManager RegionManager 
+        public IRegionManager RegionManager
         {
             get { return regionManager; }
-            private set { SetProperty(ref regionManager, value); } 
+            private set { SetProperty(ref regionManager, value); }
         }
-        #endregion
 
-        #region EventAggregator
+        // EventAggregator
+
         private IEventAggregator eventAggregator;
         public IEventAggregator EventAggregator
         {
             get { return eventAggregator; }
             private set { SetProperty(ref eventAggregator, value); }
         }
-        #endregion
 
-        #region Validation
+        // Validation
 
         public ValidationResult Validate<T>(AbstractValidator<T> v) where T : ViewModelBase
         {
@@ -56,7 +56,5 @@ namespace AdionFA.UI.Station.Infrastructure.Base
 
             return vr;
         }
-
-        #endregion
     }
 }

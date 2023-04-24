@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<OutputPath>$(SolutionDir)AdionFA-$(Configuration)-$(Platform)\</OutputPath>
+		<OutputPath>$(SolutionDir)AdionFA-$(Configuration)\</OutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>

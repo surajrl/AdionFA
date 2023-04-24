@@ -169,31 +169,37 @@
 
                                                 <!--#region IS-->
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
+                                                    <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
+                                                    <Run Text=":"/>
+                                                    <Run Text="{Binding TotalOpportunityIs}"/>
+                                                </TextBlock>
+                                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding TotalTradesIs}"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="4" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding WinningTradesIs}"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="4" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="5" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding LosingTradesIs}"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="5" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="6" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="6" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="7" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
@@ -204,31 +210,37 @@
 
                                                 <!--#region OS-->
                                                 <TextBlock Grid.Row="2" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold"/>
+                                                    <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
+                                                    <Run Text=":"/>
+                                                    <Run Text="{Binding TotalOpportunityOs}"/>
+                                                </TextBlock>
+                                                <TextBlock Grid.Row="3" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding TotalTradesOs}"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="3" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="4" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding WinningTradesOs}"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="4" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="5" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding LosingTradesOs}"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="5" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding PercentSuccessOs, StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="7" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
@@ -237,15 +249,15 @@
                                                 </TextBlock>
                                                 <!--#endregion OS-->
 
-                                                <Separator Grid.Row="7" Grid.ColumnSpan="2" Margin="10"/>
+                                                <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="10"/>
 
-                                                <TextBlock Grid.Row="8" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="9" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding VariationPercent , StringFormat=N2, Mode=OneWay}"/>
                                                     <Run Text="%"/>
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="8" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="10" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold"/>
                                                     <Run Text=":"/>
                                                     <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}"/>

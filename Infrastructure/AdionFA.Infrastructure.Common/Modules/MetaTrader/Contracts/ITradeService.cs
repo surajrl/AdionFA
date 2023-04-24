@@ -11,7 +11,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Contracts
 {
     public interface ITradeService
     {
-        bool IsTrade(TimeframeEnum period, REPTreeNodeModel node, IEnumerable<Candle> candles);
+        bool IsTrade(REPTreeNodeModel node, IList<Candle> candleHistory, Candle currentCandle);
 
         ZmqMsgRequestModel OpenOperation(OrderTypeEnum buyOrSell = OrderTypeEnum.Buy);
 

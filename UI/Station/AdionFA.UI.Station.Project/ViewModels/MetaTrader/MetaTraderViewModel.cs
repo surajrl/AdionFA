@@ -47,6 +47,7 @@ using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
 using AdionFA.UI.Station.Project.Validators.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
+using System.Windows.Data;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -65,6 +66,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private ProjectVM _project;
         private CancellationTokenSource _cancellationTokenSrc;
+        private bool _requestClose;
+        private Candle _currentCandle;
 
         public MetaTraderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
@@ -77,9 +80,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
-            ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            AddNodeForTestCommand = new DelegateCommand<REPTreeNodeVM>(AddNode);
+            ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
             ContainerLocator.Current.Resolve<IApplicationCommands>().NodeTestInMetatraderCommand.RegisterCommand(AddNodeForTestCommand);
 
             _mapper = new MapperConfiguration(mc =>
@@ -120,7 +122,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
 
                 _cancellationTokenSrc = new CancellationTokenSource();
-                CancellationToken token = _cancellationTokenSrc.Token;
+                var token = _cancellationTokenSrc.Token;
 
                 var requestSocketProgress = new Progress<ZmqMsgModel>();
                 requestSocketProgress.ProgressChanged += (senderOfProgressChanged, nextItem) =>
@@ -128,18 +130,36 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     MessageOutput.Insert(0, nextItem);
                 };
 
-                var pullSocketProgress = new Progress<ZmqMsgModel>();
-                pullSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
+                var subscriberSocketProgress = new Progress<ZmqMsgModel>();
+                subscriberSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
                 {
-                    MessageInput.Insert(0, nextItem);
-                    await RequestSocketAsync(requestSocketProgress, _cancellationTokenSrc);
+                    if (nextItem.IsNewCandle)
+                    {
+                        // Current candle with only the open price
+                        _currentCandle = new Candle
+                        {
+                            Date = nextItem.Date.AddSeconds((long)TimeSpan.Parse(nextItem.Time).TotalSeconds),
+                            Time = (long)TimeSpan.Parse(nextItem.Time).TotalSeconds,
+                            Open = (double)nextItem.Open,
+                            High = (double)nextItem.Open,
+                            Low = (double)nextItem.Open,
+                            Close = (double)nextItem.Open,
+                        };
+                    }
+                    else
+                    {
+                        // Complete candle
+                        MessageInput.Insert(0, nextItem);
+                        await RequestSocketAsync(requestSocketProgress, _cancellationTokenSrc);
+                    }
                 };
 
-                await PullSocketAsync(pullSocketProgress, _cancellationTokenSrc);
+                await SubSocket(subscriberSocketProgress, _cancellationTokenSrc);
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
+                Debug.WriteLine($"Process-{ex.Message}");
             }
             finally
             {
@@ -149,22 +169,31 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private async Task PullSocketAsync(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
+        private async Task SubSocket(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
         {
             await Task.Factory.StartNew(() =>
             {
                 using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PushPort}");
                 subscriber.Subscribe("");
 
+                Thread.Sleep(1);
+
+                var syncclient = new RequestSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.ResponsePort}");
+                syncclient.SendFrame("sync");
+                syncclient.ReceiveFrameString();
+                syncclient.Dispose();
+
                 try
                 {
                     _cancellationTokenSrc ??= new CancellationTokenSource();
-                    CancellationToken token = _cancellationTokenSrc.Token;
+                    var token = _cancellationTokenSrc.Token;
 
                     while (true)
                     {
                         if (token.IsCancellationRequested)
+                        {
                             token.ThrowIfCancellationRequested();
+                        }
 
                         var ts = TimeSpan.FromMilliseconds(1000);
 
@@ -173,13 +202,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             var zmqModel = JsonConvert.DeserializeObject<ZmqMsgModel>(message);
                             Debug.WriteLine("SubscriberSocket-Receive:" + message);
 
-                            zmqModel.Id = CountMessagesCurrentPeriod() + 1;
+                            zmqModel.Id = MessagesFromCurrentPeriod;
                             zmqModel.TemporalityName = EnumUtil.GetTimeframeEnum(zmqModel.Temporality).GetMetadata().Name;
                             zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss");
                             zmqModel.PutType = (int)MessageZMQPutTypeEnum.Input;
                             zmqModel.PutTypeName = MessageZMQPutTypeEnum.Input.GetMetadata().Name;
                             zmqModel.Description = message;
-                            zmqModel.IsRequired = true;
 
                             progress.Report(zmqModel);
                         }
@@ -187,10 +215,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    if (ex is OperationCanceledException)
-                        Console.WriteLine($"{nameof(OperationCanceledException)} thrown with message: {ex.Message}");
-                    else
-                        Console.WriteLine(ex.Message);
+                    Trace.TraceError(ex.Message);
+                    Debug.WriteLine($"SubscriberSocket:{ex.Message}");
                     ctsTask.Cancel();
                 }
             });
@@ -205,26 +231,34 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 try
                 {
                     ctsTask ??= new CancellationTokenSource();
-                    CancellationToken token = ctsTask.Token;
+                    var token = ctsTask.Token;
 
                     if (token.IsCancellationRequested)
+                    {
                         token.ThrowIfCancellationRequested();
-
-                    ZmqMsgModel lastMessageInput = MessageInput.FirstOrDefault();
+                    }
 
                     if (Nodes.Any())
                     {
-                        // Close operation request --------------------------------------------
-                        requester.SendFrame(JsonConvert.SerializeObject(_tradeService.CloseAllOperation()));
-                        Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.CloseAllOperation())}");
+                        if (_requestClose)
+                        {
+                            // Close operation request --------------------------------------------
+                            requester.SendFrame(JsonConvert.SerializeObject(_tradeService.CloseAllOperation()));
+                            Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.CloseAllOperation())}");
 
-                        // Close operation response -------------------------------------------
-                        string closeAllRep = requester.ReceiveFrameString();
-                        Debug.WriteLine($"RequestSocket-Receive:{closeAllRep}");
-                        //---------------------------------------------------------------------
+                            // Close operation response -------------------------------------------
+                            var closeAllRep = requester.ReceiveFrameString();
+                            Debug.WriteLine($"RequestSocket-Receive:{closeAllRep}");
+                            //---------------------------------------------------------------------
+
+                            _requestClose = false;
+                        }
 
                         // Perform algorithm --------------------------------------------------
-                        IEnumerable<Candle> candles = MessageInput.Select(m => new Candle
+                        List<ZmqMsgModel> messageInputCopy = MessageInput.ToList(); // Copy in case it gets modified
+
+                        ZmqMsgModel lastMessageInput = messageInputCopy.FirstOrDefault();
+                        var candles = messageInputCopy.Select(m => new Candle
                         {
                             Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time).TotalSeconds),
                             Time = (long)TimeSpan.Parse(m.Time).TotalSeconds,
@@ -233,15 +267,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Low = (double)m.Low,
                             Close = (double)m.Close,
                             Volume = (double)m.Volume,
-                            Label = m.Label
-                        }).OrderBy(m => m.Date);
-
-                        var data = new List<Candle>(candles);
+                        })
+                        .OrderBy(m => m.Date).ToList();
 
                         var isTrade = _tradeService.IsTrade(
-                            (TimeframeEnum)TimeframeId,
-                            _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(Nodes.FirstOrDefault()),
-                            data);
+                                _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(Nodes.FirstOrDefault()),
+                                candles,
+                                _currentCandle);
                         //---------------------------------------------------------------------
 
                         if (isTrade)
@@ -260,18 +292,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             //-----------------------------------------------------------------------
 
                             // Open operation response ----------------------------------------------
-                            string openOperationRep = requester.ReceiveFrameString();
+                            var openOperationRep = requester.ReceiveFrameString();
                             Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
 
-                            ZmqMsgRequestModel response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
+                            var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
 
                             var model = new ZmqMsgModel
                             {
                                 Id = MessageOutput.Count + 1,
-
-                                Date = lastMessageInput.Date,
-                                DateFormat = lastMessageInput.DateFormat,
-
+                                Date = _currentCandle.Date,
+                                DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss"),
                                 PutType = (int)MessageZMQPutTypeEnum.Output,
                                 PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
                                 PositionType = (int)response.OrderType,
@@ -281,6 +311,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             };
 
                             progress.Report(model);
+
+                            _requestClose = true;
                             //-----------------------------------------------------------------------
                         }
                     }
@@ -288,6 +320,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 catch (Exception ex)
                 {
                     Trace.TraceError(ex.Message);
+                    Debug.WriteLine($"RequestSocket:{ex.Message}");
                     ctsTask.Cancel();
                 }
             });
@@ -296,6 +329,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public DelegateCommand CleanMessageInputCommand => new DelegateCommand(() =>
         {
             MessageInput?.Clear();
+            MessagesFromCurrentPeriod = 0;
         }).ObservesCanExecute(() => MessageInputAny);
 
         public DelegateCommand CleanMessageOutputCommand => new DelegateCommand(() =>
@@ -303,18 +337,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             MessageOutput?.Clear();
         }).ObservesCanExecute(() => MessageOutputAny);
 
-        public ICommand TimeframeCommand => new DelegateCommand(() =>
-        {
-            foreach (var item in MessageInput.Where(m => m.IsRequired))
-            {
-                item.IsRequired = (int)EnumUtil.GetTimeframeEnum(item.Temporality) == TimeframeId;
-            }
-
-            MessagesFromCurrentPeriod = CountMessagesCurrentPeriod();
-        });
-
-        private ICommand AddNodeForTestCommand { get; set; }
-        public void AddNode(REPTreeNodeVM node)
+        private ICommand AddNodeForTestCommand => new DelegateCommand<REPTreeNodeVM>(node =>
         {
             try
             {
@@ -325,20 +348,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     if (n.Node == node.Node)
                     {
                         Nodes.Remove(node);
-                        MaximumMessagesRequired = MaxMessagesRequired();
                         return;
                     }
                 }
 
                 Nodes.Add(node);
-                MaximumMessagesRequired = MaxMessagesRequired();
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }
+        });
 
         public ICommand SaveEACommand => new DelegateCommand(async () =>
         {
@@ -401,7 +422,45 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     {
                         NodesAny = Nodes.Count > 0;
                     };
-                    MaximumMessagesRequired = MaxMessagesRequired();
+
+                    // TESTING NODE
+                    //var nodes = new ObservableCollection<string>
+                    //{
+                    //    "STOCHRSI_3_27_9_12_1_1 < 96.50599",
+                    //    "|   STOCHRSI_3_27_9_12_1_1 >= 3.20718",
+                    //    "|   |   STOCH_7_5_5_13_7 >= 48.84577",
+                    //    "|   |   |   AROON_12_1 >= 87.5",
+                    //    "|   |   |   |   STOCHF_37_14_1_1 < 92.31229",
+                    //    "|   |   |   |   |   RSI_3_22 >= 45.34515",
+                    //};
+
+                    //Nodes.Add(new REPTreeNodeVM
+                    //{
+                    //    Node = nodes,
+                    //    TotalUP = 82,
+                    //    TotalDOWN = 400,
+                    //    RatioUP = 0.20,
+                    //    RatioDOWN = 4.88,
+                    //    RatioMax = 4.88,
+                    //    Label = "DOWN",
+                    //    Total = 482,
+                    //    Winner = true,
+                    //    TotalTradesIs = 228,
+                    //    WinningTradesIs = 125,
+                    //    LosingTradesIs = 103,
+                    //    TotalOpportunityIs = 7811,
+                    //    PercentSuccessIs = 54,
+                    //    ProgressivenessIs = 2,
+                    //    TotalTradesOs = 47,
+                    //    WinningTradesOs = 29,
+                    //    LosingTradesOs = 18,
+                    //    TotalOpportunityOs = 1559,
+                    //    PercentSuccessOs = 61,
+                    //    ProgressivenessOs = 3,
+                    //    WinningStrategy = true,
+                    //    HistoricalData = "Forex.EURUSD.H4.05-05-2003.22-12-2022",
+                    //    HasTestInMetaTrader = true
+                    //});
                 }
 
                 if (MessageInput == null)
@@ -409,7 +468,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     MessageInput = new ObservableCollection<ZmqMsgModel>();
                     MessageInput.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
                     {
-                        MessagesFromCurrentPeriod = CountMessagesCurrentPeriod();
+                        MessagesFromCurrentPeriod++;
                         MessageInputAny = MessageInput.Count > 0;
                     };
                 }
@@ -428,50 +487,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }
-
-        private int MaxMessagesRequired()
-        {
-            if (Nodes.Count > 0)
-            {
-                var indicators = _extractorService.BuildIndicatorsFromNode(Nodes.SelectMany(_n => _n.Node.Select(__n => __n)).ToList());
-
-                List<int> valueProperties = indicators
-                    .SelectMany(_i => _i.GetType().GetByAttributeProperties(typeof(IndicatorPeriodAttribute))
-                    .Where(prop => prop.PropertyType.Name == typeof(int).Name)
-                    .Select(prop => (int)prop.GetValue(_i))).OrderByDescending(pv => pv).ToList();
-
-                return valueProperties.OrderByDescending(vp => vp)?.FirstOrDefault() ?? 0;
-            }
-            return 0;
-        }
-
-        private int CountMessagesCurrentPeriod()
-        {
-            return MessageInput.Where(_m => (int)EnumUtil.GetTimeframeEnum(_m.Temporality) == TimeframeId && _m.IsRequired).Count();
-        }
-
-        private void CleanMessageInput()
-        {
-            int max = MaxMessagesRequired();
-            var queue = MessageInput.Where(_m => (int)EnumUtil.GetTimeframeEnum(_m.Temporality) == TimeframeId).ToList();
-
-            MessageInput = queue.Count >= max ? new ObservableCollection<ZmqMsgModel>(queue.Take(max).ToList())
-            : new ObservableCollection<ZmqMsgModel>(queue);
-
-            MessagesFromCurrentPeriod = MessageInput.Count;
-            MessageInputAny = MessagesFromCurrentPeriod > max;
-            MessageInput.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
-            {
-                MessagesFromCurrentPeriod = CountMessagesCurrentPeriod();
-                int max = MaxMessagesRequired();
-                MessageInputAny = MessagesFromCurrentPeriod > max;
-
-                if (MessageInput.Count > 0 && max > 0 && MessageInput.Count > MaximumMessagesRequired * 2)
-                {
-                    CleanMessageInput();
-                }
-            };
         }
 
         // Bindable Model

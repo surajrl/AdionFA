@@ -339,8 +339,8 @@
                                             </Grid>
                                         </StackPanel>
 
-                                        <!--<StackPanel Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Right" Visibility="{Binding WinningStrategy, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                            <Button  x:Name="testInMetatraderBtn" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetatrader, Converter={StaticResource InverseBooleanConverter}}">
+                                        <StackPanel Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Right">
+                                            <Button x:Name="testInMetatraderBtn" Width="150" Margin="{StaticResource ControlMargin}" IsEnabled="{Binding HasTestInMetaTrader, Converter={StaticResource InverseBooleanConverter}}">
                                                 <Button.Content>
                                                     <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}"/>
                                                 </Button.Content>
@@ -354,7 +354,7 @@
                                                     </behaviors:EventTrigger>
                                                 </behaviors:Interaction.Triggers>
                                             </Button>
-                                        </StackPanel>-->
+                                        </StackPanel>
                                     </Grid>
                                 </Expander>
                             </DataTemplate>
