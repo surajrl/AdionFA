@@ -62,7 +62,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private ProjectVM Project;
 
-        public StrategyBuilderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
+        public StrategyBuilderViewModel(MainViewModel mainViewModel)
+            : base(mainViewModel)
         {
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
             _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
@@ -74,6 +75,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
+
+            WinningNodes = new();
 
             _mapper = new MapperConfiguration(mc =>
             {
@@ -592,7 +595,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
                 Configuration = Project?.ProjectConfigurations.FirstOrDefault();
 
-                if ((TotalCorrelationUP == 0 && TotalCorrelationDOWN == 0) || refresh)
+                if (refresh)
                 {
                     StrategyBuilderProcessList = new ObservableCollection<StrategyBuilderProcessModel>();
                     ResetBuilder(true);
@@ -614,52 +617,51 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         }
                     }
                 }
-
-                void PopulateStrategyBuilderProcessList(string templatePath)
-                {
-                    string regionName = "WithoutSchedule";
-                    int regionType = 0;
-                    if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
-                    {
-                        regionType = (int)MarketRegionEnum.America;
-                        regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America);
-                    }
-                    if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe)))
-                    {
-                        regionType = (int)MarketRegionEnum.Europe;
-                        regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe);
-                    }
-                    if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia)))
-                    {
-                        regionType = (int)MarketRegionEnum.Asia;
-                        regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia);
-                    }
-
-                    _projectDirectoryService.GetFilesInPath(templatePath).ToList().ForEach(fi =>
-                    {
-                        StrategyBuilderProcessList.Add(new StrategyBuilderProcessModel
-                        {
-                            Path = fi.FullName,
-                            TemplateName = fi.Name,
-                            RegionType = regionType,
-                            RegionName = regionName,
-                            Status = StrategyBuilderStatusEnum.NoStarted.GetMetadata().Name,
-                            IsEnabled = false,
-                            IsExpanded = false,
-                            InstancesList = new ObservableCollection<REPTreeOutputVM>()
-                        });
-                    });
-                }
-
-                //CorrelationModel = _strategyBuilderService.Correlation(ProcessArgs.ProjectName, Configuration.MaxPercentCorrelation, EntityTypeEnum.StrategyBuilder);
-                //IsCorrelationDetail = CorrelationModel != null;
-                //UpdateTotalCorrelation(CorrelationModel?.ISBacktestUP?.Count ?? 0, CorrelationModel?.ISBacktestDOWN?.Count ?? 0, true);
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
                 throw;
             }
+        }
+
+        private void PopulateStrategyBuilderProcessList(string templatePath)
+        {
+            string regionName = "WithoutSchedule";
+            int regionType = 0;
+
+            if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
+            {
+                regionType = (int)MarketRegionEnum.America;
+                regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America);
+            }
+
+            if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe)))
+            {
+                regionType = (int)MarketRegionEnum.Europe;
+                regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe);
+            }
+
+            if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia)))
+            {
+                regionType = (int)MarketRegionEnum.Asia;
+                regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia);
+            }
+
+            _projectDirectoryService.GetFilesInPath(templatePath).ToList().ForEach(file =>
+            {
+                StrategyBuilderProcessList.Add(new StrategyBuilderProcessModel
+                {
+                    Path = file.FullName,
+                    TemplateName = file.Name,
+                    RegionType = regionType,
+                    RegionName = regionName,
+                    Status = StrategyBuilderStatusEnum.NoStarted.GetMetadata().Name,
+                    IsEnabled = false,
+                    IsExpanded = false,
+                    InstancesList = new ObservableCollection<REPTreeOutputVM>()
+                });
+            });
         }
 
         private void AddItemToStrategyBuilderProcessList(string templateName, List<REPTreeOutputVM> modelList)

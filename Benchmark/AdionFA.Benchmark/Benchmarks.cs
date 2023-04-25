@@ -11,36 +11,21 @@ namespace AdionFA.Benchmark
 {
     public class Benchmarks
     {
-        private AdionFADbContext _dbContext = new();
-
-        private Consumer _consumer = new();
-
         public static void Main(string[] args)
         {
             BenchmarkRunner.Run<Benchmarks>();
         }
 
         [Benchmark]
-        public async void First()
+        public FileInfo[] GetFilesInPath()
         {
-            var hd = _dbContext.HistoricalDatas.FirstOrDefault(id => id.HistoricalDataId == 1);
+            const string path = "C:\\Users\\suraj\\Documents\\FA.Workspace\\Projects\\test-release1\\Extractions\\WithoutSchedule";
+            const string ext = "*.csv";
 
-            IEnumerable<Candle>? c = hd?.HistoricalDataCandles.Select(
-                h => new Candle
-                {
-                    Date = h.StartDate,
-                    Time = h.StartTime,
-                    Open = h.Open,
-                    High = h.High,
-                    Low = h.Low,
-                    Close = h.Close,
-                    Volume = h.Volume,
-                    Label = h.Close > h.Open ? "UP" : "DOWN"
-                })
-                .OrderBy(d => d.Date)
-                .ThenBy(d => d.Time).ToList();
+            var directory = new DirectoryInfo(path);
+            var files = directory.GetFiles(ext);
 
-            _consumer.Consume<IEnumerable<Candle>>(c);
+            return files;
         }
     }
 }

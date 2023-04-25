@@ -223,9 +223,9 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
         public FileInfo[] GetFilesInPath(string path, string ext = "*.csv")
         {
-            DirectoryInfo d = new(path);
-            FileInfo[] Files = d.GetFiles(ext);
-            return Files;
+            var directory = new DirectoryInfo(path);
+            var files = directory.GetFiles(ext);
+            return files;
         }
 
         public bool CreateBackup(string path)

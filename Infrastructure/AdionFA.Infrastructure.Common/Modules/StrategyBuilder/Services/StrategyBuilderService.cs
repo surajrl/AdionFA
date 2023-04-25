@@ -199,9 +199,6 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     allCandles,
                     config.TimeframeId);
 
-                BacktestSerializeOs(backtestOS);
-                BacktestSerializeIs(backtestIS);
-
                 var stb = new StrategyBuilderModel
                 {
                     IS = backtestIS,
@@ -387,19 +384,19 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest Serialization
 
-        private void BacktestSerializeOs(BacktestModel model)
-        {
-            SerializerHelper.XMLSerializeObject(
-                model,
-                string.Format(@"{0}\OS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
-        }
+        //private void BacktestSerializeOs(BacktestModel model)
+        //{
+        //    SerializerHelper.XMLSerializeObject(
+        //        model,
+        //        string.Format(@"{0}\OS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
+        //}
 
-        private void BacktestSerializeIs(BacktestModel model)
-        {
-            SerializerHelper.XMLSerializeObject(
-                model,
-                string.Format(@"{0}\IS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
-        }
+        //private void BacktestSerializeIs(BacktestModel model)
+        //{
+        //    SerializerHelper.XMLSerializeObject(
+        //        model,
+        //        string.Format(@"{0}\IS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
+        //}
 
         public void BacktestSerialize(string projectName, BacktestModel model)
         {
