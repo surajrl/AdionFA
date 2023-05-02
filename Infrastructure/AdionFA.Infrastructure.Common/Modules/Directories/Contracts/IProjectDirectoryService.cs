@@ -9,7 +9,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Contracts
         bool ExistDefaultWorkspace();
         bool CreateDefaultWorkspace();
         bool CreateDefaultProjectWorkspace(string projectName);
-        bool IsValidProjectDiractory(string projectName);
+        bool IsValidProjectDirectory(string projectName);
         bool CopyCSVFileTo(FileInfo fi, string targetDir);
         Task<bool> CopyCSVFileToAsync(FileInfo fi, string targetDir);
         bool CopyCSVFiles(string sourceDir, string targetDir);

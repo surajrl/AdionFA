@@ -53,7 +53,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         {
             try
             {
-                _project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
                 Configuration = _project?.ProjectConfigurations.FirstOrDefault();
             }
             catch (Exception ex)

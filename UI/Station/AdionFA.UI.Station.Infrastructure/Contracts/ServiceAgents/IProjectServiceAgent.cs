@@ -9,7 +9,7 @@ namespace AdionFA.UI.Station.Infrastructure.Contracts.AppServices
     {
         // Project
         Task<IList<ProjectVM>> GetAllProjects();
-        Task<ProjectVM> GetProject(int projectId, bool includeGraph = false);
+        Task<ProjectVM> GetProjectAsync(int projectId, bool includeGraph = false);
         Task<ProjectConfigurationVM> GetProjectConfiguration(int projectId, bool includeGraph = false);
         Task<ResponseVM> UpdateProjectConfiguration(ProjectConfigurationVM configuration);
         Task<ResponseVM> RestoreProjectConfiguration(int projectId);

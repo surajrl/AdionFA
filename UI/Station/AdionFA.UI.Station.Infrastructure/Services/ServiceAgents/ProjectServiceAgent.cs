@@ -1,7 +1,6 @@
 ﻿using AdionFA.Core.API.Contracts.Projects;
 
 using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.TransferObject.Base;
 
 using AdionFA.TransferObject.Project;
@@ -18,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 {
@@ -57,7 +57,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ProjectVM> GetProject(int projectId, bool includeGraph = false)
+        public async Task<ProjectVM> GetProjectAsync(int projectId, bool includeGraph = false)
         {
             try
             {

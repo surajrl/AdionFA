@@ -116,7 +116,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
         {
             try
             {
-                Project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                Project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
                 Configuration = Project?.ProjectConfigurations.FirstOrDefault();
             }
             catch (Exception ex)

@@ -1,5 +1,4 @@
 ﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
@@ -19,6 +18,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 {
@@ -122,7 +122,8 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                 {
                     NodeAssembledModel node = label == "up" ? model.UPNode : model.DOWNNode;
 
-                    string directory = label == "up" ? projectName.ProjectAssembledBuilderExtractorUPDirectory()
+                    string directory = label == "up" ?
+                        projectName.ProjectAssembledBuilderExtractorUPDirectory()
                         : projectName.ProjectAssembledBuilderExtractorDOWNDirectory();
 
                     List<NodeAssembledModel> backtestNodes = node.ConvertTreeToList<NodeAssembledModel, BacktestNodeAssembledModel>();
@@ -147,7 +148,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                             {
                                 List<IndicatorBase> indicators = ExtractorService.BuildIndicatorsFromCSV(fi.FullName);
 
-                                List<IndicatorBase> extractions = ExtractorService.ExtractorExecute(
+                                List<IndicatorBase> extractions = ExtractorService.DoExtraction(
                                     first, last, indicators, candles, config.TimeframeId, config.Variation);
 
                                 foreach (var ex in extractions)

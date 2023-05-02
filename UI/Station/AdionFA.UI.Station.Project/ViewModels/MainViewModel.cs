@@ -37,7 +37,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             IsTransactionActive = false;
             ProjectName = "Loading...";
-            ProjectVM project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+            ProjectVM project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
             if (project != null)
             {
                 ProjectName = project.ProjectName;

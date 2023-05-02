@@ -10,7 +10,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Contracts
 
         List<IndicatorBase> BuildIndicatorsFromNode(List<string> node);
 
-        List<IndicatorBase> ExtractorExecute(
+        List<IndicatorBase> DoExtraction(
             DateTime from,
             DateTime to,
             List<IndicatorBase> indicators,
@@ -18,11 +18,11 @@ namespace AdionFA.Infrastructure.Common.Extractor.Contracts
             int timeframeId,
             decimal variation = 0);
 
-        List<IndicatorBase> ExtractorBacktest(
+        List<IndicatorBase> DoBacktest(
             Candle firstCandle,
             Candle currentCandle,
             IEnumerable<IndicatorBase> indicators,
-            IEnumerable<Candle> candles);
+            IEnumerable<Candle> candleHistory);
 
         IEnumerable<Candle> GetCandles(string historyFilePath);
 

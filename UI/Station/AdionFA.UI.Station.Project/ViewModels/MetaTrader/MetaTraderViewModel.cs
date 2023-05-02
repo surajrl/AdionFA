@@ -395,7 +395,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             try
             {
                 // Find the configuration of the project
-                _project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
                 Configuration = _project?.ProjectConfigurations.FirstOrDefault();
 
                 // Find the EA of the project

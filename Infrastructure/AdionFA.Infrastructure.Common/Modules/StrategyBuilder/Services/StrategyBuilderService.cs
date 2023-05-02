@@ -1,6 +1,5 @@
 ﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
@@ -19,6 +18,7 @@ using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 {
@@ -33,27 +33,6 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             ExtractorService = IoC.Get<IExtractorService>();
         }
 
-        public IList<REPTreeNodeModel> GetBacktests()
-        {
-            var allBacktests = new List<BacktestModel>();
-            var allNodes = new List<REPTreeNodeModel>();
-
-            var directoryOS = Path.Combine(ProjectDirectoryManager.DefaultDirectory(), "OS");
-            var directoryIS = Path.Combine(ProjectDirectoryManager.DefaultDirectory(), "IS");
-
-            ProjectDirectoryService.GetFilesInPath(directoryOS, "*.xml").ToList().ForEach(file =>
-            {
-                allBacktests.Add(BacktestDeserialize(file.FullName));
-            });
-
-            ProjectDirectoryService.GetFilesInPath(directoryIS, "*.xml").ToList().ForEach(file =>
-            {
-                allBacktests.Add(BacktestDeserialize(file.FullName));
-            });
-
-            return allNodes;
-        }
-
         // Strategy
 
         public CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType)
@@ -64,20 +43,23 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 // Output Directory
 
-                var directoryUP = projectName.ProjectStrategyBuilderNodesUPDirectory();
-                var directoryDOWN = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                var directoryUPIS = projectName.ProjectStrategyBuilderNodesUPISDirectory();
+                var directoryDOWNIS = projectName.ProjectStrategyBuilderNodesDOWNISDirectory();
+
+                var directoryUPOS = projectName.ProjectStrategyBuilderNodesUPOSDirectory();
+                var directoryDOWNOS = projectName.ProjectStrategyBuilderNodesDOWNOSDirectory();
 
                 switch (entityType)
                 {
                     case EntityTypeEnum.AssembledBuilder:
-                        directoryUP = projectName.ProjectAssembledBuilderNodesUPDirectory();
-                        directoryDOWN = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                        directoryUPIS = projectName.ProjectAssembledBuilderNodesUPDirectory();
+                        directoryDOWNIS = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
                         break;
                 }
 
                 // UP IS Nodes
 
-                ProjectDirectoryService.GetFilesInPath(directoryUP, "*.xml")
+                ProjectDirectoryService.GetFilesInPath(directoryUPIS, "*.xml")
                     .ToList().ForEach(file =>
                     {
                         var backtestIS = BacktestDeserialize(file.FullName);
@@ -104,7 +86,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 // DOWN IS Nodes
 
-                ProjectDirectoryService.GetFilesInPath(directoryDOWN, "*.xml")
+                ProjectDirectoryService.GetFilesInPath(directoryDOWNIS, "*.xml")
                     .ToList().ForEach(file =>
                     {
                         var backtestIS = BacktestDeserialize(file.FullName);
@@ -129,6 +111,60 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         }
                     });
 
+                // UP OS Nodes
+
+                ProjectDirectoryService.GetFilesInPath(directoryUPOS, "*.xml")
+                    .ToList().ForEach(file =>
+                    {
+                        var backtestOS = BacktestDeserialize(file.FullName);
+                        var indexOf = IndexOfCorrelation(correlationDetail.OSBacktestUP, backtestOS, correlation);
+
+                        backtestOS.CorrelationPass = indexOf != null;
+
+                        if (backtestOS.CorrelationPass)
+                        {
+                            if ((indexOf ?? -1) >= 0)
+                            {
+                                correlationDetail.OSBacktestUP.Insert(indexOf.Value, backtestOS);
+                            }
+                            if ((indexOf ?? 0) == -1)
+                            {
+                                correlationDetail.OSBacktestUP.Add(backtestOS);
+                            }
+                        }
+                        else
+                        {
+                            ProjectDirectoryService.DeleteFile(file.FullName);
+                        }
+                    });
+
+                // DOWN OS Nodes
+
+                ProjectDirectoryService.GetFilesInPath(directoryDOWNOS, "*.xml")
+                    .ToList().ForEach(file =>
+                    {
+                        var backtestOS = BacktestDeserialize(file.FullName);
+                        var indexOf = IndexOfCorrelation(correlationDetail.OSBacktestDOWN, backtestOS, correlation);
+
+                        backtestOS.CorrelationPass = indexOf != null;
+
+                        if (backtestOS.CorrelationPass)
+                        {
+                            if ((indexOf ?? -1) >= 0)
+                            {
+                                correlationDetail.OSBacktestDOWN.Insert(indexOf.Value, backtestOS);
+                            }
+                            if ((indexOf ?? 0) == -1)
+                            {
+                                correlationDetail.OSBacktestDOWN.Add(backtestOS);
+                            }
+                        }
+                        else
+                        {
+                            ProjectDirectoryService.DeleteFile(file.FullName);
+                        }
+                    });
+
                 return correlationDetail;
             }
             catch (Exception ex)
@@ -138,7 +174,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        private int? IndexOfCorrelation(IList<BacktestModel> backtests, BacktestModel btModel, decimal correlation)
+        private static int? IndexOfCorrelation(IList<BacktestModel> backtests, BacktestModel btModel, decimal correlation)
         {
             int? indexOf = !backtests.Any() ? -1 : null;
 
@@ -279,7 +315,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                         candlesRange.Add(currentCandle);
 
-                        var extractorResult = ExtractorService.ExtractorBacktest(
+                        var extractorResult = ExtractorService.DoBacktest(
                             firstCandle,
                             currentCandle,
                             indicators,
@@ -384,32 +420,29 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest Serialization
 
-        //private void BacktestSerializeOs(BacktestModel model)
-        //{
-        //    SerializerHelper.XMLSerializeObject(
-        //        model,
-        //        string.Format(@"{0}\OS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
-        //}
-
-        //private void BacktestSerializeIs(BacktestModel model)
-        //{
-        //    SerializerHelper.XMLSerializeObject(
-        //        model,
-        //        string.Format(@"{0}\IS\{1}.xml", ProjectDirectoryManager.DefaultDirectory(), RegexHelper.GetValidFileName(model.NodeName(), "_")));
-        //}
-
-        public void BacktestSerialize(string projectName, BacktestModel model)
+        public static void BacktestSerialize(string projectName, BacktestModel model, bool isIS)
         {
-            var directory = model.Label.ToLower() == "up"
-                ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-                : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+            string directory;
+
+            if (isIS)
+            {
+                directory = model.Label.ToLower() == "up"
+                ? projectName.ProjectStrategyBuilderNodesUPISDirectory()
+                : projectName.ProjectStrategyBuilderNodesDOWNISDirectory();
+            }
+            else
+            {
+                directory = model.Label.ToLower() == "up"
+                ? projectName.ProjectStrategyBuilderNodesUPOSDirectory()
+                : projectName.ProjectStrategyBuilderNodesDOWNOSDirectory();
+            }
 
             SerializerHelper.XMLSerializeObject(
                 model,
                 string.Format(@"{0}\{1}.xml", directory, RegexHelper.GetValidFileName(model.NodeName(), "_")));
         }
 
-        public BacktestModel BacktestDeserialize(string path)
+        public static BacktestModel BacktestDeserialize(string path)
         {
             return SerializerHelper.XMLDeSerializeObject<BacktestModel>(path);
         }

@@ -10,8 +10,6 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 {
     public interface IStrategyBuilderService
     {
-        IList<REPTreeNodeModel> GetBacktests();
-
         // Strategy
 
         CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType);
@@ -20,10 +18,5 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 
         StrategyBuilderModel BacktestBuild(string nodeLabel, List<string> node, ConfigurationBaseDTO config, IEnumerable<Candle> candles);
         BacktestModel ExecuteBacktest(string nodeLabel, DateTime fromDate, DateTime toDate, List<string> node, IEnumerable<Candle> candles, int timeframeId);
-
-        // Serialization
-
-        void BacktestSerialize(string projectName, BacktestModel model);
-        BacktestModel BacktestDeserialize(string path);
     }
 }

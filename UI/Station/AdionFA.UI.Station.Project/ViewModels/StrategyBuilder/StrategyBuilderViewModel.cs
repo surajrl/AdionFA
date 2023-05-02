@@ -1,6 +1,5 @@
 ﻿using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
@@ -45,6 +44,8 @@ using DynamicData;
 using System.Collections.Concurrent;
 using BenchmarkDotNet.Attributes;
 using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Services;
+using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -77,6 +78,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
             WinningNodes = new();
+            StrategyBuilderProcessList = new ObservableCollection<StrategyBuilderProcessModel>();
 
             _mapper = new MapperConfiguration(mc =>
             {
@@ -204,10 +206,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     IsCorrelationDetail = CorrelationModel.Success;
                 });
 
-                UpdateTotalCorrelation(
-                    CorrelationModel?.ISBacktestUP?.Count ?? 0,
-                    CorrelationModel?.ISBacktestDOWN?.Count ?? 0,
-                    true);
+                UpdateTotalCorrelation(CorrelationModel?.ISBacktestUP?.Count ?? 0, CorrelationModel?.ISBacktestDOWN?.Count ?? 0);
 
                 // Update REP Tree Node VM with correlation pass results
 
@@ -299,8 +298,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     config.MaximumSeed,
                     config.TotalInstanceWeka,
                     (double)config.MaxRatioTree,
-                    (double)config.NTotalTree
-                );
+                    (double)config.NTotalTree);
 
                 strategyBuilderProcess.Message = $"Pruning Tree";
                 if (responseWeka.Any())
@@ -364,10 +362,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                     {
                                         instance.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
                                     }
+
                                     if (node.Label.ToLower() == "down")
                                     {
                                         instance.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
                                     }
+
                                     instance.TotalWinningStrategy = instance.TotalWinningStrategyUP + instance.TotalWinningStrategyDOWN;
                                     instance.WinningStrategy = instance.TotalWinningStrategy > 0;
                                 }
@@ -376,7 +376,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                                 if (node.WinningStrategy)
                                 {
-                                    _strategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS);
+                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
+                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
                                 }
                             }
 
@@ -406,7 +407,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private void UpdateTreeNodeVM(REPTreeNodeVM node, BacktestModel backtest, bool IsOSample)
+        private static void UpdateTreeNodeVM(REPTreeNodeVM node, BacktestModel backtest, bool IsOSample)
         {
             if (!IsOSample)
             {
@@ -451,17 +452,22 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var nodesUp = filteredNodes.Where(n => n.Label.ToLower() == "up").ToList();
                 if (nodesUp.Count > 0)
+                {
                     nodesUp = nodesUp.GetRange(0, nodesUp.Count > TargetUp ? TargetUp : nodesUp.Count);
+                }
 
                 var nodesDown = filteredNodes.Where(n => n.Label.ToLower() == "down").ToList();
                 if (nodesDown.Count > 0)
+                {
                     nodesDown = nodesDown.GetRange(0, nodesDown.Count > TargetDown ? TargetDown : nodesDown.Count);
+                }
 
                 var upLast = nodesUp.LastOrDefault();
                 var downLast = nodesDown.LastOrDefault();
 
                 var WinningTradesOs = 0;
                 var WinningTradesIs = 0;
+
                 if ((upLast?.WinningTradesOs ?? 0) > 0 && (downLast?.WinningTradesOs ?? 0) > 0)
                 {
                     WinningTradesOs = upLast.WinningTradesOs > downLast.WinningTradesOs ? downLast.WinningTradesOs : upLast.WinningTradesOs;
@@ -472,6 +478,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     WinningTradesOs = (upLast?.WinningTradesOs ?? 0) == 0 ? (downLast?.WinningTradesOs ?? 0) : (upLast?.WinningTradesOs ?? 0);
                 }
+
                 if (WinningTradesIs == 0)
                 {
                     WinningTradesIs = (upLast?.WinningTradesIs ?? 0) == 0 ? (downLast?.WinningTradesIs ?? 0) : (upLast?.WinningTradesIs ?? 0);
@@ -518,7 +525,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     var nodesOrderByTotalUpDesc = nodesGraterThanRationMax.Where(n => n.Label.ToLower() == "up").OrderByDescending(n => n.TotalUP).ToList();
                     if (nodesOrderByTotalUpDesc.Count > 0)
+                    {
                         nodesOrderByTotalUpDesc = nodesOrderByTotalUpDesc.GetRange(0, nodesOrderByTotalUpDesc.Count > lookingForTargetUp ? lookingForTargetUp : nodesOrderByTotalUpDesc.Count - 1);
+                    }
 
                     resultNodes.AddRange(nodesOrderByTotalUpDesc);
                     var totalUp = nodesOrderByTotalUpDesc.Count;
@@ -532,7 +541,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     var nodesOrderByTotalDownDesc = nodesGraterThanRationMax.Where(n => n.Label.ToLower() == "down").OrderByDescending(n => n.TotalDOWN).ToList();
                     if (nodesOrderByTotalDownDesc.Count > 0)
+                    {
                         nodesOrderByTotalDownDesc = nodesOrderByTotalDownDesc.GetRange(0, nodesOrderByTotalDownDesc.Count > lookingForTargetDown ? lookingForTargetDown : nodesOrderByTotalDownDesc.Count - 1);
+                    }
+
                     resultNodes.AddRange(nodesOrderByTotalDownDesc);
                     var totalDown = nodesOrderByTotalDownDesc.Count;
 
@@ -552,7 +564,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     return;
                 }
 
-                int result = ntotalesUp == 0 ? ntotalesDown : ntotalesUp;
+                var result = ntotalesUp == 0 ? ntotalesDown : ntotalesUp;
 
                 autoAdjustConfig.NTotalTree = result == 0 ? 50 : result;
                 autoAdjustConfig.adjustNTotalTree = Configurations.LastOrDefault().NTotalTree != autoAdjustConfig.NTotalTree;
@@ -590,30 +602,33 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                WinningNodes ??= new();
-
-                Project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                Project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
                 Configuration = Project?.ProjectConfigurations.FirstOrDefault();
+
+                CorrelationModel = _strategyBuilderService.Correlation(ProcessArgs.ProjectName, Configuration.MaxPercentCorrelation, EntityTypeEnum.StrategyBuilder);
+                IsCorrelationDetail = CorrelationModel != null;
+
+                UpdateTotalCorrelation(CorrelationModel?.ISBacktestUP?.Count ?? 0, CorrelationModel?.ISBacktestDOWN?.Count ?? 0);
 
                 if (refresh)
                 {
-                    StrategyBuilderProcessList = new ObservableCollection<StrategyBuilderProcessModel>();
+                    StrategyBuilderProcessList.Clear();
                     ResetBuilder(true);
+                }
 
-                    if (!IsTransactionActive)
+                if (!IsTransactionActive && !StrategyBuilderProcessList.Any())
+                {
+                    if (Configuration != null)
                     {
-                        if (Configuration != null)
+                        if (Configuration.WithoutSchedule == false)
                         {
-                            if (Configuration.WithoutSchedule == false)
-                            {
-                                PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory());
-                                PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory());
-                                PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory());
-                            }
-                            else
-                            {
-                                PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory());
-                            }
+                            PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory());
+                            PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory());
+                            PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory());
+                        }
+                        else
+                        {
+                            PopulateStrategyBuilderProcessList(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory());
                         }
                     }
                 }
@@ -627,8 +642,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private void PopulateStrategyBuilderProcessList(string templatePath)
         {
-            string regionName = "WithoutSchedule";
-            int regionType = 0;
+            var regionName = "WithoutSchedule";
+            var regionType = 0;
 
             if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
             {
@@ -687,12 +702,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        private void UpdateTotalCorrelation(int totalCorrelationUP, int totalCorrelationDOWN, bool isClean = false)
+        private void UpdateTotalCorrelation(int totalCorrelationUP, int totalCorrelationDOWN)
         {
-            if (isClean)
-            {
-                TotalCorrelationUP = TotalCorrelationDOWN = 0;
-            }
+            TotalCorrelationUP = TotalCorrelationDOWN = 0;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -703,7 +715,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private void ResetBuilder(bool resetConfigurations = false, bool cleanSerializedObjDirectory = false)
         {
-            UpdateTotalCorrelation(0, 0, true);
+            UpdateTotalCorrelation(0, 0);
+
             foreach (var model in StrategyBuilderProcessList)
             {
                 model.Reset();

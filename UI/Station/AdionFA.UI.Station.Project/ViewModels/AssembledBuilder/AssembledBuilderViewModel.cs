@@ -188,7 +188,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                Project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                Project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
                 Configuration = Project?.ProjectConfigurations.FirstOrDefault();
 
                 if (!IsTransactionActive)

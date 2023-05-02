@@ -39,6 +39,18 @@ namespace AdionFA.Infrastructure.Enums
         [Description(@"{0}\StrategyBuilder\Nodes\DOWN")]
         StrategyBuilderNodesDOWN = 240,
 
+        [Description(@"{0}\StrategyBuilder\Nodes\UP\IS")]
+        StrategyBuilderNodesUPIS = 250,
+
+        [Description(@"{0}\StrategyBuilder\Nodes\UP\OS")]
+        StrategyBuilderNodesUPOS = 260,
+
+        [Description(@"{0}\StrategyBuilder\Nodes\DOWN\IS")]
+        StrategyBuilderNodesDOWNIS = 270,
+
+        [Description(@"{0}\StrategyBuilder\Nodes\DOWN\OS")]
+        StrategyBuilderNodesDOWNOS = 280,
+
         // Assembled Builder
 
         [Description(@"{0}\AssembledBuilder")]
@@ -64,5 +76,17 @@ namespace AdionFA.Infrastructure.Enums
 
         [Description(@"{0}\AssembledBuilder\Nodes\DOWN")]
         AssembledBuilderNodesDOWN = 380,
+
+        [Description(@"{0}\AssembledBuilder\Nodes\UP\IS")]
+        AssembledBuilderNodesUPIS = 390,
+
+        [Description(@"{0}\AssembledBuilder\Nodes\UP\OS")]
+        AssembledBuilderNodesUPOS = 400,
+
+        [Description(@"{0}\AssembledBuilder\Nodes\DOWN\IS")]
+        AssembledBuilderNodesDOWNIS = 410,
+
+        [Description(@"{0}\AssembledBuilder\Nodes\DOWN\OS")]
+        AssembledBuilderNodesDOWNOS = 420
     }
 }

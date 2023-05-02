@@ -32,7 +32,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services
             IProjectServiceAgent service = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
             ISharedServiceAgent shareService = ContainerLocator.Container.Resolve<ISharedServiceAgent>();
 
-            ProjectVM project = await service.GetProject(projectId ?? 0);
+            ProjectVM project = await service.GetProjectAsync(projectId ?? 0);
             EntityServiceHostVM host = await shareService.GetEntityServiceHost((int)EntityTypeEnum.Project, project?.ProjectId ?? 0);
 
             if (project != null)

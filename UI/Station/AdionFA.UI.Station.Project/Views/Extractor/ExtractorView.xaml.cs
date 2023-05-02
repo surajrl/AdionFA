@@ -12,6 +12,7 @@ using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Project.ViewModels;
 using AdionFA.UI.Station.Project.Model.Extractor;
 using AdionFA.UI.Station.Project.Enums;
+using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Project.Views
 {

@@ -9,6 +9,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private object _label;
         private object _name;
         private object _toolTip;
+
         private bool _isVisible = true;
         private bool _isEnable = false;
 

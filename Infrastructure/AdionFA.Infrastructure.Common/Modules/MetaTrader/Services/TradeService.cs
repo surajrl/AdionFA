@@ -31,7 +31,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
 
             candleHistory.Add(currentCandle);
 
-            var extractorResult = _extractorService.ExtractorBacktest(
+            var extractorResult = _extractorService.DoBacktest(
                 candleHistory.FirstOrDefault(),
                 currentCandle,
                 indicators,

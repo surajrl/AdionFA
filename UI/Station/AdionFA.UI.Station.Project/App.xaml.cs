@@ -1,5 +1,4 @@
 ﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Security.Helper;
 using AdionFA.Infrastructure.Common.Security.Model;
@@ -29,6 +28,7 @@ using AdionFA.Infrastructure.Common.Validators.FluentValidator;
 using System.Windows.Threading;
 using AdionFA.TransferObject.Project;
 using AdionFA.Core.Domain.Aggregates.Project;
+using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Project
 {
@@ -106,7 +106,8 @@ namespace AdionFA.UI.Station.Project
         protected override void OnStartup(StartupEventArgs e)
         {
             string arg = e.Args[0];
-            //string arg = $"1_AdionFA.UI.Station.Project_test-release1";
+            //string arg = $"1_AdionFA.UI.Station.Project_test";
+
             ProcessArgs.Args = arg;
             if (ProcessArgs.ProjectId > 0)
             {
@@ -116,10 +117,9 @@ namespace AdionFA.UI.Station.Project
                 ProjectDirectoryManager.DefaultWorkspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace)?.Value;
 
                 var directoryService = FacadeService.DirectoryService;
-                if (!directoryService.IsValidProjectDiractory(ProcessArgs.ProjectName))
+                if (!directoryService.IsValidProjectDirectory(ProcessArgs.ProjectName))
                 {
-                    if (!directoryService.IsValidProjectDiractory(ProcessArgs.ProjectName))
-                        MessageBox.Show("Error Loading Project (Modified Directory)");
+                    MessageBox.Show("Error Loading Project");
                     Current.Shutdown();
                 }
                 else
@@ -129,24 +129,22 @@ namespace AdionFA.UI.Station.Project
                         // Theme
 
                         var themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
-                        ThemeManager.Current.ChangeThemeBaseColor(Application.Current, themeSetting?.Value ?? "Light");
+                        ThemeManager.Current.ChangeThemeBaseColor(Current, themeSetting?.Value ?? "Light");
 
                         var colorSetting = settingService.GetSetting((int)SettingEnum.Color);
-                        ThemeManager.Current.ChangeThemeColorScheme(Application.Current, colorSetting?.Value ?? "Orange");
+                        ThemeManager.Current.ChangeThemeColorScheme(Current, colorSetting?.Value ?? "Orange");
 
                         // Culture
 
-                        IList<CultureInfo> cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList();
+                        var cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList();
 
                         var cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
-
-                        var culture = cultures.FirstOrDefault(
-                            c => c.ThreeLetterISOLanguageName == cultureSetting?.Value) ?? cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
+                        var culture = cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == cultureSetting?.Value)
+                            ?? cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
 
                         Thread.CurrentThread.CurrentCulture = culture;
                         Thread.CurrentThread.CurrentUICulture = culture;
 
-                        //esto va en projecto station
                         ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
                     }
                     catch (Exception ex)
@@ -154,13 +152,6 @@ namespace AdionFA.UI.Station.Project
                         Trace.TraceError(ex.Message);
                         throw;
                     }
-
-                    // RPC
-
-                    //var response = ProjectRPCClientService.LoadProjectRequest(projectId, true);
-                    //IProjectService service = ServiceLocator.Current.GetInstance<IKernel>().Get<IProjectService>();
-                    //ProjectVM project = await service.GetProject(projectId, true);
-                    //ProcessArgs.project = project;
                 }
             }
             else

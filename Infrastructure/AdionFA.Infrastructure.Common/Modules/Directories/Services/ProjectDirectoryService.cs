@@ -1,6 +1,7 @@
 ﻿using AdionFA.Infrastructure.Common.Base;
 using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
+using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Enums;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,9 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 {
     public class ProjectDirectoryService : InfrastructureServiceBase, IProjectDirectoryService
     {
-        #region Ctor
         public ProjectDirectoryService() : base()
         {
         }
-        #endregion Ctor
 
         public bool HasWritePermissionOnPath(string path)
         {
@@ -26,23 +25,34 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             {
                 var writeAllow = false;
                 var writeDeny = false;
+
                 var accessControlList = new DirectoryInfo(path).GetAccessControl();
                 if (accessControlList == null)
+                {
                     return false;
-                var accessRules = accessControlList.GetAccessRules(true, true,
-                                            typeof(System.Security.Principal.SecurityIdentifier));
+                }
+
+                var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
                 if (accessRules == null)
+                {
                     return false;
+                }
 
                 foreach (FileSystemAccessRule rule in accessRules)
                 {
                     if ((FileSystemRights.Write & rule.FileSystemRights) != FileSystemRights.Write)
+                    {
                         continue;
+                    }
 
                     if (rule.AccessControlType == AccessControlType.Allow)
+                    {
                         writeAllow = true;
+                    }
                     else if (rule.AccessControlType == AccessControlType.Deny)
+                    {
                         writeDeny = true;
+                    }
                 }
 
                 return writeAllow && !writeDeny;
@@ -71,9 +81,9 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
         {
             try
             {
-                string workspacePath = ProjectDirectoryManager.DefaultDirectory();
+                var workspacePath = ProjectDirectoryManager.DefaultDirectory();
 
-                DirectoryInfo di = new(workspacePath);
+                var di = new DirectoryInfo(workspacePath);
                 if (!Directory.Exists(workspacePath) /*&& HasWritePermissionOnPath(workspacePath)*/)
                 {
                     di.Create();
@@ -95,25 +105,30 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             {
                 if (ExistDefaultWorkspace())
                 {
-                    DirectoryInfo di = new(ProjectDirectoryManager.ProjectsDirectoryBase());
+                    var di = new DirectoryInfo(ProjectDirectoryManager.ProjectsDirectoryBase());
                     if (di.Exists)
                     {
-                        #region Extractor
+                        // Extractor
+
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Europe.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorWithoutSchedule.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectName));
-                        #endregion Extractor
 
-                        #region StrategyBuilder
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectName));
-                        #endregion StrategyBuilder
+                        // StrategyBuilder
 
-                        #region AssembledBuilder
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUP.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWN.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUPIS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUPOS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWNIS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWNOS.GetDescription(), projectName));
+
+                        // AssembledBuilder
+
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUPIS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUPOS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWNIS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWNOS.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
@@ -122,9 +137,9 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
-                        #endregion AssembledBuilder
                     }
                 }
+
                 return false;
             }
             catch (Exception ex)
@@ -134,7 +149,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             }
         }
 
-        public bool IsValidProjectDiractory(string projectName)
+        public bool IsValidProjectDirectory(string projectName)
         {
             try
             {
@@ -316,171 +331,6 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                 LogHelper.LogException<ProjectDirectoryService>(dirNotFound);
                 throw;
             }
-        }
-    }
-
-    public static class ProjectDirectoryManager
-    {
-        public static string DefaultWorkspace { get; set; }
-
-        public static string DefaultDirectory() =>
-            string.Format(@"{0}\{1}", !string.IsNullOrWhiteSpace(DefaultWorkspace)
-                ? DefaultWorkspace
-                : Environment.GetFolderPath((Environment.SpecialFolder)ProjectDirectoryEnum.DefaultWorkspace)
-            , ProjectDirectoryEnum.DefaultWorkspace.GetDescription());
-
-        public static string ProjectsDirectoryBase() => string.Format(@"{0}\{1}", DefaultDirectory(), ProjectDirectoryEnum.Projects.GetDescription());
-
-        public static string ProjectDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(), projectNameFolder);
-        }
-
-        // Extractor
-
-        public static string ProjectExtractorDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.Extractor.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectExtractorEuropeDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Europe.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectExtractorAmericaDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.America.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectExtractorAsiaDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Asia.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectExtractorWithoutScheduleDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorWithoutSchedule.GetDescription(), projectNameFolder))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectExtractorTemplatesDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectNameFolder));
-        }
-
-        // Strategy Builder
-
-        public static string ProjectStrategyBuilderDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilder.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectStrategyBuilderNodesDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodes.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectStrategyBuilderNodesUPDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}",
-                ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectStrategyBuilderNodesDOWNDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}",
-                ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectNameFolder));
-        }
-
-        // Assembled Builder
-
-        public static string ProjectAssembledBuilderDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilder.GetDescription(), projectNameFolder));
-        }
-
-        // Assembled Builder Extractor
-
-        public static string ProjectAssembledBuilderExtractorUPDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorUP.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderExtractorDOWNDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorDOWN.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string label, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder,
-                label.ToLower() == "up" ? "UP" : "DOWN"))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectAssembledBuilderExtractorEuropeDirectory(this string projectNameFolder, string label, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectNameFolder
-                , label.ToLower() == "up" ? "UP" : "DOWN"
-                , MarketRegionEnum.Europe.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectAssembledBuilderExtractorAmericaDirectory(this string projectNameFolder, string label, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectNameFolder
-                , label.ToLower() == "up" ? "UP" : "DOWN"
-                , MarketRegionEnum.America.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectAssembledBuilderExtractorAsiaDirectory(this string projectNameFolder, string label, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectNameFolder
-                , label.ToLower() == "up" ? "UP" : "DOWN"
-                , MarketRegionEnum.Asia.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        // Assembled Builder Nodes
-
-        public static string ProjectAssembledBuilderNodesDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderNodes.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderNodesUPDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUP.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderNodesDOWNDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWN.GetDescription(), projectNameFolder));
         }
     }
 }

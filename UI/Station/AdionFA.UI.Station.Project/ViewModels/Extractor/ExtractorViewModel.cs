@@ -1,5 +1,4 @@
 ﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Enums;
@@ -26,6 +25,7 @@ using AdionFA.UI.Station.Project.Validators.Extractor;
 using AdionFA.UI.Station.Project.Model.Configuration;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -132,7 +132,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             var executing = ExtractorStatusEnum.Executing.GetMetadata();
                             model.Status = executing.Name;
                             model.Message = executing.Description;
-                            List<IndicatorBase> extractions = _extractorService.ExtractorExecute(StartDate.Value, EndDate.Value, indicators, candles, projectConfig.TimeframeId, projectConfig.Variation);
+                            List<IndicatorBase> extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles, projectConfig.TimeframeId, projectConfig.Variation);
 
                             //-------------------------------------
                             model.Message = "Writing Extraction File";
@@ -215,7 +215,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                _project = await _projectService.GetProject(ProcessArgs.ProjectId, true);
+                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
                 ExtractorPath = ProcessArgs.ProjectName.ProjectExtractorDirectory();
 
                 ProjectConfigurationVM pcVM = _project?.ProjectConfigurations.FirstOrDefault();
