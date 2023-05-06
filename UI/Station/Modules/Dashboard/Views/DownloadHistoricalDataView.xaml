@@ -67,8 +67,10 @@
         </Grid.ColumnDefinitions>
 
         <!-- Refresh and Download Buttons -->
-        <Grid Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button x:Name="RefreshBtn" Width="100" Height="40" Margin="0, 10, 0, 0"
+        <Grid Grid.Row="0" Grid.Column="4"
+              VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Width="100" Height="40"
+                    Margin="0, 10, 0, 0"
                     Command="{Binding RefreshBtnCommand}"
                     HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal"
@@ -83,8 +85,10 @@
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
 
-        <Grid Grid.Row="0" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button x:Name="DownloadBtn" Width="100" Height="40" Margin="0, 10, 0, 0"
+        <Grid Grid.Row="0" Grid.Column="6"
+              VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Width="100" Height="40"
+                    Margin="0, 10, 0, 0"
                     Command="{Binding DownloadBtnCommand}"
                     HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal"
@@ -99,9 +103,11 @@
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="7" Padding="0 0 15 0">
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="7"
+                      Padding="0 0 15 0">
             <StackPanel Orientation="Vertical">
-                <metro:MetroHeader Margin="0 0 0 15" Header="Historical Data MetaTrader 5">
+                <metro:MetroHeader Margin="0 0 0 15"
+                                   Header="Historical Data MetaTrader 5">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -112,7 +118,9 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="{StaticResource ColumnMargin}" Orientation="Horizontal">
+                        <StackPanel Grid.Row="0" Grid.Column="0"
+                                    Margin="{StaticResource ColumnMargin}"
+                                    Orientation="Horizontal">
 
                             <!--#region MarketId-->
                             <StackPanel Margin="{StaticResource ControlMargin}">
@@ -121,7 +129,7 @@
                                         <Run Text="Market *"/>
                                     </TextBlock>
                                 </Label>
-                                <ComboBox x:Name="MarketCb" MinWidth="150"
+                                <ComboBox MinWidth="150"
                                           ItemsSource="{Binding Markets}"
                                           DisplayMemberPath="Name"
                                           SelectedValuePath="Id"
@@ -138,10 +146,11 @@
                                     <Run Text="Symbol *"/>
                                     </TextBlock>
                                 </Label>
-                                <ComboBox ItemsSource="{Binding Symbols}" MinWidth="150"
+                                <ComboBox ItemsSource="{Binding Symbols}"
+                                          MinWidth="150"
                                           DisplayMemberPath="Name"
                                           SelectedValuePath="SymbolId"
-                                          SelectedValue="{Binding DownloadHistoricalDataModel.SymbolId, Mode=TwoWay}"
+                                          SelectedValue="{Binding DownloadHistoricalDataModel.SymbolId, Mode=TwoWay}",
                                           Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                                 </ComboBox>
                             </StackPanel>
@@ -154,7 +163,8 @@
                                         <Run Text="Timeframe *"/>
                                     </TextBlock>
                                 </Label>
-                                <ComboBox ItemsSource="{Binding Timeframes}" MinWidth="150"
+                                <ComboBox ItemsSource="{Binding Timeframes}"
+                                          MinWidth="150"
                                           DisplayMemberPath="Name"
                                           SelectedValuePath="TimeframeId"
                                           SelectedValue="{Binding DownloadHistoricalDataModel.TimeframeId, Mode=TwoWay}"
@@ -164,7 +174,9 @@
                             <!--#endregion-->
                         </StackPanel>
 
-                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="{StaticResource ColumnMargin}" Orientation="Horizontal">
+                        <StackPanel Grid.Row="1" Grid.Column="0"
+                                    Margin="{StaticResource ColumnMargin}"
+                                    Orientation="Horizontal">
                             <!--#region Start-->
                             <StackPanel Margin="{StaticResource ControlMargin}">
                                 <Label>

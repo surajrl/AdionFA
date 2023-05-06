@@ -123,7 +123,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 // Historical Data
 
                 var projectHistoricalData = await _marketDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
-                IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles
+                var projectCandles = projectHistoricalData.HistoricalDataCandles
                 .Select(hdCandle => new Candle
                 {
                     Date = hdCandle.StartDate,
@@ -136,7 +136,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Label = hdCandle.Close > hdCandle.Open ? "UP" : "DOWN"
                 })
                 .OrderBy(d => d.Date)
-                .ThenBy(d => d.Time).ToList();
+                .ThenBy(d => d.Time)
+                .ToList();
 
                 // Data Mine (Generate Weka Tree and Backtest of IS and OS)
 
@@ -144,6 +145,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     var length = Configurations.Count;
                     var idx = 0;
+
                     while (idx < length)
                     {
                         ResetBuilder(cleanSerializedObjDirectory: true);
@@ -153,7 +155,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         // Asynchronous - Data Mine
                         if (Configuration.AsynchronousMode)
                         {
-                            var pool = AsynchronousMode(c, candles);
+                            var pool = AsynchronousMode(c, projectCandles);
                             pool.ForEach(t => t.Start());
                             Task.WaitAll(pool.ToArray());
                         }
@@ -161,7 +163,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         // Synchronous - Data Mine
                         else
                         {
-                            var sync = SynchronousMode(c, candles);
+                            var sync = SynchronousMode(c, projectCandles);
                             sync.Start();
                             sync.Wait();
                         }

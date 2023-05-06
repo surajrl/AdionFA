@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using DynamicData;
 using System.Threading.Tasks;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
+using AdionFA.Core.Domain.Aggregates.MarketData;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
@@ -33,8 +34,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         private readonly IMarketDataServiceAgent _marketDataService;
         private readonly ISettingService _settingService;
 
-        private ICommand FlyoutCommand { get; }
-        public ICommand DownloadBtnCommand { get; }
         public ICommand RefreshBtnCommand { get; }
 
         public DownloadHistoricalDataViewModel(
@@ -47,24 +46,25 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             _settingService = settingService;
             _marketDataService = marketDataService;
 
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
-            DownloadBtnCommand = new DelegateCommand(OnDownloadAsync);
-            RefreshBtnCommand = new DelegateCommand(OnRefreshAsync);
+            RefreshBtnCommand = new DelegateCommand(OnRefreshAsync, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
-
-            PopulateViewModel();
         }
 
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutDownloadHistoricalData))
             {
-                //PopulateViewModel();
-            }
-        }
+                OnRefreshAsync();
 
-        public async void OnDownloadAsync()
+                DownloadHistoricalDataModel = new DownloadHistoricalDataModel()
+                {
+                    HistoricalDataCandles = Array.Empty<HistoricalDataCandleVM>().ToList()
+                };
+            }
+        });
+
+        public ICommand DownloadBtnCommand => new DelegateCommand(async () =>
         {
             IsTransactionActive = true;
 
@@ -106,15 +106,17 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     Start = modifiedStart,
                     End = DownloadHistoricalDataModel.End.Value,
                 });
+
                 requester.SendFrame(request);
                 Debug.WriteLine($"RequestSocket-Send:{request}");
                 // -----------------------------------------------------------------------------------------------------
 
                 // Receive response-------------------------------------------------------------------------------------
+                var response = string.Empty;
                 var timeout = new TimeSpan(0, 0, 5);
-                if (!requester.TryReceiveFrameString(timeout, out var response))
+                if (await Task.Run(() => !requester.TryReceiveFrameString(timeout, out response)).ConfigureAwait(true))
                 {
-                    throw new Exception($"Response not received from MetaTrader.");
+                    throw new Exception($"Response not received from MetaTrader");
                 }
 
                 Debug.WriteLine($"RequestSocket-Receive:{response}");
@@ -139,8 +141,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                         EntityTypeEnum.MarketData.GetMetadata().Description,
                         result ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
 
-                    PopulateViewModel();
-
                     if (result)
                     {
                         ContainerLocator.Current.Resolve<IApplicationCommands>().LoadHistoricalData.Execute(null);
@@ -157,14 +157,14 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 IsTransactionActive = false;
             }
-        }
+        }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         private async void OnRefreshAsync()
         {
             if (!IsTransactionActive)
             {
                 IsTransactionActive = true;
-
+                
                 Symbols.Clear();
 
                 try
@@ -180,8 +180,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     // -----------------------------------------------------------------------------------------------------
 
                     // Receive response-------------------------------------------------------------------------------------
+                    var response = string.Empty;
                     var timeout = new TimeSpan(0, 0, 5);
-                    if (!requester.TryReceiveFrameString(timeout, out var response))
+                    if (await Task.Run(() => !requester.TryReceiveFrameString(timeout, out response)).ConfigureAwait(true))
                     {
                         throw new Exception($"Response not received from MetaTrader");
                     }
@@ -190,16 +191,26 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     // -----------------------------------------------------------------------------------------------------
 
                     var json = JsonConvert.DeserializeObject<ZmqResponse>(response);
-                    var symbols = json.Data.Split(',').ToList();
+                    var symbolsReceived = json.Data.Split(',').ToList();
 
-                    symbols.ForEach(symbol =>
+                    symbolsReceived.ForEach(async symbol =>
                     {
-                        _marketDataService.CreateSymbol(new SymbolVM { Name = symbol, Code = symbol });
+                        await _marketDataService.CreateSymbol(new SymbolVM { Name = symbol, Code = symbol });
+                        Symbols.Add(await _marketDataService.GetSymbol(symbol));
                     });
 
-                    IsTransactionActive = false;
+                    if (!Markets.Any())
+                    {
+                        Markets.AddRange(EnumUtil.ToEnumerable<MarketEnum>());
+                    }
 
-                    PopulateViewModel();
+                    if (!Timeframes.Any())
+                    {
+                        var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
+                        timeframes.ForEach(Timeframes.Add);
+                    }
+
+                    IsTransactionActive = false;
                 }
                 catch (Exception ex)
                 {
@@ -209,32 +220,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                     IsTransactionActive = false;
                 }
-            }
-        }
-
-        private async void PopulateViewModel()
-        {
-            if (!IsTransactionActive)
-            {
-                DownloadHistoricalDataModel = new DownloadHistoricalDataModel()
-                {
-                    HistoricalDataCandles = Array.Empty<HistoricalDataCandleVM>().ToList()
-                };
-            }
-
-            if (!Markets.Any())
-                Markets.AddRange(EnumUtil.ToEnumerable<MarketEnum>());
-
-            if (!Timeframes.Any())
-            {
-                var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
-                timeframes.ForEach(Timeframes.Add);
-            }
-
-            if (!Symbols.Any())
-            {
-                var symbols = await _marketDataService.GetAllSymbol().ConfigureAwait(true);
-                symbols.ForEach(Symbols.Add);
             }
         }
 
