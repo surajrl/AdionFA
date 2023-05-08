@@ -45,11 +45,11 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
             set => SetProperty(ref _message, value);
         }
 
-        private bool? _winningStrategy;
-        public bool? WinningStrategy
+        private bool? _hasWinningStrategy;
+        public bool? HasWinningStrategy
         {
-            get => _winningStrategy;
-            set => SetProperty(ref _winningStrategy, value);
+            get => _hasWinningStrategy;
+            set => SetProperty(ref _hasWinningStrategy, value);
         }
 
         private int _totalWinningStrategy;
@@ -73,11 +73,11 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
             set => SetProperty(ref _totalWinningStrategyDOWN, value);
         }
 
-        private int _winningNodes;
-        public int WinningNodes
+        private int _validNodes;
+        public int ValidNodes
         {
-            get => _winningNodes;
-            set => SetProperty(ref _winningNodes, value);
+            get => _validNodes;
+            set => SetProperty(ref _validNodes, value);
         }
 
         public int _counterProgressBar;

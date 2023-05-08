@@ -435,7 +435,7 @@
                     <!--#endregion-->
                 </StackPanel>
 
-                <!--#region correlationDetailBtn-->
+                <!--#region Correlation Detail Button-->
                 <Button x:Name="correlationDetailBtn" Grid.Column="2" Width="160" Height="40" Margin="10 0 0 0"
                         Visibility="{Binding IsCorrelationDetail, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
@@ -447,8 +447,8 @@
                             <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                        <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}"/>
-                                        <Binding Path="WinningNodes"/>
+                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}"/>
+                                        <Binding Path="TotalNodes"/>
                                     </MultiBinding>
                                 </behaviors:InvokeCommandAction.CommandParameter>
                             </behaviors:InvokeCommandAction>
@@ -479,7 +479,7 @@
                 </Button>
                 <!--#endregion-->
 
-                <!--#region refreshStrategyBuilderBtn-->
+                <!--#region Refresh Button-->
                 <Button x:Name="refreshStrategyBuilderBtn" Grid.Column="4" Width="80" Height="40" Margin="10 0 0 0"
                         IsEnabled="{Binding CanExecute}">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -499,11 +499,11 @@
         </metro:MetroHeader>
         <!--#endregion-->
 
-        <!--#region EStrategyBuilderProcessDataGrid-->
-        <DataGrid x:Name="EStrategyBuilderProcessDataGrid"
-                  Grid.Row="3"
+        <!--#region Strategy Builder Process DataGrid-->
+        <DataGrid Grid.Row="3"
                   Grid.Column="1"
-                  Margin="10 5" IsReadOnly="True"
+                  Margin="10 5"
+                  IsReadOnly="True"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding StrategyBuilderProcessList}"
                   RowHeaderWidth="0">
@@ -541,7 +541,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="1*" Header="{x:Static commonResources:CommonResources.Instances}">
+                <DataGridTemplateColumn Width="1*"
+                                        Header="Tree Outputs">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Expander Style="{StaticResource ControlExpanderStyle}"
@@ -552,14 +553,14 @@
                                         <Grid.Resources>
                                             <Style TargetType="{x:Type Grid}">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding WinningStrategy}" Value="true">
+                                                    <DataTrigger Binding="{Binding HasWinningStrategy}" Value="true">
                                                         <Setter Property="Background" Value="LightBlue"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                             <Style TargetType="{x:Type TextBlock}">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding WinningStrategy}" Value="false">
+                                                    <DataTrigger Binding="{Binding HasWinningStrategy}" Value="false">
                                                         <Setter Property="Foreground" Value="Gray"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -567,8 +568,8 @@
                                         </Grid.Resources>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="2*"/>
                                             <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="0" Margin="5">
@@ -580,23 +581,29 @@
                                         </TextBlock>
 
                                         <TextBlock Grid.Column="2" Margin="20 5" HorizontalAlignment="Right">
-                                            <Run Text="{x:Static commonResources:CommonResources.UP}"/>
+                                            <Run Text="Completed"/>
                                             <Run Text=" - "/>
-                                            <Run Text="{Binding TotalWinningStrategyUp}" FontWeight="SemiBold"/>
+                                            <Run Text="{Binding CompletedBacktests}" FontWeight="SemiBold"/>
+                                            <Run Text="/"/>
+                                            <Run Text="{Binding TotalStrategy}" FontWeight="SemiBold"/>
                                             <Run Text=" | "/>
-                                            <Run Text="{x:Static commonResources:CommonResources.DOWN}"/>
+                                            <Run Text="Winning Strategy UP"/>
                                             <Run Text=" - "/>
-                                            <Run Text="{Binding TotalWinningStrategyDown}" FontWeight="SemiBold"/>
+                                            <Run Text="{Binding TotalWinningStrategyUP}" FontWeight="SemiBold"/>
+                                            <Run Text=" | "/>
+                                            <Run Text="Winning Strategy DOWN"/>
+                                            <Run Text=" - "/>
+                                            <Run Text="{Binding TotalWinningStrategyDOWN}" FontWeight="SemiBold"/>
                                         </TextBlock>
                                     </Grid>
                                 </Expander.Header>
                                 <StackPanel>
                                     <Grid Name="dummygrid" Visibility="Hidden">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                                            <ColumnDefinition Width="0.2*"></ColumnDefinition>
                                             <ColumnDefinition Width="1*"></ColumnDefinition>
                                             <ColumnDefinition Width="1*"></ColumnDefinition>
-                                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Border Grid.Column="0" Name="dummywidth0"></Border>
                                         <Border Grid.Column="1" Name="dummywidth1"></Border>
@@ -608,30 +615,16 @@
                                         <ListView.Resources>
                                             <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MahApps.Styles.ListViewItem}">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding WinningStrategy}" Value="true">
+                                                    <DataTrigger Binding="{Binding HasWinningStrategy}" Value="true">
                                                         <Setter Property="Background" Value="LightBlue"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </ListView.Resources>
-                                        <!--<ListView.ItemContainerStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Style.Triggers>
-                                                    <Trigger Property="ItemsControl.AlternationIndex"  Value="0">
-                                                        <Setter Property="Background" Value="Red"/>
-                                                    </Trigger>
-                                                    <Trigger Property="ItemsControl.AlternationIndex"  Value="1">
-                                                        <Setter Property="Background" Value="Green"/>
-                                                    </Trigger>
-                                                    <Trigger Property="ItemsControl.AlternationIndex"  Value="2">
-                                                        <Setter Property="Background" Value="Blue"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>-->
+                                      
                                         <ListView.View>
                                             <GridView>
-                                                <GridViewColumn Width="50">
+                                                <GridViewColumn Width="{Binding ElementName=dummywidth0, Path=ActualWidth}">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <StackPanel Margin="5 2">
@@ -645,7 +638,7 @@
                                                                                 Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                                                 <behaviors:InvokeCommandAction.CommandParameter>
                                                                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                                        <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}"/>
+                                                                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}"/>
                                                                                         <Binding Path="NodeOutput"/>
                                                                                     </MultiBinding>
                                                                                 </behaviors:InvokeCommandAction.CommandParameter>
@@ -657,37 +650,36 @@
                                                         </DataTemplate>
                                                     </GridViewColumn.CellTemplate>
                                                 </GridViewColumn>
+                                                
                                                 <GridViewColumn
-                                                        Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
-                                                        Header="{x:Static commonResources:CommonResources.Seed}"
-                                                        DisplayMemberBinding="{Binding Seed}"/>
+                                                    Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
+                                                    Header="{x:Static commonResources:CommonResources.Seed}"
+                                                    DisplayMemberBinding="{Binding Seed}"/>
+                                                
                                                 <GridViewColumn
-                                                        Width="{Binding ElementName=dummywidth2, Path=ActualWidth}"
-                                                        Header="{x:Static commonResources:CommonResources.WinningNodes}"
-                                                        DisplayMemberBinding="{Binding WinningNodes}"/>
+                                                    Width="{Binding ElementName=dummywidth2, Path=ActualWidth}"
+                                                    Header="Nodes"
+                                                    DisplayMemberBinding="{Binding ValidNodes}"/>
+                                                
                                                 <GridViewColumn
-                                                        Width="{Binding ElementName=dummywidth3, Path=ActualWidth}"
-                                                        Header="{x:Static commonResources:CommonResources.StrategyTester}">
+                                                    Width="{Binding ElementName=dummywidth3, Path=ActualWidth}"
+                                                    Header="Backtests">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <Grid>
-                                                                <metro:MetroProgressBar x:Name="PriceProgressBar"
-                                                                       Height="20"
-                                                                       Margin="0 2 25 0"
-                                                                       VerticalAlignment="Center"
-                                                                       Background="Transparent"
-                                                                       Foreground="CadetBlue"
-                                                                       Maximum="{Binding WinningNodes}"
-                                                                       Minimum="0"
-                                                                       Value="{Binding CounterProgressBar}"/>
+                                                                <metro:MetroProgressBar
+                                                                    Height="20"
+                                                                    Margin="0 2 25 0"
+                                                                    VerticalAlignment="Center"
+                                                                    Background="Transparent" Foreground="CadetBlue"
+                                                                    Minimum="0" Maximum="{Binding ValidNodes}"
+                                                                    Value="{Binding CounterProgressBar}"/>
                                                                 <TextBlock Grid.Column="2" Margin="20 5" HorizontalAlignment="Center">
-                                                                    <Run Text="{x:Static commonResources:CommonResources.UP}"/>
+                                                                    <Run Text="Completed"/>
                                                                     <Run Text=" - "/>
-                                                                    <Run Text="{Binding TotalWinningStrategyUP}" FontWeight="SemiBold"/>
-                                                                    <Run Text=" | "/>
-                                                                    <Run Text="{x:Static commonResources:CommonResources.DOWN}"/>
-                                                                    <Run Text=" - "/>
-                                                                    <Run Text="{Binding TotalWinningStrategyDOWN}" FontWeight="SemiBold"/>
+                                                                    <Run Text="{Binding CounterProgressBar}" FontWeight="SemiBold"/>
+                                                                    <Run Text="/"/>
+                                                                    <Run Text="{Binding ValidNodes}" FontWeight="SemiBold"/>
                                                                 </TextBlock>
                                                             </Grid>
                                                         </DataTemplate>

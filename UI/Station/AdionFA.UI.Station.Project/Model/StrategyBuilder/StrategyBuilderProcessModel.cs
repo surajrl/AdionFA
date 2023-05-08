@@ -46,60 +46,74 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
             set => SetProperty(ref _isEnabled, value);
         }
 
-        private bool winningStrategy;
-        public bool WinningStrategy
+        private bool _hasWinningStrategy;
+        public bool HasWinningStrategy
         {
-            get => winningStrategy;
-            set => SetProperty(ref winningStrategy, value);
+            get => _hasWinningStrategy;
+            set => SetProperty(ref _hasWinningStrategy, value);
         }
 
-        private int totalWinningStrategy;
+        private int _totalStrategy;
+        public int TotalStrategy
+        {
+            get => _totalStrategy;
+            set => SetProperty(ref _totalStrategy, value);
+        }
+
+        private int _completedBacktests;
+        public int CompletedBacktests
+        {
+            get => _completedBacktests;
+            set => SetProperty(ref _completedBacktests, value);
+        }
+
+        private int _totalWinningStrategy;
         public int TotalWinningStrategy
         {
-            get => totalWinningStrategy;
-            set => SetProperty(ref totalWinningStrategy, value);
+            get => _totalWinningStrategy;
+            set => SetProperty(ref _totalWinningStrategy, value);
         }
 
-        private int totalWinningStrategyUp;
-        public int TotalWinningStrategyUp
+        private int _totalWinningStrategyUP;
+        public int TotalWinningStrategyUP
         {
-            get => totalWinningStrategyUp;
-            set => SetProperty(ref totalWinningStrategyUp, value);
+            get => _totalWinningStrategyUP;
+            set => SetProperty(ref _totalWinningStrategyUP, value);
         }
 
-        private int totalWinningStrategyDown;
-        public int TotalWinningStrategyDown
+        private int _totalWinningStrategyDOWN;
+        public int TotalWinningStrategyDOWN
         {
-            get => totalWinningStrategyDown;
-            set => SetProperty(ref totalWinningStrategyDown, value);
+            get => _totalWinningStrategyDOWN;
+            set => SetProperty(ref _totalWinningStrategyDOWN, value);
         }
 
-        private int winningTrees;
+        private int _winningTrees;
         public int WinningTrees
         {
-            get => winningTrees;
-            set => SetProperty(ref winningTrees, value);
+            get => _winningTrees;
+            set => SetProperty(ref _winningTrees, value);
         }
 
-        private ObservableCollection<REPTreeOutputVM> instancesList;
+        private ObservableCollection<REPTreeOutputVM> _instancesList;
         public ObservableCollection<REPTreeOutputVM> InstancesList
         {
-            get => instancesList;
-            set => SetProperty(ref instancesList, value);
+            get => _instancesList;
+            set => SetProperty(ref _instancesList, value);
         }
 
-        private string status;
+        private string _status;
         public string Status
         {
-            get => status;
-            set => SetProperty(ref status, value);
+            get => _status;
+            set => SetProperty(ref _status, value);
         }
 
-        private string message;
+        private string _message;
         public string Message
         {
-            get => message;
-            set => SetProperty(ref message, value);
+            get => _message;
+            set => SetProperty(ref _message, value);
         }
 
         public void Reset()
@@ -108,8 +122,8 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
             Message = string.Empty;
             IsEnabled = false;
             IsExpanded = false;
-            WinningStrategy = false;
-            TotalWinningStrategy = TotalWinningStrategyUp = TotalWinningStrategyDown = 0;
+            HasWinningStrategy = false;
+            TotalWinningStrategy = TotalWinningStrategyUP = TotalWinningStrategyDOWN = 0;
             WinningTrees = 0;
             InstancesList = new ObservableCollection<REPTreeOutputVM>();
         }

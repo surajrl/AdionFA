@@ -77,7 +77,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            WinningNodes = new();
+            TotalNodes = new();
             StrategyBuilderProcessList = new ObservableCollection<StrategyBuilderProcessModel>();
 
             _mapper = new MapperConfiguration(mc =>
@@ -214,7 +214,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 CorrelationModel.ISBacktestUP.ForEach(backtestUP =>
                 {
-                    var correspondingNode = WinningNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestUP.Node));
+                    var correspondingNode = TotalNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestUP.Node));
                     if (correspondingNode != null)
                     {
                         correspondingNode.CorrelationPass = backtestUP.CorrelationPass;
@@ -223,7 +223,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 CorrelationModel.ISBacktestDOWN.ForEach(backtestDOWN =>
                 {
-                    var correspondingNode = WinningNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestDOWN.Node));
+                    var correspondingNode = TotalNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestDOWN.Node));
                     if (correspondingNode != null)
                     {
                         correspondingNode.CorrelationPass = backtestDOWN.CorrelationPass;
@@ -246,13 +246,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             catch (Exception ex)
             {
-                IsTransactionActive = false;
                 LogHelper.LogException<StrategyBuilderViewModel>(ex);
                 throw;
             }
             finally
             {
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+                IsTransactionActive = false;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
@@ -260,7 +260,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             return StrategyBuilderProcessList.Select(model => new Task(() =>
             {
-                DataMine(config, model, candles);
+                SynchronousDataMine(config, model, candles);
             }, TaskCreationOptions.AttachedToParent)).ToList();
         }
 
@@ -270,12 +270,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
                 {
-                    DataMine(config, strategyBuilderProcess, candles);
+                    SynchronousDataMine(config, strategyBuilderProcess, candles);
                 }
             }, TaskCreationOptions.AttachedToParent);
         }
 
-        private bool DataMine(ConfigurationBaseVM config, StrategyBuilderProcessModel strategyBuilderProcess, IEnumerable<Candle> candles)
+        private bool SynchronousDataMine(ConfigurationBaseVM config, StrategyBuilderProcessModel strategyBuilderProcess, IEnumerable<Candle> candles)
         {
             try
             {
@@ -303,36 +303,39 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     (double)config.NTotalTree);
 
                 strategyBuilderProcess.Message = $"Pruning Tree";
+                
                 if (responseWeka.Any())
                 {
+                    strategyBuilderProcess.CompletedBacktests = 0;
+
                     AddItemToStrategyBuilderProcessList(
                         strategyBuilderProcess.TemplateName,
                         responseWeka.Select(_mapper.Map<REPTreeOutputModel, REPTreeOutputVM>).ToList());
 
                     if (strategyBuilderProcess.InstancesList.Count > 0)
                     {
-                        foreach (var instance in strategyBuilderProcess.InstancesList)
+                        foreach (var tree in strategyBuilderProcess.InstancesList)
                         {
-                            var winningNodes = new List<REPTreeNodeVM>
+                            var validNodes = new List<REPTreeNodeVM>
                             {
-                                instance.NodeOutput.Where(m => m.Winner).ToList()
+                                tree.NodeOutput.Where(node => node.Winner).ToList()
                             };
 
-                            winningNodes.ForEach(winningNode =>
+                            validNodes.ForEach(node =>
                             {
-                                winningNode.Node = new ObservableCollection<string>(winningNode.Node.OrderByDescending(n => n).ToList());
+                                node.Node = new ObservableCollection<string>(node.Node.OrderByDescending(n => n).ToList());
                             });
 
-                            foreach (var node in winningNodes)
+                            strategyBuilderProcess.TotalStrategy = validNodes.Count;
+
+                            foreach (var node in validNodes)
                             {
-                                WinningNodes.Add(node);
+                                TotalNodes.Add(node);
 
                                 if (node.HasBacktest)
                                 {
                                     continue;
                                 }
-
-                                instance.CounterProgressBar++;
 
                                 node.HistoricalData = Configuration.HistoricalDataName;
 
@@ -362,16 +365,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 {
                                     if (node.Label.ToLower() == "up")
                                     {
-                                        instance.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
+                                        tree.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
                                     }
 
                                     if (node.Label.ToLower() == "down")
                                     {
-                                        instance.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
+                                        tree.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
                                     }
 
-                                    instance.TotalWinningStrategy = instance.TotalWinningStrategyUP + instance.TotalWinningStrategyDOWN;
-                                    instance.WinningStrategy = instance.TotalWinningStrategy > 0;
+                                    tree.TotalWinningStrategy = tree.TotalWinningStrategyUP + tree.TotalWinningStrategyDOWN;
+                                    tree.HasWinningStrategy = tree.TotalWinningStrategy > 0;
                                 }
 
                                 // Serialization
@@ -381,14 +384,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                     StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
                                     StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
                                 }
+
+                                strategyBuilderProcess.CompletedBacktests++;
+                                tree.CounterProgressBar++;
                             }
 
                             // Update Winning Strategy Variables
 
-                            strategyBuilderProcess.WinningStrategy = instance.TotalWinningStrategy > 0;
-                            strategyBuilderProcess.TotalWinningStrategyUp += instance.TotalWinningStrategyUP;
-                            strategyBuilderProcess.TotalWinningStrategyDown += instance.TotalWinningStrategyDOWN;
-                            strategyBuilderProcess.TotalWinningStrategy = strategyBuilderProcess.TotalWinningStrategyUp + strategyBuilderProcess.TotalWinningStrategyDown;
+                            strategyBuilderProcess.HasWinningStrategy = tree.TotalWinningStrategy > 0;
+                            strategyBuilderProcess.TotalWinningStrategyUP += tree.TotalWinningStrategyUP;
+                            strategyBuilderProcess.TotalWinningStrategyDOWN += tree.TotalWinningStrategyDOWN;
+                            strategyBuilderProcess.TotalWinningStrategy = strategyBuilderProcess.TotalWinningStrategyUP + strategyBuilderProcess.TotalWinningStrategyDOWN;
+
                         }
                     }
                 }
@@ -439,10 +446,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                var TargetUp = Configuration.WinningStrategyTotalUP > TotalCorrelationUP ?
+                var targetUp = Configuration.WinningStrategyTotalUP > TotalCorrelationUP ?
                     Configuration.WinningStrategyTotalUP - TotalCorrelationUP : 0;
 
-                var TargetDown = Configuration.WinningStrategyTotalDOWN > TotalCorrelationDOWN ?
+                var targetDown = Configuration.WinningStrategyTotalDOWN > TotalCorrelationDOWN ?
                     Configuration.WinningStrategyTotalDOWN - TotalCorrelationDOWN : 0;
 
                 var filteredNodes = nodes.Where(
@@ -455,13 +462,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var nodesUp = filteredNodes.Where(n => n.Label.ToLower() == "up").ToList();
                 if (nodesUp.Count > 0)
                 {
-                    nodesUp = nodesUp.GetRange(0, nodesUp.Count > TargetUp ? TargetUp : nodesUp.Count);
+                    nodesUp = nodesUp.GetRange(0, nodesUp.Count > targetUp ? targetUp : nodesUp.Count);
                 }
 
                 var nodesDown = filteredNodes.Where(n => n.Label.ToLower() == "down").ToList();
                 if (nodesDown.Count > 0)
                 {
-                    nodesDown = nodesDown.GetRange(0, nodesDown.Count > TargetDown ? TargetDown : nodesDown.Count);
+                    nodesDown = nodesDown.GetRange(0, nodesDown.Count > targetDown ? targetDown : nodesDown.Count);
                 }
 
                 var upLast = nodesUp.LastOrDefault();
@@ -563,6 +570,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     Configurations.Add(autoAdjustConfig);
                     CurrentConfiguration = Configurations.Count;
+                    
                     return;
                 }
 
@@ -688,12 +696,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var model = StrategyBuilderProcessList.FirstOrDefault(m => m.TemplateName == templateName);
                 modelList.ForEach(vm =>
                 {
-                    vm.Message = vm.WinningStrategy == null ? CommonResources.Pending : vm.WinningStrategy.Value ? CommonResources.Winner : CommonResources.Loser;
-                    vm.WinningNodes = vm.NodeOutput.Where(n => n.Winner).Count();
+                    vm.Message = vm.HasWinningStrategy == null ? CommonResources.Pending : vm.HasWinningStrategy.Value ? CommonResources.Winner : CommonResources.Loser;
+                    vm.ValidNodes = vm.NodeOutput.Where(n => n.Winner).Count();
                 });
 
-                model.WinningTrees = modelList.Where(n => n.WinningNodes > 0).Count();
-                model.TotalWinningStrategy = model.TotalWinningStrategyUp = model.TotalWinningStrategyDown = 0;
+                model.WinningTrees = modelList.Where(n => n.ValidNodes > 0).Count();
+                model.TotalWinningStrategy = model.TotalWinningStrategyUP = model.TotalWinningStrategyDOWN = 0;
                 model.InstancesList.Clear();
                 model.InstancesList.AddRange(modelList);
 
@@ -743,11 +751,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         // Bindable Model
 
-        private bool _istransactionActive;
+        private bool _isTransactionActive;
         public bool IsTransactionActive
         {
-            get => _istransactionActive;
-            set => SetProperty(ref _istransactionActive, value);
+            get => _isTransactionActive;
+            set => SetProperty(ref _isTransactionActive, value);
         }
 
         private bool _canExecute = true;
@@ -757,11 +765,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ObservableCollection<REPTreeNodeVM> _winnginNodes;
-        public ObservableCollection<REPTreeNodeVM> WinningNodes
+        private ObservableCollection<REPTreeNodeVM> _totalNodes;
+        public ObservableCollection<REPTreeNodeVM> TotalNodes
         {
-            get => _winnginNodes;
-            set => SetProperty(ref _winnginNodes, value);
+            get => _totalNodes;
+            set => SetProperty(ref _totalNodes, value);
         }
 
         private ProjectConfigurationVM _configuration;
@@ -783,13 +791,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             get => _totalCorrelationDOWN;
             set => SetProperty(ref _totalCorrelationDOWN, value);
-        }
-
-        private int _numberOfTransactionsFound;
-        public int NumberOfTransactionsFound
-        {
-            get => _numberOfTransactionsFound;
-            set => SetProperty(ref _numberOfTransactionsFound, value);
         }
 
         private bool _isCorrelationDetail;

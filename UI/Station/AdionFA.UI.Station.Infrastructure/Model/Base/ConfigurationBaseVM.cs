@@ -204,17 +204,12 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
             set => SetProperty(ref minPercentSuccessIS, value);
         }
 
-        #region MinAdjustMinPercentSuccessIS
-
         private decimal minAdjustMinPercentSuccessIS;
-
         public decimal MinAdjustMinPercentSuccessIS
         {
             get => minAdjustMinPercentSuccessIS;
             set => SetProperty(ref minAdjustMinPercentSuccessIS, value);
         }
-
-        #endregion MinAdjustMinPercentSuccessIS
 
         #region MinTransactionCountOS
 
@@ -384,54 +379,35 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
 
         #endregion MaxAdjustConfig
 
-        #region AsynchronousMode
 
         private bool asynchronousMode;
-
         public bool AsynchronousMode
         {
             get => asynchronousMode;
             set => SetProperty(ref asynchronousMode, value);
         }
 
-        #endregion AsynchronousMode
-
         // Assembled Builder
 
-        #region TransactionTarget
-
         private int transactionTarget;
-
         public int TransactionTarget
         {
             get => transactionTarget;
             set => SetProperty(ref transactionTarget, value);
         }
-
-        #endregion TransactionTarget
-
-        #region MinAssemblyPercent
-
+        
         private decimal minAssemblyPercent;
-
         public decimal MinAssemblyPercent
         {
             get => minAssemblyPercent;
             set => SetProperty(ref minAssemblyPercent, value);
         }
 
-        #endregion MinAssemblyPercent
-
-        #region TotalAssemblyIterations
-
         private int totalAssemblyIterations;
-
         public int TotalAssemblyIterations
         {
             get => totalAssemblyIterations;
             set => SetProperty(ref totalAssemblyIterations, value);
         }
-
-        #endregion TotalAssemblyIterations
     }
 }
