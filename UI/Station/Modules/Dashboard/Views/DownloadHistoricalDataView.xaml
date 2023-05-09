@@ -150,7 +150,7 @@
                                           MinWidth="150"
                                           DisplayMemberPath="Name"
                                           SelectedValuePath="SymbolId"
-                                          SelectedValue="{Binding DownloadHistoricalDataModel.SymbolId, Mode=TwoWay}",
+                                          SelectedValue="{Binding DownloadHistoricalDataModel.SymbolId, Mode=TwoWay}"
                                           Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                                 </ComboBox>
                             </StackPanel>

@@ -61,7 +61,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assembled Builder Completed.
+        ///   Looks up a localized string similar to Assembled builder completed.
         /// </summary>
         public static string AssembledBuilderCompleted {
             get {
@@ -79,7 +79,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Currency Pair and Currency Period must be the same for selected Market Data and Settings.
+        ///   Looks up a localized string similar to Symbol and timeframe must be the same for selected historical data and settings.
         /// </summary>
         public static string CurrencyPairAndCurrencyPeriodMustBeSame {
             get {
@@ -97,7 +97,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Successfully Saved!.
+        ///   Looks up a localized string similar to Successfully saved.
         /// </summary>
         public static string EntitySaveSuccess {
             get {
@@ -106,7 +106,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extraction Completed.
+        ///   Looks up a localized string similar to Extraction completed.
         /// </summary>
         public static string ExtractionCompleted {
             get {
@@ -115,7 +115,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Historical Data file is empty.
+        ///   Looks up a localized string similar to Historical data dile is empty.
         /// </summary>
         public static string MarketDataFileEmpty {
             get {
@@ -133,7 +133,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set the Currency Pair and the Period from Configuration.
+        ///   Looks up a localized string similar to Set the symbol and timeframe from settings.
         /// </summary>
         public static string SetCurrencyPairAndPeriodFromConfiguration {
             get {
@@ -142,7 +142,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set Data History from Configuration.
+        ///   Looks up a localized string similar to Set data history from settings.
         /// </summary>
         public static string SetDataHistoryFromConfiguration {
             get {
@@ -151,7 +151,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set a valid Date Range from Configuration.
+        ///   Looks up a localized string similar to Set a valid date range from settings.
         /// </summary>
         public static string SetValidDateRangeFromConfiguration {
             get {
@@ -160,7 +160,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set a valid Directory from Configuration.
+        ///   Looks up a localized string similar to Set a valid directory from settings.
         /// </summary>
         public static string SetValidDirectoryFromConfiguration {
             get {
@@ -169,7 +169,7 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Strategy Builder Completed.
+        ///   Looks up a localized string similar to Strategy builder completed.
         /// </summary>
         public static string StrategyBuilderCompleted {
             get {

@@ -5,7 +5,7 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum ProjectDirectoryEnum
     {
-        [Description(@"FA.Workspace")]
+        [Description(@"AdionFA.Workspace")]
         DefaultWorkspace = Environment.SpecialFolder.MyDocuments,
 
         [Description(@"Projects")]

@@ -37,7 +37,7 @@ namespace AdionFA.Benchmark
         [Benchmark]
         public void UsingEnumerateFiles()
         {
-            const string path = "C:\\Users\\suraj\\Documents\\FA.Workspace\\Projects\\test-release1\\Extractions\\WithoutSchedule";
+            const string path = "C:\\Users\\suraj\\Documents\\AdionFA.Workspace\\Projects\\test-release1\\Extractions\\WithoutSchedule";
             const string ext = "*.csv";
 
             var strategyBuilderProcessList = new ObservableCollection<ProcessModel>();
@@ -60,7 +60,7 @@ namespace AdionFA.Benchmark
         {
             var strategyBuilderProcessList = new ObservableCollection<ProcessModel>();
 
-            const string path = "C:\\Users\\suraj\\Documents\\FA.Workspace\\Projects\\test-release1\\Extractions\\WithoutSchedule";
+            const string path = "C:\\Users\\suraj\\Documents\\AdionFA.Workspace\\Projects\\test-release1\\Extractions\\WithoutSchedule";
             const string ext = "*.csv";
 
             var directory = new DirectoryInfo(path);
