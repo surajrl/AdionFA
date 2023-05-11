@@ -14,17 +14,17 @@ namespace AdionFA.Infrastructure.Common.Extractor.Contracts
             DateTime from,
             DateTime to,
             List<IndicatorBase> indicators,
-            IEnumerable<Candle> candles,
+            List<Candle> candles,
             int timeframeId,
             decimal variation = 0);
 
         List<IndicatorBase> DoBacktest(
             Candle firstCandle,
             Candle currentCandle,
-            IEnumerable<IndicatorBase> indicators,
-            IEnumerable<Candle> candleHistory);
+            List<IndicatorBase> indicators,
+            List<Candle> candleHistory);
 
-        IEnumerable<Candle> GetCandles(string historyFilePath);
+        List<Candle> GetCandles(string historyFilePath);
 
         bool ExtractorWrite(string path, List<IndicatorBase> indicators, int fromTime = 0, int toTime = 0);
     }

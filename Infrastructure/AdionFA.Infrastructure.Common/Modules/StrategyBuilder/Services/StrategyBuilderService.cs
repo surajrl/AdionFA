@@ -19,6 +19,7 @@ using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 using AdionFA.Infrastructure.Common.Managements;
+using System.Runtime.InteropServices;
 
 namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 {
@@ -215,7 +216,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             string nodeLabel,
             List<string> node,
             ConfigurationBaseDTO config,
-            IEnumerable<Candle> allCandles)
+            List<Candle> allCandles)
         {
             try
             {
@@ -223,7 +224,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     nodeLabel,
                     config.FromDateIS.Value,
                     config.ToDateIS.Value,
-                    node.ToList(),
+                    node,
                     allCandles,
                     config.TimeframeId);
 
@@ -231,7 +232,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     nodeLabel,
                     config.FromDateOS.Value,
                     config.ToDateOS.Value,
-                    node.ToList(),
+                    node,
                     allCandles,
                     config.TimeframeId);
 
@@ -262,7 +263,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             DateTime fromDate,
             DateTime toDate,
             List<string> node,
-            IEnumerable<Candle> allCandles,
+            List<Candle> allCandles,
             int timeframeId)
         {
             try
@@ -273,7 +274,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     FromDate = fromDate,
                     ToDate = toDate,
                     PeriodId = timeframeId,
-                    Node = node,
+                    Node = node.ToList(),
 
                     Backtests = new List<BacktestOperationModel>()
                 };
@@ -361,11 +362,11 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                             }
                         }
 
-                        if (passed == extractorResult.Count)
+                        if (passed == extractorResult.ToList().Count)
                         {
                             backtest.TotalTrades++;
 
-                            bool isWinnerTrade = false;
+                            var isWinnerTrade = false;
                             if (backtest.Label.ToLower() == "up")
                             {
                                 isWinnerTrade = currentCandle.Open < nextCandle.Open;

@@ -35,7 +35,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                 candleHistory.FirstOrDefault(),
                 currentCandle,
                 indicators,
-                candleHistory);
+                candleHistory.ToList());
 
             if (extractorResult.Any())
             {
@@ -74,7 +74,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                     }
                 }
 
-                return passed == extractorResult.Count;
+                return passed == extractorResult.ToList().Count;
             }
 
             return false;

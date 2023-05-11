@@ -123,26 +123,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             var beginning = ExtractorStatusEnum.Beginning.GetMetadata();
                             model.Status = beginning.Name;
                             model.Message = beginning.Description;
-
                             //------------------------------------
+
                             model.Message = "Building Indicators";
-                            List<IndicatorBase> indicators = _extractorService.BuildIndicatorsFromCSV(model.Path);
+                            var indicators = _extractorService.BuildIndicatorsFromCSV(model.Path);
 
                             // Executing-------------------------------------
                             var executing = ExtractorStatusEnum.Executing.GetMetadata();
                             model.Status = executing.Name;
                             model.Message = executing.Description;
-                            List<IndicatorBase> extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles, projectConfig.TimeframeId, projectConfig.Variation);
-
+                            var extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles.ToList(), projectConfig.TimeframeId, projectConfig.Variation);
                             //-------------------------------------
+
                             model.Message = "Writing Extraction File";
-                            string timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss");
-                            string nameSignature = model.TemplateName.Replace(".csv", string.Empty);
+                            var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss");
+                            var nameSignature = model.TemplateName.Replace(".csv", string.Empty);
+
                             _extractorService.ExtractorWrite(
                                 _project.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
                                 extractions,
-                                0, 0
-                            );
+                                0,
+                                0);
 
                             model.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
 
@@ -195,7 +196,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     IsTransactionActive = false;
                     result = !ExtractionProcessList.Any(e => e.Status != ExtractorStatusEnum.Completed.GetMetadata().Name);
 
-                    string msg = result ? MessageResources.ExtractionCompleted : MessageResources.EntityErrorTransaction;
+                    var msg = result ? MessageResources.ExtractionCompleted : MessageResources.EntityErrorTransaction;
                     MessageHelper.ShowMessage(this, CommonResources.Extractor, msg);
                 }
             }
@@ -203,6 +204,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 IsTransactionActive = false;
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
             finally
@@ -266,23 +268,33 @@ namespace AdionFA.UI.Station.Project.ViewModels
             // Validation Rules
 
             if (string.IsNullOrEmpty(Symbol) || string.IsNullOrEmpty(Timeframe))
+            {
                 errors.Add(MessageResources.SetCurrencyPairAndPeriodFromConfiguration);
+            }
 
             if (string.IsNullOrEmpty(ExtractorPath))
+            {
                 errors.Add(MessageResources.SetValidDirectoryFromConfiguration);
+            }
 
             if (StartDate == null || EndDate == null)
+            {
                 errors.Add(MessageResources.SetValidDateRangeFromConfiguration);
+            }
 
             if (HistoricalData == null)
+            {
                 errors.Add(MessageResources.SetDataHistoryFromConfiguration);
+            }
 
             CanExecute = !errors.Any();
 
             if (errors.Any() && showDialogWithErrors)
+            {
                 MessageHelper.ShowMessages(this,
                     EntityTypeEnum.Extractor.GetMetadata().Description,
                     errors.ToArray());
+            }
 
             return errors;
         }
@@ -290,6 +302,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // Bindable Model
 
         private bool istransactionActive;
+
         public bool IsTransactionActive
         {
             get => istransactionActive;
@@ -297,6 +310,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool canExecute = false;
+
         public bool CanExecute
         {
             get => canExecute;
@@ -304,6 +318,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private DateTime? startDate;
+
         public DateTime? StartDate
         {
             get => startDate;
@@ -311,6 +326,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private DateTime? endDate;
+
         public DateTime? EndDate
         {
             get => endDate;
@@ -318,6 +334,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private decimal variation;
+
         public decimal Variation
         {
             get => variation;
@@ -325,6 +342,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool withoutSchedule;
+
         public bool WithoutSchedule
         {
             get => withoutSchedule;
@@ -332,6 +350,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private string extractorPath;
+
         public string ExtractorPath
         {
             get => extractorPath;
@@ -339,6 +358,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private string symbol;
+
         public string Symbol
         {
             get => symbol;
@@ -346,6 +366,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private string _timeframe;
+
         public string Timeframe
         {
             get => _timeframe;
@@ -353,6 +374,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private HistoricalDataVM _historicalData;
+
         public HistoricalDataVM HistoricalData
         {
             get => _historicalData;
@@ -360,6 +382,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<ExtractionProcessModel> extractionProcessList;
+
         public ObservableCollection<ExtractionProcessModel> ExtractionProcessList
         {
             get => extractionProcessList;

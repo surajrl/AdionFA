@@ -20,6 +20,7 @@ using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Helpers;
 using Microsoft.AspNetCore.Identity;
+using System.Runtime.InteropServices;
 
 namespace AdionFA.Infrastructure.Common.Extractor.Services
 {
@@ -38,6 +39,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                 {
                     HasHeaderRecord = false,
                 };
+
                 using (var reader = new StreamReader(path))
                 using (var csv = new CsvReader(reader, config))
                 {
@@ -46,7 +48,6 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     csv.Context.RegisterClassMap<APOMap>();
                     csv.Context.RegisterClassMap<AROONMap>();
                     csv.Context.RegisterClassMap<ATRMap>();
-                    //csv.Context.RegisterClassMap<BOPMap>();
                     csv.Context.RegisterClassMap<CCIMap>();
                     csv.Context.RegisterClassMap<CMOMap>();
                     csv.Context.RegisterClassMap<DXMap>();
@@ -77,75 +78,99 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                 case IndicatorEnum.ADX:
                                     records.Add(csv.GetRecord<ADX>());
                                     break;
+
                                 case IndicatorEnum.ADXR:
                                     records.Add(csv.GetRecord<ADXR>());
                                     break;
+
                                 case IndicatorEnum.APO:
                                     records.Add(csv.GetRecord<APO>());
                                     break;
+
                                 case IndicatorEnum.AROON:
                                     records.Add(csv.GetRecord<AROON>());
                                     break;
+
                                 case IndicatorEnum.ATR:
                                     records.Add(csv.GetRecord<ATR>());
                                     break;
+
                                 case IndicatorEnum.BOP:
                                     records.Add(new BOP());
                                     break;
+
                                 case IndicatorEnum.CCI:
                                     records.Add(csv.GetRecord<CCI>());
                                     break;
+
                                 case IndicatorEnum.CMO:
                                     records.Add(csv.GetRecord<CMO>());
                                     break;
+
                                 case IndicatorEnum.DX:
                                     records.Add(csv.GetRecord<DX>());
                                     break;
+
                                 case IndicatorEnum.MACD:
                                     records.Add(csv.GetRecord<MACD>());
                                     break;
+
                                 case IndicatorEnum.MINUS_DI:
                                     records.Add(csv.GetRecord<MINUS_DI>());
                                     break;
+
                                 case IndicatorEnum.MINUS_DM:
                                     records.Add(csv.GetRecord<MINUS_DM>());
                                     break;
+
                                 case IndicatorEnum.MOM:
                                     records.Add(csv.GetRecord<MOM>());
                                     break;
+
                                 case IndicatorEnum.PLUS_DI:
                                     records.Add(csv.GetRecord<PLUS_DI>());
                                     break;
+
                                 case IndicatorEnum.PLUS_DM:
                                     records.Add(csv.GetRecord<PLUS_DM>());
                                     break;
+
                                 case IndicatorEnum.PPO:
                                     records.Add(csv.GetRecord<PPO>());
                                     break;
+
                                 case IndicatorEnum.ROC:
                                     records.Add(csv.GetRecord<ROC>());
                                     break;
+
                                 case IndicatorEnum.RSI:
                                     records.Add(csv.GetRecord<RSI>());
                                     break;
+
                                 case IndicatorEnum.STDDEV:
                                     records.Add(csv.GetRecord<STDDEV>());
                                     break;
+
                                 case IndicatorEnum.STOCHF:
                                     records.Add(csv.GetRecord<STOCHF>());
                                     break;
+
                                 case IndicatorEnum.STOCH:
                                     records.Add(csv.GetRecord<STOCH>());
                                     break;
+
                                 case IndicatorEnum.STOCHRSI:
                                     records.Add(csv.GetRecord<STOCHRSI>());
                                     break;
+
                                 case IndicatorEnum.ULTOSC:
                                     records.Add(csv.GetRecord<ULTOSC>());
                                     break;
+
                                 case IndicatorEnum.VAR:
                                     records.Add(csv.GetRecord<VAR>());
                                     break;
+
                                 case IndicatorEnum.WILLR:
                                     records.Add(csv.GetRecord<WILLR>());
                                     break;
@@ -167,7 +192,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
         {
             try
             {
-                List<IndicatorBase> indicators = new();
+                var indicators = new List<IndicatorBase>();
                 foreach (string n in node)
                 {
                     string f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
@@ -222,6 +247,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1])
                                     });
                                     break;
+
                                 case IndicatorEnum.ADXR:
                                     indicators.Add(new ADXR
                                     {
@@ -230,6 +256,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1])
                                     });
                                     break;
+
                                 case IndicatorEnum.APO:
                                     indicators.Add(new APO
                                     {
@@ -242,6 +269,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         MAType = int.Parse(indicatorParams[4])
                                     });
                                     break;
+
                                 case IndicatorEnum.AROON:
                                     indicators.Add(new AROON
                                     {
@@ -252,6 +280,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         AROONDownUp = int.Parse(indicatorParams[2])
                                     });
                                     break;
+
                                 case IndicatorEnum.ATR:
                                     indicators.Add(new ATR
                                     {
@@ -261,9 +290,11 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1]),
                                     });
                                     break;
+
                                 case IndicatorEnum.BOP:
                                     indicators.Add(new BOP());
                                     break;
+
                                 case IndicatorEnum.CCI:
                                     indicators.Add(new CCI
                                     {
@@ -273,6 +304,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1]),
                                     });
                                     break;
+
                                 case IndicatorEnum.CMO:
                                     indicators.Add(new CMO
                                     {
@@ -283,6 +315,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[2]),
                                     });
                                     break;
+
                                 case IndicatorEnum.DX:
                                     indicators.Add(new DX
                                     {
@@ -292,6 +325,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1]),
                                     });
                                     break;
+
                                 case IndicatorEnum.MACD:
                                     indicators.Add(new MACD
                                     {
@@ -305,6 +339,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         MACDOutput = int.Parse(indicatorParams[5]),
                                     });
                                     break;
+
                                 case IndicatorEnum.MINUS_DI:
                                     indicators.Add(new MINUS_DI
                                     {
@@ -314,6 +349,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1]),
                                     });
                                     break;
+
                                 case IndicatorEnum.MINUS_DM:
                                     indicators.Add(new MINUS_DM
                                     {
@@ -323,6 +359,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1]),
                                     });
                                     break;
+
                                 case IndicatorEnum.MOM:
                                     indicators.Add(new MOM
                                     {
@@ -333,6 +370,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[2]),
                                     });
                                     break;
+
                                 case IndicatorEnum.PLUS_DI:
                                     indicators.Add(new PLUS_DI
                                     {
@@ -342,6 +380,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1]),
                                     });
                                     break;
+
                                 case IndicatorEnum.PLUS_DM:
                                     indicators.Add(new PLUS_DM
                                     {
@@ -351,6 +390,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[1]),
                                     });
                                     break;
+
                                 case IndicatorEnum.PPO:
                                     indicators.Add(new PPO
                                     {
@@ -363,6 +403,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         MAType = int.Parse(indicatorParams[4]),
                                     });
                                     break;
+
                                 case IndicatorEnum.ROC:
                                     indicators.Add(new ROC
                                     {
@@ -373,6 +414,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[2]),
                                     });
                                     break;
+
                                 case IndicatorEnum.RSI:
                                     indicators.Add(new RSI
                                     {
@@ -383,6 +425,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[2]),
                                     });
                                     break;
+
                                 case IndicatorEnum.STDDEV:
                                     indicators.Add(new STDDEV
                                     {
@@ -394,6 +437,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInNbDev = double.Parse(indicatorParams[3]),
                                     });
                                     break;
+
                                 case IndicatorEnum.STOCHF:
                                     indicators.Add(new STOCHF
                                     {
@@ -406,6 +450,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         STOCHFOutput = int.Parse(indicatorParams[4]),
                                     });
                                     break;
+
                                 case IndicatorEnum.STOCH:
                                     indicators.Add(new STOCH
                                     {
@@ -419,6 +464,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInSlowDMAType = int.Parse(indicatorParams[5]),
                                     });
                                     break;
+
                                 case IndicatorEnum.STOCHRSI:
                                     indicators.Add(new STOCHRSI
                                     {
@@ -433,6 +479,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         STOCHRSIOutput = int.Parse(indicatorParams[6]),
                                     });
                                     break;
+
                                 case IndicatorEnum.ULTOSC:
                                     indicators.Add(new ULTOSC
                                     {
@@ -444,6 +491,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod3 = int.Parse(indicatorParams[3]),
                                     });
                                     break;
+
                                 case IndicatorEnum.VAR:
                                     indicators.Add(new VAR
                                     {
@@ -454,6 +502,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                                         OptInTimePeriod = int.Parse(indicatorParams[2]),
                                     });
                                     break;
+
                                 case IndicatorEnum.WILLR:
                                     indicators.Add(new WILLR
                                     {
@@ -480,8 +529,8 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
         public List<IndicatorBase> DoBacktest(
             Candle firstCandle,
             Candle currentCandle,
-            IEnumerable<IndicatorBase> indicators,
-            IEnumerable<Candle> candleHistory)
+            List<IndicatorBase> indicators,
+            List<Candle> candleHistory)
         {
             try
             {
@@ -510,7 +559,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             DateTime from,
             DateTime to,
             List<IndicatorBase> indicators,
-            IEnumerable<Candle> candles,
+            List<Candle> candles,
             int timeframeId,
             decimal variation = 0)
         {
@@ -545,10 +594,11 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                 var min = (from c in data select c.Low).ToArray();
 
                 // Select candles that are within the IS start and end dates
-                var candlesRange = from c in data
-                                   let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
-                                   where dt >= @from && dt <= to
-                                   select c;
+                var candlesRange = (from c in data
+                                    let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
+                                    where dt >= @from && dt <= to
+                                    select c)
+                                   .ToList();
 
                 var startIdx = Array.IndexOf(data.ToArray(), candlesRange.FirstOrDefault());
                 var endIdx = Array.IndexOf(data.ToArray(), candlesRange.LastOrDefault());
@@ -572,7 +622,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             double[] low,
             double[] close,
             List<IndicatorBase> indicators,
-            IEnumerable<Candle> candlesRange,
+            List<Candle> candlesRange,
             int timeframeId,
             bool isExtraction)
         {
@@ -589,28 +639,32 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     switch (indicator.Type)
                     {
                         case IndicatorEnum.ADX:
-                            ADX ADX = (ADX)indicator;
+                            var ADX = (ADX)indicator;
                             TALib.Core.Adx(high, low, close, startIdx, endIdx, ADX.Output, out OutBegIdx, out OutNBElement, ADX.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.ADXR:
-                            ADXR ADXR = (ADXR)indicator;
+                            var ADXR = (ADXR)indicator;
                             TALib.Core.Adxr(high, low, close, startIdx, endIdx, ADXR.Output, out OutBegIdx, out OutNBElement, ADXR.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.APO:
-                            APO APO = (APO)indicator;
+                            var APO = (APO)indicator;
                             TALib.Core.Apo(BuildInRealArray(APO.PriceType, open, high, low, close), startIdx, endIdx, APO.Output, out OutBegIdx, out OutNBElement, (TALib.Core.MAType)APO.MAType, APO.OptInFastPeriod, APO.OptInSlowPeriod);
                             break;
-                        case IndicatorEnum.AROON:
-                            AROON AROON = (AROON)indicator;
 
-                            double[] up = new double[length];
-                            double[] down = new double[length];
+                        case IndicatorEnum.AROON:
+                            var AROON = (AROON)indicator;
+
+                            var up = new double[length];
+                            var down = new double[length];
 
                             switch (AROON.AROONDownUp)
                             {
                                 case (int)AROONDownUpEnum.UP:
                                     TALib.Core.Aroon(high, low, startIdx, endIdx, down, AROON.Output, out OutBegIdx, out OutNBElement, AROON.OptInTimePeriod);
                                     break;
+
                                 case (int)AROONDownUpEnum.DOWN:
                                     TALib.Core.Aroon(high, low, startIdx, endIdx, AROON.Output, up, out OutBegIdx, out OutNBElement, AROON.OptInTimePeriod);
                                     break;
@@ -618,119 +672,143 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                             break;
 
                         case IndicatorEnum.ATR:
-                            ATR ATR = (ATR)indicator;
+                            var ATR = (ATR)indicator;
                             TALib.Core.Atr(high, low, close, startIdx, endIdx, ATR.Output, out OutBegIdx, out OutNBElement, ATR.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.BOP:
-                            BOP BOP = (BOP)indicator;
+                            var BOP = (BOP)indicator;
                             TALib.Core.Bop(open, high, low, close, startIdx, endIdx, BOP.Output, out OutBegIdx, out OutNBElement);
                             break;
+
                         case IndicatorEnum.CCI:
-                            CCI CCI = (CCI)indicator;
+                            var CCI = (CCI)indicator;
                             TALib.Core.Cci(high, low, close, startIdx, endIdx, CCI.Output, out OutBegIdx, out OutNBElement, CCI.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.CMO:
-                            CMO CMO = (CMO)indicator;
+                            var CMO = (CMO)indicator;
                             TALib.Core.Cmo(BuildInRealArray(CMO.PriceType, open, high, low, close), startIdx, endIdx, CMO.Output, out OutBegIdx, out OutNBElement, CMO.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.DX:
-                            DX DX = (DX)indicator;
+                            var DX = (DX)indicator;
                             TALib.Core.Dx(high, low, close, startIdx, endIdx, DX.Output, out OutBegIdx, out OutNBElement, DX.OptInTimePeriod);
                             break;
-                        case IndicatorEnum.MACD:
-                            MACD MACD = (MACD)indicator;
 
-                            double[] macd = new double[length];
-                            double[] signal = new double[length];
-                            double[] hist = new double[length];
+                        case IndicatorEnum.MACD:
+                            var MACD = (MACD)indicator;
+
+                            var macd = new double[length];
+                            var signal = new double[length];
+                            var hist = new double[length];
 
                             switch (MACD.MACDOutput)
                             {
                                 case (int)MACDOutputEnum.Macd:
                                     TALib.Core.Macd(BuildInRealArray(MACD.PriceType, open, high, low, close), startIdx, endIdx, MACD.Output, signal, hist, out OutBegIdx, out OutNBElement, MACD.OptInFastPeriod, MACD.OptInSlowPeriod, MACD.OptInSignalPeriod);
                                     break;
+
                                 case (int)MACDOutputEnum.MacdSignal:
                                     TALib.Core.Macd(BuildInRealArray(MACD.PriceType, open, high, low, close), startIdx, endIdx, macd, MACD.Output, hist, out OutBegIdx, out OutNBElement, MACD.OptInFastPeriod, MACD.OptInSlowPeriod, MACD.OptInSignalPeriod);
                                     break;
+
                                 case (int)MACDOutputEnum.MacdHist:
                                     TALib.Core.Macd(BuildInRealArray(MACD.PriceType, open, high, low, close), startIdx, endIdx, macd, signal, MACD.Output, out OutBegIdx, out OutNBElement, MACD.OptInFastPeriod, MACD.OptInSlowPeriod, MACD.OptInSignalPeriod);
                                     break;
                             }
                             break;
+
                         case IndicatorEnum.MINUS_DI:
-                            MINUS_DI MINUS_DI = (MINUS_DI)indicator;
+                            var MINUS_DI = (MINUS_DI)indicator;
                             TALib.Core.MinusDI(high, low, close, startIdx, endIdx, MINUS_DI.Output, out OutBegIdx, out OutNBElement, MINUS_DI.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.MINUS_DM:
-                            MINUS_DM MINUS_DM = (MINUS_DM)indicator;
+                            var MINUS_DM = (MINUS_DM)indicator;
                             TALib.Core.MinusDM(high, low, startIdx, endIdx, MINUS_DM.Output, out OutBegIdx, out OutNBElement, MINUS_DM.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.MOM:
-                            MOM MOM = (MOM)indicator;
+                            var MOM = (MOM)indicator;
                             TALib.Core.Mom(BuildInRealArray(MOM.PriceType, open, high, low, close), startIdx, endIdx, MOM.Output, out OutBegIdx, out OutNBElement, MOM.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.PLUS_DI:
-                            PLUS_DI PLUS_DI = (PLUS_DI)indicator;
+                            var PLUS_DI = (PLUS_DI)indicator;
                             TALib.Core.PlusDI(high, low, close, startIdx, endIdx, PLUS_DI.Output, out OutBegIdx, out OutNBElement, PLUS_DI.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.PLUS_DM:
-                            PLUS_DM PLUS_DM = (PLUS_DM)indicator;
+                            var PLUS_DM = (PLUS_DM)indicator;
                             TALib.Core.PlusDM(high, low, startIdx, endIdx, PLUS_DM.Output, out OutBegIdx, out OutNBElement, PLUS_DM.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.PPO:
-                            PPO PPO = (PPO)indicator;
+                            var PPO = (PPO)indicator;
                             TALib.Core.Ppo(BuildInRealArray(PPO.PriceType, open, high, low, close), startIdx, endIdx, PPO.Output, out OutBegIdx, out OutNBElement, (TALib.Core.MAType)PPO.MAType, PPO.OptInFastPeriod, PPO.OptInSlowPeriod);
                             break;
+
                         case IndicatorEnum.ROC:
-                            ROC ROC = (ROC)indicator;
+                            var ROC = (ROC)indicator;
                             TALib.Core.Roc(BuildInRealArray(ROC.PriceType, open, high, low, close), startIdx, endIdx, ROC.Output, out OutBegIdx, out OutNBElement, ROC.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.RSI:
-                            RSI RSI = (RSI)indicator;
+                            var RSI = (RSI)indicator;
                             TALib.Core.Rsi(BuildInRealArray(RSI.PriceType, open, high, low, close), startIdx, endIdx, RSI.Output, out OutBegIdx, out OutNBElement, RSI.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.STDDEV:
-                            STDDEV STDDEV = (STDDEV)indicator;
+                            var STDDEV = (STDDEV)indicator;
                             TALib.Core.StdDev(BuildInRealArray(STDDEV.PriceType, open, high, low, close), startIdx, endIdx, STDDEV.Output, out OutBegIdx, out OutNBElement, STDDEV.OptInTimePeriod, STDDEV.OptInNbDev);
                             break;
+
                         case IndicatorEnum.STOCHF:
-                            STOCHF STOCHF = (STOCHF)indicator;
+                            var STOCHF = (STOCHF)indicator;
                             switch (STOCHF.STOCHFOutput)
                             {
                                 case (int)STOCHFOutputEnum.FastK:
                                     TALib.Core.StochF(high, low, close, startIdx, endIdx, STOCHF.Output, new double[length], out OutBegIdx, out OutNBElement, (TALib.Core.MAType)STOCHF.OptInFastDMAType, STOCHF.OptInFastKPeriod, STOCHF.OptInFastDPeriod);
                                     break;
+
                                 case (int)STOCHFOutputEnum.FastD:
                                     TALib.Core.StochF(high, low, close, startIdx, endIdx, new double[length], STOCHF.Output, out OutBegIdx, out OutNBElement, (TALib.Core.MAType)STOCHF.OptInFastDMAType, STOCHF.OptInFastKPeriod, STOCHF.OptInFastDPeriod);
                                     break;
                             }
                             break;
+
                         case IndicatorEnum.STOCH:
-                            STOCH STOCH = (STOCH)indicator;
+                            var STOCH = (STOCH)indicator;
                             TALib.Core.Stoch(high, low, close, startIdx, endIdx, STOCH.Output, new double[length], out OutBegIdx, out OutNBElement, (TALib.Core.MAType)STOCH.OptInSlowKMAType, (TALib.Core.MAType)STOCH.OptInSlowDMAType, STOCH.OptInFastKPeriod, STOCH.OptInSlowKPeriod, STOCH.OptInSlowDPeriod);
                             break;
+
                         case IndicatorEnum.STOCHRSI:
-                            STOCHRSI STOCHRSI = (STOCHRSI)indicator;
+                            var STOCHRSI = (STOCHRSI)indicator;
                             switch (STOCHRSI.STOCHRSIOutput)
                             {
                                 case (int)STOCHRSIOutputEnum.FastK:
                                     TALib.Core.StochRsi(BuildInRealArray(STOCHRSI.PriceType, open, high, low, close), startIdx, endIdx, STOCHRSI.Output, new double[length], out OutBegIdx, out OutNBElement, (TALib.Core.MAType)STOCHRSI.OptInFastDMAType, STOCHRSI.OptInTimePeriod, STOCHRSI.OptInFastKPeriod, STOCHRSI.OptInFastDPeriod);
                                     break;
+
                                 case (int)STOCHRSIOutputEnum.FastD:
                                     TALib.Core.StochRsi(BuildInRealArray(STOCHRSI.PriceType, open, high, low, close), startIdx, endIdx, new double[length], STOCHRSI.Output, out OutBegIdx, out OutNBElement, (TALib.Core.MAType)STOCHRSI.OptInFastDMAType, STOCHRSI.OptInTimePeriod, STOCHRSI.OptInFastKPeriod, STOCHRSI.OptInFastDPeriod);
                                     break;
                             }
                             break;
+
                         case IndicatorEnum.ULTOSC:
-                            ULTOSC ULTOSC = (ULTOSC)indicator;
+                            var ULTOSC = (ULTOSC)indicator;
                             TALib.Core.UltOsc(high, low, close, startIdx, endIdx, ULTOSC.Output, out OutBegIdx, out OutNBElement, ULTOSC.OptInTimePeriod1, ULTOSC.OptInTimePeriod2, ULTOSC.OptInTimePeriod3);
                             break;
+
                         case IndicatorEnum.VAR:
-                            VAR VAR = (VAR)indicator;
+                            var VAR = (VAR)indicator;
                             TALib.Core.Var(BuildInRealArray(VAR.PriceType, open, high, low, close), startIdx, endIdx, VAR.Output, out OutBegIdx, out OutNBElement, VAR.OptInTimePeriod);
                             break;
+
                         case IndicatorEnum.WILLR:
-                            WILLR WILLR = (WILLR)indicator;
+                            var WILLR = (WILLR)indicator;
                             TALib.Core.WillR(high, low, close, startIdx, endIdx, WILLR.Output, out OutBegIdx, out OutNBElement, WILLR.OptInTimePeriod);
                             break;
                     }
@@ -771,10 +849,10 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
         {
             try
             {
-                if (indicators.Count > 0)
+                if (indicators.ToList().Count > 0)
                 {
-                    int columnCount = indicators.Count;
-                    int rowCount = indicators.FirstOrDefault().IntervalLabels.Where(
+                    var columnCount = indicators.ToList().Count;
+                    var rowCount = indicators.FirstOrDefault().IntervalLabels.Where(
                         il => (fromRegionTime == 0 || il.Interval.Hour >= fromRegionTime) &&
                                 (toRegionTime == 0 || il.Interval.Hour <= toRegionTime)
                     ).ToList().Count;
@@ -782,12 +860,12 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     using var writer = new StreamWriter(path);
                     using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-                    string[] headers = new string[columnCount];
-                    object[,] items = new object[columnCount, rowCount];
-                    int iCounter = 0;
+                    var headers = new string[columnCount];
+                    var items = new object[columnCount, rowCount];
+                    var iCounter = 0;
                     foreach (var i in indicators)
                     {
-                        PropertyInfo[] properties = i.GetType().GetFilteredProperties<IgnoreReflectionAttribute>();
+                        var properties = i.GetType().GetFilteredProperties<IgnoreReflectionAttribute>();
 
                         var parameters = string.Join("_", (from p in properties
                                                            where p.PropertyType.Name == typeof(int).Name || p.PropertyType.Name == typeof(double).Name
@@ -797,10 +875,10 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
 
                         if (i.Output.Length > 0)
                         {
-                            int zzz = 0;
+                            var zzz = 0;
                             for (int jCounter = 0; jCounter < i.Output.Length; jCounter++)
                             {
-                                DateTime dt = i.IntervalLabels[jCounter].Interval;
+                                var dt = i.IntervalLabels[jCounter].Interval;
                                 if ((fromRegionTime == 0 || dt.Hour >= fromRegionTime) && (toRegionTime == 0 || dt.Hour <= toRegionTime))
                                 {
                                     items[iCounter, zzz] = i.Output[jCounter];
@@ -815,7 +893,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     var duplicates = headers.Select((t, i) => new { Index = i, Text = t })
                         .GroupBy(g => g.Text).Where(g => g.Count() > 1);
 
-                    List<int> indexDuplicates = new();
+                    var indexDuplicates = new List<int>();
 
                     //Build csv
                     csv.WriteField("Id");
@@ -836,7 +914,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     csv.WriteField("LABEL");
                     csv.NextRecord();
 
-                    IntervalLabel[] intervals = indicators.FirstOrDefault().IntervalLabels.Where(
+                    var intervals = indicators.FirstOrDefault().IntervalLabels.Where(
                         il => (fromRegionTime == 0 || il.Interval.Hour >= fromRegionTime) &&
                                 (toRegionTime == 0 || il.Interval.Hour <= toRegionTime)
                     ).ToArray();
@@ -869,11 +947,11 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             return false;
         }
 
-        public IEnumerable<Candle> GetCandles(string filePath)
+        public List<Candle> GetCandles(string filePath)
         {
             try
             {
-                List<Candle> result = new();
+                var result = new List<Candle>();
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     HasHeaderRecord = false,

@@ -136,20 +136,18 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
                     if (operations.Any() && ProjectDirectoryService.DeleteAllFiles(directory, option: SearchOption.AllDirectories, isBackup: false))
                     {
-                        DateTime first = operations.FirstOrDefault().Date;
-                        DateTime last = operations.LastOrDefault().Date;
+                        var first = operations.FirstOrDefault().Date;
+                        var last = operations.LastOrDefault().Date;
 
-                        List<FileInfo> templates = ProjectDirectoryService.GetFilesInPath(
+                        var templates = ProjectDirectoryService.GetFilesInPath(
                             projectName.ProjectExtractorTemplatesDirectory()).ToList();
 
                         Parallel.ForEach(templates,
                             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 },
                             fi =>
                             {
-                                List<IndicatorBase> indicators = ExtractorService.BuildIndicatorsFromCSV(fi.FullName);
-
-                                List<IndicatorBase> extractions = ExtractorService.DoExtraction(
-                                    first, last, indicators, candles, config.TimeframeId, config.Variation);
+                                var indicators = ExtractorService.BuildIndicatorsFromCSV(fi.FullName);
+                                var extractions = ExtractorService.DoExtraction(first, last, indicators, candles.ToList(), config.TimeframeId, config.Variation);
 
                                 foreach (var ex in extractions)
                                 {
@@ -185,7 +183,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
                                 if (!config.WithoutSchedule && config.ProjectScheduleConfigurations.Any())
                                 {
-                                    #region America
+                                    // America
                                     config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.America,
                                         out DateTime FromTimeInSecondsAmerica, out DateTime ToTimeInSecondsAmerica);
 
@@ -194,9 +192,8 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                                         indicators,
                                         FromTimeInSecondsAmerica.Hour, ToTimeInSecondsAmerica.Hour
                                     );
-                                    #endregion America
 
-                                    #region Europe
+                                    // Europe
                                     config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Europe,
                                         out DateTime FromTimeInSecondsEurope, out DateTime ToTimeInSecondsEurope);
 
@@ -205,9 +202,8 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                                         indicators,
                                         FromTimeInSecondsEurope.Hour, ToTimeInSecondsEurope.Hour
                                     );
-                                    #endregion Europe
 
-                                    #region Asia
+                                    // Asia
                                     config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Asia,
                                         out DateTime FromTimeInSecondsAsia, out DateTime ToTimeInSecondsAsia);
 
@@ -216,7 +212,6 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                                         indicators,
                                         FromTimeInSecondsAsia.Hour, ToTimeInSecondsAsia.Hour
                                     );
-                                    #endregion Asia
                                 }
                             });
                     }
@@ -246,7 +241,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 },
                             ext =>
                             {
-                                #region Weka
+                                // Weka
 
                                 var wekaApi = new WekaApiClient();
                                 IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
@@ -260,13 +255,11 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                                     true
                                 );
 
-                                #endregion Weka
-
-                                #region Strategy
+                                // Strategy
 
                                 foreach (var instance in responseWeka)
                                 {
-                                    List<REPTreeNodeModel> winningNodes = instance.NodeOutput.Where(m => m.Winner).ToList();
+                                    var winningNodes = instance.NodeOutput.Where(m => m.Winner).ToList();
                                     winningNodes.ForEach(m =>
                                     {
                                         m.Node = new List<string>(m.Node.OrderByDescending(n => n).ToList());
@@ -274,20 +267,16 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
                                     foreach (var node in winningNodes)
                                     {
-                                        StrategyBuilderModel stb = StrategyBuilderService.BacktestBuild(label, node.Node.ToList(), config, candles);
+                                        var stb = StrategyBuilderService.BacktestBuild(label, node.Node.ToList(), config, candles.ToList());
 
-                                        #region Serialization
+                                        // Serialization
 
                                         if (stb.WinningStrategy)
                                         {
                                             BacktestSerialize(projectName, stb.IS);
                                         }
-
-                                        #endregion Serialization
                                     }
                                 }
-
-                                #endregion Strategy
                             });
                     }
                 }
