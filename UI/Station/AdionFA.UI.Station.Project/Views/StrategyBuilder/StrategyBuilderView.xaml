@@ -20,7 +20,7 @@
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
 
         <Style TargetType="Button" x:Key="DisableBorderRarioBtn">
-            <Setter Property="Padding" Value="5,0,5,0"/>
+            <Setter Property="Padding" Value="5,0,5,0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -30,19 +30,19 @@
                                               Content="{TemplateBinding Content}"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               Margin="{TemplateBinding Padding}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background">
                                     <Setter.Value>
                                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                            <GradientStop Color="#FF5BB75B" Offset="0"/>
-                                            <GradientStop Color="#FF398239" Offset="1"/>
+                                            <GradientStop Color="#FF5BB75B" Offset="0" />
+                                            <GradientStop Color="#FF398239" Offset="1" />
                                         </LinearGradientBrush>
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Cursor" Value="Hand" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -55,7 +55,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridCell}">
                         <Grid Background="{TemplateBinding Background}">
-                            <ContentPresenter VerticalAlignment="Center"/>
+                            <ContentPresenter VerticalAlignment="Center" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -66,45 +66,59 @@
     <Grid Margin="10 0 0 0">
         <!--#region Row & Col Definition-->
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <!--#endregion-->
 
-        <!--#region ProcessBtn-->
-        <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0 20 10 0">
-            <Button x:Name="ProcessBtn" Width="80" Height="40" IsEnabled="{Binding CanExecute}"
-                    Command="{Binding ProcessCommand}"
-                    HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal" Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <iconPacks:FontAwesome Kind="PlaySolid" Width="14"/>
-                    <Label Content="Process" FontSize="11"/>
-                </StackPanel>
-            </Button>
-            <metro:ProgressRing IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        </Grid>
-        <!--#endregion-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <!--#region Stop Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80" Height="40"
+                        Command="{Binding StopCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="StopSolid" Width="14" />
+                        <Label Content="Stop" FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <!--#endregion-->
 
-        <!--#region StrategyBuilderInformationExpander-->
+            <!--#region Process Button-->
+            <Grid  Margin="0 20 10 0">
+                <Button Width="80" Height="40"
+                    IsEnabled="{Binding CanExecute}"
+                    Command="{Binding ProcessCommand}">
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <iconPacks:FontAwesome Kind="PlaySolid" Width="14" />
+                        <Label Content="Process" FontSize="11" />
+                    </StackPanel>
+                </Button>
+                <metro:ProgressRing IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+            <!--#endregion-->
+        </StackPanel>
+
+        <!--#region Strategy Builder Configuration Expander-->
         <Expander x:Name="StrategyBuilderInformationExpander" Grid.Row="1" Margin="0 3 10 0" Style="{DynamicResource ControlExpanderStyle}"
                   Header="{x:Static commonResources:CommonResources.Configurations}"
                   IsExpanded="False">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Row="0" Grid.Column="0" Margin="10 0 0 0" Orientation="Horizontal">
@@ -113,11 +127,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Instances}"/>
-                                    <Run Text=""/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Instances}" />
+                                    <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.TotalInstanceWeka}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.TotalInstanceWeka}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -125,11 +139,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.NTotals}"/>
-                                    <Run Text=""/>
+                                    <Run Text="{x:Static commonResources:CommonResources.NTotals}" />
+                                    <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.NTotalTree}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.NTotalTree}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -137,11 +151,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Depth}"/>
-                                    <Run Text=""/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Depth}" />
+                                    <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.DepthWeka}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.DepthWeka}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -149,11 +163,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Ratio}"/>
-                                    <Run Text=""/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Ratio}" />
+                                    <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MaxRatioTree}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MaxRatioTree}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
@@ -164,12 +178,12 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Maximum}"/>
-                                    <Run Text="{x:Static commonResources:CommonResources.Seed}"/>
-                                    <Run Text=""/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Maximum}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Seed}" />
+                                    <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MaximumSeed}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MaximumSeed}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -177,12 +191,12 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Minimal}"/>
-                                    <Run Text="{x:Static commonResources:CommonResources.Seed}"/>
-                                    <Run Text=""/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Minimal}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Seed}" />
+                                    <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MinimalSeed}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MinimalSeed}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -190,11 +204,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Decimals}"/>
-                                    <Run Text=""/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Decimals}" />
+                                    <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.TotalDecimalWeka}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.TotalDecimalWeka}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
@@ -205,10 +219,10 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalUP}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalUP}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.WinningStrategyTotalUP}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.WinningStrategyTotalUP}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -216,10 +230,10 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalDOWN}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalDOWN}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.WinningStrategyTotalDOWN}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.WinningStrategyTotalDOWN}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -227,25 +241,24 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.TransactionTarget}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.TransactionTarget}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
 
                 <StackPanel Grid.Row="3" Grid.Column="0" Margin="10 0 0 0" Orientation="Horizontal">
-
                     <!--#region VariationTransaction-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Variation}"/>
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Variation}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.VariationTransaction}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.VariationTransaction}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -253,12 +266,12 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.ActivateProgressiveness}"/>
-                                <Run Text="{x:Static commonResources:CommonResources.Percent}"/>
+                                <Run Text="{x:Static commonResources:CommonResources.ActivateProgressiveness}" />
+                                <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
                         <metro:ToggleSwitch Margin="0 -3" IsEnabled="False"
-                                   IsOn="{Binding Configuration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                   IsOn="{Binding Configuration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -266,11 +279,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Progressiveness}"/>
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.Progressiveness}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.Progressiveness}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -278,11 +291,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Correlation}"/>
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Correlation}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MaxPercentCorrelation}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MaxPercentCorrelation}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
@@ -293,11 +306,11 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Transactions}"/>
-                                    <Run Text="{x:Static commonResources:CommonResources.IS}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Transactions}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.IS}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MinTransactionCountIS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MinTransactionCountIS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -305,27 +318,26 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Transactions}"/>
-                                    <Run Text="{x:Static commonResources:CommonResources.OS}"/>
+                                    <Run Text="{x:Static commonResources:CommonResources.Transactions}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.OS}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MinTransactionCountOS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MinTransactionCountOS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
 
                 <StackPanel Grid.Row="5" Grid.Column="0" Margin="10 0 0 0" Orientation="Horizontal">
-
                     <!--#region MinPercentSuccessIS-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.SuccessRate}"/>
-                                <Run Text="{x:Static commonResources:CommonResources.Percent}"/>
-                                <Run Text="{x:Static commonResources:CommonResources.IS}"/>
+                                <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
+                                <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                <Run Text="{x:Static commonResources:CommonResources.IS}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MinPercentSuccessIS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MinPercentSuccessIS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -333,12 +345,12 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.SuccessRate}"/>
-                                <Run Text="{x:Static commonResources:CommonResources.Percent}"/>
-                                <Run Text="{x:Static commonResources:CommonResources.OS}"/>
+                                <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
+                                <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                <Run Text="{x:Static commonResources:CommonResources.OS}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MinPercentSuccessOS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225"/>
+                        <TextBox Text="{Binding Configuration.MinPercentSuccessOS}" IsReadOnly="True" Focusable="False" IsEnabled="False" Width="225" />
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
@@ -346,109 +358,144 @@
         </Expander>
         <!--#endregion-->
 
-        <!--#region StrategyBuilderInformation-->
+        <!--#region Strategy Builder Information-->
         <metro:MetroHeader Grid.Row="2" Margin="0 10 10 10" Header="{x:Static commonResources:CommonResources.StrategyBuilderInformation}">
             <Grid Margin="0 10 0 0">
-                <!--#region Rows & Cols-->
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <!--#endregion-->
 
                 <StackPanel Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <!--#region TotalCorrelationUP-->
-                        <TextBlock Grid.Column="0" Grid.Row="0" Margin="0 5 10 5">
-                            <Run Text="{x:Static commonResources:CommonResources.CorrelationUP}" FontWeight="SemiBold"/>
-                            <Run Text=":"/>
+                        <!--#region All Nodes-->
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   Margin="0 5 10 5">
+                            <Run Text="All Nodes" FontWeight="SemiBold" />
+                            <Run Text=":" />
                         </TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="0" Margin="0 5 10 5">
-                            <Run Text="{Binding TotalCorrelationUP}"/>
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="1"
+                                   Margin="0 5 10 5">
+                            <Run Text="{Binding AllNodes.Count, Mode=OneWay}" />
                         </TextBlock>
                         <!--#endregion-->
 
-                        <!--#region TotalCorrelationDOWN-->
-                        <TextBlock Grid.Column="0" Grid.Row="1" Margin="0 5 10 5">
-                            <Run Text="{x:Static commonResources:CommonResources.CorrelationDOWN}" FontWeight="SemiBold"/>
-                            <Run Text=":"/>
+                        <!--#region Correlation UP-->
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Margin="0 5 10 5">
+                            <Run Text="{x:Static commonResources:CommonResources.CorrelationUP}" FontWeight="SemiBold" />
+                            <Run Text=":" />
                         </TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="1" Margin="0 5 10 5">
-                            <Run Text="{Binding TotalCorrelationDOWN}"/>
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   Margin="0 5 10 5">
+                            <Run Text="{Binding TotalCorrelationUP}" />
+                        </TextBlock>
+                        <!--#endregion-->
+
+                        <!--#region Correlation DOWN-->
+                        <TextBlock Grid.Row="2"
+                                   Grid.Column="0"
+                                   Margin="0 5 10 5">
+                            <Run Text="{x:Static commonResources:CommonResources.CorrelationDOWN}" FontWeight="SemiBold" />
+                            <Run Text=":" />
+                        </TextBlock>
+                        <TextBlock Grid.Row="2"
+                                   Grid.Column="1"
+                                   Margin="0 5 10 5">
+                            <Run Text="{Binding TotalCorrelationDOWN}" />
                         </TextBlock>
                         <!--#endregion-->
                     </Grid>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center">
                     <!--#region AsynchronousMode-->
                     <StackPanel Margin="{StaticResource ControlMargin}" Width="125">
                         <Label>
                             <TextBlock>
-                            <Run Text="{x:Static commonResources:CommonResources.AsynchronousMode}"/>
+                            <Run Text="{x:Static commonResources:CommonResources.AsynchronousMode}" />
                             </TextBlock>
                         </Label>
                         <metro:ToggleSwitch Margin="0 -3" IsEnabled="False"
-                                IsOn="{Binding Configuration.AsynchronousMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                IsOn="{Binding Configuration.AsynchronousMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <!--#endregion-->
 
-                    <!--#region AutoAdjustConfig-->
+                    <!--#region Maximum Parallelism Configuration-->
+                    <StackPanel Margin="{StaticResource ControlMargin}" Width="125" Orientation="Vertical">
+                        <Label>
+                            <TextBlock>
+                                <Run Text="Maximum Parallelism" />
+                            </TextBlock>
+                        </Label>
+                        <TextBox Text="{Binding MaxParallelism}" IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
+                    </StackPanel>
+                    <!--#endregion-->
+
+                    <!--#region Auto Adjustment Configuration-->
                     <StackPanel Margin="{StaticResource ControlMargin}" Width="85">
                         <Label>
                             <TextBlock>
-                            <Run Text="{x:Static commonResources:CommonResources.AutoAdjustConfig}"/>
+                            <Run Text="{x:Static commonResources:CommonResources.AutoAdjustConfig}" />
                             </TextBlock>
                         </Label>
                         <metro:ToggleSwitch Margin="0 -3" IsEnabled="False"
-                                IsOn="{Binding Configuration.AutoAdjustConfig, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                IsOn="{Binding Configuration.AutoAdjustConfig, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <!--#endregion-->
 
-                    <!--#region MaxAdjustConfig-->
+                    <!--#region Maximum Adjustment Configuration-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.MaxAdjustConfig}"/>
+                                <Run Text="{x:Static commonResources:CommonResources.MaxAdjustConfig}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MaxAdjustConfig}" IsReadOnly="True" Focusable="False" IsEnabled="False"/>
+                        <TextBox Text="{Binding Configuration.MaxAdjustConfig}" IsReadOnly="True" Focusable="False" IsEnabled="False" />
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
 
                 <!--#region Correlation Detail Button-->
-                <Button x:Name="correlationDetailBtn" Grid.Column="2" Width="160" Height="40" Margin="10 0 0 0"
-                        Visibility="{Binding IsCorrelationDetail, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button x:Name="correlationDetailBtn"
+                        Grid.Column="2"
+                        Width="160" Height="40"
+                        Margin="10 0 0 0"
+                        IsEnabled="{Binding IsCorrelationDetail}">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands" Width="14"/>
-                        <Label Content="{x:Static commonResources:CommonResources.CorrelationDetail}" FontSize="11"/>
+                        <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands" Width="14" />
+                        <Label Content="{x:Static commonResources:CommonResources.CorrelationDetail}" FontSize="11" />
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
                         <behaviors:EventTrigger SourceName="correlationDetailBtn" EventName="Click">
                             <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}"/>
-                                        <Binding Path="TotalNodes"/>
+                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}" />
+                                        <Binding Path="AllNodes" />
                                     </MultiBinding>
                                 </behaviors:InvokeCommandAction.CommandParameter>
                             </behaviors:InvokeCommandAction>
@@ -458,19 +505,22 @@
                 <!--#endregion-->
 
                 <!--#region iterationsDetailBtn-->
-                <Button x:Name="iterationsDetailBtn" Grid.Column="3" Width="160" Height="40" Margin="10 0 0 0"
-                        Visibility="{Binding Configuration.AutoAdjustConfig, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button x:Name="iterationsDetailBtn"
+                        Grid.Column="3"
+                        Width="160" Height="40"
+                        Margin="10 0 0 0"
+                        IsEnabled="{Binding Configuration.AutoAdjustConfig}">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconFontAwesome Kind="TasksSolid" Width="14"/>
-                        <Label Content="{x:Static commonResources:CommonResources.ConfigurationSettings}" FontSize="11"/>
+                        <iconPacks:PackIconFontAwesome Kind="TasksSolid" Width="14" />
+                        <Label Content="{x:Static commonResources:CommonResources.ConfigurationSettings}" FontSize="11" />
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
                         <behaviors:EventTrigger SourceName="iterationsDetailBtn" EventName="Click">
                             <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                        <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAutoConfiguration}"/>
-                                        <Binding Path="Configurations"/>
+                                        <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAutoConfiguration}" />
+                                        <Binding Path="Configurations" />
                                     </MultiBinding>
                                 </behaviors:InvokeCommandAction.CommandParameter>
                             </behaviors:InvokeCommandAction>
@@ -480,26 +530,29 @@
                 <!--#endregion-->
 
                 <!--#region Refresh Button-->
-                <Button x:Name="refreshStrategyBuilderBtn" Grid.Column="4" Width="80" Height="40" Margin="10 0 0 0"
+                <Button x:Name="refreshStrategyBuilderBtn"
+                        Grid.Column="4"
+                        Width="80" Height="40"
+                        Margin="10 0 0 0"
                         IsEnabled="{Binding CanExecute}">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:PackIconFontAwesome Kind="RedoSolid" Width="14"/>
-                        <Label Content="Refresh" FontSize="11"/>
+                        <iconPacks:PackIconFontAwesome Kind="RedoSolid" Width="14" />
+                        <Label Content="Refresh" FontSize="11" />
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
                         <behaviors:EventTrigger SourceName="refreshStrategyBuilderBtn" EventName="Click">
                             <behaviors:InvokeCommandAction
-                                Command="{Binding RefreshCommand}"/>
+                                Command="{Binding RefreshCommand}" />
                         </behaviors:EventTrigger>
                     </behaviors:Interaction.Triggers>
                 </Button>
-                <metro:ProgressRing Grid.Column="4" IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <metro:ProgressRing Grid.Column="4" IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <!--#endregion-->
             </Grid>
         </metro:MetroHeader>
         <!--#endregion-->
 
-        <!--#region Strategy Builder Process DataGrid-->
+        <!--#region Strategy Builder Process-->
         <DataGrid Grid.Row="3"
                   Grid.Column="1"
                   Margin="10 5"
@@ -508,41 +561,42 @@
                   ItemsSource="{Binding StrategyBuilderProcessList}"
                   RowHeaderWidth="0">
             <DataGrid.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="White"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="White" />
             </DataGrid.Resources>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="Foreground" Value="Black" />
                 </Style>
             </DataGrid.CellStyle>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="Foreground" Value="Black" />
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="BorderBrush" Value="Gray"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="BorderBrush" Value="Gray" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Foreground" Value="Black" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{x:Static commonResources:CommonResources.TemplateName}">
+                <DataGridTemplateColumn Header="{x:Static commonResources:CommonResources.ExtractionName}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0 3 10 0">
-                                <Label Content="{Binding TemplateName}"/>
+                                <Label Content="{Binding ExtractionName}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="1*"
-                                        Header="Tree Outputs">
+
+                <DataGridTemplateColumn Header="Tree Outputs"
+                                        Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Expander Style="{StaticResource ControlExpanderStyle}"
@@ -554,46 +608,38 @@
                                             <Style TargetType="{x:Type Grid}">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding HasWinningStrategy}" Value="true">
-                                                        <Setter Property="Background" Value="LightBlue"/>
+                                                        <Setter Property="Background" Value="LightBlue" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                             <Style TargetType="{x:Type TextBlock}">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding HasWinningStrategy}" Value="false">
-                                                        <Setter Property="Foreground" Value="Gray"/>
+                                                        <Setter Property="Foreground" Value="Gray" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Grid.Resources>
+
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="1*" />
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="0" Margin="5">
-                                            <Run Text="{Binding Status}"/>
+                                            <Run Text="{Binding Status}" />
                                         </TextBlock>
 
                                         <TextBlock Grid.Column="1" Margin="5">
-                                            <Run Text="{Binding Message}"/>
+                                            <Run Text="{Binding Message}" />
                                         </TextBlock>
 
                                         <TextBlock Grid.Column="2" Margin="20 5" HorizontalAlignment="Right">
-                                            <Run Text="Completed"/>
-                                            <Run Text=" - "/>
-                                            <Run Text="{Binding CompletedBacktests}" FontWeight="SemiBold"/>
-                                            <Run Text="/"/>
-                                            <Run Text="{Binding TotalStrategy}" FontWeight="SemiBold"/>
-                                            <Run Text=" | "/>
-                                            <Run Text="Winning Strategy UP"/>
-                                            <Run Text=" - "/>
-                                            <Run Text="{Binding TotalWinningStrategyUP}" FontWeight="SemiBold"/>
-                                            <Run Text=" | "/>
-                                            <Run Text="Winning Strategy DOWN"/>
-                                            <Run Text=" - "/>
-                                            <Run Text="{Binding TotalWinningStrategyDOWN}" FontWeight="SemiBold"/>
+                                            <Run Text="Completed" />
+                                            <Run Text=" - " />
+                                            <Run Text="{Binding CompletedBacktests}" FontWeight="SemiBold" />
+                                            <Run Text="/" />
+                                            <Run Text="{Binding TotalStrategy}" FontWeight="SemiBold" />
                                         </TextBlock>
                                     </Grid>
                                 </Expander.Header>
@@ -616,12 +662,12 @@
                                             <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MahApps.Styles.ListViewItem}">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding HasWinningStrategy}" Value="true">
-                                                        <Setter Property="Background" Value="LightBlue"/>
+                                                        <Setter Property="Background" Value="LightBlue" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </ListView.Resources>
-                                      
+
                                         <ListView.View>
                                             <GridView>
                                                 <GridViewColumn Width="{Binding ElementName=dummywidth0, Path=ActualWidth}">
@@ -630,7 +676,7 @@
                                                             <StackPanel Margin="5 2">
                                                                 <Button x:Name="viewInstanceDetailBtn">
                                                                     <Button.Content>
-                                                                        <iconPacks:PackIconMaterial Kind="FileTreeOutline"  Width="12" Height="12"/>
+                                                                        <iconPacks:PackIconMaterial Kind="FileTreeOutline"  Width="12" Height="12" />
                                                                     </Button.Content>
                                                                     <behaviors:Interaction.Triggers>
                                                                         <behaviors:EventTrigger SourceName="viewInstanceDetailBtn" EventName="Click">
@@ -638,8 +684,8 @@
                                                                                 Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                                                 <behaviors:InvokeCommandAction.CommandParameter>
                                                                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}"/>
-                                                                                        <Binding Path="NodeOutput"/>
+                                                                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}" />
+                                                                                        <Binding Path="NodeOutput" />
                                                                                     </MultiBinding>
                                                                                 </behaviors:InvokeCommandAction.CommandParameter>
                                                                             </behaviors:InvokeCommandAction>
@@ -650,17 +696,17 @@
                                                         </DataTemplate>
                                                     </GridViewColumn.CellTemplate>
                                                 </GridViewColumn>
-                                                
+
                                                 <GridViewColumn
                                                     Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
                                                     Header="{x:Static commonResources:CommonResources.Seed}"
-                                                    DisplayMemberBinding="{Binding Seed}"/>
-                                                
+                                                    DisplayMemberBinding="{Binding Seed}" />
+
                                                 <GridViewColumn
                                                     Width="{Binding ElementName=dummywidth2, Path=ActualWidth}"
                                                     Header="Nodes"
-                                                    DisplayMemberBinding="{Binding ValidNodes}"/>
-                                                
+                                                    DisplayMemberBinding="{Binding ValidNodes}" />
+
                                                 <GridViewColumn
                                                     Width="{Binding ElementName=dummywidth3, Path=ActualWidth}"
                                                     Header="Backtests">
@@ -673,13 +719,13 @@
                                                                     VerticalAlignment="Center"
                                                                     Background="Transparent" Foreground="CadetBlue"
                                                                     Minimum="0" Maximum="{Binding ValidNodes}"
-                                                                    Value="{Binding CounterProgressBar}"/>
+                                                                    Value="{Binding CounterProgressBar}" />
                                                                 <TextBlock Grid.Column="2" Margin="20 5" HorizontalAlignment="Center">
-                                                                    <Run Text="Completed"/>
-                                                                    <Run Text=" - "/>
-                                                                    <Run Text="{Binding CounterProgressBar}" FontWeight="SemiBold"/>
-                                                                    <Run Text="/"/>
-                                                                    <Run Text="{Binding ValidNodes}" FontWeight="SemiBold"/>
+                                                                    <Run Text="Completed" />
+                                                                    <Run Text=" - " />
+                                                                    <Run Text="{Binding CounterProgressBar}" FontWeight="SemiBold" />
+                                                                    <Run Text="/" />
+                                                                    <Run Text="{Binding ValidNodes}" FontWeight="SemiBold" />
                                                                 </TextBlock>
                                                             </Grid>
                                                         </DataTemplate>
@@ -699,7 +745,7 @@
         <StackPanel Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Label Content="Strategy Builder Process is Empty"
-               Visibility="{Binding StrategyBuilderProcessList.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}"/>
+               Visibility="{Binding StrategyBuilderProcessList.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
         </StackPanel>
         <!--#endregion-->
     </Grid>

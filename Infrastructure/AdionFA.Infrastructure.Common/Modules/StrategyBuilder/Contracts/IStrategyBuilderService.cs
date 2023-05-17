@@ -5,6 +5,7 @@ using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Base;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 {
@@ -16,8 +17,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 
         // Backtest
 
-        StrategyBuilderModel BacktestBuild(string nodeLabel, List<string> node, ConfigurationBaseDTO config, List<Candle> candles);
+        StrategyBuilderModel BacktestBuild(string nodeLabel, List<string> node, ConfigurationBaseDTO config, IEnumerable<Candle> candles, CancellationToken token);
 
-        BacktestModel ExecuteBacktest(string nodeLabel, DateTime fromDate, DateTime toDate, List<string> node, List<Candle> candles, int timeframeId);
+        BacktestModel ExecuteBacktest(string nodeLabel, DateTime fromDate, DateTime toDate, List<string> node, IEnumerable<Candle> candles, int timeframeId, CancellationToken token);
     }
 }

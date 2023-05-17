@@ -1,6 +1,8 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Project.Model.StrategyBuilder;
 using NetMQ.Sockets;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -8,9 +10,13 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
 {
     public class REPTreeNodeVM : ViewModelBase
     {
+        public REPTreeOutputVM Tree { get; set; }
+        public StrategyBuilderProcessModel StrategyBuilderProcess { get; set; }
+
         // Weka
 
         private ObservableCollection<string> _node;
+
         public ObservableCollection<string> Node
         {
             get => _node;
@@ -18,6 +24,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private double _totalUP;
+
         public double TotalUP
         {
             get => _totalUP;
@@ -25,6 +32,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private double _totalDOWN;
+
         public double TotalDOWN
         {
             get => _totalDOWN;
@@ -32,6 +40,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private double _ratioUP;
+
         public double RatioUP
         {
             get => _ratioUP;
@@ -39,6 +48,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private double _ratioDOWN;
+
         public double RatioDOWN
         {
             get => _ratioDOWN;
@@ -46,6 +56,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private double _ratioMax;
+
         public double RatioMax
         {
             get => _ratioMax;
@@ -53,29 +64,33 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private double _total;
+
         public double Total
         {
             get => _total;
             set => SetProperty(ref _total, value);
         }
 
-        private bool _winner;
-        public bool Winner
-        {
-            get => _winner;
-            set => SetProperty(ref _winner, value);
-        }
-
         private string _label;
+
         public string Label
         {
             get => _label;
             set => SetProperty(ref _label, value);
         }
 
+        private bool _winner;
+
+        public bool Winner
+        {
+            get => _winner;
+            set => SetProperty(ref _winner, value);
+        }
+
         // IS
 
         private int _totalTradesIs;
+
         public int TotalTradesIs
         {
             get => _totalTradesIs;
@@ -83,6 +98,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private int _winningTradesIs;
+
         public int WinningTradesIs
         {
             get => _winningTradesIs;
@@ -90,6 +106,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private int _losingTradesIs;
+
         public int LosingTradesIs
         {
             get => _losingTradesIs;
@@ -102,25 +119,28 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
 
         // OS
 
-        private int totalTradesOs;
+        private int _totalTradesOs;
+
         public int TotalTradesOs
         {
-            get => totalTradesOs;
-            set => SetProperty(ref totalTradesOs, value);
+            get => _totalTradesOs;
+            set => SetProperty(ref _totalTradesOs, value);
         }
 
-        private int winningTradesOs;
+        private int _winningTradesOs;
+
         public int WinningTradesOs
         {
-            get => winningTradesOs;
-            set => SetProperty(ref winningTradesOs, value);
+            get => _winningTradesOs;
+            set => SetProperty(ref _winningTradesOs, value);
         }
 
-        private int losingTradesOs;
+        private int _losingTradesOs;
+
         public int LosingTradesOs
         {
-            get => losingTradesOs;
-            set => SetProperty(ref losingTradesOs, value);
+            get => _losingTradesOs;
+            set => SetProperty(ref _losingTradesOs, value);
         }
 
         public double TotalOpportunityOs { get; set; }
@@ -130,6 +150,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         // Correlation
 
         private bool _correlationPass;
+
         public bool CorrelationPass
         {
             get => _correlationPass;
@@ -143,6 +164,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         public bool WinningStrategy { get; set; }
 
         private string _historicalData;
+
         public string HistoricalData
         {
             get => _historicalData;
@@ -150,12 +172,75 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private bool _hasTestInMetatrader;
+
         public bool HasTestInMetaTrader
         {
             get => _hasTestInMetatrader;
             set => SetProperty(ref _hasTestInMetatrader, value);
         }
 
-        public bool HasBacktest { get; set; }
+        public bool IsBacktestCompleted { get; set; }
+
+        public string Name => NodeName();
+
+        public string NodeName()
+        {
+            var indicators = new List<string>();
+            Node.ToList().ForEach(n =>
+            {
+                var f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
+                string[] divisions = null;
+
+                // Operator Split
+
+                if (f.Contains(">="))
+                {
+                    divisions = f.Split(">=");
+                }
+                else if (f.Contains("<="))
+                {
+                    divisions = f.Split("<=");
+                }
+                else if (f.Contains('>'))
+                {
+                    divisions = f.Split('>');
+                }
+                else if (f.Contains('<'))
+                {
+                    divisions = f.Split('<');
+                }
+                else if (f.Contains('='))
+                {
+                    divisions = f.Split('=');
+                }
+
+                var name = divisions[0].Split("_")[0].Replace(".", string.Empty);
+
+                var last = indicators.LastOrDefault();
+                if (last != null)
+                {
+                    var lastName = last.Split(".")[0];
+                    int lastCount = 1;
+                    if (last.Contains('.'))
+                    {
+                        int.TryParse(last.Split(".")[1], out lastCount);
+                    }
+                    if (name == lastName)
+                    {
+                        indicators[^1] = string.Concat(name, ".", lastCount + 1);
+                    }
+                    else
+                    {
+                        indicators.Add(name);
+                    }
+                }
+                else
+                {
+                    indicators.Add(name);
+                }
+            });
+
+            return string.Join("_", indicators); ;
+        }
     }
 }

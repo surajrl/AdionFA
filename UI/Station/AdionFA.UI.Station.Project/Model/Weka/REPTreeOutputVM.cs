@@ -1,16 +1,13 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Base;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdionFA.UI.Station.Infrastructure.Model.Weka
 {
     public class REPTreeOutputVM : ViewModelBase
     {
         private int _seed;
+
         public int Seed
         {
             get => _seed;
@@ -18,6 +15,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private string _treeOutput;
+
         public string TreeOutput
         {
             get => _treeOutput;
@@ -25,6 +23,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private ObservableCollection<REPTreeNodeVM> _nodeOutput;
+
         public ObservableCollection<REPTreeNodeVM> NodeOutput
         {
             get => _nodeOutput;
@@ -32,6 +31,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private bool _isSuccess;
+
         public bool IsSuccess
         {
             get => _isSuccess;
@@ -39,6 +39,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private string _message;
+
         public string Message
         {
             get => _message;
@@ -46,6 +47,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private bool? _hasWinningStrategy;
+
         public bool? HasWinningStrategy
         {
             get => _hasWinningStrategy;
@@ -53,6 +55,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private int _totalWinningStrategy;
+
         public int TotalWinningStrategy
         {
             get => _totalWinningStrategy;
@@ -60,6 +63,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private int _totalWinningStrategyUP;
+
         public int TotalWinningStrategyUP
         {
             get => _totalWinningStrategyUP;
@@ -67,6 +71,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private int _totalWinningStrategyDOWN;
+
         public int TotalWinningStrategyDOWN
         {
             get => _totalWinningStrategyDOWN;
@@ -74,6 +79,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         private int _validNodes;
+
         public int ValidNodes
         {
             get => _validNodes;
@@ -81,6 +87,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         public int _counterProgressBar;
+
         public int CounterProgressBar
         {
             get => _counterProgressBar;

@@ -41,10 +41,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Project.Model.StrategyBuilder;
 using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.Infrastructure.Common.Weka.Model;
-using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
 using AdionFA.UI.Station.Project.Validators.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 using System.Windows.Data;
@@ -67,6 +65,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private ProjectVM _project;
         private CancellationTokenSource _cancellationTokenSrc;
         private bool _requestClose;
+        private bool _firstCompleteCandleReceived;
         private Candle _currentCandle;
 
         public MetaTraderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
@@ -104,7 +103,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }, (s) => true);
@@ -124,6 +125,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _cancellationTokenSrc = new CancellationTokenSource();
                 var token = _cancellationTokenSrc.Token;
 
+                _firstCompleteCandleReceived = false;
+
                 var requestSocketProgress = new Progress<ZmqMsgModel>();
                 requestSocketProgress.ProgressChanged += (senderOfProgressChanged, nextItem) =>
                 {
@@ -133,6 +136,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var subscriberSocketProgress = new Progress<ZmqMsgModel>();
                 subscriberSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
                 {
+                    // The current new candle is first received, followed by the previous complete candle
+
+                    if (!_firstCompleteCandleReceived && !nextItem.IsNewCandle)
+                    {
+                        _firstCompleteCandleReceived = true;
+
+                        return;
+                    }
+
                     if (nextItem.IsNewCandle)
                     {
                         // Current candle with only the open price
@@ -422,45 +434,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     {
                         NodesAny = Nodes.Count > 0;
                     };
-
-                    // TESTING NODE
-                    //var nodes = new ObservableCollection<string>
-                    //{
-                    //    "STOCHRSI_3_27_9_12_1_1 < 96.50599",
-                    //    "|   STOCHRSI_3_27_9_12_1_1 >= 3.20718",
-                    //    "|   |   STOCH_7_5_5_13_7 >= 48.84577",
-                    //    "|   |   |   AROON_12_1 >= 87.5",
-                    //    "|   |   |   |   STOCHF_37_14_1_1 < 92.31229",
-                    //    "|   |   |   |   |   RSI_3_22 >= 45.34515",
-                    //};
-
-                    //Nodes.Add(new REPTreeNodeVM
-                    //{
-                    //    Node = nodes,
-                    //    TotalUP = 82,
-                    //    TotalDOWN = 400,
-                    //    RatioUP = 0.20,
-                    //    RatioDOWN = 4.88,
-                    //    RatioMax = 4.88,
-                    //    Label = "DOWN",
-                    //    Total = 482,
-                    //    Winner = true,
-                    //    TotalTradesIs = 228,
-                    //    WinningTradesIs = 125,
-                    //    LosingTradesIs = 103,
-                    //    TotalOpportunityIs = 7811,
-                    //    PercentSuccessIs = 54,
-                    //    ProgressivenessIs = 2,
-                    //    TotalTradesOs = 47,
-                    //    WinningTradesOs = 29,
-                    //    LosingTradesOs = 18,
-                    //    TotalOpportunityOs = 1559,
-                    //    PercentSuccessOs = 61,
-                    //    ProgressivenessOs = 3,
-                    //    WinningStrategy = true,
-                    //    HistoricalData = "Forex.EURUSD.H4.05-05-2003.22-12-2022",
-                    //    HasTestInMetaTrader = true
-                    //});
                 }
 
                 if (MessageInput == null)
@@ -492,6 +465,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // Bindable Model
 
         private bool _isTransactionActive;
+
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -499,6 +473,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _canExecute = true;
+
         public bool CanExecute
         {
             get => _canExecute;
@@ -506,6 +481,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ConfigurationBaseVM _configuration;
+
         public ConfigurationBaseVM Configuration
         {
             get => _configuration;
@@ -513,6 +489,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int _maximumMessagesRequired;
+
         public int MaximumMessagesRequired
         {
             get => _maximumMessagesRequired;
@@ -520,6 +497,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int _messagesFromCurrentPeriod;
+
         public int MessagesFromCurrentPeriod
         {
             get => _messagesFromCurrentPeriod;
@@ -527,6 +505,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _nodesAny;
+
         public bool NodesAny
         {
             get => _nodesAny;
@@ -534,6 +513,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<REPTreeNodeVM> _nodes;
+
         public ObservableCollection<REPTreeNodeVM> Nodes
         {
             get => _nodes;
@@ -541,6 +521,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _messageInputAny;
+
         public bool MessageInputAny
         {
             get => _messageInputAny;
@@ -548,6 +529,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<ZmqMsgModel> _messageInput;
+
         public ObservableCollection<ZmqMsgModel> MessageInput
         {
             get => _messageInput;
@@ -555,6 +537,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _messageOutputAny;
+
         public bool MessageOutputAny
         {
             get => _messageOutputAny;
@@ -562,6 +545,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<ZmqMsgModel> _messageOutput;
+
         public ObservableCollection<ZmqMsgModel> MessageOutput
         {
             get => _messageOutput;
@@ -569,6 +553,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int? _timeframeId;
+
         public int? TimeframeId
         {
             get => _timeframeId;
@@ -580,6 +565,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // Expert Advisor Configuration
 
         private ExpertAdvisorVM _expertAdvisor;
+
         public ExpertAdvisorVM ExpertAdvisor
         {
             get => _expertAdvisor;

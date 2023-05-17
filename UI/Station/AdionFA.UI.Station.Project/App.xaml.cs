@@ -105,8 +105,8 @@ namespace AdionFA.UI.Station.Project
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            //var arg = e.Args[0];
-            var arg = $"1_AdionFA.UI.Station.Project_test";
+            var arg = e.Args[0];
+            //var arg = $"1_AdionFA.UI.Station.Project_test";
 
             ProcessArgs.Args = arg;
             if (ProcessArgs.ProjectId > 0)

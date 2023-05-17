@@ -22,7 +22,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Contracts
             Candle firstCandle,
             Candle currentCandle,
             List<IndicatorBase> indicators,
-            List<Candle> candleHistory);
+            IEnumerable<Candle> candleHistory);
 
         List<Candle> GetCandles(string historyFilePath);
 

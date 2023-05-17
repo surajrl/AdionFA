@@ -11,14 +11,16 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
     {
         public string Path { get; set; }
 
-        private string _templateName;
-        public string TemplateName
+        private string _extractionName;
+
+        public string ExtractionName
         {
-            get => _templateName;
-            set => SetProperty(ref _templateName, value);
+            get => _extractionName;
+            set => SetProperty(ref _extractionName, value);
         }
 
         private int _regionType;
+
         public int RegionType
         {
             get => _regionType;
@@ -26,6 +28,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private string _regionName;
+
         public string RegionName
         {
             get => _regionName;
@@ -33,6 +36,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private bool _isExpanded;
+
         public bool IsExpanded
         {
             get => _isExpanded;
@@ -40,6 +44,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private bool _isEnabled;
+
         public bool IsEnabled
         {
             get => _isEnabled;
@@ -47,6 +52,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private bool _hasWinningStrategy;
+
         public bool HasWinningStrategy
         {
             get => _hasWinningStrategy;
@@ -54,6 +60,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private int _totalStrategy;
+
         public int TotalStrategy
         {
             get => _totalStrategy;
@@ -61,34 +68,23 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private int _completedBacktests;
+
         public int CompletedBacktests
         {
             get => _completedBacktests;
             set => SetProperty(ref _completedBacktests, value);
         }
 
-        private int _totalWinningStrategy;
-        public int TotalWinningStrategy
-        {
-            get => _totalWinningStrategy;
-            set => SetProperty(ref _totalWinningStrategy, value);
-        }
+        private int _executingBacktests;
 
-        private int _totalWinningStrategyUP;
-        public int TotalWinningStrategyUP
+        public int ExecutingBacktests
         {
-            get => _totalWinningStrategyUP;
-            set => SetProperty(ref _totalWinningStrategyUP, value);
-        }
-
-        private int _totalWinningStrategyDOWN;
-        public int TotalWinningStrategyDOWN
-        {
-            get => _totalWinningStrategyDOWN;
-            set => SetProperty(ref _totalWinningStrategyDOWN, value);
+            get => _executingBacktests;
+            set => SetProperty(ref _executingBacktests, value);
         }
 
         private int _winningTrees;
+
         public int WinningTrees
         {
             get => _winningTrees;
@@ -96,6 +92,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private ObservableCollection<REPTreeOutputVM> _instancesList;
+
         public ObservableCollection<REPTreeOutputVM> InstancesList
         {
             get => _instancesList;
@@ -103,6 +100,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private string _status;
+
         public string Status
         {
             get => _status;
@@ -110,6 +108,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
         }
 
         private string _message;
+
         public string Message
         {
             get => _message;
@@ -122,9 +121,10 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
             Message = string.Empty;
             IsEnabled = false;
             IsExpanded = false;
-            HasWinningStrategy = false;
-            TotalWinningStrategy = TotalWinningStrategyUP = TotalWinningStrategyDOWN = 0;
             WinningTrees = 0;
+            TotalStrategy = 0;
+            HasWinningStrategy = false;
+            CompletedBacktests = 0;
             InstancesList = new ObservableCollection<REPTreeOutputVM>();
         }
     }

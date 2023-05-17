@@ -49,8 +49,8 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Model
 
     public class ZmqResponse
     {
-        public int Status { get; set; } // 0 Error, 1 OK
+        public int Status { get; set; }
         public string Message { get; set; }
-        public string Data { get; set; } // Each item separated by ','
+        public string Data { get; set; }
     }
 }

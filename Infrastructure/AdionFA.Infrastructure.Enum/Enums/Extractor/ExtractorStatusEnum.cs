@@ -4,22 +4,22 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum ExtractorStatusEnum
     {
-        [Metadata("Not Started", descriptionKey: "")]
+        [Metadata(nameKey: "Not Started", descriptionKey: "")]
         NoStarted = 0,
 
-        [Metadata("Beginning", descriptionKey: "Preparing Start Of Execution")]
+        [Metadata(nameKey: "Beginning", descriptionKey: "Preparing Start Of Execution")]
         Beginning = 1,
 
-        [Metadata("Executing", descriptionKey: "Running Extraction")]
+        [Metadata(nameKey: "Executing", descriptionKey: "Running Extraction")]
         Executing = 2,
 
-        [Metadata("Completed", descriptionKey: "Extraction Completed")]
+        [Metadata(nameKey: "Completed", descriptionKey: "Extraction Completed")]
         Completed = 3,
 
-        [Metadata("Suspended", descriptionKey: "Extraction Canceled")]
+        [Metadata(nameKey: "Suspended", descriptionKey: "Extraction Canceled")]
         Suspended = 4,
 
-        [Metadata("Error")]
+        [Metadata(nameKey: "Error")]
         Error = 5
     }
 }

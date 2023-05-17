@@ -8,6 +8,7 @@ namespace AdionFA.UI.Station.Project.Validators.StrategyBuilder
         public StrategyBuilderValidator()
         {
             RuleFor(model => model.StrategyBuilderProcessList).NotEmpty();
+            RuleFor(model => model.MaxParallelism).GreaterThan(0);
         }
     }
 }

@@ -48,6 +48,8 @@ using System.Net.WebSockets;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using ReactiveUI;
+using AdionFA.Infrastructure.Common.Base;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -64,6 +66,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IEventAggregator _eventAggregator;
 
         private ProjectVM _project;
+        private CancellationTokenSource _cancellationTokenSrc;
+
+        private object _lock;
 
         public StrategyBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
@@ -79,13 +84,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            TotalNodes = new();
-            StrategyBuilderProcessList = new ObservableCollection<StrategyBuilderProcessModel>();
-
             _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
+
+            _lock = new();
+            AllNodes = new();
+            StrategyBuilderProcessList = new ObservableCollection<StrategyBuilderProcessModel>();
+            MaxParallelism = Environment.ProcessorCount;
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
@@ -105,6 +112,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, (s) => true);
 
+        public ICommand StopCommand => new DelegateCommand(() =>
+        {
+            _cancellationTokenSrc.Cancel();
+        }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+
         public ICommand ProcessCommand => new DelegateCommand(async () =>
         {
             IsTransactionActive = true;
@@ -114,6 +126,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             try
             {
+                _cancellationTokenSrc ??= new CancellationTokenSource();
+                var token = _cancellationTokenSrc.Token;
+
                 // Validator
 
                 if (!Validate(new StrategyBuilderValidator()).IsValid)
@@ -142,8 +157,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Label = hdCandle.Close > hdCandle.Open ? "UP" : "DOWN"
                 })
                 .OrderBy(candle => candle.Date)
-                .ThenBy(candle => candle.Time)
-                .ToList();
+                .ThenBy(candle => candle.Time);
 
                 await Task.Run(async () =>
                 {
@@ -152,6 +166,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     while (idx < length)
                     {
+                        token.ThrowIfCancellationRequested();
+
                         ResetBuilder(cleanSerializedObjDirectory: true);
 
                         var configuration = Configurations[idx];
@@ -159,26 +175,137 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         // Asynchronous - Data Mine (Generate Weka Tree and do IS and OS Backtests)
                         if (Configuration.AsynchronousMode)
                         {
-                            // USING PARALLEL FOREACH ----------------------------------------------------------------------------------------
-                            //Parallel.ForEach(
-                            //    StrategyBuilderProcessList,
-                            //    strategyBuilderProcess =>
-                            //    {
-                            //        AsyncDataMine(configuration, strategyBuilderProcess, projectCandles);
-                            //    }
-                            //);
-                            // USING PARALLEL FOREACH ----------------------------------------------------------------------------------------
-
-                            // USING TASK POOL -----------------------------------------------------------------------------------------------
-                            var taskPool = new List<Task>();
-
                             foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
                             {
-                                taskPool.Add(Task.Run(() => AsyncDataMine(configuration, strategyBuilderProcess, projectCandles)));
+                                // Beginning
+
+                                var beginning = StrategyBuilderStatusEnum.Beginning.GetMetadata();
+                                strategyBuilderProcess.Status = beginning.Name;
+                                strategyBuilderProcess.Message = beginning.Description;
+
+                                // Weka
+
+                                var weka = StrategyBuilderStatusEnum.ExecutingWeka.GetMetadata();
+                                strategyBuilderProcess.Status = weka.Name;
+                                strategyBuilderProcess.Message = weka.Description;
+
+                                var wekaApi = new WekaApiClient();
+                                IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
+                                    strategyBuilderProcess.Path,
+                                    configuration.DepthWeka,
+                                    configuration.TotalDecimalWeka,
+                                    configuration.MinimalSeed,
+                                    configuration.MaximumSeed,
+                                    configuration.TotalInstanceWeka,
+                                    (double)configuration.MaxRatioTree,
+                                    (double)configuration.NTotalTree);
+
+                                AddItemToStrategyBuilderProcessList(
+                                    strategyBuilderProcess.ExtractionName,
+                                    responseWeka.Select(_mapper.Map<REPTreeOutputModel, REPTreeOutputVM>).ToList());
+
+                                if (responseWeka.Any() && strategyBuilderProcess.InstancesList.Count > 0)
+                                {
+                                    // Iterate over each Weka Tree from one Extraction
+                                    foreach (var tree in strategyBuilderProcess.InstancesList)
+                                    {
+                                        token.ThrowIfCancellationRequested();
+
+                                        AllNodes.Add(tree.NodeOutput
+                                            .Where(node => node.Winner)
+                                            .Select(node =>
+                                            {
+                                                strategyBuilderProcess.TotalStrategy++;
+                                                node.Tree = tree;
+                                                node.StrategyBuilderProcess = strategyBuilderProcess;
+
+                                                return node;
+                                            })
+                                            .ToList());
+                                    }
+
+                                    strategyBuilderProcess.Status = StrategyBuilderStatusEnum.WekaCompleted.GetMetadata().Name;
+                                    strategyBuilderProcess.Message = $"{strategyBuilderProcess.TotalStrategy} Nodes Found";
+                                }
                             }
 
-                            await Task.WhenAll(taskPool);
-                            // USING TASK POOL -----------------------------------------------------------------------------------------------
+                            Parallel.ForEach(
+                                AllNodes,
+                                new ParallelOptions
+                                {
+                                    MaxDegreeOfParallelism = MaxParallelism,
+                                    CancellationToken = token,
+                                },
+                                node =>
+                                {
+                                    lock (_lock)
+                                    {
+                                        node.StrategyBuilderProcess.ExecutingBacktests++;
+                                    }
+
+                                    node.StrategyBuilderProcess.Status = StrategyBuilderStatusEnum.ExecutingBacktests.GetMetadata().Name;
+                                    node.StrategyBuilderProcess.Message = $"Executing Backtest of {node.StrategyBuilderProcess.ExecutingBacktests} {(node.StrategyBuilderProcess.ExecutingBacktests == 1 ? "Node" : "Nodes")}";
+
+                                    node.Node = new ObservableCollection<string>(node.Node.OrderByDescending(n => n).ToList());
+
+                                    // Backtest ------------------------------------------------------------------------------
+                                    var timer = new Stopwatch();
+                                    timer.Start();
+                                    Debug.WriteLine($"[THREAD] {Environment.CurrentManagedThreadId}\t[EXTRACTION] {node.StrategyBuilderProcess.ExtractionName}\t[NODE] {node.Name}\t[MESSAGE] Backtest Started");
+                                    var stb = _strategyBuilderService.BacktestBuild(
+                                        node.Label,
+                                        node.Node.ToList(),
+                                        _mapper.Map<ConfigurationBaseVM, ConfigurationBaseDTO>(configuration),
+                                        projectCandles,
+                                        token);
+                                    timer.Stop();
+                                    Debug.WriteLine($"[THREAD] {Environment.CurrentManagedThreadId}\t[EXTRACTION] {node.StrategyBuilderProcess.ExtractionName}\t[NODE] {node.Name}\t[MESSAGE] Backtest Finished in {timer.Elapsed:mm\\:ss\\.ffffff}");
+                                    // ---------------------------------------------------------------------------------------
+
+                                    // Update Node ---------------------------------------------------------------------------
+                                    UpdateTreeNodeVM(node, stb);
+                                    // ---------------------------------------------------------------------------------------
+
+                                    if (node.WinningStrategy)
+                                    {
+                                        // Serialization -------------------------------------------------------------------------
+                                        StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
+                                        StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
+                                        // ---------------------------------------------------------------------------------------
+
+                                        // Update Tree ---------------------------------------------------------------------------
+                                        if (node.Label.ToLower() == "up")
+                                        {
+                                            node.Tree.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
+                                        }
+
+                                        if (node.Label.ToLower() == "down")
+                                        {
+                                            node.Tree.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
+                                        }
+
+                                        node.Tree.TotalWinningStrategy = node.Tree.TotalWinningStrategyUP + node.Tree.TotalWinningStrategyDOWN;
+                                        node.Tree.HasWinningStrategy = node.Tree.TotalWinningStrategy > 0;
+                                        node.StrategyBuilderProcess.HasWinningStrategy = true;
+                                        // ---------------------------------------------------------------------------------------
+                                    }
+
+                                    lock (_lock)
+                                    {
+                                        node.StrategyBuilderProcess.ExecutingBacktests--;
+                                        node.StrategyBuilderProcess.CompletedBacktests++;
+                                        node.Tree.CounterProgressBar++;
+                                    }
+
+                                    node.StrategyBuilderProcess.Message = $"Executing Backtest of {node.StrategyBuilderProcess.ExecutingBacktests} {(node.StrategyBuilderProcess.ExecutingBacktests == 1 ? "Node" : "Nodes")}";
+
+                                    if (node.StrategyBuilderProcess.TotalStrategy == node.StrategyBuilderProcess.CompletedBacktests)
+                                    {
+                                        var strategyBuilderCompleted = StrategyBuilderStatusEnum.StrategyBuilderCompleted.GetMetadata();
+                                        node.StrategyBuilderProcess.Status = strategyBuilderCompleted.Name;
+                                        node.StrategyBuilderProcess.Message = strategyBuilderCompleted.Description;
+                                    }
+                                });
                         }
 
                         // Synchronous - Data Mine (Generate Weka Tree and do IS and OS Backtests)
@@ -186,7 +313,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         {
                             foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
                             {
-                                await Task.Run(() => DataMine(configuration, strategyBuilderProcess, projectCandles)).ConfigureAwait(true);
+                                token.ThrowIfCancellationRequested();
+
+                                await Task.Run(() => DataMine(configuration, strategyBuilderProcess, projectCandles, token));
                             }
                         }
 
@@ -236,7 +365,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 CorrelationModel.ISBacktestUP.ForEach(backtestUP =>
                 {
-                    var correspondingNode = TotalNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestUP.Node));
+                    var correspondingNode = AllNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestUP.Node));
                     if (correspondingNode != null)
                     {
                         correspondingNode.CorrelationPass = backtestUP.CorrelationPass;
@@ -245,7 +374,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 CorrelationModel.ISBacktestDOWN.ForEach(backtestDOWN =>
                 {
-                    var correspondingNode = TotalNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestDOWN.Node));
+                    var correspondingNode = AllNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestDOWN.Node));
                     if (correspondingNode != null)
                     {
                         correspondingNode.CorrelationPass = backtestDOWN.CorrelationPass;
@@ -254,33 +383,54 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 stopwatch.Stop();
 
-                IsTransactionActive = false;
-
                 // Results Message
 
-                var result = !StrategyBuilderProcessList.Any(e => e.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name);
+                var result = !StrategyBuilderProcessList.Any(strategyBuilderProcess => strategyBuilderProcess.Status != StrategyBuilderStatusEnum.StrategyBuilderCompleted.GetMetadata().Name);
                 var msg = result ? MessageResources.StrategyBuilderCompleted : MessageResources.EntityErrorTransaction;
 
                 if (result && !IsCorrelationDetail)
                 {
-                    msg = $"{MessageResources.CorrelationRunWithNoResults}\nTotal time taken {stopwatch.Elapsed:mm\\:ss\\.ff}";
+                    msg = $"{msg}\n{MessageResources.CorrelationRunWithNoResults}";
                 }
 
-                MessageHelper.ShowMessage(this, CommonResources.StrategyBuilder, msg);
+                MessageHelper.ShowMessage(this, CommonResources.StrategyBuilder, $"{msg}\nTotal time taken {stopwatch.Elapsed:mm\\:ss\\.ffffff}");
+            }
+            catch (OperationCanceledException ex)
+            {
+                LogHelper.LogException<StrategyBuilderViewModel>(ex);
+
+                foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
+                {
+                    var suspended = StrategyBuilderStatusEnum.Suspended.GetMetadata();
+                    strategyBuilderProcess.Status = suspended.Name;
+                    strategyBuilderProcess.Message = suspended.Description;
+                }
             }
             catch (Exception ex)
             {
                 LogHelper.LogException<StrategyBuilderViewModel>(ex);
+
+                foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
+                {
+                    var error = StrategyBuilderStatusEnum.Error.GetMetadata();
+                    strategyBuilderProcess.Status = error.Name;
+                    strategyBuilderProcess.Message = error.Description;
+                }
+
                 throw;
             }
             finally
             {
+                _cancellationTokenSrc.Dispose();
+                _cancellationTokenSrc = null;
+
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+
                 IsTransactionActive = false;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private bool AsyncDataMine(ConfigurationBaseVM configuration, StrategyBuilderProcessModel strategyBuilderProcess, List<Candle> candles)
+        private bool DataMine(ConfigurationBaseVM configuration, StrategyBuilderProcessModel strategyBuilderProcess, IEnumerable<Candle> candles, CancellationToken token)
         {
             try
             {
@@ -288,13 +438,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var beginning = StrategyBuilderStatusEnum.Beginning.GetMetadata();
                 strategyBuilderProcess.Status = beginning.Name;
-                strategyBuilderProcess.Message = $"{beginning.Description}";
+                strategyBuilderProcess.Message = beginning.Description;
 
                 // Weka
 
                 var weka = StrategyBuilderStatusEnum.ExecutingWeka.GetMetadata();
                 strategyBuilderProcess.Status = weka.Name;
-                strategyBuilderProcess.Message = $"{weka.Description}";
+                strategyBuilderProcess.Message = weka.Description;
 
                 var wekaApi = new WekaApiClient();
                 IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
@@ -307,10 +457,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     (double)configuration.MaxRatioTree,
                     (double)configuration.NTotalTree);
 
-                strategyBuilderProcess.Message = $"Pruning Tree";
-
                 AddItemToStrategyBuilderProcessList(
-                    strategyBuilderProcess.TemplateName,
+                    strategyBuilderProcess.ExtractionName,
                     responseWeka.Select(_mapper.Map<REPTreeOutputModel, REPTreeOutputVM>).ToList());
 
                 if (responseWeka.Any() && strategyBuilderProcess.InstancesList.Count > 0)
@@ -320,346 +468,117 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     // Iterate over each Weka Tree from one Extraction
                     foreach (var tree in strategyBuilderProcess.InstancesList)
                     {
-                        var validNodes = new List<REPTreeNodeVM>
-                        {
-                            tree.NodeOutput.Where(node => node.Winner).ToList()
-                        };
+                        AllNodes.Add(tree.NodeOutput
+                            .Where(node => node.Winner)
+                            .Select(node =>
+                            {
+                                strategyBuilderProcess.TotalStrategy++;
+                                node.Tree = tree;
 
-                        strategyBuilderProcess.TotalStrategy = validNodes.Count;
+                                return node;
+                            })
+                            .ToList());
 
-                        // USING PARALLEL FOREACH ----------------------------------------------------------------------------------------
                         // Iterate over each Node from one Weka Tree
-                        //Parallel.ForEach(
-                        //    validNodes,
-                        //    node =>
-                        //    {
-                        //        node.Node = new ObservableCollection<string>(node.Node.OrderByDescending(n => n).ToList());
-
-                        //        if (!node.HasBacktest)
-                        //        {
-                        //            TotalNodes.Add(node);
-
-                        //            node.HistoricalData = Configuration.HistoricalDataName;
-
-                        //            // Backtest
-                        //            var backtestTs = new Stopwatch();
-
-                        //            backtestTs.Start();
-                        //            Debug.WriteLine($"[THREAD ID] {Environment.CurrentManagedThreadId}\t[EXTRACTOR] {strategyBuilderProcess.TemplateName}\t[NODE] {node.Node.Last()}\tStarting Backtest");
-
-                        //            var stb = _strategyBuilderService.BacktestBuild(
-                        //                node.Label,
-                        //                node.Node.ToList(),
-                        //                _mapper.Map<ConfigurationBaseVM, ConfigurationBaseDTO>(configuration),
-                        //                candles);
-
-                        //            backtestTs.Stop();
-                        //            Debug.WriteLine($"[THREAD ID] {Environment.CurrentManagedThreadId}\t[EXTRACTOR] {strategyBuilderProcess.TemplateName}\t[NODE] {node.Node.Last()}\tFinished Backtest in {backtestTs.Elapsed:mm\\:ss\\.ff}");
-
-                        //            node.HasBacktest = true;
-                        //            // ---------------------------------------------------------------------------------------
-
-                        //            UpdateTreeNodeVM(node, stb.IS, false);
-                        //            UpdateTreeNodeVM(node, stb.OS, true);
-
-                        //            node.WinningStrategy = stb.WinningStrategy;
-
-                        //            if (node.WinningStrategy)
-                        //            {
-                        //                if (node.Label.ToLower() == "up")
-                        //                {
-                        //                    tree.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
-                        //                }
-
-                        //                if (node.Label.ToLower() == "down")
-                        //                {
-                        //                    tree.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
-                        //                }
-
-                        //                tree.TotalWinningStrategy = tree.TotalWinningStrategyUP + tree.TotalWinningStrategyDOWN;
-                        //                tree.HasWinningStrategy = tree.TotalWinningStrategy > 0;
-                        //            }
-
-                        //            // Serialization
-
-                        //            if (node.WinningStrategy)
-                        //            {
-                        //                StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
-                        //                StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
-                        //            }
-
-                        //            // ---------------------------------------------------------------------------------------
-
-                        //            strategyBuilderProcess.CompletedBacktests++;
-                        //            tree.CounterProgressBar++;
-                        //        }
-                        //    }
-                        //);
-                        // USING PARALLEL FOREACH ----------------------------------------------------------------------------------------
-
-                        // USING TASK POOL -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                        var taskPool = new List<Task>();
-                        // Iterate over each Node from one Weka Tree
-                        foreach (var node in validNodes)
+                        foreach (var node in AllNodes)
                         {
-                            taskPool.Add(Task.Run(() =>
+                            if (!node.IsBacktestCompleted)
                             {
                                 node.Node = new ObservableCollection<string>(node.Node.OrderByDescending(n => n).ToList());
 
-                                if (!node.HasBacktest)
-                                {
-                                    TotalNodes.Add(node);
+                                strategyBuilderProcess.Message = $"Executing Backtest of Node {node.Name}";
 
-                                    node.HistoricalData = Configuration.HistoricalDataName;
-
-                                    // Backtest
-                                    var backtestTs = new Stopwatch();
-
-                                    backtestTs.Start();
-                                    Debug.WriteLine($"[THREAD ID] {Environment.CurrentManagedThreadId}\t[EXTRACTOR] {strategyBuilderProcess.TemplateName}\t[NODE] {node.Node.Last()}\tStarting Backtest");
-
-                                    var stb = _strategyBuilderService.BacktestBuild(
-                                        node.Label,
-                                        node.Node.ToList(),
-                                        _mapper.Map<ConfigurationBaseVM, ConfigurationBaseDTO>(configuration),
-                                        candles);
-
-                                    backtestTs.Stop();
-                                    Debug.WriteLine($"[THREAD ID] {Environment.CurrentManagedThreadId}\t[EXTRACTOR] {strategyBuilderProcess.TemplateName}\t[NODE] {node.Node.Last()}\tFinished Backtest in {backtestTs.Elapsed:mm\\:ss\\.ff}");
-
-                                    node.HasBacktest = true;
-                                    // ---------------------------------------------------------------------------------------
-
-                                    UpdateTreeNodeVM(node, stb.IS, false);
-                                    UpdateTreeNodeVM(node, stb.OS, true);
-
-                                    node.WinningStrategy = stb.WinningStrategy;
-
-                                    if (node.WinningStrategy)
-                                    {
-                                        if (node.Label.ToLower() == "up")
-                                        {
-                                            tree.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
-                                        }
-
-                                        if (node.Label.ToLower() == "down")
-                                        {
-                                            tree.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
-                                        }
-
-                                        tree.TotalWinningStrategy = tree.TotalWinningStrategyUP + tree.TotalWinningStrategyDOWN;
-                                        tree.HasWinningStrategy = tree.TotalWinningStrategy > 0;
-                                    }
-
-                                    // Serialization
-
-                                    if (node.WinningStrategy)
-                                    {
-                                        StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
-                                        StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
-                                    }
-
-                                    // ---------------------------------------------------------------------------------------
-
-                                    strategyBuilderProcess.CompletedBacktests++;
-                                    tree.CounterProgressBar++;
-                                }
-                            }));
-                        }
-
-                        Task.WhenAll(taskPool).Wait();
-                        // USING TASK POOL -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-                        // Update Weka Tree when backtest of all nodes has been completed
-
-                        strategyBuilderProcess.HasWinningStrategy = tree.TotalWinningStrategy > 0;
-                        strategyBuilderProcess.TotalWinningStrategyUP += tree.TotalWinningStrategyUP;
-                        strategyBuilderProcess.TotalWinningStrategyDOWN += tree.TotalWinningStrategyDOWN;
-                        strategyBuilderProcess.TotalWinningStrategy = strategyBuilderProcess.TotalWinningStrategyUP + strategyBuilderProcess.TotalWinningStrategyDOWN;
-                    }
-                }
-
-                var completed = StrategyBuilderStatusEnum.Completed.GetMetadata();
-                strategyBuilderProcess.Status = completed.Name;
-                strategyBuilderProcess.Message = $"{completed.Description}";
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogException<StrategyBuilderViewModel>(ex);
-                var error = StrategyBuilderStatusEnum.Error.GetMetadata();
-                strategyBuilderProcess.Status = error.Name;
-                strategyBuilderProcess.Message = ex.Message;
-
-                return false;
-            }
-        }
-
-        private bool DataMine(ConfigurationBaseVM configuration, StrategyBuilderProcessModel strategyBuilderProcess, List<Candle> candles)
-        {
-            try
-            {
-                // Beginning
-
-                var beginning = StrategyBuilderStatusEnum.Beginning.GetMetadata();
-                strategyBuilderProcess.Status = beginning.Name;
-                strategyBuilderProcess.Message = $"{beginning.Description}";
-
-                // Weka
-
-                var weka = StrategyBuilderStatusEnum.ExecutingWeka.GetMetadata();
-                strategyBuilderProcess.Status = weka.Name;
-                strategyBuilderProcess.Message = $"{weka.Description}";
-
-                var wekaApi = new WekaApiClient();
-                IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
-                    strategyBuilderProcess.Path,
-                    configuration.DepthWeka,
-                    configuration.TotalDecimalWeka,
-                    configuration.MinimalSeed,
-                    configuration.MaximumSeed,
-                    configuration.TotalInstanceWeka,
-                    (double)configuration.MaxRatioTree,
-                    (double)configuration.NTotalTree);
-
-                strategyBuilderProcess.Message = $"Pruning Tree";
-
-                AddItemToStrategyBuilderProcessList(
-                    strategyBuilderProcess.TemplateName,
-                    responseWeka.Select(_mapper.Map<REPTreeOutputModel, REPTreeOutputVM>).ToList());
-
-                if (responseWeka.Any() && strategyBuilderProcess.InstancesList.Count > 0)
-                {
-                    strategyBuilderProcess.CompletedBacktests = 0;
-
-                    // Iterate over each Weka Tree from one Extraction
-                    foreach (var tree in strategyBuilderProcess.InstancesList)
-                    {
-                        var validNodes = new List<REPTreeNodeVM>
-                        {
-                            tree.NodeOutput.Where(node => node.Winner).ToList()
-                        };
-
-                        strategyBuilderProcess.TotalStrategy = validNodes.Count;
-
-                        // Iterate over each Node from one Weka Tree
-                        foreach (var node in validNodes)
-                        {
-                            node.Node = new ObservableCollection<string>(node.Node.OrderByDescending(n => n).ToList());
-
-                            if (!node.HasBacktest)
-                            {
-                                TotalNodes.Add(node);
-
-                                strategyBuilderProcess.Message = $"Executing Backtest of Node {node.Node.Last()}";
-
-                                node.HistoricalData = Configuration.HistoricalDataName;
-
-                                // Backtest
-                                var backtestTs = new Stopwatch();
-
-                                backtestTs.Start();
-                                Debug.WriteLine($"[THREAD ID] {Environment.CurrentManagedThreadId}\t[EXTRACTOR] {strategyBuilderProcess.TemplateName}\t[NODE] {node.Node.Last()}\tStarting Backtest");
-
+                                // Backtest ------------------------------------------------------------------------------
+                                var timer = new Stopwatch();
+                                timer.Start();
+                                Debug.WriteLine($"[THREAD] {Environment.CurrentManagedThreadId}\t[EXTRACTION] {node.StrategyBuilderProcess.ExtractionName}\t[NODE] {node.Name}\t[MESSAGE] Backtest Started");
                                 var stb = _strategyBuilderService.BacktestBuild(
                                     node.Label,
                                     node.Node.ToList(),
                                     _mapper.Map<ConfigurationBaseVM, ConfigurationBaseDTO>(configuration),
-                                    candles);
-
-                                backtestTs.Stop();
-                                Debug.WriteLine($"[THREAD ID] {Environment.CurrentManagedThreadId}\t[EXTRACTOR] {strategyBuilderProcess.TemplateName}\t[NODE] {node.Node.Last()}\tFinished Backtest in {backtestTs.Elapsed:mm\\:ss\\.ff}");
-
-                                node.HasBacktest = true;
+                                    candles,
+                                    token);
+                                timer.Stop();
+                                Debug.WriteLine($"[THREAD] {Environment.CurrentManagedThreadId}\t[EXTRACTION] {node.StrategyBuilderProcess.ExtractionName}\t[NODE] {node.Name}\t[MESSAGE] Backtest Finished in {timer.Elapsed:mm\\:ss\\.ffffff}");
                                 // ---------------------------------------------------------------------------------------
 
-                                UpdateTreeNodeVM(node, stb.IS, false);
-                                UpdateTreeNodeVM(node, stb.OS, true);
-
-                                node.WinningStrategy = stb.WinningStrategy;
+                                // Update Node ---------------------------------------------------------------------------
+                                UpdateTreeNodeVM(node, stb);
+                                // ---------------------------------------------------------------------------------------
 
                                 if (node.WinningStrategy)
                                 {
+                                    // Serialization -------------------------------------------------------------------------
+                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
+                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
+                                    // ---------------------------------------------------------------------------------------
+
+                                    // Update Tree ---------------------------------------------------------------------------
                                     if (node.Label.ToLower() == "up")
                                     {
-                                        tree.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
+                                        node.Tree.TotalWinningStrategyUP += node.WinningStrategy ? 1 : 0;
                                     }
 
                                     if (node.Label.ToLower() == "down")
                                     {
-                                        tree.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
+                                        node.Tree.TotalWinningStrategyDOWN += node.WinningStrategy ? 1 : 0;
                                     }
 
-                                    tree.TotalWinningStrategy = tree.TotalWinningStrategyUP + tree.TotalWinningStrategyDOWN;
-                                    tree.HasWinningStrategy = tree.TotalWinningStrategy > 0;
+                                    node.Tree.TotalWinningStrategy = node.Tree.TotalWinningStrategyUP + node.Tree.TotalWinningStrategyDOWN;
+                                    node.Tree.HasWinningStrategy = node.Tree.TotalWinningStrategy > 0;
+                                    strategyBuilderProcess.HasWinningStrategy = true;
+                                    // ---------------------------------------------------------------------------------------
                                 }
 
-                                // Serialization
-
-                                if (node.WinningStrategy)
-                                {
-                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
-                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
-                                }
-
-                                // ---------------------------------------------------------------------------------------
+                                node.IsBacktestCompleted = true;
 
                                 strategyBuilderProcess.CompletedBacktests++;
-                                tree.CounterProgressBar++;
+                                node.Tree.CounterProgressBar++;
                             }
                         }
-
-                        // Update Weka Tree when backtest of all nodes has been completed
-
-                        strategyBuilderProcess.HasWinningStrategy = tree.TotalWinningStrategy > 0;
-                        strategyBuilderProcess.TotalWinningStrategyUP += tree.TotalWinningStrategyUP;
-                        strategyBuilderProcess.TotalWinningStrategyDOWN += tree.TotalWinningStrategyDOWN;
-                        strategyBuilderProcess.TotalWinningStrategy = strategyBuilderProcess.TotalWinningStrategyUP + strategyBuilderProcess.TotalWinningStrategyDOWN;
                     }
                 }
 
-                var completed = StrategyBuilderStatusEnum.Completed.GetMetadata();
+                var completed = StrategyBuilderStatusEnum.StrategyBuilderCompleted.GetMetadata();
                 strategyBuilderProcess.Status = completed.Name;
-                strategyBuilderProcess.Message = $"{completed.Description}";
+                strategyBuilderProcess.Message = completed.Description;
 
                 return true;
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<StrategyBuilderViewModel>(ex);
-                var error = StrategyBuilderStatusEnum.Error.GetMetadata();
-                strategyBuilderProcess.Status = error.Name;
-                strategyBuilderProcess.Message = ex.Message;
-
                 return false;
             }
         }
 
-        private static void UpdateTreeNodeVM(REPTreeNodeVM node, BacktestModel backtest, bool IsOSample)
+        private void UpdateTreeNodeVM(REPTreeNodeVM node, StrategyBuilderModel backtest)
         {
-            if (!IsOSample)
-            {
-                node.TotalOpportunityIs = backtest.TotalOpportunity;
-                node.TotalTradesIs = backtest.TotalTrades;
-                node.WinningTradesIs = backtest.WinningTrades;
-                node.LosingTradesIs = backtest.LosingTrades;
+            node.HistoricalData = Configuration.HistoricalDataName;
+            node.WinningStrategy = backtest.WinningStrategy;
 
-                node.PercentSuccessIs = backtest.PercentSuccess;
-                node.ProgressivenessIs = backtest.Progressiveness;
-            }
-            else
-            {
-                node.TotalOpportunityOs = backtest.TotalOpportunity;
-                node.TotalTradesOs = backtest.TotalTrades;
-                node.WinningTradesOs = backtest.WinningTrades;
-                node.LosingTradesOs = backtest.LosingTrades;
+            // IS
 
-                node.PercentSuccessOs = backtest.PercentSuccess;
-                node.ProgressivenessOs = backtest.Progressiveness;
-            }
+            node.CorrelationPass = backtest.IS.CorrelationPass;
 
-            node.CorrelationPass = backtest.CorrelationPass;
+            node.TotalOpportunityIs = backtest.IS.TotalOpportunity;
+            node.TotalTradesIs = backtest.IS.TotalTrades;
+            node.WinningTradesIs = backtest.IS.WinningTrades;
+            node.LosingTradesIs = backtest.IS.LosingTrades;
+
+            node.PercentSuccessIs = backtest.IS.PercentSuccess;
+            node.ProgressivenessIs = backtest.IS.Progressiveness;
+
+            // OS
+
+            node.CorrelationPass = backtest.OS.CorrelationPass;
+
+            node.TotalOpportunityOs = backtest.OS.TotalOpportunity;
+            node.TotalTradesOs = backtest.OS.TotalTrades;
+            node.WinningTradesOs = backtest.OS.WinningTrades;
+            node.LosingTradesOs = backtest.OS.LosingTrades;
+
+            node.PercentSuccessOs = backtest.OS.PercentSuccess;
+            node.ProgressivenessOs = backtest.OS.Progressiveness;
         }
 
         private void AdjustConfigurationBuilder(List<REPTreeNodeVM> nodes, AutoAdjustConfigModel autoAdjustConfig)
@@ -694,27 +613,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var upLast = nodesUp.LastOrDefault();
                 var downLast = nodesDown.LastOrDefault();
 
-                var WinningTradesOs = 0;
-                var WinningTradesIs = 0;
+                var winningTradesOs = 0;
+                var winningTradesIs = 0;
 
                 if ((upLast?.WinningTradesOs ?? 0) > 0 && (downLast?.WinningTradesOs ?? 0) > 0)
                 {
-                    WinningTradesOs = upLast.WinningTradesOs > downLast.WinningTradesOs ? downLast.WinningTradesOs : upLast.WinningTradesOs;
-                    WinningTradesIs = upLast.WinningTradesIs > downLast.WinningTradesIs ? downLast.WinningTradesIs : upLast.WinningTradesIs;
+                    winningTradesOs = upLast.WinningTradesOs > downLast.WinningTradesOs ? downLast.WinningTradesOs : upLast.WinningTradesOs;
+                    winningTradesIs = upLast.WinningTradesIs > downLast.WinningTradesIs ? downLast.WinningTradesIs : upLast.WinningTradesIs;
                 }
 
-                if (WinningTradesOs == 0)
+                if (winningTradesOs == 0)
                 {
-                    WinningTradesOs = (upLast?.WinningTradesOs ?? 0) == 0 ? (downLast?.WinningTradesOs ?? 0) : (upLast?.WinningTradesOs ?? 0);
+                    winningTradesOs = (upLast?.WinningTradesOs ?? 0) == 0 ? (downLast?.WinningTradesOs ?? 0) : (upLast?.WinningTradesOs ?? 0);
                 }
 
-                if (WinningTradesIs == 0)
+                if (winningTradesIs == 0)
                 {
-                    WinningTradesIs = (upLast?.WinningTradesIs ?? 0) == 0 ? (downLast?.WinningTradesIs ?? 0) : (upLast?.WinningTradesIs ?? 0);
+                    winningTradesIs = (upLast?.WinningTradesIs ?? 0) == 0 ? (downLast?.WinningTradesIs ?? 0) : (upLast?.WinningTradesIs ?? 0);
                 }
 
-                autoAdjustConfig.MinTransactionCountOS = WinningTradesOs > 0 ? WinningTradesOs : autoAdjustConfig.MinTransactionCountOS;
-                autoAdjustConfig.MinTransactionCountIS = WinningTradesIs > 0 ? WinningTradesIs : autoAdjustConfig.MinTransactionCountIS;
+                autoAdjustConfig.MinTransactionCountOS = winningTradesOs > 0 ? winningTradesOs : autoAdjustConfig.MinTransactionCountOS;
+                autoAdjustConfig.MinTransactionCountIS = winningTradesIs > 0 ? winningTradesIs : autoAdjustConfig.MinTransactionCountIS;
 
                 autoAdjustConfig.AdjustMinTransactionCountOS = Configurations.LastOrDefault().MinTransactionCountOS != autoAdjustConfig.MinTransactionCountOS;
                 autoAdjustConfig.AdjustMinTransactionCountIS = Configurations.LastOrDefault().MinTransactionCountIS != autoAdjustConfig.MinTransactionCountIS;
@@ -728,6 +647,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }
@@ -812,8 +732,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        // Refresh Command
-
         public ICommand RefreshCommand => new DelegateCommand(() =>
         {
             try
@@ -823,7 +741,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
@@ -870,35 +790,35 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private void PopulateStrategyBuilderProcessList(string templatePath)
+        private void PopulateStrategyBuilderProcessList(string extractionPath)
         {
             var regionName = "WithoutSchedule";
             var regionType = 0;
 
-            if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
+            if (extractionPath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
             {
                 regionType = (int)MarketRegionEnum.America;
                 regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America);
             }
 
-            if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe)))
+            if (extractionPath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe)))
             {
                 regionType = (int)MarketRegionEnum.Europe;
                 regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe);
             }
 
-            if (templatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia)))
+            if (extractionPath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia)))
             {
                 regionType = (int)MarketRegionEnum.Asia;
                 regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia);
             }
 
-            _projectDirectoryService.GetFilesInPath(templatePath).ToList().ForEach(file =>
+            _projectDirectoryService.GetFilesInPath(extractionPath).ToList().ForEach(file =>
             {
                 StrategyBuilderProcessList.Add(new StrategyBuilderProcessModel
                 {
                     Path = file.FullName,
-                    TemplateName = file.Name,
+                    ExtractionName = file.Name,
                     RegionType = regionType,
                     RegionName = regionName,
                     Status = StrategyBuilderStatusEnum.NoStarted.GetMetadata().Name,
@@ -909,25 +829,24 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        private void AddItemToStrategyBuilderProcessList(string templateName, List<REPTreeOutputVM> modelList)
+        private void AddItemToStrategyBuilderProcessList(string templateName, List<REPTreeOutputVM> treeList)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var model = StrategyBuilderProcessList.FirstOrDefault(m => m.TemplateName == templateName);
-                modelList.ForEach(vm =>
+                var strategyBuilderProcess = StrategyBuilderProcessList.FirstOrDefault(m => m.ExtractionName == templateName);
+                treeList.ForEach(tree =>
                 {
-                    vm.Message = vm.HasWinningStrategy == null ? CommonResources.Pending : vm.HasWinningStrategy.Value ? CommonResources.Winner : CommonResources.Loser;
-                    vm.ValidNodes = vm.NodeOutput.Where(n => n.Winner).Count();
+                    tree.Message = tree.HasWinningStrategy == null ? CommonResources.Pending : tree.HasWinningStrategy.Value ? CommonResources.Winner : CommonResources.Loser;
+                    tree.ValidNodes = tree.NodeOutput.Where(node => node.Winner).Count();
                 });
 
-                model.WinningTrees = modelList.Where(n => n.ValidNodes > 0).Count();
-                model.TotalWinningStrategy = model.TotalWinningStrategyUP = model.TotalWinningStrategyDOWN = 0;
-                model.InstancesList.Clear();
-                model.InstancesList.AddRange(modelList);
+                strategyBuilderProcess.WinningTrees = treeList.Where(n => n.ValidNodes > 0).Count();
+                strategyBuilderProcess.InstancesList.Clear();
+                strategyBuilderProcess.InstancesList.AddRange(treeList);
 
-                if (model.WinningTrees > 0)
+                if (strategyBuilderProcess.WinningTrees > 0)
                 {
-                    model.IsEnabled = true;
+                    strategyBuilderProcess.IsEnabled = true;
                 }
             });
         }
@@ -946,6 +865,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private void ResetBuilder(bool resetConfigurations = false, bool cleanSerializedObjDirectory = false)
         {
             UpdateTotalCorrelation(0, 0);
+
+            AllNodes.Clear();
 
             foreach (var model in StrategyBuilderProcessList)
             {
@@ -987,12 +908,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ObservableCollection<REPTreeNodeVM> _totalNodes;
+        private ObservableCollection<REPTreeNodeVM> _allNodes;
 
-        public ObservableCollection<REPTreeNodeVM> TotalNodes
+        public ObservableCollection<REPTreeNodeVM> AllNodes
         {
-            get => _totalNodes;
-            set => SetProperty(ref _totalNodes, value);
+            get => _allNodes;
+            set => SetProperty(ref _allNodes, value);
         }
 
         private ProjectConfigurationVM _configuration;
@@ -1033,6 +954,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             get => _correlationModel;
             set => SetProperty(ref _correlationModel, value);
+        }
+
+        private int _maxParallelism;
+
+        public int MaxParallelism
+        {
+            get => _maxParallelism;
+            set => SetProperty(ref _maxParallelism, value);
         }
 
         private int _currentConfiguration;

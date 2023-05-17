@@ -17,7 +17,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             int? maxSeed = default(int?),
             int? instances = default(int?),
             double? ratio = default(double?),
-            double? total = default(double?),
+            double? total = default,
             bool? isAssembled = default(bool?))
         {
             return Task.Factory.StartNew(s => ((IWekaApiClient)s).GetREPTreeClassifierAsync(

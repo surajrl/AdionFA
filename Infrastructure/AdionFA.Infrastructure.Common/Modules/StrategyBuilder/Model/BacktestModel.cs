@@ -26,6 +26,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
         public int TotalOpportunity { get; set; }
 
         private double? percentSuccess;
+
         public double PercentSuccess
         {
             get => percentSuccess ?? (TotalTrades > 0 && WinningTrades > 0 ? WinningTrades * 100 / TotalTrades : 0);
@@ -33,6 +34,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
         }
 
         private double? progressiveness;
+
         public double Progressiveness
         {
             get => progressiveness ?? (TotalTrades > 0 && TotalOpportunity > 0 ? TotalTrades * 100 / TotalOpportunity : 0);
@@ -40,12 +42,13 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
         }
 
         public string Name => NodeName();
+
         public string NodeName()
         {
-            List<string> indicators = new();
+            var indicators = new List<string>();
             Node.ForEach(n =>
             {
-                string f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
+                var f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
                 string[] divisions = null;
 
                 // Operator Split
@@ -71,12 +74,12 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
                     divisions = f.Split('=');
                 }
 
-                string name = divisions[0].Split("_")[0].Replace(".", string.Empty);
+                var name = divisions[0].Split("_")[0].Replace(".", string.Empty);
 
-                string last = indicators.LastOrDefault();
+                var last = indicators.LastOrDefault();
                 if (last != null)
                 {
-                    string lastName = last.Split(".")[0];
+                    var lastName = last.Split(".")[0];
                     int lastCount = 1;
                     if (last.Contains('.'))
                     {

@@ -68,7 +68,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }, (s) => true);
@@ -99,102 +101,100 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     var projectHistoricalData = await _historicalDataService.GetHistoricalData(projectConfig.HistoricalDataId.Value, true);
 
                     // Gets all the candles from the corresponding historical data
-                    IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles.Select(
-                            h => new Candle
-                            {
-                                Date = h.StartDate,
-                                Time = h.StartTime,
-                                Open = h.Open,
-                                High = h.High,
-                                Low = h.Low,
-                                Close = h.Close,
-                                Volume = h.Volume
-                            }
-                        ).OrderBy(d => d.Date).ThenBy(d => d.Time).ToList();
-
-                    bool result = false;
-
-                    void action(object e)
+                    IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles
+                    .Select(hdCandle => new Candle
                     {
-                        ExtractionProcessModel model = (ExtractionProcessModel)e;
-                        try
+                        Date = hdCandle.StartDate,
+                        Time = hdCandle.StartTime,
+                        Open = hdCandle.Open,
+                        High = hdCandle.High,
+                        Low = hdCandle.Low,
+                        Close = hdCandle.Close,
+                        Volume = hdCandle.Volume
+                    })
+                    .OrderBy(candle => candle.Date)
+                    .ThenBy(candle => candle.Time)
+                    .ToList();
+
+                    var taskPool = new List<Task>();
+                    foreach (var extractionProcess in ExtractionProcessList)
+                    {
+                        taskPool.Add(Task.Run(() =>
                         {
-                            // Beginning
-                            var beginning = ExtractorStatusEnum.Beginning.GetMetadata();
-                            model.Status = beginning.Name;
-                            model.Message = beginning.Description;
-                            //------------------------------------
-
-                            model.Message = "Building Indicators";
-                            var indicators = _extractorService.BuildIndicatorsFromCSV(model.Path);
-
-                            // Executing-------------------------------------
-                            var executing = ExtractorStatusEnum.Executing.GetMetadata();
-                            model.Status = executing.Name;
-                            model.Message = executing.Description;
-                            var extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles.ToList(), projectConfig.TimeframeId, projectConfig.Variation);
-                            //-------------------------------------
-
-                            model.Message = "Writing Extraction File";
-                            var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss");
-                            var nameSignature = model.TemplateName.Replace(".csv", string.Empty);
-
-                            _extractorService.ExtractorWrite(
-                                _project.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
-                                extractions,
-                                0,
-                                0);
-
-                            model.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
-
-                            if (!projectConfig.WithoutSchedule)
+                            try
                             {
-                                // America
-                                model.Message = "Writing Extraction File America";
-                                _extractorService.ExtractorWrite(
-                                    _project.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
-                                    indicators,
-                                    projectConfig.FromTimeInSecondsAmerica.Hour, projectConfig.ToTimeInSecondsAmerica.Hour
-                                );
+                                // Beginning --------------------------
+                                var beginning = ExtractorStatusEnum.Beginning.GetMetadata();
+                                extractionProcess.Status = beginning.Name;
+                                extractionProcess.Message = beginning.Description;
+                                //-------------------------------------
 
-                                // Europe
-                                model.Message = "Writing Extraction File Europe";
-                                _extractorService.ExtractorWrite(
-                                    _project.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
-                                    indicators,
-                                    projectConfig.FromTimeInSecondsEurope.Hour, projectConfig.ToTimeInSecondsEurope.Hour
-                                );
+                                extractionProcess.Message = "Building Indicators";
+                                var indicators = _extractorService.BuildIndicatorsFromCSV(extractionProcess.Path);
 
-                                // Asia
-                                model.Message = "Writing Extraction File Asia";
+                                // Executing --------------------------
+                                var executing = ExtractorStatusEnum.Executing.GetMetadata();
+                                extractionProcess.Status = executing.Name;
+                                extractionProcess.Message = executing.Description;
+                                var extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles.ToList(), projectConfig.TimeframeId, projectConfig.Variation);
+                                //-------------------------------------
+
+                                extractionProcess.Message = "Writing Extraction File";
+                                var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss");
+                                var nameSignature = extractionProcess.TemplateName.Replace(".csv", string.Empty);
+
                                 _extractorService.ExtractorWrite(
-                                    _project.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
-                                    indicators,
-                                    projectConfig.FromTimeInSecondsAsia.Hour, projectConfig.ToTimeInSecondsAsia.Hour
-                                );
+                                    _project.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
+                                    extractions,
+                                    0,
+                                    0);
+
+                                extractionProcess.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
+
+                                if (!projectConfig.WithoutSchedule)
+                                {
+                                    // America
+                                    extractionProcess.Message = "Writing Extraction File America";
+                                    _extractorService.ExtractorWrite(
+                                        _project.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
+                                        indicators,
+                                        projectConfig.FromTimeInSecondsAmerica.Hour, projectConfig.ToTimeInSecondsAmerica.Hour
+                                    );
+
+                                    // Europe
+                                    extractionProcess.Message = "Writing Extraction File Europe";
+                                    _extractorService.ExtractorWrite(
+                                        _project.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
+                                        indicators,
+                                        projectConfig.FromTimeInSecondsEurope.Hour, projectConfig.ToTimeInSecondsEurope.Hour
+                                    );
+
+                                    // Asia
+                                    extractionProcess.Message = "Writing Extraction File Asia";
+                                    _extractorService.ExtractorWrite(
+                                        _project.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
+                                        indicators,
+                                        projectConfig.FromTimeInSecondsAsia.Hour, projectConfig.ToTimeInSecondsAsia.Hour
+                                    );
+                                }
+
+                                var completed = ExtractorStatusEnum.Completed.GetMetadata();
+                                extractionProcess.Status = completed.Name;
+                                extractionProcess.Message = completed.Description;
                             }
-
-                            var completed = ExtractorStatusEnum.Completed.GetMetadata();
-                            model.Status = completed.Name;
-                            model.Message = completed.Description;
-                        }
-                        catch (Exception ex)
-                        {
-                            model.Message = ex.Message;
-                            model.Status = ExtractorStatusEnum.Error.GetMetadata().Name;
-                        }
+                            catch (Exception ex)
+                            {
+                                extractionProcess.Message = ex.Message;
+                                extractionProcess.Status = ExtractorStatusEnum.Error.GetMetadata().Name;
+                            }
+                        }));
                     }
 
-                    var pool = ExtractionProcessList.Select(e => new Task(action, e)).ToArray();
-                    foreach (var t in pool)
-                    {
-                        t.Start();
-                    }
-
-                    await Task.WhenAll(pool).ConfigureAwait(true);
+                    await Task.WhenAll(taskPool);
 
                     IsTransactionActive = false;
-                    result = !ExtractionProcessList.Any(e => e.Status != ExtractorStatusEnum.Completed.GetMetadata().Name);
+
+                    var result = !ExtractionProcessList.Any(e => e.Status != ExtractorStatusEnum.Completed.GetMetadata().Name);
 
                     var msg = result ? MessageResources.ExtractionCompleted : MessageResources.EntityErrorTransaction;
                     MessageHelper.ShowMessage(this, CommonResources.Extractor, msg);
@@ -203,6 +203,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
 
                 throw;

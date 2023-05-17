@@ -61,7 +61,8 @@ namespace AdionFA.Core.Domain.Services.MarketData
                     (hd.EndDate ?? DateTime.MinValue) == DateTime.MinValue;
 
                 var h = includeGraph ?
-                    HistoricalDataRepository.FirstOrDefault(predicate, hd => hd.HistoricalDataCandles) : HistoricalDataRepository.FirstOrDefault(predicate);
+                    HistoricalDataRepository.FirstOrDefault(predicate, hd => hd.HistoricalDataCandles)
+                    : HistoricalDataRepository.FirstOrDefault(predicate);
 
                 return h;
             }

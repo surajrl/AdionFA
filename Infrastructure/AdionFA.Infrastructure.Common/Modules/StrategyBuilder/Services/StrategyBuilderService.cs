@@ -12,14 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-using AdionFA.Infrastructure.Common.Weka.Model;
-using System.Reflection.Metadata;
-using System.ComponentModel.Design;
-using System.IO;
-using System.Reflection;
 using System.Diagnostics;
 using AdionFA.Infrastructure.Common.Managements;
-using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 {
@@ -216,7 +211,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             string nodeLabel,
             List<string> node,
             ConfigurationBaseDTO config,
-            List<Candle> allCandles)
+            IEnumerable<Candle> allCandles,
+            CancellationToken token)
         {
             try
             {
@@ -226,7 +222,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     config.ToDateIS.Value,
                     node,
                     allCandles,
-                    config.TimeframeId);
+                    config.TimeframeId,
+                    token);
 
                 var backtestOS = ExecuteBacktest(
                     nodeLabel,
@@ -234,7 +231,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     config.ToDateOS.Value,
                     node,
                     allCandles,
-                    config.TimeframeId);
+                    config.TimeframeId,
+                    token);
 
                 var stb = new StrategyBuilderModel
                 {
@@ -263,8 +261,9 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             DateTime fromDate,
             DateTime toDate,
             List<string> node,
-            List<Candle> allCandles,
-            int timeframeId)
+            IEnumerable<Candle> allCandles,
+            int timeframeId,
+            CancellationToken token)
         {
             try
             {
@@ -291,36 +290,55 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                     backtest.TotalOpportunity = candlesFromTo.Count;
 
+                    var candleHistory = new List<Candle>();
+
                     for (var idx = 0; idx < candlesFromTo.Count - 1; idx++)
                     {
-                        var firstCandle = candlesFromTo[0];
-                        var nextCandle = candlesFromTo[idx + 1];
+                        token.ThrowIfCancellationRequested();
 
+                        var firstCandle = candlesFromTo[0];
                         var currentCandle = new Candle
                         {
                             Date = candlesFromTo[idx].Date,
                             Time = candlesFromTo[idx].Time,
+
                             Open = candlesFromTo[idx].Open,
                             High = candlesFromTo[idx].Open,
                             Low = candlesFromTo[idx].Open,
                             Close = candlesFromTo[idx].Open,
                         };
+                        var nextCandle = candlesFromTo[idx + 1];
 
                         var firstCandleDt = DateTimeHelper.BuildDateTime(timeframeId, firstCandle.Date, firstCandle.Time);
                         var currentCandleDt = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time);
 
-                        var candlesRange = (from c in candlesFromTo
-                                            let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
-                                            where dt >= firstCandleDt && dt < currentCandleDt
-                                            select c).ToList();
+                        var extractorResult = new List<IndicatorBase>();
 
-                        candlesRange.Add(currentCandle);
+                        if (idx == 0)
+                        {
+                            candleHistory.Add(currentCandle);
 
-                        var extractorResult = ExtractorService.DoBacktest(
-                            firstCandle,
-                            currentCandle,
-                            indicators,
-                            candlesRange);
+                            extractorResult = ExtractorService.DoBacktest(
+                                currentCandle,
+                                currentCandle,
+                                indicators,
+                                candleHistory);
+                        }
+                        else
+                        {
+                            candleHistory = (from c in candlesFromTo
+                                             let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
+                                             where dt >= firstCandleDt && dt < currentCandleDt
+                                             select c).ToList();
+
+                            candleHistory.Add(currentCandle);
+
+                            extractorResult = ExtractorService.DoBacktest(
+                                firstCandle,
+                                currentCandle,
+                                indicators,
+                                candleHistory);
+                        }
 
                         if (!extractorResult.Any())
                         {

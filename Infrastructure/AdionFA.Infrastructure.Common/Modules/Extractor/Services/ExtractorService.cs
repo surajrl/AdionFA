@@ -530,7 +530,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             Candle firstCandle,
             Candle currentCandle,
             List<IndicatorBase> indicators,
-            List<Candle> candleHistory)
+            IEnumerable<Candle> candleHistory)
         {
             try
             {
@@ -551,6 +551,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             catch (Exception ex)
             {
                 LogHelper.LogException<ExtractorService>(ex);
+
                 throw;
             }
         }
@@ -589,9 +590,9 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                             }).ToList();
 
                 var open = (from c in data select c.Open).ToArray();
-                var max = (from c in data select c.High).ToArray();
+                var high = (from c in data select c.High).ToArray();
+                var low = (from c in data select c.Low).ToArray();
                 var close = (from c in data select c.Close).ToArray();
-                var min = (from c in data select c.Low).ToArray();
 
                 // Select candles that are within the IS start and end dates
                 var candlesRange = (from c in data
@@ -603,7 +604,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                 var startIdx = Array.IndexOf(data.ToArray(), candlesRange.FirstOrDefault());
                 var endIdx = Array.IndexOf(data.ToArray(), candlesRange.LastOrDefault());
 
-                Execute(startIdx, endIdx, open, max, min, close, extractions, candlesRange, timeframeId, true);
+                Execute(startIdx, endIdx, open, high, low, close, extractions, candlesRange, timeframeId, true);
 
                 return extractions;
             }
@@ -622,13 +623,13 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             double[] low,
             double[] close,
             List<IndicatorBase> indicators,
-            List<Candle> candlesRange,
+            IEnumerable<Candle> candlesRange,
             int timeframeId,
             bool isExtraction)
         {
             try
             {
-                var length = (endIdx - startIdx) + 1;
+                var length = endIdx - startIdx + 1;
                 foreach (var indicator in indicators)
                 {
                     indicator.Output = new double[length];
@@ -818,11 +819,11 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
 
                     if (isExtraction)
                     {
-                        indicator.IntervalLabels = (from cr in candlesRange
+                        indicator.IntervalLabels = (from candle in candlesRange
                                                     select new IntervalLabel
                                                     {
-                                                        Interval = DateTimeHelper.BuildDateTime(timeframeId, cr.Date, cr.Time),
-                                                        Label = cr.Label
+                                                        Interval = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time),
+                                                        Label = candle.Label
                                                     }).ToArray();
                     }
                 }
