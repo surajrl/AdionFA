@@ -57,14 +57,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly ITradeService _tradeService;
 
         private readonly IProjectServiceAgent _projectService;
-        private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IServiceAgent _serviceAgent;
 
         private readonly IEventAggregator _eventAggregator;
 
         private ProjectVM _project;
         private CancellationTokenSource _cancellationTokenSrc;
-        private bool _requestClose;
         private bool _firstCompleteCandleReceived;
         private Candle _currentCandle;
 
@@ -75,7 +73,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _serviceAgent = ContainerLocator.Current.Resolve<IServiceAgent>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
@@ -111,9 +108,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }, (s) => true);
 
         public DelegateCommand StopProcessBtnCommand => new DelegateCommand(() =>
-        {
-            _cancellationTokenSrc.Cancel();
-        }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+            _cancellationTokenSrc.Cancel(),
+            () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
@@ -123,7 +119,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
 
                 _cancellationTokenSrc = new CancellationTokenSource();
-                var token = _cancellationTokenSrc.Token;
 
                 _firstCompleteCandleReceived = false;
 
@@ -136,8 +131,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var subscriberSocketProgress = new Progress<ZmqMsgModel>();
                 subscriberSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
                 {
-                    // The current new candle is first received, followed by the previous complete candle
-
                     if (!_firstCompleteCandleReceived && !nextItem.IsNewCandle)
                     {
                         _firstCompleteCandleReceived = true;
@@ -162,11 +155,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     {
                         // Complete candle
                         MessageInput.Insert(0, nextItem);
-                        await RequestSocketAsync(requestSocketProgress, _cancellationTokenSrc);
+                        await RequestSocketAsync(requestSocketProgress);
                     }
                 };
 
-                await SubSocket(subscriberSocketProgress, _cancellationTokenSrc);
+                await SubSocket(subscriberSocketProgress);
             }
             catch (Exception ex)
             {
@@ -181,31 +174,20 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private async Task SubSocket(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
+        private async Task SubSocket(IProgress<ZmqMsgModel> progress)
         {
             await Task.Factory.StartNew(() =>
             {
                 using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PushPort}");
                 subscriber.Subscribe("");
 
-                Thread.Sleep(1);
-
-                var syncclient = new RequestSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.ResponsePort}");
-                syncclient.SendFrame("sync");
-                syncclient.ReceiveFrameString();
-                syncclient.Dispose();
-
                 try
                 {
                     _cancellationTokenSrc ??= new CancellationTokenSource();
-                    var token = _cancellationTokenSrc.Token;
 
                     while (true)
                     {
-                        if (token.IsCancellationRequested)
-                        {
-                            token.ThrowIfCancellationRequested();
-                        }
+                        _cancellationTokenSrc.Token.ThrowIfCancellationRequested();
 
                         var ts = TimeSpan.FromMilliseconds(1000);
 
@@ -219,7 +201,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss");
                             zmqModel.PutType = (int)MessageZMQPutTypeEnum.Input;
                             zmqModel.PutTypeName = MessageZMQPutTypeEnum.Input.GetMetadata().Name;
-                            zmqModel.Description = message;
 
                             progress.Report(zmqModel);
                         }
@@ -229,12 +210,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     Trace.TraceError(ex.Message);
                     Debug.WriteLine($"SubscriberSocket:{ex.Message}");
-                    ctsTask.Cancel();
+
+                    _cancellationTokenSrc.Cancel();
                 }
             });
         }
 
-        private async Task RequestSocketAsync(IProgress<ZmqMsgModel> progress, CancellationTokenSource ctsTask)
+        private async Task RequestSocketAsync(IProgress<ZmqMsgModel> progress)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -242,34 +224,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 try
                 {
-                    ctsTask ??= new CancellationTokenSource();
-                    var token = ctsTask.Token;
+                    _cancellationTokenSrc ??= new CancellationTokenSource();
 
-                    if (token.IsCancellationRequested)
-                    {
-                        token.ThrowIfCancellationRequested();
-                    }
+                    _cancellationTokenSrc.Token.ThrowIfCancellationRequested();
 
                     if (Nodes.Any())
                     {
-                        if (_requestClose)
-                        {
-                            // Close operation request --------------------------------------------
-                            requester.SendFrame(JsonConvert.SerializeObject(_tradeService.CloseAllOperation()));
-                            Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.CloseAllOperation())}");
-
-                            // Close operation response -------------------------------------------
-                            var closeAllRep = requester.ReceiveFrameString();
-                            Debug.WriteLine($"RequestSocket-Receive:{closeAllRep}");
-                            //---------------------------------------------------------------------
-
-                            _requestClose = false;
-                        }
-
                         // Perform algorithm --------------------------------------------------
-                        List<ZmqMsgModel> messageInputCopy = MessageInput.ToList(); // Copy in case it gets modified
+                        var messageInputCopy = MessageInput.ToList(); // Copy in case it gets modified
 
-                        ZmqMsgModel lastMessageInput = messageInputCopy.FirstOrDefault();
+                        var lastMessageInput = messageInputCopy.FirstOrDefault();
                         var candles = messageInputCopy.Select(m => new Candle
                         {
                             Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time).TotalSeconds),
@@ -277,8 +241,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Open = (double)m.Open,
                             High = (double)m.High,
                             Low = (double)m.Low,
-                            Close = (double)m.Close,
-                            Volume = (double)m.Volume,
+                            Close = (double)m.Close
                         })
                         .OrderBy(m => m.Date).ToList();
 
@@ -318,13 +281,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
                                 PositionType = (int)response.OrderType,
                                 PositionTypeName = response.OrderType.GetMetadata().Name,
-                                Volume = decimal.Parse(response.Volume),
-                                Description = response.Comment,
+                                Volume = decimal.Parse(response.Volume)
                             };
 
                             progress.Report(model);
-
-                            _requestClose = true;
                             //-----------------------------------------------------------------------
                         }
                     }
@@ -333,7 +293,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     Trace.TraceError(ex.Message);
                     Debug.WriteLine($"RequestSocket:{ex.Message}");
-                    ctsTask.Cancel();
+
+                    _cancellationTokenSrc.Cancel();
                 }
             });
         }
@@ -561,8 +522,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         public ObservableCollection<Metadata> Timeframes { get; } = new ObservableCollection<Metadata>();
-
-        // Expert Advisor Configuration
 
         private ExpertAdvisorVM _expertAdvisor;
 

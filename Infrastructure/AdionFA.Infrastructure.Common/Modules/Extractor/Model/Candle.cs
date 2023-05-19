@@ -11,6 +11,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Model
         public double Low { get; set; }
         public double Close { get; set; }
         public double Volume { get; set; }
+        public double Spread { get; set; }
         public string Label { get; set; }
     }
 }

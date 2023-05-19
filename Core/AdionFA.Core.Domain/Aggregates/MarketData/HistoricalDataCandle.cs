@@ -13,6 +13,7 @@ namespace AdionFA.Core.Domain.Aggregates.MarketData
         public int HistoricalDataCandleId { get; set; }
 
         public int HistoricalDataId { get; set; }
+
         [ForeignKey(nameof(HistoricalDataId))]
         public HistoricalData HistoricalData { get; set; }
 
@@ -23,5 +24,6 @@ namespace AdionFA.Core.Domain.Aggregates.MarketData
         public double Low { get; set; }
         public double Close { get; set; }
         public double Volume { get; set; }
+        public double Spread { get; set; }
     }
 }

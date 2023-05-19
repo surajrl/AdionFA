@@ -1,4 +1,4 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.Market;
+﻿using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AutoMapper;

@@ -1,5 +1,5 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 
 namespace AdionFA.UI.Station.Infrastructure.Model.Project
 {

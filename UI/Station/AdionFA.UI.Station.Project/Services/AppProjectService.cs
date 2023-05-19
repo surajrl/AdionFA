@@ -1,6 +1,6 @@
 ﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Project.AutoMapper;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AutoMapper;

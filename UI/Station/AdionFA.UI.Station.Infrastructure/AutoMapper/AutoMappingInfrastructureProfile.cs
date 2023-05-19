@@ -9,7 +9,7 @@ using AdionFA.TransferObject.ReferenceData;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.UI.Station.Infrastructure.Model.Core;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.Organization;
 using AdionFA.UI.Station.Infrastructure.Model.Project;

@@ -17,7 +17,7 @@ namespace AdionFA.Infrastructure.Enums
         [Metadata("DefaultWorkspace", "DefaultWorkspace", "", resourceType: typeof(EnumResources))]
         DefaultWorkspace = 4,
 
-        [Metadata("Host", "Host", "127.0.0.1", resourceType: typeof(EnumResources))]
+        [Metadata("Host", "Host", "192.168.50.137", resourceType: typeof(EnumResources))]
         Host = 5,
 
         [Metadata("Port", "Port", "5555", resourceType: typeof(EnumResources))]

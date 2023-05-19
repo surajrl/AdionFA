@@ -8,7 +8,7 @@ using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AdionFA.UI.Station.Module.Dashboard.Services;
@@ -43,6 +43,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private ICommand FlyoutCommand { get; set; }
+
         public void ShowFlyout(FlyoutModel flyoutModel)
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutUploadHistoricalData))
@@ -107,17 +108,18 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 if (result.Count > 0)
                 {
-                    result.ForEach(item =>
+                    result.ForEach(candle =>
                     {
                         UploadHistoricalData.HistoricalDataCandles.Add(new HistoricalDataCandleVM
                         {
-                            StartDate = item.Date,
-                            StartTime = item.Time,
-                            Open = item.Open,
-                            High = item.High,
-                            Low = item.Low,
-                            Close = item.Close,
-                            Volume = item.Volume
+                            StartDate = candle.Date,
+                            StartTime = candle.Time,
+                            Open = candle.Open,
+                            High = candle.High,
+                            Low = candle.Low,
+                            Close = candle.Close,
+                            Volume = candle.Volume,
+                            Spread = candle.Spread,
                         });
                     });
 
@@ -181,6 +183,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         // Bindable Model
 
         private bool istransactionActive;
+
         public bool IsTransactionActive
         {
             get => istransactionActive;
@@ -188,6 +191,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private UploadHistoricalDataModel _uploadHistoricalData;
+
         public UploadHistoricalDataModel UploadHistoricalData
         {
             get => _uploadHistoricalData;

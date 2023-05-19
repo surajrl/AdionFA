@@ -4,7 +4,7 @@ using AdionFA.Infrastructure.Enums.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AdionFA.UI.Station.Module.Dashboard.Services;
@@ -57,7 +57,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 Timeframe ??= new();
 
                 if (!Markets.Any())
+                {
                     Markets.AddRange(EnumUtil.ToEnumerable<MarketEnum>());
+                }
 
                 Symbols?.Clear();
                 var symbols = await _historicalDataService.GetAllSymbol().ConfigureAwait(true);
@@ -83,7 +85,10 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 IsTransactionActive = true;
                 HistoricalDataDetails?.Clear();
 
-                if (Symbol == null || Timeframe == null) return;
+                if (Symbol == null || Timeframe == null)
+                {
+                    return;
+                }
 
                 var vm = await _settingService.GetHistoricalData(
                                     MarketId ?? 0,
@@ -114,6 +119,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private int? _marketId;
+
         public int? MarketId
         {
             get => _marketId;
@@ -121,6 +127,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private SymbolVM _symbol;
+
         public SymbolVM Symbol
         {
             get => _symbol;
@@ -128,6 +135,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private TimeframeVM _timeframe;
+
         public TimeframeVM Timeframe
         {
             get => _timeframe;
@@ -135,6 +143,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private ObservableCollection<HistoricalDataCandleSettingVM> _historicalDataDetails;
+
         public ObservableCollection<HistoricalDataCandleSettingVM> HistoricalDataDetails
         {
             get => _historicalDataDetails;

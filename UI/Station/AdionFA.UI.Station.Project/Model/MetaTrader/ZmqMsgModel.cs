@@ -5,12 +5,7 @@ namespace AdionFA.UI.Station.Project.Model.MetaTrader
 {
     public class ZmqMsgModel : ViewModelBase
     {
-        private int _id;
-        public int Id
-        {
-            get => _id;
-            set => SetProperty(ref _id, value);
-        }
+        public int Id { get; set; }
 
         public bool IsNewCandle { get; set; }
 
@@ -24,15 +19,14 @@ namespace AdionFA.UI.Station.Project.Model.MetaTrader
         public int PutType { get; set; }
         public string PutTypeName { get; set; }
 
-        public decimal Volume { get; set; }
         public int PositionType { get; set; }
         public string PositionTypeName { get; set; }
 
-        public string Description { get; set; }
-
-        public decimal High { get; set; }
         public decimal Open { get; set; }
-        public decimal Close { get; set; }
+        public decimal High { get; set; }
         public decimal Low { get; set; }
+        public decimal Close { get; set; }
+        public decimal Volume { get; set; }
+        public decimal Spread { get; set; }
     }
 }

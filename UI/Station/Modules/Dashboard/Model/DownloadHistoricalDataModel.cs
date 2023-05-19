@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Module.Dashboard.Validators;
 using FluentValidation;
 using FluentValidation.Results;

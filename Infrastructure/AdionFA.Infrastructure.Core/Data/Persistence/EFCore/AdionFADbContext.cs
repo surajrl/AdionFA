@@ -470,7 +470,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
         public DbSet<CurrencySpread> CurrencySpreads { get; set; }
         public DbSet<Market> Markets { get; set; }
         public DbSet<HistoricalData> HistoricalDatas { get; set; }
-        public DbSet<HistoricalDataCandle> HistoricalDataDetails { get; set; }
+        public DbSet<HistoricalDataCandle> HistoricalDataCandles { get; set; }
         public DbSet<MarketRegion> MarketRegions { get; set; }
 
         // MetaTrader

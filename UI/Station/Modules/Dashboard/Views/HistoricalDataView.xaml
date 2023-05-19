@@ -113,7 +113,8 @@
                     </TextBlock>
                 </Label>
                 <ComboBox x:Name="TimeframeFilterCb"
-                          ItemsSource="{Binding Timeframes}" MinWidth="225"
+                          ItemsSource="{Binding Timeframes}"
+                          MinWidth="225"
                           IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                           DisplayMemberPath="Name"
                           SelectedItem="{Binding Timeframe, Mode=TwoWay}">
@@ -126,10 +127,10 @@
             </StackPanel>
         </StackPanel>
 
-        <DataGrid x:Name="MarketDataGrid"
-                  Grid.Row="1"
+        <DataGrid Grid.Row="1"
                   Grid.Column="1"
-                  Margin="10" IsReadOnly="True"
+                  Margin="10"
+                  IsReadOnly="True"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding HistoricalDataDetails}"
                   RowHeaderWidth="0">
@@ -141,15 +142,19 @@
                 <DataGridTextColumn Width="1*" Binding="{Binding Low}" Header="{x:Static commonResources:CommonResources.MinPrice}" />
                 <DataGridTextColumn Width="1*" Binding="{Binding Close}" Header="{x:Static commonResources:CommonResources.ClosePrice}" />
                 <DataGridTextColumn Width="1*" Binding="{Binding Volume}" Header="{x:Static commonResources:CommonResources.Volume}" />
+                <DataGridTextColumn Width="1*" Binding="{Binding Spread}" Header="{x:Static commonResources:CommonResources.Spread}" />
             </DataGrid.Columns>
         </DataGrid>
 
-        <metro:MetroProgressBar Grid.Row="1" IsIndeterminate="True" Width="250"
+        <metro:MetroProgressBar Grid.Row="1"
+                                IsIndeterminate="True"
+                                Width="250"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
                     Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Label Content="Historical Data is Empty"
-               Visibility="{Binding HistoricalDataDetails.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
+                   Visibility="{Binding HistoricalDataDetails.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
         </StackPanel>
     </Grid>
 </UserControl>

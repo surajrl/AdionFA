@@ -20,7 +20,9 @@ namespace AdionFA.Infrastructure.Common.Helpers
             try
             {
                 if (!File.Exists(historyFilePath))
+                {
                     throw new Exception(ExceptionMessagesEnum.FileNotFound.GetMetadata().Description);
+                }
 
                 var result = new List<Candle>();
 

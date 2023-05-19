@@ -4,7 +4,7 @@ using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AdionFA.UI.Station.Module.Dashboard.Services;

@@ -10,7 +10,7 @@ using AdionFA.UI.Station.Project.Model.AssembledBuilder;
 using AdionFA.TransferObject.Common;
 using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.UI.Station.Infrastructure.Model.Core;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.Organization;
 using AdionFA.UI.Station.Infrastructure.Model.Organization;

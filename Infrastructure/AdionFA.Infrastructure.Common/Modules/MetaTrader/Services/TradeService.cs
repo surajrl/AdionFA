@@ -80,26 +80,12 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
             return false;
         }
 
-        public ZmqMsgRequestModel OpenOperation(OrderTypeEnum buyOrSell = OrderTypeEnum.Buy)
+        public ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType)
         {
             var request = new ZmqMsgRequestModel
             {
                 UUID = Guid.NewGuid().ToString(),
-                Action = "TRADE_ACTION_DEAL",   // Place a trade order for an immediate execution with the specified parameters(market order)
-                Symbol = "EURUSD",
-                OrderType = buyOrSell,
-            };
-
-            return request;
-        }
-
-        public ZmqMsgRequestModel CloseAllOperation()
-        {
-            var request = new ZmqMsgRequestModel
-            {
-                UUID = Guid.NewGuid().ToString(),
-                Action = "TRADE_ACTION_CLOSE_BY",   // Close a position by an opposite one
-                OrderType = OrderTypeEnum.Close,    // Order to close a position by an opposite one
+                OrderType = orderType,
             };
 
             return request;

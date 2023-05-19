@@ -13,7 +13,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.Infrastructure.I18n.Resources;
 using System.Diagnostics;
 using AdionFA.UI.Station.Module.Dashboard.Services;
@@ -24,7 +24,6 @@ using Newtonsoft.Json;
 using DynamicData;
 using System.Threading.Tasks;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
-using AdionFA.Core.Domain.Aggregates.MarketData;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
@@ -164,7 +163,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             if (!IsTransactionActive)
             {
                 IsTransactionActive = true;
-                
+
                 Symbols.Clear();
 
                 try
@@ -231,17 +230,18 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 if (result.Count > 0)
                 {
-                    result.ForEach(item =>
+                    result.ForEach(candle =>
                     {
                         DownloadHistoricalDataModel.HistoricalDataCandles.Add(new HistoricalDataCandleVM
                         {
-                            StartDate = item.Date,
-                            StartTime = item.Time,
-                            Open = item.Open,
-                            High = item.High,
-                            Low = item.Low,
-                            Close = item.Close,
-                            Volume = item.Volume
+                            StartDate = candle.Date,
+                            StartTime = candle.Time,
+                            Open = candle.Open,
+                            High = candle.High,
+                            Low = candle.Low,
+                            Close = candle.Close,
+                            Volume = candle.Volume,
+                            Spread = candle.Spread
                         });
                     });
 
@@ -279,6 +279,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         // View Bindings
 
         private bool _isTransactionActive;
+
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -286,6 +287,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private DownloadHistoricalDataModel _downloadHistoricalDataModel;
+
         public DownloadHistoricalDataModel DownloadHistoricalDataModel
         {
             get => _downloadHistoricalDataModel;

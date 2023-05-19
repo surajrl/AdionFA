@@ -9,7 +9,7 @@ using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.Extractor;
 using AdionFA.UI.Station.Project.Services;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using Prism.Commands;
 using Prism.Events;

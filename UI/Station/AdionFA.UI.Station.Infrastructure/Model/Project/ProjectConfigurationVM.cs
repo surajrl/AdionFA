@@ -1,6 +1,6 @@
 ﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using System.Collections.Generic;
 
 namespace AdionFA.UI.Station.Infrastructure.Model.Project

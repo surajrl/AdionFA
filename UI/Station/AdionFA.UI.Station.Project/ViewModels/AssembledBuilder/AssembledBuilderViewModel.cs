@@ -21,7 +21,7 @@ using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.UI.Station.Project.Validators.AssembledBuilder;
 using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -277,6 +277,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // Bindable Model
 
         private bool _istransactionActive;
+
         public bool IsTransactionActive
         {
             get => _istransactionActive;
@@ -284,6 +285,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _canExecute = true;
+
         public bool CanExecute
         {
             get => _canExecute;
@@ -291,6 +293,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ProjectConfigurationVM _configuration;
+
         public ProjectConfigurationVM Configuration
         {
             get => _configuration;
@@ -298,6 +301,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private AssembledBuilderBindableModel _model;
+
         public AssembledBuilderBindableModel Model
         {
             get => _model;

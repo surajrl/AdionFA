@@ -4,7 +4,7 @@ using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Core.Data.Persistence;
 using AdionFA.Infrastructure.Core.Data.Repositories;
 using AdionFA.Infrastructure.Enums;
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using ControlzEx.Controls;

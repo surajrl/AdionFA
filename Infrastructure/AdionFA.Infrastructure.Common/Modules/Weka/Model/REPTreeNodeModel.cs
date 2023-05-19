@@ -4,8 +4,6 @@ namespace AdionFA.Infrastructure.Common.Weka.Model
 {
     public class REPTreeNodeModel
     {
-        public REPTreeNodeModel Tree { get; set; }
-
         // Weka
 
         public List<string> Node { get; set; }

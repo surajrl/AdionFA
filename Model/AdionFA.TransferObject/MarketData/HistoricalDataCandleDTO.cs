@@ -5,9 +5,9 @@ namespace AdionFA.TransferObject.MarketData
 {
     public class HistoricalDataCandleDTO : EntityBaseDTO
     {
-        public int HistoricalDataDetailId { get; set; }
+        public int HistoricalDataCandlelId { get; set; }
 
-        public int MarketDataId { get; set; }
+        public int HistoricalDataId { get; set; }
         public HistoricalDataDTO HistoricalData { get; set; }
 
         public DateTime StartDate { get; set; }
@@ -17,5 +17,6 @@ namespace AdionFA.TransferObject.MarketData
         public double Low { get; set; }
         public double Close { get; set; }
         public double Volume { get; set; }
+        public double Spread { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.Base;
 
-using AdionFA.UI.Station.Infrastructure.Model.Market;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.AutoMapper;

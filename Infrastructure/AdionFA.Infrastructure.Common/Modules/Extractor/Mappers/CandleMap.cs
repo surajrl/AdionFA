@@ -18,6 +18,7 @@ namespace AdionFA.Infrastructure.Common.Mappers
             Map(m => m.Low).Index(4);
             Map(m => m.Close).Index(5);
             Map(m => m.Volume).Index(6);
+            Map(m => m.Spread).Index(7);
         }
 
         public class CandleValueTransform<T> : DefaultTypeConverter
@@ -31,6 +32,7 @@ namespace AdionFA.Infrastructure.Common.Mappers
                         case 0:
                             string dtFormat = text.Replace('.', '/');
                             return Convert.ToDateTime(dtFormat);
+
                         case 1:
                             string timeFormat = text.Split(':')[0];
                             long.TryParse(timeFormat, out long time);

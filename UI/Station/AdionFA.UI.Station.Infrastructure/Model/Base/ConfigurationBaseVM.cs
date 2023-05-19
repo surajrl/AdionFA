@@ -1,4 +1,4 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.Market;
+﻿using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using Prism.Unity;
 using System;
 
@@ -9,6 +9,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         // Extractor
 
         private int _variation;
+
         public int Variation
         {
             get => _variation;
@@ -18,6 +19,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         // Period
 
         private DateTime? fromDateOS;
+
         public DateTime? FromDateOS
         {
             get => fromDateOS;
@@ -25,6 +27,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private DateTime? toDateOS;
+
         public DateTime? ToDateOS
         {
             get => toDateOS;
@@ -32,6 +35,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private DateTime? fromDateIS;
+
         public DateTime? FromDateIS
         {
             get => fromDateIS;
@@ -39,6 +43,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private DateTime? toDateIS;
+
         public DateTime? ToDateIS
         {
             get => toDateIS;
@@ -46,6 +51,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private bool withoutSchedule;
+
         public bool WithoutSchedule
         {
             get => withoutSchedule;
@@ -54,6 +60,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
 
         // Symbol
         private int _symbolId;
+
         public int SymbolId
         {
             get => _symbolId;
@@ -61,6 +68,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private SymbolVM _symbol;
+
         public SymbolVM Symbol
         {
             get => _symbol;
@@ -69,6 +77,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
 
         // Timeframe
         private int _timeframeId;
+
         public int TimeframeId
         {
             get => _timeframeId;
@@ -76,6 +85,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private TimeframeVM _timeframe;
+
         public TimeframeVM Timeframe
         {
             get => _timeframe;
@@ -85,6 +95,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         // CurrencySpreadId
 
         private int _currencySpreadId;
+
         public int CurrencySpreadId
         {
             get => _currencySpreadId;
@@ -102,6 +113,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         // Weka
 
         private int _totalInstanceWeka;
+
         public int TotalInstanceWeka
         {
             get => _totalInstanceWeka;
@@ -191,6 +203,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private int minAdjustMinTransactionCountIS;
+
         public int MinAdjustMinTransactionCountIS
         {
             get => minAdjustMinTransactionCountIS;
@@ -198,6 +211,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private decimal minPercentSuccessIS;
+
         public decimal MinPercentSuccessIS
         {
             get => minPercentSuccessIS;
@@ -205,6 +219,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private decimal minAdjustMinPercentSuccessIS;
+
         public decimal MinAdjustMinPercentSuccessIS
         {
             get => minAdjustMinPercentSuccessIS;
@@ -379,8 +394,8 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
 
         #endregion MaxAdjustConfig
 
-
         private bool asynchronousMode;
+
         public bool AsynchronousMode
         {
             get => asynchronousMode;
@@ -390,13 +405,15 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         // Assembled Builder
 
         private int transactionTarget;
+
         public int TransactionTarget
         {
             get => transactionTarget;
             set => SetProperty(ref transactionTarget, value);
         }
-        
+
         private decimal minAssemblyPercent;
+
         public decimal MinAssemblyPercent
         {
             get => minAssemblyPercent;
@@ -404,6 +421,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private int totalAssemblyIterations;
+
         public int TotalAssemblyIterations
         {
             get => totalAssemblyIterations;

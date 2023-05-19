@@ -13,8 +13,6 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Contracts
     {
         bool IsTrade(REPTreeNodeModel node, IList<Candle> candleHistory, Candle currentCandle);
 
-        ZmqMsgRequestModel OpenOperation(OrderTypeEnum buyOrSell = OrderTypeEnum.Buy);
-
-        ZmqMsgRequestModel CloseAllOperation();
+        ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType);
     }
 }
