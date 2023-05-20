@@ -306,6 +306,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                             High = candlesFromTo[idx].Open,
                             Low = candlesFromTo[idx].Open,
                             Close = candlesFromTo[idx].Open,
+
+                            Spread = candlesFromTo[idx].Spread
                         };
                         var nextCandle = candlesFromTo[idx + 1];
 
@@ -387,11 +389,11 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                             var isWinnerTrade = false;
                             if (backtest.Label.ToLower() == "up")
                             {
-                                isWinnerTrade = currentCandle.Open < nextCandle.Open;
+                                isWinnerTrade = (currentCandle.Open * 100000 + currentCandle.Spread) < (nextCandle.Open * 100000 - nextCandle.Spread);
                             }
                             else
                             {
-                                isWinnerTrade = currentCandle.Open > nextCandle.Open;
+                                isWinnerTrade = (currentCandle.Open * 100000 - currentCandle.Spread) > (nextCandle.Open * 100000 + nextCandle.Spread);
                             }
 
                             if (isWinnerTrade)

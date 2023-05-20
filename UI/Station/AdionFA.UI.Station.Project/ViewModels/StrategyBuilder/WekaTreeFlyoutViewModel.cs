@@ -1,12 +1,8 @@
-﻿using AdionFA.UI.Station.Project.Model.StrategyBuilder;
-using Prism.Commands;
+﻿using Prism.Commands;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
-using AutoMapper;
-using AdionFA.UI.Station.Project.Services;
 using Prism.Ioc;
-using AdionFA.UI.Station.Project.AutoMapper;
 using System;
 using System.Diagnostics;
 using AdionFA.UI.Station.Infrastructure.Base;
@@ -36,6 +32,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         }
 
         private ICommand NodeTestInMetatraderCommand { get; set; }
+
         public void AddNode(REPTreeNodeVM node)
         {
             node.HasTestInMetaTrader = true;
@@ -63,6 +60,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                 NodeOutput = new ObservableCollection<REPTreeNodeVM>(projection);
             }
         }
+
         public async void PopulateViewModel()
         {
             try
@@ -80,6 +78,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         // Bindable Model
 
         private ConfigurationBaseVM _configuration;
+
         public ConfigurationBaseVM Configuration
         {
             get => _configuration;
@@ -87,6 +86,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         }
 
         private int _seed;
+
         public int Seed
         {
             get => _seed;
@@ -94,6 +94,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         }
 
         private ObservableCollection<REPTreeNodeVM> _nodeOutput;
+
         public ObservableCollection<REPTreeNodeVM> NodeOutput
         {
             get => _nodeOutput;

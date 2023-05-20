@@ -44,10 +44,6 @@ using DynamicData;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Services;
 using AdionFA.Infrastructure.Common.Managements;
-using System.Net.WebSockets;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
 using ReactiveUI;
 using AdionFA.Infrastructure.Common.Base;
 
@@ -149,11 +145,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     Date = hdCandle.StartDate,
                     Time = hdCandle.StartTime,
+
                     Open = hdCandle.Open,
                     High = hdCandle.High,
                     Low = hdCandle.Low,
                     Close = hdCandle.Close,
+
                     Volume = hdCandle.Volume,
+                    Spread = hdCandle.Spread,
+
                     Label = hdCandle.Close > hdCandle.Open ? "UP" : "DOWN"
                 })
                 .OrderBy(candle => candle.Date)
