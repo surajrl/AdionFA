@@ -171,14 +171,6 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
             set => SetProperty(ref _historicalData, value);
         }
 
-        private bool _hasTestInMetatrader;
-
-        public bool HasTestInMetaTrader
-        {
-            get => _hasTestInMetatrader;
-            set => SetProperty(ref _hasTestInMetatrader, value);
-        }
-
         public bool IsBacktestCompleted { get; set; }
 
         public string Name => NodeName();

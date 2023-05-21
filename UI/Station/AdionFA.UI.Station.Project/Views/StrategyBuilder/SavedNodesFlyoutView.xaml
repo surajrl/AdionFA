@@ -1,4 +1,4 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.MetaTrader.NodeMetaTraderFlyoutView"
+﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.StrategyBuilder.SavedNodesFlyoutView"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -9,11 +9,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:AdionFA.UI.Station.Project.MetaTrader"
+             xmlns:local="clr-namespace:AdionFA.UI.Station.Project.StrategyBuilder"
              mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True"
              Position="Right" Theme="Adapt" Width="1200" CloseButtonIsCancel="True"
-             Header="{x:Static commonResources:CommonResources.NodesUnderTest}" IsModal="True">
+             Header="Saved Nodes" IsModal="True">
 
     <metro:Flyout.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
@@ -21,17 +21,17 @@
     </metro:Flyout.Resources>
 
     <Grid>
-        <Expander Margin="0"
-                  Header="{x:Static commonResources:CommonResources.Tree}"
-                  IsExpanded="True">
-            <DataGrid
-                IsReadOnly="True"
-                AutoGenerateColumns="False"
-                RowHeaderWidth="0"
-                ItemsSource="{Binding Nodes}">
+        <!--#region General Expander-->
+        <Expander Margin="0" Header="Nodes" IsExpanded="True">
+            <DataGrid IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      RowHeaderWidth="0"
+                      ItemsSource="{Binding SavedNodes}">
+
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="White" />
                 </DataGrid.Resources>
+
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="BorderThickness" Value="0" />
@@ -39,6 +39,7 @@
                         <Setter Property="Foreground" Value="Black" />
                     </Style>
                 </DataGrid.CellStyle>
+
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="BorderThickness" Value="0" />
@@ -58,9 +59,11 @@
                     <DataGridTemplateColumn Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
+                                <!--#region Single Node Expander-->
                                 <Expander Style="{x:Null}">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
+
                                             <StackPanel.Resources>
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
@@ -75,7 +78,6 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </StackPanel.Resources>
-
                                             <TextBlock Margin="{StaticResource ColumnMargin}">
                                                 <Run Text="{Binding Label}" FontWeight="SemiBold" />
                                             </TextBlock>
@@ -87,6 +89,7 @@
                                             </TextBlock>
                                         </StackPanel>
                                     </Expander.Header>
+
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
@@ -100,8 +103,11 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
 
-                                        <ListView Grid.Column="0" ItemsSource="{Binding Node}" Padding="20 1" />
+                                        <!--#region Node Output-->
+                                        <ListView ItemsSource="{Binding Node}" Padding="20 1" />
+                                        <!--#endregion-->
 
+                                        <!--#region Tree Details-->
                                         <StackPanel Grid.Column="1">
                                             <Grid>
                                                 <Grid.RowDefinitions>
@@ -114,40 +120,58 @@
                                                     <ColumnDefinition />
                                                     <ColumnDefinition />
                                                 </Grid.ColumnDefinitions>
+
+                                                <!--#region Total UP-->
                                                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalUP}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding TotalUP, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Total DOWN-->
                                                 <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding TotalDOWN, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Total-->
                                                 <TextBlock Grid.Row="0" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.NTotals}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding Total, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
 
+                                                <!--#region Ratio UP-->
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioUP}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding RatioUP, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Ratio DOWN-->
                                                 <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding RatioDOWN, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Ratio Max-->
                                                 <TextBlock Grid.Row="2" Grid.Column="2" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioMax}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding RatioMax, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
                                             </Grid>
                                         </StackPanel>
 
+                                        <!--#region IS and OS Details-->
                                         <StackPanel Grid.Column="2">
                                             <Grid>
                                                 <Grid.RowDefinitions>
@@ -161,37 +185,60 @@
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition />
                                                     <ColumnDefinition />
                                                 </Grid.ColumnDefinitions>
 
-                                                <!--#region IS-->
+                                                <!--#region Historical Data-->
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.HistoricalData}" FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding HistoricalData , StringFormat=N2, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+
+                                                <Separator Grid.Row="1" Grid.ColumnSpan="2" Margin="10" />
+
+                                                <!--#region Total Opportunity IS-->
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding TotalOpportunityIs}" />
+                                                    <Run Text="{Binding TotalOpportunityIs, Mode=OneWay}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Total Trades IS-->
                                                 <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding TotalTradesIs}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Winning Trades IS-->
                                                 <TextBlock Grid.Row="4" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding WinningTradesIs}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Losing Trades IS-->
                                                 <TextBlock Grid.Row="5" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding LosingTradesIs}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Percent Success IS-->
                                                 <TextBlock Grid.Row="6" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold" />
@@ -199,6 +246,9 @@
                                                     <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Progressiveness IS-->
                                                 <TextBlock Grid.Row="7" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold" />
@@ -206,33 +256,45 @@
                                                     <Run Text="{Binding ProgressivenessIs, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
-                                                <!--#endregion IS-->
+                                                <!--#endregion-->
 
-                                                <!--#region OS-->
+                                                <!--#region Total Opportunity OS-->
                                                 <TextBlock Grid.Row="2" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Opportunities}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding TotalOpportunityOs}" />
+                                                    <Run Text="{Binding TotalOpportunityOs, Mode=OneWay}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Total Trades OS-->
                                                 <TextBlock Grid.Row="3" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Transactions}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding TotalTradesOs}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Winning Trades OS-->
                                                 <TextBlock Grid.Row="4" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalWinners}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding WinningTradesOs}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Losing Trades OS-->
                                                 <TextBlock Grid.Row="5" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalLosers}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding LosingTradesOs}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Percent Success OS-->
                                                 <TextBlock Grid.Row="6" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold" />
@@ -240,6 +302,9 @@
                                                     <Run Text="{Binding PercentSuccessOs, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Progressiveness OS-->
                                                 <TextBlock Grid.Row="7" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold" />
@@ -247,35 +312,52 @@
                                                     <Run Text="{Binding ProgressivenessOs, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
-                                                <!--#endregion OS-->
+                                                <!--#endregion-->
 
                                                 <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="10" />
 
+                                                <!--#region VariationPercent-->
                                                 <TextBlock Grid.Row="9" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding VariationPercent , StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding VariationPercent, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
-                                                <TextBlock Grid.Row="10" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <!--#endregion-->
+
+                                                <!--#region Progressiveness-->
+                                                <TextBlock Grid.Row="9" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Winning Strategy-->
+                                                <TextBlock Grid.Row="11" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategy}" FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding WinningStrategy, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
                                             </Grid>
                                         </StackPanel>
 
-                                        <StackPanel Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Right">
-                                            <Button  x:Name="removeNodeFromMetaTraderBtn"
-                                                     Width="150"
-                                                     Margin="{StaticResource ControlMargin}">
+                                        <!--#region Delete Node & Test Node In MetaTrader Buttons-->
+                                        <StackPanel Grid.ColumnSpan="3"
+                                                    Grid.Row="1"
+                                                    Orientation="Horizontal"
+                                                    HorizontalAlignment="Right">
+                                            <!--#region Delete Node Button-->
+                                            <Button x:Name="deleteNodeBtn" Width="150"
+                                                    Margin="{StaticResource ControlMargin}">
                                                 <Button.Content>
-                                                    <TextBlock Text="{x:Static commonResources:CommonResources.OffTest}" />
+                                                    <TextBlock Text="Delete Node" />
                                                 </Button.Content>
                                                 <behaviors:Interaction.Triggers>
-                                                    <behaviors:EventTrigger SourceName="removeNodeFromMetaTraderBtn" EventName="Click">
-                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.RemoveNodeFromMetaTrader}">
+                                                    <behaviors:EventTrigger SourceName="deleteNodeBtn" EventName="Click">
+                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.DeleteNodeCommand}">
                                                             <behaviors:InvokeCommandAction.CommandParameter>
                                                                 <Binding Path="." />
                                                             </behaviors:InvokeCommandAction.CommandParameter>
@@ -283,14 +365,37 @@
                                                     </behaviors:EventTrigger>
                                                 </behaviors:Interaction.Triggers>
                                             </Button>
+                                            <!--#endregion-->
+
+                                            <!--#region Test Node In MetaTrader Button-->
+                                            <Button x:Name="testInMetaTraderBtn"
+                                                    Width="150"
+                                                    Margin="{StaticResource ControlMargin}">
+                                                <Button.Content>
+                                                    <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}" />
+                                                </Button.Content>
+                                                <behaviors:Interaction.Triggers>
+                                                    <behaviors:EventTrigger SourceName="testInMetaTraderBtn" EventName="Click">
+                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.AddNodeToMetaTrader}">
+                                                            <behaviors:InvokeCommandAction.CommandParameter>
+                                                                <Binding Path="." />
+                                                            </behaviors:InvokeCommandAction.CommandParameter>
+                                                        </behaviors:InvokeCommandAction>
+                                                    </behaviors:EventTrigger>
+                                                </behaviors:Interaction.Triggers>
+                                            </Button>
+                                            <!--#endregion-->
                                         </StackPanel>
+                                        <!--#endregion-->
                                     </Grid>
                                 </Expander>
+                                <!--#endregion-->
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Expander>
+        <!--#endregion-->
     </Grid>
 </metro:Flyout>

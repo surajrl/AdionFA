@@ -34,7 +34,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            applicationCommands.LoadHistoricalData.RegisterCommand(HistoricalDataFilterCommand);
+            applicationCommands.LoadHistoricalDataCommand.RegisterCommand(HistoricalDataFilterCommand);
         }
 
         private ICommand FlyoutCommand { get; set; }

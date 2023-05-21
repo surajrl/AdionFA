@@ -387,13 +387,14 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                             backtest.TotalTrades++;
 
                             var isWinnerTrade = false;
+                            var spread = currentCandle.Spread * 0.00001;
                             if (backtest.Label.ToLower() == "up")
                             {
-                                isWinnerTrade = (currentCandle.Open * 100000 + currentCandle.Spread) < (nextCandle.Open * 100000 - nextCandle.Spread);
+                                isWinnerTrade = (currentCandle.Open + spread) < nextCandle.Open;
                             }
                             else
                             {
-                                isWinnerTrade = (currentCandle.Open * 100000 - currentCandle.Spread) > (nextCandle.Open * 100000 + nextCandle.Spread);
+                                isWinnerTrade = currentCandle.Open > (nextCandle.Open + spread);
                             }
 
                             if (isWinnerTrade)

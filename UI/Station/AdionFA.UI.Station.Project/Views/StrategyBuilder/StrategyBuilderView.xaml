@@ -370,9 +370,10 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -395,7 +396,7 @@
                         <TextBlock Grid.Row="0"
                                    Grid.Column="1"
                                    Margin="0 5 10 5">
-                            <Run Text="{Binding AllNodes.Count, Mode=OneWay}" />
+                            <Run Text="{Binding CorrelationNodes.Count, Mode=OneWay}" />
                         </TextBlock>
                         <!--#endregion-->
 
@@ -479,9 +480,32 @@
                     <!--#endregion-->
                 </StackPanel>
 
+                <!--#region Saved Nodes Button-->
+                <Button x:Name="savedNodesBtn"
+                        Grid.Column="2"
+                        Width="100" Height="40"
+                        Margin="10 0 0 0">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconFontAwesome Kind="DatabaseSolid" Width="14" />
+                        <Label Content="Saved Nodes" FontSize="11" />
+                    </StackPanel>
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger SourceName="savedNodesBtn" EventName="Click">
+                            <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                <behaviors:InvokeCommandAction.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSavedNodes}" />
+                                    </MultiBinding>
+                                </behaviors:InvokeCommandAction.CommandParameter>
+                            </behaviors:InvokeCommandAction>
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </Button>
+                <!--#endregion-->
+
                 <!--#region Correlation Detail Button-->
                 <Button x:Name="correlationDetailBtn"
-                        Grid.Column="2"
+                        Grid.Column="3"
                         Width="160" Height="40"
                         Margin="10 0 0 0"
                         IsEnabled="{Binding IsCorrelationDetail}">
@@ -495,7 +519,7 @@
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                         <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}" />
-                                        <Binding Path="AllNodes" />
+                                        <Binding Path="CorrelationNodes" />
                                     </MultiBinding>
                                 </behaviors:InvokeCommandAction.CommandParameter>
                             </behaviors:InvokeCommandAction>
@@ -504,9 +528,9 @@
                 </Button>
                 <!--#endregion-->
 
-                <!--#region iterationsDetailBtn-->
-                <Button x:Name="iterationsDetailBtn"
-                        Grid.Column="3"
+                <!--#region Configuration Button-->
+                <Button x:Name="configurationBtn"
+                        Grid.Column="4"
                         Width="160" Height="40"
                         Margin="10 0 0 0"
                         IsEnabled="{Binding Configuration.AutoAdjustConfig}">
@@ -515,7 +539,7 @@
                         <Label Content="{x:Static commonResources:CommonResources.ConfigurationSettings}" FontSize="11" />
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="iterationsDetailBtn" EventName="Click">
+                        <behaviors:EventTrigger SourceName="configurationBtn" EventName="Click">
                             <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -531,7 +555,7 @@
 
                 <!--#region Refresh Button-->
                 <Button x:Name="refreshStrategyBuilderBtn"
-                        Grid.Column="4"
+                        Grid.Column="5"
                         Width="80" Height="40"
                         Margin="10 0 0 0"
                         IsEnabled="{Binding CanExecute}">
@@ -546,7 +570,7 @@
                         </behaviors:EventTrigger>
                     </behaviors:Interaction.Triggers>
                 </Button>
-                <metro:ProgressRing Grid.Column="4" IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <metro:ProgressRing Grid.Column="5" IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <!--#endregion-->
             </Grid>
         </metro:MetroHeader>

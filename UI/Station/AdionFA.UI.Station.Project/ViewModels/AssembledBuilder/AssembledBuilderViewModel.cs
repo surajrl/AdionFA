@@ -33,15 +33,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
 {
     public class AssembledBuilderViewModel : MenuItemViewModel
     {
-        public readonly IMapper Mapper;
+        public readonly IMapper _mapper;
 
         private readonly IAssembledBuilderService _assembledBuilderService;
         private readonly IProjectServiceAgent _projectService;
         private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IEventAggregator _eventAggregator;
 
-        private ProjectVM Project;
-        private AssembledBuilderModel AssembledBuilderModel;
+        private ProjectVM _project;
+        private AssembledBuilderModel _asembledBuilderModel;
 
         public AssembledBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
@@ -54,15 +54,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
 
-            ContainerLocator.Current.Resolve<IAppProjectCommands>()
-                .SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
+            ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            Mapper = new MapperConfiguration(mc =>
+            _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
 
-            Model = new AssembledBuilderBindableModel();
+            Model = new();
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
@@ -80,7 +79,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }, (s) => true); //item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, (s) => true);
 
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
@@ -116,11 +115,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 await Task.Factory.StartNew(() =>
                 {
-                    var config = Mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
+                    var config = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
 
                     // Extractor
 
-                    _assembledBuilderService.ExtractorExecute(ProcessArgs.ProjectName, AssembledBuilderModel, candles, config);
+                    _assembledBuilderService.ExtractorExecute(ProcessArgs.ProjectName, _asembledBuilderModel, candles, config);
 
                     // Strategy
 
@@ -188,8 +187,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                Project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
-                Configuration = Project?.ProjectConfigurations.FirstOrDefault();
+                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
+                Configuration = _project?.ProjectConfigurations.FirstOrDefault();
 
                 if (!IsTransactionActive)
                 {
@@ -201,7 +200,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Model.DOWNNodes.Clear();
                     Model.DOWNNodes.Add(MapToTreeObservableNode(model.DOWNNode, true, isBacktestExpanded: false));
 
-                    AssembledBuilderModel = model;
+                    _asembledBuilderModel = model;
                 }
             }
             catch (Exception ex)

@@ -12,40 +12,33 @@ using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using AdionFA.Infrastructure.Common.Helpers;
+using AdionFA.Infrastructure.Common.Managements;
+using AutoMapper;
+using AdionFA.UI.Station.Project.AutoMapper;
+using AdionFA.Infrastructure.Common.Weka.Model;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
     public class WekaTreeFlyoutViewModel : ViewModelBase
     {
-        private readonly IProjectServiceAgent _projectService;
-        private ProjectVM Project;
+        private readonly IMapper _mapper;
 
         public WekaTreeFlyoutViewModel(IApplicationCommands applicationCommands)
         {
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
+            applicationCommands.SaveNodeCommand.RegisterCommand(SaveNodeCommand);
 
-            NodeTestInMetatraderCommand = new DelegateCommand<REPTreeNodeVM>(AddNode);
-            applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(NodeTestInMetatraderCommand);
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingAppProjectProfile());
+            }).CreateMapper();
         }
 
-        private ICommand NodeTestInMetatraderCommand { get; set; }
-
-        public void AddNode(REPTreeNodeVM node)
-        {
-            node.HasTestInMetaTrader = true;
-        }
-
-        private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleWekaTree))
             {
-                PopulateViewModel();
-
                 var projection = ((ObservableCollection<REPTreeNodeVM>)flyoutModel.Model)
                     .Where(m => m.Winner)
                     .OrderByDescending(n => n.Winner)
@@ -57,48 +50,24 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                     m.Node = new ObservableCollection<string>(m.Node.OrderByDescending(n => n).ToList());
                 });
 
-                NodeOutput = new ObservableCollection<REPTreeNodeVM>(projection);
+                Nodes = new ObservableCollection<REPTreeNodeVM>(projection);
             }
-        }
+        });
 
-        public async void PopulateViewModel()
+        public ICommand SaveNodeCommand => new DelegateCommand<REPTreeNodeVM>(node =>
         {
-            try
-            {
-                Project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
-                Configuration = Project?.ProjectConfigurations.FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
-        }
+            var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
+            SerializerHelper.XMLSerializeObject(_mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node), string.Format(@"{0}\{1}.xml", directory, RegexHelper.GetValidFileName(node.NodeName(), "_")));
+        });
 
-        // Bindable Model
+        // View Bindings
 
-        private ConfigurationBaseVM _configuration;
+        private ObservableCollection<REPTreeNodeVM> _nodes;
 
-        public ConfigurationBaseVM Configuration
+        public ObservableCollection<REPTreeNodeVM> Nodes
         {
-            get => _configuration;
-            set => SetProperty(ref _configuration, value);
-        }
-
-        private int _seed;
-
-        public int Seed
-        {
-            get => _seed;
-            set => SetProperty(ref _seed, value);
-        }
-
-        private ObservableCollection<REPTreeNodeVM> _nodeOutput;
-
-        public ObservableCollection<REPTreeNodeVM> NodeOutput
-        {
-            get => _nodeOutput;
-            set => SetProperty(ref _nodeOutput, value);
+            get => _nodes;
+            set => SetProperty(ref _nodes, value);
         }
     }
 }

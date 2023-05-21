@@ -20,126 +20,37 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
 {
     public class NodeMetaTraderFlyoutViewModel : ViewModelBase
     {
-        private readonly IProjectServiceAgent _projectService;
-
-        private ProjectVM Project;
-
         public NodeMetaTraderFlyoutViewModel(IApplicationCommands applicationCommands)
         {
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
+            applicationCommands.AddNodeToMetaTrader.RegisterCommand(AddNodeToMetaTrader);
+            applicationCommands.RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTrader);
 
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
-            applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
-
-            AddOrRemoveNodeForTestCommand = new DelegateCommand<REPTreeNodeVM>(AddOrRemoveNodeForTest);
-            applicationCommands.NodeTestInMetatraderCommand.RegisterCommand(AddOrRemoveNodeForTestCommand);
+            Nodes = new();
         }
 
-        private ICommand FlyoutCommand { get; set; }
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeVM>(node =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleNodeMetaTrader))
+            if (Nodes.Where(n => n.Name == node.Name).Any())
             {
-                PopulateViewModel();
-
-                if ((NodeOutput?.Count ?? 0) == 0)
-                    NodeOutput = new ObservableCollection<REPTreeNodeVM>();
-
-                // TESTING NODE
-                //var nodes = new ObservableCollection<string>
-                //    {
-                //        "STOCHRSI_3_27_9_12_1_1 < 96.50599",
-                //        "|   STOCHRSI_3_27_9_12_1_1 >= 3.20718",
-                //        "|   |   STOCH_7_5_5_13_7 >= 48.84577",
-                //        "|   |   |   AROON_12_1 >= 87.5",
-                //        "|   |   |   |   STOCHF_37_14_1_1 < 92.31229",
-                //        "|   |   |   |   |   RSI_3_22 >= 45.34515",
-                //    };
-
-                //NodeOutput.Add(new REPTreeNodeVM
-                //{
-                //    Node = nodes,
-                //    TotalUP = 82,
-                //    TotalDOWN = 400,
-                //    RatioUP = 0.20,
-                //    RatioDOWN = 4.88,
-                //    RatioMax = 4.88,
-                //    Label = "DOWN",
-                //    Total = 482,
-                //    Winner = true,
-                //    TotalTradesIs = 228,
-                //    WinningTradesIs = 125,
-                //    LosingTradesIs = 103,
-                //    TotalOpportunityIs = 7811,
-                //    PercentSuccessIs = 54,
-                //    ProgressivenessIs = 2,
-                //    TotalTradesOs = 47,
-                //    WinningTradesOs = 29,
-                //    LosingTradesOs = 18,
-                //    TotalOpportunityOs = 1559,
-                //    PercentSuccessOs = 61,
-                //    ProgressivenessOs = 3,
-                //    WinningStrategy = true,
-                //    HistoricalData = "Forex.EURUSD.H4.05-05-2003.22-12-2022",
-                //    HasTestInMetaTrader = true
-                //});
+                return;
             }
-        }
 
-        private ICommand AddOrRemoveNodeForTestCommand { get; set; }
-        public void AddOrRemoveNodeForTest(REPTreeNodeVM node)
+            Nodes.Add(node);
+        });
+
+        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<REPTreeNodeVM>(node =>
         {
-            try
-            {
-                NodeOutput ??= new ObservableCollection<REPTreeNodeVM>();
+            Nodes.Remove(node);
+        });
 
-                foreach (var n in NodeOutput)
-                {
-                    if (n.Node == node.Node)
-                    {
-                        NodeOutput.Remove(node);
-                        node.HasTestInMetaTrader = false;
-                        return;
-                    }
-                }
+        // View Bindings
 
-                NodeOutput.Add(node);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
-        }
+        private ObservableCollection<REPTreeNodeVM> _nodes;
 
-        public async void PopulateViewModel()
+        public ObservableCollection<REPTreeNodeVM> Nodes
         {
-            try
-            {
-                Project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
-                Configuration = Project?.ProjectConfigurations.FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
-        }
-
-        // Bindable Model
-
-        private ConfigurationBaseVM _configuration;
-        public ConfigurationBaseVM Configuration
-        {
-            get => _configuration;
-            set => SetProperty(ref _configuration, value);
-        }
-
-        private ObservableCollection<REPTreeNodeVM> _nodeOutput;
-        public ObservableCollection<REPTreeNodeVM> NodeOutput
-        {
-            get => _nodeOutput;
-            set => SetProperty(ref _nodeOutput, value);
+            get => _nodes;
+            set => SetProperty(ref _nodes, value);
         }
     }
 }

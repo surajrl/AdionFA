@@ -24,13 +24,14 @@ namespace AdionFA.UI.Station.Project
             {
                 SetRegionManager(regionManager, this.flyoutsControlRegion, FlyoutRegions.FlyoutRegion);
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(WekaTreeFlyoutView));
+                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(SavedNodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ConfigurationFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(CorrelationFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodeMetaTraderFlyoutView));
             }
         }
 
-        void SetRegionManager(IRegionManager regionManager, DependencyObject regionTarget, string regionName)
+        private void SetRegionManager(IRegionManager regionManager, DependencyObject regionTarget, string regionName)
         {
             RegionManager.SetRegionName(regionTarget, regionName);
             RegionManager.SetRegionManager(regionTarget, regionManager);

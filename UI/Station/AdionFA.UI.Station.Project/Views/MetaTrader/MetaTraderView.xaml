@@ -242,13 +242,13 @@
                                 <GridViewColumn Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding DateFormat}" Header="{x:Static commonResources:CommonResources.Date}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth2, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Open}" Header="{x:Static commonResources:CommonResources.Open}" />
+                                                DisplayMemberBinding="{Binding Open, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Open}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth3, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding High}" Header="{x:Static commonResources:CommonResources.High}" />
+                                                DisplayMemberBinding="{Binding High, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.High}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth4, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Low}" Header="{x:Static commonResources:CommonResources.Low}" />
+                                                DisplayMemberBinding="{Binding Low, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Low}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth5, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Close}" Header="{x:Static commonResources:CommonResources.Close}" />
+                                                DisplayMemberBinding="{Binding Close, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Close}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth6, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Volume}" Header="{x:Static commonResources:CommonResources.Volume}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth7, Path=ActualWidth}"
@@ -284,7 +284,7 @@
                                 <GridViewColumn Width="{Binding ElementName=dummywidth12, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding PositionTypeName}" Header="{x:Static commonResources:CommonResources.PositionType}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth13, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Volume}" Header="{x:Static commonResources:CommonResources.Volume}" />
+                                                DisplayMemberBinding="{Binding Volume, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Volume}" />
                             </GridView>
                         </ListView.View>
                     </ListView>

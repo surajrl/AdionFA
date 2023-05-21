@@ -78,7 +78,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
-            ContainerLocator.Current.Resolve<IApplicationCommands>().NodeTestInMetatraderCommand.RegisterCommand(AddNodeForTestCommand);
+            ContainerLocator.Current.Resolve<IApplicationCommands>().AddNodeToMetaTrader.RegisterCommand(AddNodeToMetaTrader);
+            ContainerLocator.Current.Resolve<IApplicationCommands>().RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTrader);
 
             _mapper = new MapperConfiguration(mc =>
             {
@@ -105,11 +106,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 throw;
             }
-        }, (s) => true);
+        });
 
         public DelegateCommand StopProcessBtnCommand => new DelegateCommand(() =>
-            _cancellationTokenSrc.Cancel(),
-            () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        {
+            _cancellationTokenSrc.Cancel();
+        }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
@@ -299,39 +301,30 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        public DelegateCommand CleanMessageInputCommand => new DelegateCommand(() =>
+        public ICommand CleanMessageInputCommand => new DelegateCommand(() =>
         {
             MessageInput?.Clear();
             MessagesFromCurrentPeriod = 0;
         }).ObservesCanExecute(() => MessageInputAny);
 
-        public DelegateCommand CleanMessageOutputCommand => new DelegateCommand(() =>
+        public ICommand CleanMessageOutputCommand => new DelegateCommand(() =>
         {
             MessageOutput?.Clear();
         }).ObservesCanExecute(() => MessageOutputAny);
 
-        private ICommand AddNodeForTestCommand => new DelegateCommand<REPTreeNodeVM>(node =>
+        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeVM>(node =>
         {
-            try
+            if (Nodes.Where(n => n.Name == node.Name).Any())
             {
-                Nodes ??= new ObservableCollection<REPTreeNodeVM>();
-
-                foreach (var n in Nodes)
-                {
-                    if (n.Node == node.Node)
-                    {
-                        Nodes.Remove(node);
-                        return;
-                    }
-                }
-
-                Nodes.Add(node);
+                return;
             }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+
+            Nodes.Add(node);
+        });
+
+        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<REPTreeNodeVM>(node =>
+        {
+            Nodes.Remove(node);
         });
 
         public ICommand SaveEACommand => new DelegateCommand(async () =>
@@ -345,6 +338,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     MessageHelper.ShowMessages(this,
                         "MetaTrader - Expert Advisor",
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+
                     return;
                 }
 
@@ -359,6 +353,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         });
@@ -367,11 +362,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                // Find the configuration of the project
                 _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
                 Configuration = _project?.ProjectConfigurations.FirstOrDefault();
 
-                // Find the EA of the project
                 ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(_project.ProjectId);
                 ExpertAdvisor ??= new();
 
@@ -419,6 +412,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }
@@ -447,14 +441,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             get => _configuration;
             set => SetProperty(ref _configuration, value);
-        }
-
-        private int _maximumMessagesRequired;
-
-        public int MaximumMessagesRequired
-        {
-            get => _maximumMessagesRequired;
-            set => SetProperty(ref _maximumMessagesRequired, value);
         }
 
         private int _messagesFromCurrentPeriod;

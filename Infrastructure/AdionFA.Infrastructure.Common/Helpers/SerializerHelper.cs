@@ -3,14 +3,19 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+
 /**https://stackoverflow.com/questions/6115721/how-to-save-restore-serializable-object-to-from-file**/
+
 namespace AdionFA.Infrastructure.Common.Helpers
 {
     public static class SerializerHelper
     {
         public static void XMLSerializeObject<T>(T serializableObject, string fileName)
         {
-            if (serializableObject == null) { return; }
+            if (serializableObject == null)
+            {
+                return;
+            }
 
             try
             {

@@ -142,7 +142,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                     if (result)
                     {
-                        ContainerLocator.Current.Resolve<IApplicationCommands>().LoadHistoricalData.Execute(null);
+                        ContainerLocator.Current.Resolve<IApplicationCommands>().LoadHistoricalDataCommand.Execute(null);
                     }
                 }
 

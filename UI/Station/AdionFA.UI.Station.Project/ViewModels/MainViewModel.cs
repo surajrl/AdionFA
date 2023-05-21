@@ -10,7 +10,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        #region Properties
+        // Properties
 
         private ObservableCollection<MenuItemViewModel> _menuItems;
         private ObservableCollection<MenuItemViewModel> _menuOptionItems;
@@ -19,8 +19,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private string projectStepName;
 
         private bool istransactionActive;
-
-        #endregion Properties
 
         protected readonly IProjectServiceAgent _projectService;
 
@@ -119,7 +117,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             };
         }
 
-        #region Bindable Model
+        // View Bindings
 
         public ObservableCollection<MenuItemViewModel> MenuItems
         {
@@ -147,10 +145,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public bool IsTransactionActive
         {
-            get { return istransactionActive; }
-            set { SetProperty(ref istransactionActive, value); }
+            get => istransactionActive;
+            set => SetProperty(ref istransactionActive, value);
         }
-
-        #endregion Bindable Model
     }
 }

@@ -4,68 +4,57 @@ namespace AdionFA.UI.Station.Infrastructure
 {
     public static class ApplicationCommands
     {
-        public static CompositeCommand LoadedProjectCommand = new CompositeCommand();
-        public static CompositeCommand StartProcessProjectCommand = new CompositeCommand();
-        public static CompositeCommand EndAllProcessProjectCommand = new CompositeCommand();
-        public static CompositeCommand ShowFlyoutCommand = new CompositeCommand();
-        public static CompositeCommand LoadProjectHierarchyCommand = new CompositeCommand();
-        public static CompositeCommand NodeTestInMetatraderCommand = new CompositeCommand();
-        public static CompositeCommand LoadHistoricalData = new CompositeCommand();
-        public static CompositeCommand PinnedProjectCommand = new CompositeCommand();
+        public static CompositeCommand LoadedProjectCommand = new();
+        public static CompositeCommand PinnedProjectCommand = new();
+
+        public static CompositeCommand StartProcessProjectCommand = new();
+        public static CompositeCommand EndAllProcessProjectCommand = new();
+
+        public static CompositeCommand ShowFlyoutCommand = new();
+        public static CompositeCommand LoadProjectHierarchyCommand = new();
+        public static CompositeCommand LoadHistoricalDataCommand = new();
+
+        public static CompositeCommand SaveNodeCommand = new();
+        public static CompositeCommand DeleteNodeCommand = new();
+        public static CompositeCommand AddNodeToMetaTrader = new();
+        public static CompositeCommand RemoveNodeFromMetaTrader = new();
     }
 
     public interface IApplicationCommands
     {
         CompositeCommand LoadedProjectCommand { get; }
+        CompositeCommand PinnedProjectCommand { get; }
+
         CompositeCommand StartProcessProjectCommand { get; }
         CompositeCommand EndAllProcessProjectCommand { get; }
+
         CompositeCommand ShowFlyoutCommand { get; }
+
         CompositeCommand LoadProjectHierarchyCommand { get; }
-        CompositeCommand NodeTestInMetatraderCommand { get;  }
-        CompositeCommand LoadHistoricalData { get; }
-        CompositeCommand PinnedProjectCommand { get; }
+        CompositeCommand LoadHistoricalDataCommand { get; }
+
+        CompositeCommand SaveNodeCommand { get; }
+        CompositeCommand DeleteNodeCommand { get; }
+        CompositeCommand AddNodeToMetaTrader { get; }
+        CompositeCommand RemoveNodeFromMetaTrader { get; }
     }
 
     public class ApplicationCommandsProxy : IApplicationCommands
     {
-        public CompositeCommand LoadedProjectCommand
-        {
-           get => ApplicationCommands.LoadedProjectCommand;
-        }
+        public CompositeCommand LoadedProjectCommand => ApplicationCommands.LoadedProjectCommand;
+        public CompositeCommand PinnedProjectCommand => ApplicationCommands.PinnedProjectCommand;
 
-        public CompositeCommand StartProcessProjectCommand
-        {
-            get => ApplicationCommands.StartProcessProjectCommand;
-        }
+        public CompositeCommand StartProcessProjectCommand => ApplicationCommands.StartProcessProjectCommand;
+        public CompositeCommand EndAllProcessProjectCommand => ApplicationCommands.EndAllProcessProjectCommand;
 
-        public CompositeCommand EndAllProcessProjectCommand
-        {
-            get => ApplicationCommands.EndAllProcessProjectCommand;
-        }
+        public CompositeCommand ShowFlyoutCommand => ApplicationCommands.ShowFlyoutCommand;
 
-        public CompositeCommand ShowFlyoutCommand
-        {
-            get => ApplicationCommands.ShowFlyoutCommand;
-        }
+        public CompositeCommand LoadProjectHierarchyCommand => ApplicationCommands.LoadProjectHierarchyCommand;
+        public CompositeCommand LoadHistoricalDataCommand => ApplicationCommands.LoadHistoricalDataCommand;
 
-        public CompositeCommand LoadProjectHierarchyCommand
-        {
-            get => ApplicationCommands.LoadProjectHierarchyCommand;
-        }
-
-        public CompositeCommand NodeTestInMetatraderCommand
-        {
-            get => ApplicationCommands.NodeTestInMetatraderCommand;
-        }
-
-        public CompositeCommand LoadHistoricalData
-        {
-            get => ApplicationCommands.LoadHistoricalData;
-        }
-
-        public CompositeCommand PinnedProjectCommand
-        { 
-            get => ApplicationCommands.PinnedProjectCommand;
-        }
+        public CompositeCommand SaveNodeCommand => ApplicationCommands.SaveNodeCommand;
+        public CompositeCommand DeleteNodeCommand => ApplicationCommands.DeleteNodeCommand;
+        public CompositeCommand AddNodeToMetaTrader => ApplicationCommands.AddNodeToMetaTrader;
+        public CompositeCommand RemoveNodeFromMetaTrader => ApplicationCommands.RemoveNodeFromMetaTrader;
     }
 }
