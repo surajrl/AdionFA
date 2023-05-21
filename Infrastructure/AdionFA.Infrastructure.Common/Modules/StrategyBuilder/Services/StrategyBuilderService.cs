@@ -174,15 +174,15 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         {
             int? indexOf = !backtests.Any() ? -1 : null;
 
-            foreach (var btItem in backtests)
+            foreach (var backtest in backtests)
             {
                 var coincidences =
-                    btItem.Backtests
-                    .Where(_btoItem => btModel.Backtests.Any(_bto => _bto.Date == _btoItem.Date))
+                    backtest.Backtests
+                    .Where(operation => btModel.Backtests.Any(_bto => _bto.Date == operation.Date))
                     .ToList();
 
                 var totalCoincidences = coincidences.Count;
-                var btItemCount = btItem.Backtests.Count;
+                var btItemCount = backtest.Backtests.Count;
                 var btModelCount = btModel.Backtests.Count;
 
                 var percentBtItem = totalCoincidences * 100 / btItemCount;
@@ -190,16 +190,18 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 if (totalCoincidences == 0 && btModelCount > btItemCount)
                 {
-                    return backtests.IndexOf(btItem);
+                    return backtests.IndexOf(backtest);
                 }
 
                 if ((percentBtItem + percentBtModel) / 2 <= correlation)
                 {
-                    indexOf = percentBtItem > percentBtModel ? backtests.IndexOf(btItem) : -1;
+                    indexOf = percentBtItem > percentBtModel ? backtests.IndexOf(backtest) : -1;
                 }
 
                 if (indexOf > -1)
+                {
                     break;
+                }
             }
 
             return indexOf;
@@ -212,7 +214,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             List<string> node,
             ConfigurationBaseDTO config,
             IEnumerable<Candle> allCandles,
-            CancellationToken token)
+            CancellationToken cancellationToken,
+            ManualResetEventSlim manualResetEvent)
         {
             try
             {
@@ -223,7 +226,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     node,
                     allCandles,
                     config.TimeframeId,
-                    token);
+                    cancellationToken,
+                    manualResetEvent);
 
                 var backtestOS = ExecuteBacktest(
                     nodeLabel,
@@ -232,7 +236,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     node,
                     allCandles,
                     config.TimeframeId,
-                    token);
+                    cancellationToken,
+                    manualResetEvent);
 
                 var stb = new StrategyBuilderModel
                 {
@@ -263,7 +268,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             List<string> node,
             IEnumerable<Candle> allCandles,
             int timeframeId,
-            CancellationToken token)
+            CancellationToken cancellationToken,
+            ManualResetEventSlim manualResetEvent)
         {
             try
             {
@@ -292,31 +298,32 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                     var candleHistory = new List<Candle>();
 
-                    for (var idx = 0; idx < candlesFromTo.Count - 1; idx++)
+                    for (var candleIdx = 0; candleIdx < candlesFromTo.Count - 1; candleIdx++)
                     {
-                        token.ThrowIfCancellationRequested();
+                        manualResetEvent.Wait();
+                        cancellationToken.ThrowIfCancellationRequested();
 
                         var firstCandle = candlesFromTo[0];
                         var currentCandle = new Candle
                         {
-                            Date = candlesFromTo[idx].Date,
-                            Time = candlesFromTo[idx].Time,
+                            Date = candlesFromTo[candleIdx].Date,
+                            Time = candlesFromTo[candleIdx].Time,
 
-                            Open = candlesFromTo[idx].Open,
-                            High = candlesFromTo[idx].Open,
-                            Low = candlesFromTo[idx].Open,
-                            Close = candlesFromTo[idx].Open,
+                            Open = candlesFromTo[candleIdx].Open,
+                            High = candlesFromTo[candleIdx].Open,
+                            Low = candlesFromTo[candleIdx].Open,
+                            Close = candlesFromTo[candleIdx].Open,
 
-                            Spread = candlesFromTo[idx].Spread
+                            Spread = candlesFromTo[candleIdx].Spread
                         };
-                        var nextCandle = candlesFromTo[idx + 1];
+                        var nextCandle = candlesFromTo[candleIdx + 1];
 
                         var firstCandleDt = DateTimeHelper.BuildDateTime(timeframeId, firstCandle.Date, firstCandle.Time);
                         var currentCandleDt = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time);
 
                         var extractorResult = new List<IndicatorBase>();
 
-                        if (idx == 0)
+                        if (candleIdx == 0)
                         {
                             candleHistory.Add(currentCandle);
 

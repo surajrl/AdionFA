@@ -267,7 +267,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
                                     foreach (var node in winningNodes)
                                     {
-                                        var stb = StrategyBuilderService.BacktestBuild(label, node.Node.ToList(), config, candles.ToList(), new System.Threading.CancellationToken());
+                                        var stb = StrategyBuilderService.BacktestBuild(label, node.Node.ToList(), config, candles.ToList(), new System.Threading.CancellationToken(), new System.Threading.ManualResetEventSlim(false));
 
                                         // Serialization
 

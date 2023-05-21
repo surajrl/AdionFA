@@ -82,8 +82,32 @@
                 <Button Width="80" Height="40"
                         Command="{Binding StopCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:FontAwesome Kind="StopSolid" Width="14" />
+                        <iconPacks:FontAwesome Kind="PauseCircleSolid" Width="14" />
                         <Label Content="Stop" FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <!--#endregion-->
+
+            <!--#region Cancel Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80" Height="40"
+                        Command="{Binding CancelCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="StopCircleSolid" Width="14" />
+                        <Label Content="Cancel" FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <!--#endregion-->
+
+            <!--#region Continue Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80" Height="40"
+                        Command="{Binding ContinueCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="PlayCircleSolid" Width="14" />
+                        <Label Content="Continue" FontSize="11" />
                     </StackPanel>
                 </Button>
             </Grid>
@@ -99,7 +123,9 @@
                         <Label Content="Process" FontSize="11" />
                     </StackPanel>
                 </Button>
-                <metro:ProgressRing IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <metro:ProgressRing IsActive="True"
+                                    Width="25" Height="25"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
             <!--#endregion-->
         </StackPanel>
@@ -433,18 +459,6 @@
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                    <!--#region AsynchronousMode-->
-                    <StackPanel Margin="{StaticResource ControlMargin}" Width="125">
-                        <Label>
-                            <TextBlock>
-                            <Run Text="{x:Static commonResources:CommonResources.AsynchronousMode}" />
-                            </TextBlock>
-                        </Label>
-                        <metro:ToggleSwitch Margin="0 -3" IsEnabled="False"
-                                IsOn="{Binding Configuration.AsynchronousMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                    <!--#endregion-->
-
                     <!--#region Maximum Parallelism Configuration-->
                     <StackPanel Margin="{StaticResource ControlMargin}" Width="125" Orientation="Vertical">
                         <Label>
@@ -507,8 +521,7 @@
                 <Button x:Name="correlationDetailBtn"
                         Grid.Column="3"
                         Width="160" Height="40"
-                        Margin="10 0 0 0"
-                        IsEnabled="{Binding IsCorrelationDetail}">
+                        Margin="10 0 0 0">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands" Width="14" />
                         <Label Content="{x:Static commonResources:CommonResources.CorrelationDetail}" FontSize="11" />

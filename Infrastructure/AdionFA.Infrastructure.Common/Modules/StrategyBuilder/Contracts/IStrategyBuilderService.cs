@@ -17,8 +17,22 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 
         // Backtest
 
-        StrategyBuilderModel BacktestBuild(string nodeLabel, List<string> node, ConfigurationBaseDTO config, IEnumerable<Candle> candles, CancellationToken token);
+        StrategyBuilderModel BacktestBuild(
+            string nodeLabel,
+            List<string> node,
+            ConfigurationBaseDTO config,
+            IEnumerable<Candle> candles,
+            CancellationToken cancellationToken,
+            ManualResetEventSlim manualResetEvent);
 
-        BacktestModel ExecuteBacktest(string nodeLabel, DateTime fromDate, DateTime toDate, List<string> node, IEnumerable<Candle> candles, int timeframeId, CancellationToken token);
+        BacktestModel ExecuteBacktest(
+            string nodeLabel,
+            DateTime fromDate,
+            DateTime toDate,
+            List<string> node,
+            IEnumerable<Candle> candles,
+            int timeframeId,
+            CancellationToken cancellationToken,
+            ManualResetEventSlim manualResetEvent);
     }
 }

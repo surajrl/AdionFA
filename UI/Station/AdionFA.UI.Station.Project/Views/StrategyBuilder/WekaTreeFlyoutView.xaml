@@ -350,8 +350,7 @@
                                                     HorizontalAlignment="Right">
                                             <!--#region Save Node Button-->
                                             <Button x:Name="saveNodeBtn" Width="150"
-                                                    Margin="{StaticResource ControlMargin}"
-                                                    IsEnabled="{Binding IsSaved, Converter={StaticResource InverseBooleanConverter}}">
+                                                    Margin="{StaticResource ControlMargin}">
                                                 <Button.Content>
                                                     <TextBlock Text="Save Node" />
                                                 </Button.Content>

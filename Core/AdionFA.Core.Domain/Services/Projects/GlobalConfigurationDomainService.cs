@@ -12,14 +12,8 @@ namespace AdionFA.Core.Domain.Services.Projects
 {
     public class GlobalConfigurationDomainService : DomainServiceBase, IGlobalConfigurationDomainService
     {
-        #region Repositories
-
         public IRepository<ProjectGlobalConfiguration> ProjectGlobalConfigurationRepository { get; set; }
         public IRepository<ProjectGlobalScheduleConfiguration> ProjectGlobalScheduleConfigurationRepository { get; set; }
-
-        #endregion Repositories
-
-        #region Ctor
 
         public GlobalConfigurationDomainService(string tenantId, string ownerId, string owner,
             IRepository<ProjectGlobalConfiguration> projectGlobalConfigurationRepository,
@@ -28,10 +22,6 @@ namespace AdionFA.Core.Domain.Services.Projects
             ProjectGlobalConfigurationRepository = projectGlobalConfigurationRepository;
             ProjectGlobalScheduleConfigurationRepository = projectGlobalScheduleConfigurationRepository;
         }
-
-        #endregion Ctor
-
-        #region Project Global Configurations
 
         public IList<ProjectGlobalConfiguration> GetAllProjectGlobalConfigurations(bool includeGraph = false)
         {
@@ -114,9 +104,7 @@ namespace AdionFA.Core.Domain.Services.Projects
             }
         }
 
-        #endregion Project Global Configurations
-
-        #region Schedule Configuration
+        // Schedule Configuration
 
         public ProjectGlobalScheduleConfiguration GetProjectGlobalScheduleConfiguration(int marketRegionId)
         {
@@ -168,7 +156,5 @@ namespace AdionFA.Core.Domain.Services.Projects
                 throw;
             }
         }
-
-        #endregion Schedule Configuration
     }
 }

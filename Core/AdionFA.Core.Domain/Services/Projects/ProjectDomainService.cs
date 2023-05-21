@@ -192,7 +192,6 @@ namespace AdionFA.Core.Domain.Services.Projects
 
                     AutoAdjustConfig = configuration.AutoAdjustConfig,
                     MaxAdjustConfig = configuration.MaxAdjustConfig,
-                    AsynchronousMode = configuration.AsynchronousMode,
 
                     // Assembled Builder
 
@@ -276,7 +275,7 @@ namespace AdionFA.Core.Domain.Services.Projects
             }
         }
 
-        #region Project Configuration
+        // Project Configuration
 
         public ProjectConfiguration GetProjectConfiguration(int projectId, bool includeGraph = false)
         {
@@ -350,13 +349,9 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                #region Find ProjectGlobalConfiguration
-
                 ProjectGlobalConfiguration configuration = ProjectGlobalConfigurationRepository.FirstOrDefault(
                     c => c.EndDate == null,
                     c => c.ProjectGlobalScheduleConfigurations) ?? throw new GlobalConfigurationNotFoundException();
-
-                #endregion Find ProjectGlobalConfiguration
 
                 ProjectConfigurationRepository.CloseTemporalRecord();
 
@@ -364,40 +359,32 @@ namespace AdionFA.Core.Domain.Services.Projects
                 {
                     ProjectId = projectId,
 
-                    #region Global Configuration
+                    // Global Configuration
 
                     Description = configuration.Description,
 
-                    #region Extractor
+                    // Extractor
 
                     Variation = configuration.Variation,
 
-                    #endregion Extractor
-
-                    #region Period
+                    // Period
 
                     FromDateIS = configuration.FromDateIS,
                     ToDateIS = configuration.ToDateIS,
                     FromDateOS = configuration.FromDateOS,
                     ToDateOS = configuration.ToDateOS,
 
-                    #endregion Period
-
-                    #region Schedule
+                    // Schedule
 
                     WithoutSchedule = configuration.WithoutSchedule,
 
-                    #endregion Schedule
-
-                    #region Currency
+                    // Currency
 
                     SymbolId = configuration.SymbolId,
                     TimeframeId = configuration.TimeframeId,
                     CurrencySpreadId = configuration.CurrencySpreadId,
 
-                    #endregion Currency
-
-                    #region Weka
+                    // Weka
 
                     TotalInstanceWeka = configuration.TotalInstanceWeka,
 
@@ -414,9 +401,7 @@ namespace AdionFA.Core.Domain.Services.Projects
                     NTotalTree = configuration.NTotalTree,
                     MinAdjustNTotalTree = configuration.MinAdjustNTotalTree,
 
-                    #endregion Weka
-
-                    #region Strategy Builder
+                    // Strategy Builder
 
                     MinTransactionCountIS = configuration.MinTransactionCountIS,
                     MinAdjustMinTransactionCountIS = configuration.MinAdjustMinTransactionCountIS,
@@ -442,21 +427,14 @@ namespace AdionFA.Core.Domain.Services.Projects
 
                     AutoAdjustConfig = configuration.AutoAdjustConfig,
                     MaxAdjustConfig = configuration.MaxAdjustConfig,
-                    AsynchronousMode = configuration.AsynchronousMode,
 
-                    #endregion Strategy Builder
-
-                    #region Assembled Builder
+                    // Assembled Builder
 
                     TransactionTarget = configuration.TransactionTarget,
                     MinAssemblyPercent = configuration.MinAssemblyPercent,
                     TotalAssemblyIterations = configuration.TotalAssemblyIterations,
 
-                    #endregion Assembled Builder
-
                     ProjectScheduleConfigurations = new List<ProjectScheduleConfiguration>(),
-
-                    #endregion Global Configuration
 
                     StartDate = DateTime.UtcNow,
                     EndDate = null,
@@ -496,9 +474,7 @@ namespace AdionFA.Core.Domain.Services.Projects
             }
         }
 
-        #endregion Project Configuration
-
-        #region Process
+        // Process
 
         public bool UpdateProcessId(int entityId, int entityTypeId, long? processId)
         {
@@ -530,7 +506,5 @@ namespace AdionFA.Core.Domain.Services.Projects
                 throw;
             }
         }
-
-        #endregion Process
     }
 }

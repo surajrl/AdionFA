@@ -75,7 +75,6 @@ namespace AdionFA.TransferObject.Base
 
         public bool AutoAdjustConfig { get; set; }
         public int MaxAdjustConfig { get; set; }
-        public bool AsynchronousMode { get; set; }
 
         // Assembled Builder
 

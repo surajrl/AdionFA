@@ -83,7 +83,6 @@ namespace AdionFA.Core.Domain.Aggregates.Base
 
         public bool AutoAdjustConfig { get; set; }
         public int MaxAdjustConfig { get; set; }
-        public bool AsynchronousMode { get; set; }
 
         // Assembled Builder
 

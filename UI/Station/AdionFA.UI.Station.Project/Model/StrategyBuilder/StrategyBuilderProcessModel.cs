@@ -117,7 +117,7 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
 
         public void Reset()
         {
-            Status = StrategyBuilderStatusEnum.NoStarted.GetMetadata().Name;
+            Status = StrategyBuilderStatusEnum.NotStarted.GetMetadata().Name;
             Message = string.Empty;
             IsEnabled = false;
             IsExpanded = false;

@@ -319,7 +319,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                 AutoAdjustConfig = false,
                 MaxAdjustConfig = 5,
-                AsynchronousMode = false,
 
                 // Assembled Builder
 

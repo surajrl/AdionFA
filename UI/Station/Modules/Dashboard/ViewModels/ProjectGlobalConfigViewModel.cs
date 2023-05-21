@@ -82,7 +82,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 {
                     IsTransactionActive = false;
 
-                    MessageHelper.ShowMessages(this, EntityDescription, validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+                    MessageHelper.ShowMessages(this,
+                        EntityDescription,
+                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
                 }
@@ -100,7 +102,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
@@ -121,7 +125,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             ProjectGlobalConfiguration = await _settingService.GetGlobalConfiguration();
         }
 
-        #region Bindable Model
+        // View Bindings
 
         private bool istransactionActive;
 
@@ -142,7 +146,5 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         public ObservableCollection<SymbolVM> Symbols { get; } = new ObservableCollection<SymbolVM>();
         public ObservableCollection<TimeframeVM> Timeframes { get; } = new ObservableCollection<TimeframeVM>();
         public ObservableCollection<Metadata> CurrencySpreads { get; } = new ObservableCollection<Metadata>();
-
-        #endregion Bindable Model
     }
 }

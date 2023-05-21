@@ -25,18 +25,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
 {
     public class ProjectSettingsViewModel : MenuItemViewModel
     {
-        #region Services
-
         private readonly IAppProjectService _appProjectService;
         private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IProjectServiceAgent _projectService;
         private readonly IEventAggregator _eventAggregator;
 
-        #endregion Services
-
-        #region Ctor
-
-        public ProjectSettingsViewModel(MainViewModel mainViewModel) : base(mainViewModel)
+        public ProjectSettingsViewModel(MainViewModel mainViewModel)
+            : base(mainViewModel)
         {
             _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
             _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
@@ -45,15 +40,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
 
-            ContainerLocator.Current.Resolve<IAppProjectCommands>()
-                .SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
+            ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
         }
-
-        #endregion Ctor
-
-        #region Commands
-
-        #region SelectItemHamburgerMenuCommand
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
@@ -70,48 +58,38 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }, (s) => true); //item => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
-
-        #endregion SelectItemHamburgerMenuCommand
-
-        #region WithoutSchedulesCommand
+        });
 
         public ICommand WithoutSchedulesCommand => new DelegateCommand(async () =>
         {
             var config = await _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
-            if (projectConfiguration.WithoutSchedule)
+            if (_projectConfiguration.WithoutSchedule)
             {
-                projectConfiguration.FromTimeInSecondsEurope = projectConfiguration.ToTimeInSecondsEurope =
-                projectConfiguration.FromTimeInSecondsAmerica = projectConfiguration.ToTimeInSecondsAmerica =
-                projectConfiguration.FromTimeInSecondsAsia = projectConfiguration.ToTimeInSecondsAsia = DateTime.UtcNow;
+                _projectConfiguration.FromTimeInSecondsEurope = _projectConfiguration.ToTimeInSecondsEurope =
+                _projectConfiguration.FromTimeInSecondsAmerica = _projectConfiguration.ToTimeInSecondsAmerica =
+                _projectConfiguration.FromTimeInSecondsAsia = _projectConfiguration.ToTimeInSecondsAsia = DateTime.UtcNow;
 
-                projectConfiguration.FromTimeInSecondsEurope = config.FromTimeInSecondsEurope;
-                projectConfiguration.ToTimeInSecondsEurope = config.ToTimeInSecondsEurope;
+                _projectConfiguration.FromTimeInSecondsEurope = config.FromTimeInSecondsEurope;
+                _projectConfiguration.ToTimeInSecondsEurope = config.ToTimeInSecondsEurope;
 
-                projectConfiguration.FromTimeInSecondsAmerica = config.FromTimeInSecondsAmerica;
-                projectConfiguration.ToTimeInSecondsAmerica = config.ToTimeInSecondsAmerica;
+                _projectConfiguration.FromTimeInSecondsAmerica = config.FromTimeInSecondsAmerica;
+                _projectConfiguration.ToTimeInSecondsAmerica = config.ToTimeInSecondsAmerica;
 
-                projectConfiguration.FromTimeInSecondsAsia = config.FromTimeInSecondsAsia;
-                projectConfiguration.ToTimeInSecondsAsia = config.ToTimeInSecondsAsia;
+                _projectConfiguration.FromTimeInSecondsAsia = config.FromTimeInSecondsAsia;
+                _projectConfiguration.ToTimeInSecondsAsia = config.ToTimeInSecondsAsia;
             }
         });
 
-        #endregion WithoutSchedulesCommand
-
-        #region SaveBtnCommand
-
-        public DelegateCommand SaveBtnCommand => new DelegateCommand(async () =>
+        public ICommand SaveBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
-                var validator = projectConfiguration.Validate();
+                var validator = _projectConfiguration.Validate();
                 if (!validator.IsValid)
                 {
-                    IsTransactionActive = false;
-
                     MessageHelper.ShowMessages(this,
                         EntityTypeEnum.StrategyBuilder.GetMetadata().Description,
-                            validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
                 }
@@ -119,7 +97,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
 
-                ResponseVM result = await _appProjectService.UpdateProjectConfiguration(projectConfiguration);
+                var result = await _appProjectService.UpdateProjectConfiguration(_projectConfiguration);
+
                 IsTransactionActive = false;
 
                 PropertyValidator(result, true);
@@ -127,7 +106,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
             finally
@@ -136,33 +117,34 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        #endregion SaveBtnCommand
-
-        #region RestoreConfigurationBtnCommand
-
-        public DelegateCommand RestoreConfigurationBtnCommand => new DelegateCommand(async () =>
+        public ICommand RestoreConfigurationBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
 
-                ResponseVM result = await _projectService.RestoreProjectConfiguration(ProcessArgs.ProjectId);
+                var result = await _projectService.RestoreProjectConfiguration(ProcessArgs.ProjectId);
                 if (result?.IsSuccess ?? false)
                 {
                     PopulateViewModel(ProcessArgs.ProjectId);
                 }
+
                 IsTransactionActive = false;
 
                 string msg = (result?.IsSuccess ?? false) ? MessageResources.EntitySaveSuccess
                     : result?.Message ?? MessageResources.EntityErrorTransaction;
 
-                MessageHelper.ShowMessage(this, CommonResources.ProjectConfigurationRestore, msg);
+                MessageHelper.ShowMessage(this,
+                    CommonResources.ProjectConfigurationRestore,
+                    msg);
             }
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
             finally
@@ -170,10 +152,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
-
-        #endregion RestoreConfigurationBtnCommand
-
-        #endregion Commands
 
         public async void PopulateViewModel(int projectId)
         {
@@ -196,8 +174,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             CurrencySpreads.Clear();
             CurrencySpreads.AddRange(EnumUtil.ToEnumerable<CurrencySpreadEnum>(true));
 
-            #region MarketDataList
-
             HistoricalDataList.Clear();
             HistoricalDataList.Insert(0, new Metadata
             {
@@ -210,13 +186,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Name = md.Description,
             }));
 
-            #endregion MarketDataList
-
             ProjectConfiguration = await _appProjectService.GetProjectConfiguration(projectId, true);
 
             ProjectConfiguration.HistoricalDataId ??= 0;
 
-            if (!HistoricalDataList.Any(md => md.Id == projectConfiguration.HistoricalDataId))
+            if (!HistoricalDataList.Any(md => md.Id == _projectConfiguration.HistoricalDataId))
             {
                 MessageHelper.ShowMessage(this, "Info", "The project is associated with outdated historical data, consider updating the Market Data field");
             }
@@ -230,11 +204,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             switch (response.MessageResource)
             {
                 case (int)MessageResourceEnum.CurrencyPairAndCurrencyPeriodMustBeSame:
-                    projectConfiguration.SetError(nameof(projectConfiguration.Symbol.SymbolId),
+                    _projectConfiguration.SetError(nameof(_projectConfiguration.Symbol.SymbolId),
                         ShowMessageControl(msg, showMessageInControl));
-                    projectConfiguration.SetError(nameof(projectConfiguration.Timeframe.TimeframeId),
+                    _projectConfiguration.SetError(nameof(_projectConfiguration.Timeframe.TimeframeId),
                         ShowMessageControl(msg, showMessageInControl));
-                    projectConfiguration.SetError(nameof(projectConfiguration.HistoricalDataId),
+                    _projectConfiguration.SetError(nameof(_projectConfiguration.HistoricalDataId),
                         ShowMessageControl(msg, showMessageInControl));
                     break;
             }
@@ -242,47 +216,41 @@ namespace AdionFA.UI.Station.Project.ViewModels
             if (showDialogWithErrors)
                 MessageHelper.ShowMessage(this, CommonResources.ProjectConfiguration, msg);
 
-            #region ShowMessageControl
-
             string ShowMessageControl(string msg, bool showMessageInControl = false)
             {
                 return showMessageInControl ? msg : string.Empty;
             }
-
-            #endregion ShowMessageControl
         }
 
-        #region Bindable Model
+        // View Bindings
 
-        private bool istransactionActive;
+        private bool _isTransactionActive;
 
         public bool IsTransactionActive
         {
-            get => istransactionActive;
-            set => SetProperty(ref istransactionActive, value);
+            get => _isTransactionActive;
+            set => SetProperty(ref _isTransactionActive, value);
         }
 
-        private bool canExecute = true;
+        private bool _canExecute = true;
 
         public bool CanExecute
         {
-            get => canExecute;
-            set => SetProperty(ref canExecute, value);
+            get => _canExecute;
+            set => SetProperty(ref _canExecute, value);
         }
 
-        private ProjectSettingsModel projectConfiguration;
+        private ProjectSettingsModel _projectConfiguration;
 
         public ProjectSettingsModel ProjectConfiguration
         {
-            get => projectConfiguration;
-            set => SetProperty(ref projectConfiguration, value);
+            get => _projectConfiguration;
+            set => SetProperty(ref _projectConfiguration, value);
         }
 
         public ObservableCollection<Metadata> Symbols { get; } = new ObservableCollection<Metadata>();
         public ObservableCollection<Metadata> Timeframes { get; } = new ObservableCollection<Metadata>();
         public ObservableCollection<Metadata> CurrencySpreads { get; } = new ObservableCollection<Metadata>();
         public ObservableCollection<Metadata> HistoricalDataList { get; } = new ObservableCollection<Metadata>();
-
-        #endregion Bindable Model
     }
 }

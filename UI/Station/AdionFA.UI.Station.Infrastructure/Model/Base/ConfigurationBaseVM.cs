@@ -59,6 +59,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         // Symbol
+
         private int _symbolId;
 
         public int SymbolId
@@ -76,6 +77,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         // Timeframe
+
         private int _timeframeId;
 
         public int TimeframeId
@@ -393,14 +395,6 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         #endregion MaxAdjustConfig
-
-        private bool asynchronousMode;
-
-        public bool AsynchronousMode
-        {
-            get => asynchronousMode;
-            set => SetProperty(ref asynchronousMode, value);
-        }
 
         // Assembled Builder
 
