@@ -780,7 +780,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        private void ResetBuilder(bool resetConfigurations = false)
+        private void ResetBuilder()
         {
             UpdateTotalCorrelation();
 
@@ -789,16 +789,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             foreach (var model in StrategyBuilderProcessList)
             {
                 model.Reset();
-            }
-
-            if (resetConfigurations)
-            {
-                Configurations = new ObservableCollection<AutoAdjustConfigModel>
-                {
-                    _mapper.Map<ConfigurationBaseVM, AutoAdjustConfigModel>(Configuration)
-                };
-
-                CurrentConfiguration = 1;
             }
         }
 

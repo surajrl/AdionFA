@@ -6,13 +6,15 @@
 #property copyright "Copyright 2023, MetaQuotes Ltd."
 #property link      "https://www.mql5.com"
 #property version   "1.00"
+#property script_show_inputs
 
-input string Host = "192.168.50.137";
-input string Port = "5555";
+//--- input parameters
+input string   Host="192.168.50.137";
+input string   Port="5555";
 
 #include <ZMQ/Zmq.mqh>
 #include <Json/JAson.mqh>
-#include <Files\FileTxt.mqh>
+#include <Files/FileTxt.mqh>
 
 Context ServerContext("server");
 Socket ResponseSocket(ServerContext, ZMQ_REP);
