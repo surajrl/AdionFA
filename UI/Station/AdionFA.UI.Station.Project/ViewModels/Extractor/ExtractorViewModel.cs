@@ -52,7 +52,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
         }
@@ -96,7 +96,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     _projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorAsiaDirectory()))
                 {
                     IsTransactionActive = true;
-                    _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
+                    _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                     var projectConfig = await _appProjectService.GetProjectConfiguration(_project.ProjectId, true);
                     var projectHistoricalData = await _historicalDataService.GetHistoricalData(projectConfig.HistoricalDataId.Value, true);
@@ -211,7 +211,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             finally
             {
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 

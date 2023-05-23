@@ -114,18 +114,5 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
             get => _message;
             set => SetProperty(ref _message, value);
         }
-
-        public void Reset()
-        {
-            Status = StrategyBuilderStatusEnum.NotStarted.GetMetadata().Name;
-            Message = string.Empty;
-            IsEnabled = false;
-            IsExpanded = false;
-            WinningTrees = 0;
-            TotalStrategy = 0;
-            HasWinningStrategy = false;
-            CompletedBacktests = 0;
-            InstancesList = new ObservableCollection<REPTreeOutputVM>();
-        }
     }
 }

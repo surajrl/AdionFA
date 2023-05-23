@@ -38,7 +38,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
         }
@@ -95,7 +95,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
 
                 IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                 var result = await _appProjectService.UpdateProjectConfiguration(_projectConfiguration);
 
@@ -113,7 +113,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             finally
             {
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
@@ -122,7 +122,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             try
             {
                 IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                 var result = await _projectService.RestoreProjectConfiguration(ProcessArgs.ProjectId);
                 if (result?.IsSuccess ?? false)
@@ -149,7 +149,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             finally
             {
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 

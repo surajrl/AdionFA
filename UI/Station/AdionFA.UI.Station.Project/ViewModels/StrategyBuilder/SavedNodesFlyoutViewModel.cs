@@ -32,7 +32,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
-            applicationCommands.DeleteNodeCommand.RegisterCommand(DeleteNodeCommand);
 
             _mapper = new MapperConfiguration(mc =>
             {
@@ -49,8 +48,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                 SavedNodes.Clear();
 
                 var path = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
-                _projectDirectoryService.GetFilesInPath(path, "*.xml")
-                .ToList()
+                _projectDirectoryService.GetFilesInPath(path, "*.xml").ToList()
                 .ForEach(file =>
                 {
                     var node = _mapper.Map<REPTreeNodeModel, REPTreeNodeVM>(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));

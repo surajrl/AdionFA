@@ -75,7 +75,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
             ContainerLocator.Current.Resolve<IApplicationCommands>().AddNodeToMetaTrader.RegisterCommand(AddNodeToMetaTrader);
@@ -118,7 +118,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             try
             {
                 IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                 _cancellationTokenSrc = new CancellationTokenSource();
 
@@ -172,7 +172,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 _cancellationTokenSrc.Dispose();
                 IsTransactionActive = false;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 

@@ -80,20 +80,24 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                 {
                     var result = new List<NodeAssembledModel>();
 
-                    string path = label.ToLower() == "up" ? projectName.ProjectStrategyBuilderNodesUPDirectory() :
-                        label.ToLower() == "down" ? projectName.ProjectStrategyBuilderNodesDOWNDirectory() : null;
+                    var path = label.ToLower() == "up" ?
+                        projectName.ProjectStrategyBuilderNodesUPDirectory() :
+                        projectName.ProjectStrategyBuilderNodesDOWNDirectory();
 
                     if (path != null)
                     {
                         ProjectDirectoryService.GetFilesInPath(path, "*.xml")
                             .ToList().ForEach(fi =>
                             {
-                                BacktestModel model = SerializerHelper.XMLDeSerializeObject<BacktestModel>(fi.FullName);
-                                result.Add(new BacktestNodeAssembledModel
+                                if (fi.Name.Contains("BACKTEST"))
                                 {
-                                    Backtest = model,
-                                    Type = NodeAssembledTypeEnum.Backtest,
-                                });
+                                    var model = SerializerHelper.XMLDeSerializeObject<BacktestModel>(fi.FullName);
+                                    result.Add(new BacktestNodeAssembledModel
+                                    {
+                                        Backtest = model,
+                                        Type = NodeAssembledTypeEnum.Backtest,
+                                    });
+                                }
                             });
                     }
 
@@ -113,16 +117,20 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
             try
             {
                 if (model?.UPNode?.Nodes?.Any() ?? false)
+                {
                     Extractor("up");
+                }
 
                 if (model?.DOWNNode?.Nodes?.Any() ?? false)
+                {
                     Extractor("down");
+                }
 
                 void Extractor(string label)
                 {
                     NodeAssembledModel node = label == "up" ? model.UPNode : model.DOWNNode;
 
-                    string directory = label == "up" ?
+                    var directory = label == "up" ?
                         projectName.ProjectAssembledBuilderExtractorUPDirectory()
                         : projectName.ProjectAssembledBuilderExtractorDOWNDirectory();
 

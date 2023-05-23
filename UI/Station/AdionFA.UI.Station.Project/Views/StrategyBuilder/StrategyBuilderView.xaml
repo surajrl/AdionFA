@@ -422,7 +422,7 @@
                         <TextBlock Grid.Row="0"
                                    Grid.Column="1"
                                    Margin="0 5 10 5">
-                            <Run Text="{Binding CorrelationNodes.Count, Mode=OneWay}" />
+                            <Run Text="{Binding AllNodes.Count, Mode=OneWay}" />
                         </TextBlock>
                         <!--#endregion-->
 
@@ -517,22 +517,21 @@
                 </Button>
                 <!--#endregion-->
 
-                <!--#region Correlation Detail Button-->
-                <Button x:Name="correlationDetailBtn"
+                <!--#region Correlation Nodes Button-->
+                <Button x:Name="correlationNodesBtn"
                         Grid.Column="3"
                         Width="160" Height="40"
                         Margin="10 0 0 0">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands" Width="14" />
-                        <Label Content="{x:Static commonResources:CommonResources.CorrelationDetail}" FontSize="11" />
+                        <Label Content="Correlation Nodes" FontSize="11" />
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="correlationDetailBtn" EventName="Click">
+                        <behaviors:EventTrigger SourceName="correlationNodesBtn" EventName="Click">
                             <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                         <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}" />
-                                        <Binding Path="CorrelationNodes" />
                                     </MultiBinding>
                                 </behaviors:InvokeCommandAction.CommandParameter>
                             </behaviors:InvokeCommandAction>
@@ -541,7 +540,7 @@
                 </Button>
                 <!--#endregion-->
 
-                <!--#region Configuration Button-->
+                <!--#region Configuration Settings Button-->
                 <Button x:Name="configurationBtn"
                         Grid.Column="4"
                         Width="160" Height="40"
@@ -549,7 +548,7 @@
                         IsEnabled="{Binding Configuration.AutoAdjustConfig}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="TasksSolid" Width="14" />
-                        <Label Content="{x:Static commonResources:CommonResources.ConfigurationSettings}" FontSize="11" />
+                        <Label Content="Configuration Settings" FontSize="11" />
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
                         <behaviors:EventTrigger SourceName="configurationBtn" EventName="Click">

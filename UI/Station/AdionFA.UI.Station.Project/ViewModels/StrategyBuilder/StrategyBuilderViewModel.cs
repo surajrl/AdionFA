@@ -47,6 +47,9 @@ using AdionFA.Infrastructure.Common.Managements;
 using ReactiveUI;
 using AdionFA.Infrastructure.Common.Helpers;
 using MahApps.Metro.Converters;
+using AdionFA.Infrastructure.Common.Directories.Services;
+using System.Windows.Shapes;
+using AdionFA.UI.Station.Infrastructure;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -62,8 +65,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private readonly IEventAggregator _eventAggregator;
 
-        private ProjectVM _project;
-        private CorrelationModel _correlation;
         private CancellationTokenSource _cancellationTokenSrc;
         private ManualResetEventSlim _manualResetEvent;
         private readonly object _lock;
@@ -78,7 +79,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
-            _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<CorrelationNodeDeletedEvent>().Subscribe(p => UpdateTotalCorrelationNodes());
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
@@ -88,9 +90,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }).CreateMapper();
 
             _lock = new();
-
-            CorrelationNodes = new();
             _manualResetEvent = new(true);
+
+            AllNodes = new();
             StrategyBuilderProcessList = new();
             MaxParallelism = Environment.ProcessorCount;
         }
@@ -118,7 +120,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                PopulateViewModel(true);
+                AllNodes.Clear();
+                StrategyBuilderProcessList.Clear();
+
+                PopulateViewModel();
             }
             catch (Exception ex)
             {
@@ -193,14 +198,19 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
 
                 IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
                 _cancellationTokenSrc ??= new CancellationTokenSource();
 
-                ResetBuilder(true);
+                AllNodes.Clear();
+
+                Configurations = new ObservableCollection<AutoAdjustConfigModel>
+                {
+                    _mapper.Map<ConfigurationBaseVM, AutoAdjustConfigModel>(Configuration)
+                };
 
                 // Historical Data
 
@@ -222,7 +232,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Label = hdCandle.Close > hdCandle.Open ? "UP" : "DOWN"
                 })
                 .OrderBy(candle => candle.Date)
-                .ThenBy(candle => candle.Time);
+                .ThenBy(candle => candle.Time)
+                .ToList();
 
                 await Task.Run(() =>
                 {
@@ -231,8 +242,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     while (idx < length)
                     {
-                        ResetBuilder();
-
                         var configuration = Configurations[idx];
 
                         // Asynchronous - Data Mine (Generate Weka Tree and do IS and OS Backtests)
@@ -267,7 +276,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 // Iterate over each Weka Tree from one Extraction
                                 foreach (var tree in strategyBuilderProcess.InstancesList)
                                 {
-                                    CorrelationNodes.Add(tree.NodeOutput
+                                    AllNodes.Add(tree.NodeOutput
                                         .Where(node => node.Winner)
                                         .Select(node =>
                                         {
@@ -285,7 +294,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         }
 
                         Parallel.ForEach(
-                            CorrelationNodes,
+                            AllNodes,
                             new ParallelOptions
                             {
                                 MaxDegreeOfParallelism = MaxParallelism,
@@ -340,8 +349,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 if (node.WinningStrategy)
                                 {
                                     // Serialization -------------------------------------------------------------------------
-                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.IS, true);
-                                    StrategyBuilderService.BacktestSerialize(ProcessArgs.ProjectName, stb.OS, false);
+                                    StrategyBuilderService.SerializeBacktest(ProcessArgs.ProjectName, stb.IS);
+                                    StrategyBuilderService.SerializeNode(ProcessArgs.ProjectName, node.Name, _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node));
                                     // ---------------------------------------------------------------------------------------
 
                                     // Update Tree ---------------------------------------------------------------------------
@@ -413,30 +422,32 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Correlation
 
+                var correlation = new CorrelationModel();
                 await Task.Run(() =>
                 {
-                    _correlation = _strategyBuilderService.Correlation(
+                    correlation = _strategyBuilderService.Correlation(
                         ProcessArgs.ProjectName,
                         Configuration.MaxPercentCorrelation,
                         EntityTypeEnum.StrategyBuilder);
                 });
 
-                UpdateTotalCorrelation();
+                TotalCorrelationUP = correlation.ISBacktestUP?.Count ?? 0;
+                TotalCorrelationDOWN = correlation.ISBacktestDOWN?.Count ?? 0;
 
                 // Update REP Tree Node VM with correlation pass results
 
-                _correlation.ISBacktestUP.ForEach(backtestUP =>
+                correlation.ISBacktestUP.ForEach(backtestUP =>
                 {
-                    var correspondingNode = CorrelationNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestUP.Node));
+                    var correspondingNode = AllNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestUP.Node));
                     if (correspondingNode != null)
                     {
                         correspondingNode.CorrelationPass = backtestUP.CorrelationPass;
                     }
                 });
 
-                _correlation.ISBacktestDOWN.ForEach(backtestDOWN =>
+                correlation.ISBacktestDOWN.ForEach(backtestDOWN =>
                 {
-                    var correspondingNode = CorrelationNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestDOWN.Node));
+                    var correspondingNode = AllNodes.FirstOrDefault(node => node.Node.SequenceEqual(backtestDOWN.Node));
                     if (correspondingNode != null)
                     {
                         correspondingNode.CorrelationPass = backtestDOWN.CorrelationPass;
@@ -450,7 +461,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var result = !StrategyBuilderProcessList.Any(strategyBuilderProcess => strategyBuilderProcess.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name);
                 var msg = result ? MessageResources.StrategyBuilderCompleted : MessageResources.EntityErrorTransaction;
 
-                if (result && !_correlation.Success)
+                if (result && !correlation.Success)
                 {
                     msg = $"{msg}\n{MessageResources.CorrelationRunWithNoResults}";
                 }
@@ -485,7 +496,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _cancellationTokenSrc = null;
 
                 IsTransactionActive = false;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
@@ -524,10 +535,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             try
             {
                 var targetUp = Configuration.WinningStrategyTotalUP > TotalCorrelationUP ?
-                    Configuration.WinningStrategyTotalUP - TotalCorrelationUP : 0;
+                    Configuration.WinningStrategyTotalUP - TotalCorrelationUP
+                    : 0;
 
                 var targetDown = Configuration.WinningStrategyTotalDOWN > TotalCorrelationDOWN ?
-                    Configuration.WinningStrategyTotalDOWN - TotalCorrelationDOWN : 0;
+                    Configuration.WinningStrategyTotalDOWN - TotalCorrelationDOWN
+                    : 0;
 
                 var filteredNodes = nodes.Where(
                     n => n.PercentSuccessIs >= (double)autoAdjustConfig.MinPercentSuccessIS &&
@@ -666,26 +679,19 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }
 
-        public async void PopulateViewModel(bool refresh = false)
+        public async void PopulateViewModel()
         {
             try
             {
-                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
-                Configuration = _project?.ProjectConfigurations.FirstOrDefault();
+                var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
+                Configuration = project?.ProjectConfigurations.FirstOrDefault();
 
-                _correlation = _strategyBuilderService.Correlation(ProcessArgs.ProjectName, Configuration.MaxPercentCorrelation, EntityTypeEnum.StrategyBuilder);
-
-                UpdateTotalCorrelation();
-
-                if (refresh)
-                {
-                    StrategyBuilderProcessList.Clear();
-                    ResetBuilder(true);
-                }
+                UpdateTotalCorrelationNodes();
 
                 if (!IsTransactionActive && !StrategyBuilderProcessList.Any())
                 {
@@ -704,6 +710,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }
@@ -747,20 +754,21 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        private void AddItemToStrategyBuilderProcessList(string templateName, List<REPTreeOutputVM> treeList)
+        private void AddItemToStrategyBuilderProcessList(string templateName, IList<REPTreeOutputVM> wekaTree)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var strategyBuilderProcess = StrategyBuilderProcessList.FirstOrDefault(m => m.ExtractionName == templateName);
-                treeList.ForEach(tree =>
+
+                foreach (var tree in wekaTree)
                 {
                     tree.Message = tree.HasWinningStrategy == null ? CommonResources.Pending : tree.HasWinningStrategy.Value ? CommonResources.Winner : CommonResources.Loser;
                     tree.ValidNodes = tree.NodeOutput.Where(node => node.Winner).Count();
-                });
+                }
 
-                strategyBuilderProcess.WinningTrees = treeList.Where(n => n.ValidNodes > 0).Count();
+                strategyBuilderProcess.WinningTrees = wekaTree.Where(n => n.ValidNodes > 0).Count();
                 strategyBuilderProcess.InstancesList.Clear();
-                strategyBuilderProcess.InstancesList.AddRange(treeList);
+                strategyBuilderProcess.InstancesList.AddRange(wekaTree);
 
                 if (strategyBuilderProcess.WinningTrees > 0)
                 {
@@ -769,30 +777,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        private void UpdateTotalCorrelation()
+        public void UpdateTotalCorrelationNodes()
         {
-            TotalCorrelationUP = TotalCorrelationDOWN = 0;
+            const int xmlFilesPerNode = 2;
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                TotalCorrelationUP += _correlation?.ISBacktestUP?.Count ?? 0;
-                TotalCorrelationDOWN += _correlation?.ISBacktestDOWN?.Count ?? 0;
-            });
+            var directoryUP = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory();
+            var directoryDOWN = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory();
+
+            TotalCorrelationUP = _projectDirectoryService.GetFilesInPath(directoryUP, "*.xml").ToList().Count / xmlFilesPerNode;
+            TotalCorrelationDOWN = _projectDirectoryService.GetFilesInPath(directoryDOWN, "*.xml").ToList().Count / xmlFilesPerNode;
         }
 
-        private void ResetBuilder()
-        {
-            UpdateTotalCorrelation();
-
-            CorrelationNodes.Clear();
-
-            foreach (var model in StrategyBuilderProcessList)
-            {
-                model.Reset();
-            }
-        }
-
-        // Bindable Model
+        // View Bindings
 
         private bool _canCancelOrContinue;
 
@@ -818,12 +814,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ObservableCollection<REPTreeNodeVM> _correlationNodes;
+        private ObservableCollection<REPTreeNodeVM> _allNodes;
 
-        public ObservableCollection<REPTreeNodeVM> CorrelationNodes
+        public ObservableCollection<REPTreeNodeVM> AllNodes
         {
-            get => _correlationNodes;
-            set => SetProperty(ref _correlationNodes, value);
+            get => _allNodes;
+            set => SetProperty(ref _allNodes, value);
         }
 
         private ProjectConfigurationVM _configuration;

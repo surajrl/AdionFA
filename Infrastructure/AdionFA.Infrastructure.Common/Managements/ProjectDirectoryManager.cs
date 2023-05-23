@@ -92,34 +92,6 @@ namespace AdionFA.Infrastructure.Common.Managements
                 string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectNameFolder));
         }
 
-        public static string ProjectStrategyBuilderNodesUPISDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}",
-                ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUPIS.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectStrategyBuilderNodesUPOSDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}",
-                ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUPOS.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectStrategyBuilderNodesDOWNISDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}",
-                ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWNIS.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectStrategyBuilderNodesDOWNOSDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}",
-                ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWNOS.GetDescription(), projectNameFolder));
-        }
-
         // Assembled Builder
 
         public static string ProjectAssembledBuilderDirectory(this string projectNameFolder)
@@ -195,30 +167,6 @@ namespace AdionFA.Infrastructure.Common.Managements
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWN.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderNodesUPISDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUPIS.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderNodesDOWNISDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWNIS.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderNodesUPOSDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUPOS.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectAssembledBuilderNodesDOWNOSDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWNOS.GetDescription(), projectNameFolder));
         }
     }
 }

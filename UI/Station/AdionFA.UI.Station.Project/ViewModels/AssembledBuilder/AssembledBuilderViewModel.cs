@@ -52,7 +52,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
@@ -76,10 +76,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
-        }, (s) => true);
+        });
 
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
@@ -94,22 +96,23 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
 
                 IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(false);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                 // Historical Data
 
                 var projectHistoricalData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
 
-                IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles.Select(
-                        h => new Candle
+                IEnumerable<Candle> projectCandles = projectHistoricalData.HistoricalDataCandles.Select(
+                        hdCandle => new Candle
                         {
-                            Date = h.StartDate,
-                            Time = h.StartTime,
-                            Open = h.Open,
-                            High = h.High,
-                            Low = h.Low,
-                            Close = h.Close,
-                            Volume = h.Volume
+                            Date = hdCandle.StartDate,
+                            Time = hdCandle.StartTime,
+                            Open = hdCandle.Open,
+                            High = hdCandle.High,
+                            Low = hdCandle.Low,
+                            Close = hdCandle.Close,
+                            Volume = hdCandle.Volume,
+                            Spread = hdCandle.Spread
                         }
                     ).OrderBy(d => d.Date).ThenBy(d => d.Time).ToList();
 
@@ -119,33 +122,32 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     // Extractor
 
-                    _assembledBuilderService.ExtractorExecute(ProcessArgs.ProjectName, _asembledBuilderModel, candles, config);
+                    _assembledBuilderService.ExtractorExecute(ProcessArgs.ProjectName, _asembledBuilderModel, projectCandles, config);
 
                     // Strategy
 
-                    _assembledBuilderService.Build(ProcessArgs.ProjectName, config, candles);
+                    _assembledBuilderService.Build(ProcessArgs.ProjectName, config, projectCandles);
                 }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
 
                 IsTransactionActive = false;
                 bool result = true;
 
-                #region Msg
+                // Result Message
 
                 string msg = result ? MessageResources.AssembledBuilderCompleted : MessageResources.EntityErrorTransaction;
-
                 MessageHelper.ShowMessage(this, CommonResources.AssembledBuilder, msg);
-
-                #endregion Msg
             }
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 LogHelper.LogException<AssembledBuilderViewModel>(ex);
+
                 throw;
             }
             finally
             {
-                _eventAggregator.GetEvent<AppProjectCanExecuteEventAggregator>().Publish(true);
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
@@ -158,7 +160,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
@@ -170,18 +174,24 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 if (Model != null && !string.IsNullOrEmpty(label?.Trim()))
                 {
                     if (label == "up")
+                    {
                         Model.ChangeExpandedAll(Model.UPNodes);
+                    }
                     if (label == "down")
+                    {
                         Model.ChangeExpandedAll(Model.DOWNNodes);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
+
                 throw;
             }
-        }, (item) => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, _ => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public async void PopulateViewModel()
         {
@@ -192,7 +202,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (!IsTransactionActive)
                 {
-                    AssembledBuilderModel model = _assembledBuilderService.LoadStrategyModel(ProcessArgs.ProjectName);
+                    var model = _assembledBuilderService.LoadStrategyModel(ProcessArgs.ProjectName);
 
                     Model.UPNodes.Clear();
                     Model.UPNodes.Add(MapToTreeObservableNode(model.UPNode, true, isBacktestExpanded: false));

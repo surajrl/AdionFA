@@ -118,17 +118,13 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
                         // StrategyBuilder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUPIS.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUPOS.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWNIS.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWNOS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectName));
 
                         // AssembledBuilder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUPIS.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUPOS.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWNIS.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWNOS.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUP.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWN.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));

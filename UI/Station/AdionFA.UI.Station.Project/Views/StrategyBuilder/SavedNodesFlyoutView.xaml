@@ -22,10 +22,10 @@
 
     <Grid>
         <!--#region General Expander-->
-        <Expander Margin="0" Header="Nodes" IsExpanded="True">
+        <Expander Header="Nodes"
+                  IsExpanded="True">
             <DataGrid IsReadOnly="True"
                       AutoGenerateColumns="False"
-                      RowHeaderWidth="0"
                       ItemsSource="{Binding SavedNodes}">
 
                 <DataGrid.Resources>
@@ -122,7 +122,7 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <!--#region Total UP-->
-                                                <TextBlock Grid.Row="0" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalUP}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding TotalUP, StringFormat=N2}" />
@@ -130,7 +130,7 @@
                                                 <!--#endregion-->
 
                                                 <!--#region Total DOWN-->
-                                                <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding TotalDOWN, StringFormat=N2}" />
@@ -138,7 +138,7 @@
                                                 <!--#endregion-->
 
                                                 <!--#region Total-->
-                                                <TextBlock Grid.Row="0" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Column="1" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.NTotals}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding Total, StringFormat=N2}" />
@@ -146,7 +146,7 @@
                                                 <!--#endregion-->
 
                                                 <!--#region Ratio UP-->
-                                                <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="2" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioUP}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding RatioUP, StringFormat=N2}" />
@@ -154,7 +154,7 @@
                                                 <!--#endregion-->
 
                                                 <!--#region Ratio DOWN-->
-                                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                                                <TextBlock Grid.Row="3" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding RatioDOWN, StringFormat=N2}" />
@@ -357,7 +357,7 @@
                                                 </Button.Content>
                                                 <behaviors:Interaction.Triggers>
                                                     <behaviors:EventTrigger SourceName="deleteNodeBtn" EventName="Click">
-                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.DeleteNodeCommand}">
+                                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:Flyout}}, Path=DataContext.DeleteNodeCommand}">
                                                             <behaviors:InvokeCommandAction.CommandParameter>
                                                                 <Binding Path="." />
                                                             </behaviors:InvokeCommandAction.CommandParameter>

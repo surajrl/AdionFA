@@ -14,22 +14,24 @@ namespace AdionFA.UI.Station.Infrastructure.Base
             EventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
         }
 
-        // RegionManager
+        // Region Manager
 
-        private IRegionManager regionManager;
+        private IRegionManager _regionManager;
+
         public IRegionManager RegionManager
         {
-            get { return regionManager; }
-            private set { SetProperty(ref regionManager, value); }
+            get => _regionManager;
+            private set => SetProperty(ref _regionManager, value);
         }
 
-        // EventAggregator
+        // Event Aggregator
 
-        private IEventAggregator eventAggregator;
+        private IEventAggregator _eventAggregator;
+
         public IEventAggregator EventAggregator
         {
-            get { return eventAggregator; }
-            private set { SetProperty(ref eventAggregator, value); }
+            get => _eventAggregator;
+            private set => SetProperty(ref _eventAggregator, value);
         }
 
         // Validation
@@ -37,7 +39,7 @@ namespace AdionFA.UI.Station.Infrastructure.Base
         public ValidationResult Validate<T>(AbstractValidator<T> v) where T : ViewModelBase
         {
             ClearAllErrors();
-            ValidationResult vr = v.Validate((T)this);
+            var vr = v.Validate((T)this);
             vr.Errors.ForEach(error =>
             {
                 SetError(error.PropertyName, error.ErrorMessage);
@@ -48,7 +50,7 @@ namespace AdionFA.UI.Station.Infrastructure.Base
         public ValidationResult Validate()
         {
             ClearAllErrors();
-            ValidationResult vr = (this as IModelValidator).GetValidationResult();
+            var vr = (this as IModelValidator).GetValidationResult();
             vr.Errors.ForEach(error =>
             {
                 SetError(error.PropertyName, error.ErrorMessage);
