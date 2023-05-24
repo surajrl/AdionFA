@@ -257,7 +257,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             if (isTrade)
                             {
                                 // Open operation request -----------------------------------------------
-                                if (Nodes.First().Label.ToLower() == "up")
+                                if (node.Label.ToLower() == "up")
                                 {
                                     requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
                                     Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
