@@ -247,47 +247,51 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         })
                         .OrderBy(m => m.Date).ToList();
 
-                        var isTrade = _tradeService.IsTrade(
-                                _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(Nodes.FirstOrDefault()),
-                                candles,
-                                _currentCandle);
-                        //---------------------------------------------------------------------
-
-                        if (isTrade)
+                        foreach (var node in Nodes)
                         {
-                            // Open operation request -----------------------------------------------
-                            if (Nodes.First().Label.ToLower() == "up")
+                            var isTrade = _tradeService.IsTrade(
+                                    _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node),
+                                    candles,
+                                    _currentCandle);
+
+                            if (isTrade)
                             {
-                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
-                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
+                                // Open operation request -----------------------------------------------
+                                if (Nodes.First().Label.ToLower() == "up")
+                                {
+                                    requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
+                                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
+                                }
+                                else
+                                {
+                                    requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
+                                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
+                                }
+                                //-----------------------------------------------------------------------
+
+                                // Open operation response ----------------------------------------------
+                                var openOperationRep = requester.ReceiveFrameString();
+                                Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
+
+                                var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
+
+                                var model = new ZmqMsgModel
+                                {
+                                    Id = MessageOutput.Count + 1,
+                                    Date = _currentCandle.Date,
+                                    DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss"),
+                                    PutType = (int)MessageZMQPutTypeEnum.Output,
+                                    PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
+                                    PositionType = (int)response.OrderType,
+                                    PositionTypeName = response.OrderType.GetMetadata().Name,
+                                    Volume = decimal.Parse(response.Volume)
+                                };
+
+                                progress.Report(model);
+                                //-----------------------------------------------------------------------
+
+                                break;
                             }
-                            else
-                            {
-                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
-                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
-                            }
-                            //-----------------------------------------------------------------------
-
-                            // Open operation response ----------------------------------------------
-                            var openOperationRep = requester.ReceiveFrameString();
-                            Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
-
-                            var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
-
-                            var model = new ZmqMsgModel
-                            {
-                                Id = MessageOutput.Count + 1,
-                                Date = _currentCandle.Date,
-                                DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss"),
-                                PutType = (int)MessageZMQPutTypeEnum.Output,
-                                PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
-                                PositionType = (int)response.OrderType,
-                                PositionTypeName = response.OrderType.GetMetadata().Name,
-                                Volume = decimal.Parse(response.Volume)
-                            };
-
-                            progress.Report(model);
-                            //-----------------------------------------------------------------------
                         }
                     }
                 }
