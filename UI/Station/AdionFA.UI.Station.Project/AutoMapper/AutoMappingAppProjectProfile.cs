@@ -30,6 +30,8 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<EntityServiceHostDTO, EntityServiceHostVM>().ReverseMap();
             CreateMap<EntityTypeDTO, EntityTypeVM>().ReverseMap();
             CreateMap<SettingDTO, SettingVM>().ReverseMap();
+            CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
+            CreateMap<ScheduleConfigurationDTO, ScheduleConfigurationVM>().ReverseMap();
 
             // Market Data
 
@@ -43,24 +45,23 @@ namespace AdionFA.UI.Station.Project.AutoMapper
 
             CreateMap<ProjectDTO, ProjectVM>().ReverseMap();
             CreateMap<ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
-            CreateMap<ProjectGlobalConfigurationDTO, ProjectGlobalConfigurationVM>().ReverseMap();
-            CreateMap<ProjectGlobalScheduleConfigurationDTO, ProjectGlobalScheduleConfigurationVM>().ReverseMap();
             CreateMap<ProjectScheduleConfigurationDTO, ProjectScheduleConfigurationVM>().ReverseMap();
+            CreateMap<ProjectConfigurationVM, ProjectConfigurationModel>().ReverseMap();
 
             // Reference Data
 
             CreateMap<CurrencyDTO, CurrencyVM>().ReverseMap();
 
             // Extractor & Strategy Builder
-            CreateMap<ProjectConfigurationVM, ProjectSettingsModel>().ReverseMap();
-
-            CreateMap<ConfigurationBaseDTO, ConfigurationBaseVM>().ReverseMap();
+            CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
+            CreateMap<ProjectConfigurationVM, ConfigurationDTO>().ReverseMap();
 
             CreateMap<REPTreeOutputModel, REPTreeOutputVM>().ReverseMap();
             CreateMap<REPTreeNodeModel, REPTreeNodeVM>().ReverseMap();
 
             // Assembled Builder
 
+            CreateMap<ProjectConfigurationVM, ConfigurationBaseDTO>().ReverseMap();
             CreateMap<AssembledBuilderModel, AssembledBuilderVM>().ReverseMap();
         }
     }

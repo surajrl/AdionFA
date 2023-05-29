@@ -7,7 +7,7 @@ namespace AdionFA.Infrastructure.Common.Security.Authorization
 {
     public static class AuthorizationMgmt
     {
-        public static Type AuthorizeCall(string tenantId, string ownerId, string owner, string sourceFilePath)
+        public static Type AuthorizeCall(string ownerId, string owner, string sourceFilePath)
         {
             bool authorize = false;
 
@@ -16,8 +16,8 @@ namespace AdionFA.Infrastructure.Common.Security.Authorization
             if (type.GetCustomAttributes(typeof(AdionAnonymousAttribute), false).Any())
                 authorize = true;
 
-            if (!authorize && (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(ownerId) || string.IsNullOrEmpty(owner)))
-                throw new Exception("Invalid Tenant or Owner");
+            if (!authorize && (string.IsNullOrEmpty(ownerId) || string.IsNullOrEmpty(owner)))
+                throw new Exception("Invalid Owner");
 
             return type;
         }

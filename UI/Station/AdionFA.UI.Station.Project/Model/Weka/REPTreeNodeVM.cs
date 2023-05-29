@@ -1,9 +1,9 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Project.Model.StrategyBuilder;
-using NetMQ.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 
 namespace AdionFA.UI.Station.Infrastructure.Model.Weka
@@ -215,7 +215,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
                     int lastCount = 1;
                     if (last.Contains('.'))
                     {
-                        int.TryParse(last.Split(".")[1], out lastCount);
+                        lastCount = int.Parse(last.Split(".")[1], CultureInfo.InvariantCulture);
                     }
                     if (name == lastName)
                     {

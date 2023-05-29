@@ -2,7 +2,6 @@
 using AdionFA.Core.Domain.Aggregates.Project;
 using AdionFA.Core.Domain.Contracts.Projects;
 using AdionFA.Core.Domain.Contracts.Repositories;
-using AdionFA.Core.Domain.Exceptions;
 using AdionFA.Infrastructure.Core.Data.Repositories.Extension;
 using AdionFA.Infrastructure.Enums;
 using System;
@@ -18,20 +17,20 @@ namespace AdionFA.Core.Domain.Services.Projects
         // Repositories
 
         private readonly IRepository<Project> _projectRepository;
-        private readonly IRepository<ProjectGlobalConfiguration> _projectGlobalConfigurationRepository;
         private readonly IRepository<ProjectConfiguration> _projectConfigurationRepository;
         private readonly IRepository<ProjectScheduleConfiguration> _projectScheduleConfigurationRepository;
+        private readonly IRepository<Configuration> _configurationRepository;
         private readonly IRepository<EntityServiceHost> _entityServiceHostRepository;
 
-        public ProjectDomainService(string tenantId, string ownerId, string owner,
+        public ProjectDomainService(string ownerId, string owner,
             IRepository<Project> projectRepository,
-            IRepository<ProjectGlobalConfiguration> projectGlobalConfigurationRepository,
+            IRepository<Configuration> configurationRepository,
             IRepository<ProjectConfiguration> projectConfigurationRepository,
             IRepository<ProjectScheduleConfiguration> projectScheduleConfigurationRepository,
-            IRepository<EntityServiceHost> entityServiceHostRepository) : base(tenantId, ownerId, owner)
+            IRepository<EntityServiceHost> entityServiceHostRepository) : base(ownerId, owner)
         {
             _projectRepository = projectRepository;
-            _projectGlobalConfigurationRepository = projectGlobalConfigurationRepository;
+            _configurationRepository = configurationRepository;
             _projectConfigurationRepository = projectConfigurationRepository;
             _projectScheduleConfigurationRepository = projectScheduleConfigurationRepository;
             _entityServiceHostRepository = entityServiceHostRepository;
@@ -100,7 +99,7 @@ namespace AdionFA.Core.Domain.Services.Projects
             }
         }
 
-        public int CreateProject(Project project, int globalConfigurationId, int? marketDataId = null)
+        public int CreateProject(Project project, int configurationId, int? marketDataId = null)
         {
             try
             {
@@ -112,10 +111,9 @@ namespace AdionFA.Core.Domain.Services.Projects
 
                 // Find Project Global Configuration
 
-                var configuration = _projectGlobalConfigurationRepository.FirstOrDefault(
-                    c => c.ProjectGlobalConfigurationId == globalConfigurationId,
-                    c => c.ProjectGlobalScheduleConfigurations)
-                    ?? throw new GlobalConfigurationNotFoundException();
+                var configuration = _configurationRepository.FirstOrDefault(
+                    c => c.ConfigurationId == configurationId,
+                    c => c.ScheduleConfigurations);
 
                 ProjectConfiguration projectConfiguration = new()
                 {
@@ -183,33 +181,30 @@ namespace AdionFA.Core.Domain.Services.Projects
                     StartDate = DateTime.UtcNow,
                     EndDate = null,
 
-                    TenantId = _tenantId,
                     CreatedById = _ownerId,
                     CreatedByUserName = _owner,
                     CreatedOn = DateTime.UtcNow,
                     IsDeleted = false,
-                    Inaccesible = false,
                 };
 
-                if (configuration.ProjectGlobalScheduleConfigurations?.Any() ?? false)
+                if (configuration.ScheduleConfigurations?.Any() ?? false)
                 {
-                    foreach (var sch in configuration.ProjectGlobalScheduleConfigurations)
+                    foreach (var sch in configuration.ScheduleConfigurations)
                     {
                         projectConfiguration.ProjectScheduleConfigurations.Add(new ProjectScheduleConfiguration
                         {
                             MarketRegionId = sch.MarketRegionId,
+
                             FromTimeInSeconds = sch.FromTimeInSeconds,
                             ToTimeInSeconds = sch.ToTimeInSeconds,
 
                             StartDate = DateTime.UtcNow,
                             EndDate = null,
 
-                            TenantId = _tenantId,
                             CreatedById = _ownerId,
                             CreatedByUserName = _owner,
                             CreatedOn = DateTime.UtcNow,
                             IsDeleted = false,
-                            Inaccesible = false,
                         });
                     }
                 }
@@ -325,9 +320,9 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                ProjectGlobalConfiguration configuration = _projectGlobalConfigurationRepository.FirstOrDefault(
+                var configuration = _configurationRepository.FirstOrDefault(
                     c => c.EndDate == null,
-                    c => c.ProjectGlobalScheduleConfigurations) ?? throw new GlobalConfigurationNotFoundException();
+                    c => c.ScheduleConfigurations);
 
                 _projectConfigurationRepository.CloseTemporalRecord();
 
@@ -399,9 +394,9 @@ namespace AdionFA.Core.Domain.Services.Projects
                     EndDate = null,
                 };
 
-                if (configuration.ProjectGlobalScheduleConfigurations?.Any() ?? false)
+                if (configuration.ScheduleConfigurations?.Any() ?? false)
                 {
-                    foreach (var sch in configuration.ProjectGlobalScheduleConfigurations)
+                    foreach (var sch in configuration.ScheduleConfigurations)
                     {
                         projectConfiguration.ProjectScheduleConfigurations.Add(new ProjectScheduleConfiguration
                         {
@@ -412,12 +407,10 @@ namespace AdionFA.Core.Domain.Services.Projects
                             StartDate = DateTime.UtcNow,
                             EndDate = null,
 
-                            TenantId = _tenantId,
                             CreatedById = _ownerId,
                             CreatedByUserName = _owner,
                             CreatedOn = DateTime.UtcNow,
                             IsDeleted = false,
-                            Inaccesible = false,
                         });
                     }
                 }

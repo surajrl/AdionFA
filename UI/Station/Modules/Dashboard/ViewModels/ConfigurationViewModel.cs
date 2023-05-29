@@ -17,52 +17,49 @@ using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
-    public class ProjectGlobalConfigurationViewModel : ViewModelBase
+    public class ConfigurationViewModel : ViewModelBase
     {
-        internal readonly string EntityDescription = EntityTypeEnum.ProjectGlobalConfiguration.GetMetadata().Description;
+        private readonly string EntityDescription = EntityTypeEnum.Configuration.GetMetadata().Description;
 
         private readonly ISettingService _settingService;
         private readonly IMarketDataServiceAgent _marketDataService;
 
-        public ProjectGlobalConfigurationViewModel(
+        public ConfigurationViewModel(
             ISettingService settingService,
-            IMarketDataServiceAgent historicalDataService,
+            IMarketDataServiceAgent marketDataService,
             IApplicationCommands applicationCommands)
         {
             _settingService = settingService;
-            _marketDataService = historicalDataService;
+            _marketDataService = marketDataService;
 
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
 
-        private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        private ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectGlobalConfig))
             {
                 PopulateViewModel();
             }
-        }
+        });
 
         public ICommand WithoutSchedulesCommand => new DelegateCommand(async () =>
         {
-            var config = await _settingService.GetGlobalConfiguration();
-            if (ProjectGlobalConfiguration.WithoutSchedule)
+            var config = await _settingService.GetConfiguration();
+            if (Configuration.WithoutSchedule)
             {
-                ProjectGlobalConfiguration.FromTimeInSecondsEurope = _projectGlobalConfiguration.ToTimeInSecondsEurope =
-                ProjectGlobalConfiguration.FromTimeInSecondsAmerica = _projectGlobalConfiguration.ToTimeInSecondsAmerica =
-                ProjectGlobalConfiguration.FromTimeInSecondsAsia = _projectGlobalConfiguration.ToTimeInSecondsAsia = DateTime.UtcNow;
+                Configuration.FromTimeInSecondsEurope = _Configuration.ToTimeInSecondsEurope =
+                Configuration.FromTimeInSecondsAmerica = _Configuration.ToTimeInSecondsAmerica =
+                Configuration.FromTimeInSecondsAsia = _Configuration.ToTimeInSecondsAsia = DateTime.UtcNow;
 
-                ProjectGlobalConfiguration.FromTimeInSecondsEurope = config.FromTimeInSecondsEurope;
-                ProjectGlobalConfiguration.ToTimeInSecondsEurope = config.ToTimeInSecondsEurope;
+                Configuration.FromTimeInSecondsEurope = config.FromTimeInSecondsEurope;
+                Configuration.ToTimeInSecondsEurope = config.ToTimeInSecondsEurope;
 
-                ProjectGlobalConfiguration.FromTimeInSecondsAmerica = config.FromTimeInSecondsAmerica;
-                ProjectGlobalConfiguration.ToTimeInSecondsAmerica = config.ToTimeInSecondsAmerica;
+                Configuration.FromTimeInSecondsAmerica = config.FromTimeInSecondsAmerica;
+                Configuration.ToTimeInSecondsAmerica = config.ToTimeInSecondsAmerica;
 
-                ProjectGlobalConfiguration.FromTimeInSecondsAsia = config.FromTimeInSecondsAsia;
-                ProjectGlobalConfiguration.ToTimeInSecondsAsia = config.ToTimeInSecondsAsia;
+                Configuration.FromTimeInSecondsAsia = config.FromTimeInSecondsAsia;
+                Configuration.ToTimeInSecondsAsia = config.ToTimeInSecondsAsia;
             }
         });
 
@@ -70,7 +67,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         {
             try
             {
-                var validator = ProjectGlobalConfiguration.Validate();
+                var validator = Configuration.Validate();
                 if (!validator.IsValid)
                 {
                     IsTransactionActive = false;
@@ -85,7 +82,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 IsTransactionActive = true;
 
                 // Update
-                var result = await _settingService.UpdateGlobalConfiguration(ProjectGlobalConfiguration);
+                var result = await _settingService.UpdateConfiguration(Configuration);
 
                 IsTransactionActive = false;
 
@@ -121,24 +118,23 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 Name = timeframe.Name
             }));
 
-            ProjectGlobalConfiguration = await _settingService.GetGlobalConfiguration();
+            Configuration = await _settingService.GetConfiguration();
         }
 
         // View Bindings
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
             set => SetProperty(ref _isTransactionActive, value);
         }
 
-        private ProjectGlobalConfigurationModel _projectGlobalConfiguration;
-        public ProjectGlobalConfigurationModel ProjectGlobalConfiguration
+        private ConfigurationModel _Configuration;
+        public ConfigurationModel Configuration
         {
-            get => _projectGlobalConfiguration;
-            set => SetProperty(ref _projectGlobalConfiguration, value);
+            get => _Configuration;
+            set => SetProperty(ref _Configuration, value);
         }
 
         public ObservableCollection<Metadata> Symbols { get; } = new ObservableCollection<Metadata>();

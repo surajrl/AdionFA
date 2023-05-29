@@ -7,7 +7,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
     {
         // Identity
 
-        public string _tenantId { get; }
         public string _ownerId { get; }
         public string _owner { get; }
 
@@ -15,12 +14,11 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
         private bool _disposed = false;
 
-        public UnitOfWork(string tenantId, string ownerId, string owner, TContext context)
+        public UnitOfWork(string ownerId, string owner, TContext context)
         {
             _context = context;
             _context.Database.SetCommandTimeout(120);
 
-            _tenantId = tenantId;
             _ownerId = ownerId;
             _owner = owner;
         }

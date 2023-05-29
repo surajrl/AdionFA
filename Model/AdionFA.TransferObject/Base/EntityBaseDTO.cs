@@ -6,10 +6,6 @@ namespace AdionFA.TransferObject.Base
     {
         public bool IsDeleted { get; set; }
 
-        public bool Inaccesible { get; set; }
-
-        public string TenantId { get; set; }
-
         public string CreatedById { get; set; }
         public string CreatedByUserName { get; set; }
 

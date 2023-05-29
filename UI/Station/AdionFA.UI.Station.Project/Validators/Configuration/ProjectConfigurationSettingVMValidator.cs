@@ -7,7 +7,7 @@ using static AdionFA.Infrastructure.Common.Validators.FluentValidator.FluentVali
 
 namespace AdionFA.UI.Station.Project.Validators.Configuration
 {
-    public class ProjectConfigurationSettingVMValidator : AbstractValidator<ProjectSettingsModel>
+    public class ProjectConfigurationSettingVMValidator : AbstractValidator<ProjectConfigurationModel>
     {
         public ProjectConfigurationSettingVMValidator()
         {

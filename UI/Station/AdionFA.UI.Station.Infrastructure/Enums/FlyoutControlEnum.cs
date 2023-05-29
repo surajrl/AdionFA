@@ -2,7 +2,7 @@
 
 namespace AdionFA.UI.Station.Infrastructure.Enums
 {
-    public enum FloyoutPosition
+    public enum FlyoutPosition
     {
         Left,
         Right,
@@ -37,7 +37,7 @@ namespace AdionFA.UI.Station.Infrastructure.Enums
     }
 
     [Flags]
-    public enum FloyoutWindowCommandsOverlayBehavior
+    public enum FlyoutWindowCommandsOverlayBehavior
     {
         /// <summary>
         /// Doesn't overlay a hidden TitleBar.
@@ -51,7 +51,7 @@ namespace AdionFA.UI.Station.Infrastructure.Enums
     }
 
     [Flags]
-    public enum FloyoutOverlayBehavior
+    public enum FlyoutOverlayBehavior
     {
         /// <summary>
         /// Doesn't overlay Flyouts nor a hidden TitleBar.

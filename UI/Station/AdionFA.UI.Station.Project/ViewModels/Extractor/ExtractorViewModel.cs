@@ -8,7 +8,6 @@ using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
@@ -39,8 +38,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IMarketDataServiceAgent _historicalDataService;
 
         private readonly IEventAggregator _eventAggregator;
-
-        private ProjectVM _project;
 
         public ExtractorViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
@@ -90,16 +87,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Process
 
-                if (_projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorWithoutScheduleDirectory()) &&
-                    _projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorAmericaDirectory()) &&
-                    _projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorEuropeDirectory()) &&
-                    _projectDirectoryService.DeleteAllFiles(_project.ProjectName.ProjectExtractorAsiaDirectory()))
+                if (_projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory()) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory()) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory()) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory()))
                 {
                     IsTransactionActive = true;
                     _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                    var projectConfig = await _appProjectService.GetProjectConfiguration(_project.ProjectId, true);
-                    var projectHistoricalData = await _historicalDataService.GetHistoricalData(projectConfig.HistoricalDataId.Value, true);
+                    var projectConfiguration = await _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
+                    var projectHistoricalData = await _historicalDataService.GetHistoricalData(projectConfiguration.HistoricalDataId.Value, true);
 
                     // Gets all the candles from the corresponding historical data
                     IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles
@@ -137,7 +134,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 var executing = ExtractorStatusEnum.Executing.GetMetadata();
                                 extractionProcess.Status = executing.Name;
                                 extractionProcess.Message = executing.Description;
-                                var extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles.ToList(), projectConfig.TimeframeId, projectConfig.ExtractorMinVariation);
+                                var extractions = _extractorService.DoExtraction(
+                                    StartDate.Value,
+                                    EndDate.Value,
+                                    indicators,
+                                    candles.ToList(),
+                                    projectConfiguration.TimeframeId,
+                                    projectConfiguration.ExtractorMinVariation);
                                 //-------------------------------------
 
                                 extractionProcess.Message = "Writing Extraction File";
@@ -145,37 +148,37 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 var nameSignature = extractionProcess.TemplateName.Replace(".csv", string.Empty);
 
                                 _extractorService.ExtractorWrite(
-                                    _project.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
+                                    ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
                                     extractions,
                                     0,
                                     0);
 
                                 extractionProcess.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
 
-                                if (!projectConfig.WithoutSchedule)
+                                if (!projectConfiguration.WithoutSchedule)
                                 {
                                     // America
                                     extractionProcess.Message = "Writing Extraction File America";
                                     _extractorService.ExtractorWrite(
-                                        _project.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
+                                        ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
                                         indicators,
-                                        projectConfig.FromTimeInSecondsAmerica.Hour, projectConfig.ToTimeInSecondsAmerica.Hour
+                                        projectConfiguration.FromTimeInSecondsAmerica.Hour, projectConfiguration.ToTimeInSecondsAmerica.Hour
                                     );
 
                                     // Europe
                                     extractionProcess.Message = "Writing Extraction File Europe";
                                     _extractorService.ExtractorWrite(
-                                        _project.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
+                                        ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
                                         indicators,
-                                        projectConfig.FromTimeInSecondsEurope.Hour, projectConfig.ToTimeInSecondsEurope.Hour
+                                        projectConfiguration.FromTimeInSecondsEurope.Hour, projectConfiguration.ToTimeInSecondsEurope.Hour
                                     );
 
                                     // Asia
                                     extractionProcess.Message = "Writing Extraction File Asia";
                                     _extractorService.ExtractorWrite(
-                                        _project.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
+                                        ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
                                         indicators,
-                                        projectConfig.FromTimeInSecondsAsia.Hour, projectConfig.ToTimeInSecondsAsia.Hour
+                                        projectConfiguration.FromTimeInSecondsAsia.Hour, projectConfiguration.ToTimeInSecondsAsia.Hour
                                     );
                                 }
 
@@ -197,7 +200,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     var result = !ExtractionProcessList.Any(e => e.Status != ExtractorStatusEnum.Completed.GetMetadata().Name);
 
-                    var msg = result ? MessageResources.ExtractionCompleted : MessageResources.EntityErrorTransaction;
+                    var msg = result
+                    ? MessageResources.ExtractionCompleted
+                    : MessageResources.EntityErrorTransaction;
+
                     MessageHelper.ShowMessage(this, CommonResources.Extractor, msg);
                 }
             }
@@ -206,7 +212,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = false;
 
                 Trace.TraceError(ex.Message);
-
                 throw;
             }
             finally
@@ -219,24 +224,24 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
+                var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
                 ExtractorPath = ProcessArgs.ProjectName.ProjectExtractorDirectory();
 
-                ProjectConfigurationVM pcVM = _project?.ProjectConfigurations.FirstOrDefault();
-                Symbol = ((CurrencyPairEnum)pcVM?.SymbolId).GetMetadata()?.Name;
+                var projectConfigurationVM = project?.ProjectConfigurations.FirstOrDefault();
+                Symbol = ((CurrencyPairEnum)projectConfigurationVM?.SymbolId).GetMetadata()?.Name;
 
-                var symbolVM = await _historicalDataService.GetSymbol(pcVM.SymbolId).ConfigureAwait(true);
+                var symbolVM = await _historicalDataService.GetSymbol(projectConfigurationVM.SymbolId).ConfigureAwait(true);
                 Symbol = symbolVM.Name;
 
-                var timeframeVM = await _historicalDataService.GetTimeframe(pcVM.TimeframeId).ConfigureAwait(true);
+                var timeframeVM = await _historicalDataService.GetTimeframe(projectConfigurationVM.TimeframeId).ConfigureAwait(true);
                 Timeframe = timeframeVM.Name;
 
-                Variation = pcVM?.ExtractorMinVariation ?? 0;
-                WithoutSchedule = pcVM?.WithoutSchedule ?? false;
-                StartDate = pcVM.FromDateIS;
-                EndDate = pcVM.ToDateIS;
+                Variation = projectConfigurationVM?.ExtractorMinVariation ?? 0;
+                WithoutSchedule = projectConfigurationVM?.WithoutSchedule ?? false;
+                StartDate = projectConfigurationVM.FromDateIS;
+                EndDate = projectConfigurationVM.ToDateIS;
 
-                HistoricalData = await _historicalDataService.GetHistoricalData(historicalDataId: pcVM?.HistoricalDataId ?? 0).ConfigureAwait(true);
+                HistoricalData = await _historicalDataService.GetHistoricalData(historicalDataId: projectConfigurationVM?.HistoricalDataId ?? 0).ConfigureAwait(true);
 
                 if (!IsTransactionActive)
                 {
@@ -301,7 +306,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             return errors;
         }
 
-        // Bindable Model
+        // View Bindings
 
         private bool _isTransactionActive;
         public bool IsTransactionActive

@@ -20,6 +20,8 @@ namespace AdionFA.Core.Domain.Aggregates.Project
         public ICollection<ProjectConfiguration> ProjectConfigurations { get; set; }
         public ICollection<ExpertAdvisor> ExpertAdvisors { get; set; }
 
+        // Not Mapped
+
         [NotMapped]
         public DateTime? ProcessLastDate { get; set; }
 

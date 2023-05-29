@@ -10,10 +10,9 @@ using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.Common;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Project.AutoMapper;
@@ -87,20 +86,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
-            try
+            if (item == HamburgerMenuItems.StrategyBuilder.Replace(" ", string.Empty))
             {
-                if (item == HamburgerMenuItems.StrategyBuilder.Replace(" ", string.Empty))
-                {
-                    PopulateViewModel();
-                }
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-
-                Trace.TraceError(ex.Message);
-
-                throw;
+                PopulateViewModel();
             }
         });
 
@@ -351,7 +339,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             var strategyBuilder = _strategyBuilderService.BuildBacktest(
                                 node.Label,
                                 node.Node.ToList(),
-                                _mapper.Map<ConfigurationBaseVM, ConfigurationBaseDTO>(Configuration),
+                                _mapper.Map<ProjectConfigurationVM, ConfigurationDTO>(Configuration),
                                 projectCandles,
                                 _manualResetEvent,
                                 _cancellationTokenSrc.Token);
@@ -634,7 +622,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // View Bindings
 
         private bool _canCancelOrContinue;
-
         public bool CanCancelOrContinue
         {
             get => _canCancelOrContinue;
@@ -642,7 +629,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -650,7 +636,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _canExecute = true;
-
         public bool CanExecute
         {
             get => _canExecute;
@@ -658,7 +643,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<REPTreeNodeVM> _allNodes;
-
         public ObservableCollection<REPTreeNodeVM> AllNodes
         {
             get => _allNodes;
@@ -666,7 +650,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ProjectConfigurationVM _configuration;
-
         public ProjectConfigurationVM Configuration
         {
             get => _configuration;
@@ -674,7 +657,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int _totalCorrelationUP;
-
         public int TotalCorrelationUP
         {
             get => _totalCorrelationUP;
@@ -682,7 +664,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int _totalCorrelationDOWN;
-
         public int TotalCorrelationDOWN
         {
             get => _totalCorrelationDOWN;
@@ -690,23 +671,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int _maxParallelism;
-
         public int MaxParallelism
         {
             get => _maxParallelism;
             set => SetProperty(ref _maxParallelism, value);
         }
 
-        private int _currentConfiguration;
-
-        public int CurrentConfiguration
-        {
-            get => _currentConfiguration;
-            set => SetProperty(ref _currentConfiguration, value);
-        }
-
         private ObservableCollection<StrategyBuilderProcessModel> _strategyBuilderProcessList;
-
         public ObservableCollection<StrategyBuilderProcessModel> StrategyBuilderProcessList
         {
             get => _strategyBuilderProcessList;

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AdionFA.UI.Station.Module.Dashboard.ProjectGlobalConfigurationView"
+﻿<UserControl x:Class="AdionFA.UI.Station.Module.Dashboard.ConfigurationView"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
@@ -15,15 +15,14 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800"
-             Margin="20 10 10 5"
-             x:Name="projectGlobalConfigView">
+             x:Name="configurationView">
 
     <UserControl.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
         <Thickness x:Key="ControlMargin">0 5 0 15</Thickness>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="10 0 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -33,12 +32,16 @@
         </Grid.ColumnDefinitions>
 
         <Grid HorizontalAlignment="Right"
-              Margin="0 0 0 10">
-            <Button x:Name="ProjectGlobalConfigurationShellBtnSave"
-                    Width="80"
+              Margin="0 20 10 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Button Width="80"
                     Height="40"
-                    Command="{Binding SaveBtnCommand}"
-                    HorizontalAlignment="Right">
+                    HorizontalAlignment="Right"
+                    Margin="10 0 0 0"
+                    Command="{Binding SaveBtnCommand}">
                 <StackPanel Orientation="Horizontal"
                             Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <iconPacks:FontAwesome Kind="SaveRegular"
@@ -47,7 +50,8 @@
                            FontSize="11" />
                 </StackPanel>
             </Button>
-            <metro:ProgressRing IsActive="True"
+            <metro:ProgressRing Grid.Column="1"
+                                IsActive="True"
                                 Width="25"
                                 Height="25"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -56,7 +60,7 @@
         <ScrollViewer Grid.Row="1"
                       Padding="0 0 15 0">
             <StackPanel Orientation="Vertical">
-                <!--GeneralInformation-->
+                <!--General Information-->
                 <metro:MetroHeader Header="{x:Static commonResources:CommonResources.GeneralInformation}"
                                    Margin="0 0 0 15">
                     <Grid>
@@ -65,15 +69,15 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <!--#region Description-->
                         <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <!--#region Description-->
                             <Label>
                                 <TextBlock>
                                         <Run Text="{x:Static commonResources:CommonResources.Description}" />
                                         <Run Text="*" /></TextBlock>
                             </Label>
                             <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                     Text="{Binding ProjectGlobalConfiguration.Description, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                     Text="{Binding Configuration.Description, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>
@@ -87,8 +91,8 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <!--#region Symbol-->
                         <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <!--#region Symbol-->
                             <Label>
                                 <TextBlock>
                                             <Run Text="{x:Static commonResources:CommonResources.Symbols}" />
@@ -98,12 +102,12 @@
                                       Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="Id"
-                                      SelectedValue="{Binding ProjectGlobalConfiguration.SymbolId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                      SelectedValue="{Binding Configuration.SymbolId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
                         </StackPanel>
-                        <!--#endregion-->
-                        <!--#region Timeframe-->
                         <StackPanel Grid.Column="1"
                                     Margin="{StaticResource ColumnMargin}">
+                            <!--#region Timeframe-->
                             <Label>
                                 <TextBlock>
                                         <Run Text="{x:Static commonResources:CommonResources.Timeframe}" />
@@ -113,9 +117,9 @@
                                       Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="Id"
-                                      SelectedValue="{Binding ProjectGlobalConfiguration.TimeframeId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                      SelectedValue="{Binding Configuration.TimeframeId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
                         </StackPanel>
-                        <!--#endregion-->
                     </Grid>
                 </metro:MetroHeader>
                 <!--Schedule-->
@@ -134,7 +138,7 @@
                         <StackPanel Margin="{StaticResource ColumnMargin}">
                             <!--#region Without Schedule-->
                             <CheckBox Content="{x:Static commonResources:CommonResources.WithoutSchedules}"
-                                      IsChecked="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                      IsChecked="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
                                       Command="{Binding WithoutSchedulesCommand}" />
                             <!--#endregion-->
                         </StackPanel>
@@ -149,9 +153,9 @@
                                             <Run Text="*" /></TextBlock>
                                 </Label>
                                 <metro:TimePicker SelectedTimeFormat="Short"
-                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.FromTimeInSecondsEurope, Mode=TwoWay}"
+                                                  IsEnabled="{Binding Configuration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding Configuration.FromTimeInSecondsEurope, Mode=TwoWay}"
                                                   Culture="(Default)" />
                                 <!--#endregion-->
                                 <!--#region ToTimeInSecondsEurope-->
@@ -161,9 +165,9 @@
                                             <Run Text="*" /></TextBlock>
                                 </Label>
                                 <metro:TimePicker SelectedTimeFormat="Short"
-                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.ToTimeInSecondsEurope, Mode=TwoWay}"
+                                                  IsEnabled="{Binding Configuration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding Configuration.ToTimeInSecondsEurope, Mode=TwoWay}"
                                                   Culture="(Default)" />
                                 <!--#endregion-->
                             </StackPanel>
@@ -181,9 +185,9 @@
                                             <Run Text="*" /></TextBlock>
                                 </Label>
                                 <metro:TimePicker SelectedTimeFormat="Short"
-                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.FromTimeInSecondsAmerica, Mode=TwoWay,
+                                                  IsEnabled="{Binding Configuration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding Configuration.FromTimeInSecondsAmerica, Mode=TwoWay,
                                                                     ValidatesOnNotifyDataErrors=True}"
                                                   Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                   Culture="(Default)" />
@@ -195,9 +199,9 @@
                                             <Run Text="*" /></TextBlock>
                                 </Label>
                                 <metro:TimePicker SelectedTimeFormat="Short"
-                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.ToTimeInSecondsAmerica, Mode=TwoWay}"
+                                                  IsEnabled="{Binding Configuration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding Configuration.ToTimeInSecondsAmerica, Mode=TwoWay}"
                                                   Culture="(Default)" />
                                 <!--#endregion-->
                             </StackPanel>
@@ -214,9 +218,9 @@
                                             <Run Text="*" /></TextBlock>
                                 </Label>
                                 <metro:TimePicker SelectedTimeFormat="Short"
-                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.FromTimeInSecondsAsia, Mode=TwoWay}"
+                                                  IsEnabled="{Binding Configuration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding Configuration.FromTimeInSecondsAsia, Mode=TwoWay}"
                                                   Culture="(Default)" />
                                 <!--#endregion-->
                                 <!--#region ToTimeInSecondsAsia-->
@@ -226,9 +230,9 @@
                                             <Run Text="*" /></TextBlock>
                                 </Label>
                                 <metro:TimePicker SelectedTimeFormat="Short"
-                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.ToTimeInSecondsAsia, Mode=TwoWay}"
+                                                  IsEnabled="{Binding Configuration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding Configuration.ToTimeInSecondsAsia, Mode=TwoWay}"
                                                   Culture="(Default)" />
                             </StackPanel>
                             <!--#endregion-->
@@ -247,8 +251,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition />
                         </Grid.RowDefinitions>
-
-                        <!--#region Minimum Variation-->
+                            <!--#region Minimum Variation-->
                         <StackPanel Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
@@ -258,7 +261,7 @@
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Minimum="0"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.ExtractorMinVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.ExtractorMinVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>
@@ -287,7 +290,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.TotalInstanceWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.TotalInstanceWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             <!--#endregion-->
                             <!--#region MinimalSeed-->
                             <Label>
@@ -299,7 +302,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.MinimalSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.MinimalSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             <!--#endregion-->
                             <!--#region NTotalTree-->
                             <Label>
@@ -310,7 +313,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.NTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.NTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             <!--#endregion-->
                         </StackPanel>
                         <StackPanel Grid.Column="1"
@@ -324,7 +327,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.TotalDecimalWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.TotalDecimalWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             <!--#endregion-->
                             <!--#region MaximumSeed-->
                             <Label>
@@ -336,7 +339,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.MaximumSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.MaximumSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             <!--#endregion-->
                             <!--#region MaxRatioTree-->
                             <Label>
@@ -347,7 +350,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.MaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.MaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             <!--#endregion-->
                         </StackPanel>
                         <!--#region DepthWeka-->
@@ -361,7 +364,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.DepthWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.DepthWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>
@@ -392,7 +395,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBWinningStrategyUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBWinningStrategyUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region Winning Strategy UP Target-->
@@ -406,7 +409,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBWinningStrategyDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBWinningStrategyDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region TransactionTarget-->
@@ -420,7 +423,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region VariationTransaction-->
@@ -435,7 +438,7 @@
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBMaxTransactionsVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMaxTransactionsVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region ActivateProgressiveness-->
@@ -448,24 +451,24 @@
                             </Label>
                             <metro:ToggleSwitch Margin="0 -3"
                                                 Toggled="ProgressivenessToggleSwitch_Toggled"
-                                                IsOn="{Binding ProjectGlobalConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                IsOn="{Binding Configuration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region Progressiveness-->
                         <StackPanel Grid.Column="2"
                                     Grid.Row="1"
                                     Margin="{StaticResource ColumnMargin}">
-                            <Label IsEnabled="{Binding ProjectGlobalConfiguration.IsProgressiveness}">
+                            <Label IsEnabled="{Binding Configuration.IsProgressiveness}">
                                 <TextBlock>
                                         <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" />
                                         <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                        <Run Text="{Binding ElementName=projectGlobalConfigView, Path=LabelRequiredProgressiveness}" /></TextBlock>
+                                        <Run Text="{Binding ElementName=configurationView, Path=LabelRequiredProgressiveness}" /></TextBlock>
                             </Label>
-                            <metro:NumericUpDown IsEnabled="{Binding ProjectGlobalConfiguration.IsProgressiveness}"
+                            <metro:NumericUpDown IsEnabled="{Binding Configuration.IsProgressiveness}"
                                                  NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.Progressiveness, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.Progressiveness, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MaxPercentCorrelation-->
@@ -481,7 +484,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBMaxPercentCorrelation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMaxPercentCorrelation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinTransactionCountIS-->
@@ -497,7 +500,7 @@
                             <metro:NumericUpDown Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  NumericInputMode="Numbers"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBMinTransactionsIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMinTransactionsIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinPercentSuccessIS-->
@@ -515,7 +518,7 @@
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBMinPercentSuccessIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMinPercentSuccessIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinTransactionCountOS-->
@@ -531,7 +534,7 @@
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBMinTransactionsOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMinTransactionsOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinPercentSuccessOS-->
@@ -540,16 +543,16 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="Minimum" />
-                                    <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.OS}" />
-                                    <Run Text="*" /></TextBlock>
+                                        <Run Text="Minimum" />
+                                        <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
+                                        <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                        <Run Text="{x:Static commonResources:CommonResources.OS}" />
+                                        <Run Text="*" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.SBMinPercentSuccessOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMinPercentSuccessOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>
@@ -574,7 +577,7 @@
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.ABTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.ABTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#region Minimum Success Rate Improvement Percent-->
                         <StackPanel Grid.Column="1"
@@ -587,7 +590,7 @@
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectGlobalConfiguration.ABMinImprovePercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.ABMinImprovePercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>

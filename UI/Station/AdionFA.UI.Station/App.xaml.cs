@@ -18,7 +18,6 @@ using AdionFA.UI.Station.Module.Dashboard.Services;
 using AdionFA.UI.Station.Module.Shell;
 using ControlzEx.Theming;
 using FluentValidation;
-using Grpc.Core;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
@@ -29,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace AdionFA.UI.Station
@@ -50,7 +48,7 @@ namespace AdionFA.UI.Station
 
             // Identity
 
-            AdionIdentity Identity = new(SecurityHelper.DefaultTenantId, SecurityHelper.DefaultOwnerId, SecurityHelper.DefaultOwner);
+            AdionIdentity Identity = new(SecurityHelper.DefaultOwnerId, SecurityHelper.DefaultOwner);
             AdionPrincipal Principal = new()
             {
                 Identity = Identity

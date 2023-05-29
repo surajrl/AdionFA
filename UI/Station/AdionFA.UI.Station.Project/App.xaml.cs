@@ -1,34 +1,30 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.IofC;
+﻿using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Security.Helper;
 using AdionFA.Infrastructure.Common.Security.Model;
+using AdionFA.Infrastructure.Common.Validators.FluentValidator;
 using AdionFA.Infrastructure.Core.IofCExt;
 using AdionFA.Infrastructure.Enums;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.Services;
+using AdionFA.TransferObject.Project;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Contracts.Services;
-using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Infrastructure.Services.AppServices;
+using AdionFA.UI.Station.Project.Commands;
+using AdionFA.UI.Station.Project.Services;
 using ControlzEx.Theming;
+using FluentValidation;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using FluentValidation;
-using AdionFA.Infrastructure.Common.Validators.FluentValidator;
 using System.Windows.Threading;
-using AdionFA.TransferObject.Project;
-using AdionFA.Core.Domain.Aggregates.Project;
-using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Project
 {
@@ -48,7 +44,7 @@ namespace AdionFA.UI.Station.Project
 
             // Identity
 
-            AdionIdentity Identity = new(SecurityHelper.DefaultTenantId, SecurityHelper.DefaultOwnerId, SecurityHelper.DefaultOwner);
+            AdionIdentity Identity = new(SecurityHelper.DefaultOwnerId, SecurityHelper.DefaultOwner);
             AdionPrincipal Principal = new()
             {
                 Identity = Identity
@@ -171,7 +167,7 @@ namespace AdionFA.UI.Station.Project
             set => args = value.Split("_AdionFA.UI.Station.Project_");
         }
 
-        public static int ProjectId => args.Length > 0 ? int.Parse(args[0]) : 0;
+        public static int ProjectId => args.Length > 0 ? int.Parse(args[0], CultureInfo.InvariantCulture) : 0;
         public static string ProjectName => args[1] ?? string.Empty;
         public static ProjectDTO Project => FacadeService.ProjectAPI.GetProject(ProjectId, true);
 

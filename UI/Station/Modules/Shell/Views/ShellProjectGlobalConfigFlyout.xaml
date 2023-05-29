@@ -11,12 +11,12 @@
               xmlns:local="clr-namespace:AdionFA.UI.Station.Module.Shell.Views"
               mc:Ignorable="d"
               Position="Right" Theme="Adapt" HorizontalContentAlignment="Stretch" CloseButtonIsCancel="True"
-              Header="{x:Static commonResources:CommonResources.ProjectGlobalConfiguration}" IsModal="True">
+              Header="Configuration" IsModal="True">
     <Grid>
         <Expander Margin="0"
-                  Header="{x:Static commonResources:CommonResources.ProjectGlobalConfiguration}"
+                  Header="Configuration"
                   IsExpanded="True">
-            <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:AppRegions.ProjectGlobalConfigView_SettingModule}" />
+            <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:AppRegions.ConfigurationView_SettingModule}" />
         </Expander>
     </Grid>
 </metro:Flyout>

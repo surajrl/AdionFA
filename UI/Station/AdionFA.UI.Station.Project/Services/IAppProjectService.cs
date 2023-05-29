@@ -11,8 +11,8 @@ namespace AdionFA.UI.Station.Project.Services
     {
         // Project Configuration
 
-        Task<ProjectSettingsModel> GetProjectConfiguration(int projectId, bool includeGraph = false);
+        Task<ProjectConfigurationModel> GetProjectConfiguration(int projectId, bool includeGraph = false);
 
-        Task<ResponseVM> UpdateProjectConfiguration(ProjectSettingsModel config);
+        Task<ResponseVM> UpdateProjectConfiguration(ProjectConfigurationModel config);
     }
 }

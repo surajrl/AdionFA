@@ -8,7 +8,7 @@ namespace AdionFA.Core.Application.Contracts.Projects
     {
         // Project
 
-        IList<ProjectDTO> GetAllProjects();
+        IList<ProjectDTO> GetAllProject();
         ProjectDTO GetProject(int projectId, bool includeGraph = false);
         ResponseDTO CreateProject(ProjectDTO project, int? globalConfigurationId = null, int? marketDataId = null);
         ResponseDTO UpdateProject(ProjectDTO project);

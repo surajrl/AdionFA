@@ -17,7 +17,6 @@ namespace AdionFA.Infrastructure.Common.Logger.Helpers
         {
             LoggerHandler.LogInfo<T>(model ?? new LogModel
             {
-                _tenantId = SecurityHelper.Identity.TenantId,
                 _owner = SecurityHelper.Identity.Owner,
             }, action ?? LogActionEnum.Getting, memberName, lineNumber, filePath);
         }
@@ -28,7 +27,6 @@ namespace AdionFA.Infrastructure.Common.Logger.Helpers
         {
             LoggerHandler.LogInfo<T>(new LogModel
             {
-                _tenantId = SecurityHelper.Identity.TenantId,
                 _owner = SecurityHelper.Identity.Owner,
                 param0 = ex.ToString(),
             }, LogActionEnum.Exception, memberName, lineNumber, filePath);

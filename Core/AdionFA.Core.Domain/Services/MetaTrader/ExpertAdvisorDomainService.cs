@@ -1,8 +1,7 @@
 ﻿using AdionFA.Core.Domain.Aggregates.MetaTrader;
-using AdionFA.Core.Domain.Aggregates.Project;
 using AdionFA.Core.Domain.Contracts.MetaTrader;
 using AdionFA.Core.Domain.Contracts.Repositories;
-using AdionFA.Core.Domain.Exceptions.MetaTrader;
+using AdionFA.Core.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,12 +11,12 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
 {
     public class ExpertAdvisorDomainService : DomainServiceBase, IExpertAdvisorDomainService
     {
-        public IRepository<ExpertAdvisor> ExpertAdvisorRepository { get; set; }
+        private IRepository<ExpertAdvisor> _expertAdvisorRepository;
 
-        public ExpertAdvisorDomainService(string tenantId, string ownerId, string owner, IRepository<ExpertAdvisor> expertAdvisorRepository)
-            : base(tenantId, ownerId, owner)
+        public ExpertAdvisorDomainService(string ownerId, string owner, IRepository<ExpertAdvisor> expertAdvisorRepository)
+            : base(ownerId, owner)
         {
-            ExpertAdvisorRepository = expertAdvisorRepository;
+            _expertAdvisorRepository = expertAdvisorRepository;
         }
 
         public int? CreateExpertAdvisor(ExpertAdvisor advisor)
@@ -29,7 +28,7 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
                 {
                     if (advisor.PushPort == advisor.ResponsePort) throw new PropertiesWithSameValueAdionException();
 
-                    ExpertAdvisorRepository.Create(advisor);
+                    _expertAdvisorRepository.Create(advisor);
                     eaId = advisor.ExpertAdvisorId;
                 }
 
@@ -54,7 +53,7 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
                     includes.Add(ea => ea.Project);
                 }
 
-                return ExpertAdvisorRepository.FirstOrDefault(predicate, includes.ToArray());
+                return _expertAdvisorRepository.FirstOrDefault(predicate, includes.ToArray());
             }
             catch (Exception ex)
             {
@@ -67,16 +66,16 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
         {
             try
             {
-                var ea = ExpertAdvisorRepository.FirstOrDefault(ea => ea.ProjectId == expertAdvisor.ProjectId);
+                var ea = _expertAdvisorRepository.FirstOrDefault(ea => ea.ProjectId == expertAdvisor.ProjectId);
 
                 if (ea is not null && ea.ExpertAdvisorId > 0)
                 {
                     expertAdvisor.ExpertAdvisorId = ea.ExpertAdvisorId;
-                    ExpertAdvisorRepository.Update(expertAdvisor);
+                    _expertAdvisorRepository.Update(expertAdvisor);
                     return true;
                 }
 
-                ExpertAdvisorRepository.Create(expertAdvisor);
+                _expertAdvisorRepository.Create(expertAdvisor);
                 return true;
             }
             catch (Exception ex)
@@ -98,7 +97,7 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
                     includes.Add(ea => ea.Project);
                 }
 
-                return ExpertAdvisorRepository.FirstOrDefault(predicate, includes.ToArray());
+                return _expertAdvisorRepository.FirstOrDefault(predicate, includes.ToArray());
             }
             catch (Exception ex)
             {

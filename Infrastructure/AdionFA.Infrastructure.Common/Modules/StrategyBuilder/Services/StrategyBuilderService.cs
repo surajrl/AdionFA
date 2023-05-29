@@ -9,7 +9,7 @@ using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
-using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,7 +160,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         public StrategyBuilderModel BuildBacktest(
             string nodeLabel,
             List<string> node,
-            ConfigurationBaseDTO configuration,
+            ConfigurationDTO configuration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
@@ -371,13 +371,13 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             return true;
         }
 
-        private bool ApplyWinningStrategyRulesIS(BacktestModel backtestIS, ConfigurationBaseDTO configuration)
+        private bool ApplyWinningStrategyRulesIS(BacktestModel backtestIS, ConfigurationDTO configuration)
         {
             return backtestIS.WinningTrades >= configuration.SBMinTransactionsIS
                 && backtestIS.PercentSuccess >= (double)configuration.SBMinPercentSuccessIS;
         }
 
-        private bool ApplyWinningStrategyRulesOS(BacktestModel backtestOS, ConfigurationBaseDTO configuration)
+        private bool ApplyWinningStrategyRulesOS(BacktestModel backtestOS, ConfigurationDTO configuration)
         {
             return backtestOS.WinningTrades >= configuration.SBMinTransactionsOS
                && backtestOS.PercentSuccess >= (double)configuration.SBMinPercentSuccessOS;

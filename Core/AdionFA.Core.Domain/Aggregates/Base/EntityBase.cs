@@ -1,6 +1,5 @@
 ﻿using AdionFA.Core.Domain.Contracts.Bases;
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace AdionFA.Core.Domain.Aggregates.Base
@@ -8,10 +7,6 @@ namespace AdionFA.Core.Domain.Aggregates.Base
     public class EntityBase : IAuditBase
     {
         public bool IsDeleted { get; set; }
-
-        public bool Inaccesible { get; set; }
-
-        public string TenantId { get; set; }
 
         public string CreatedById { get; set; }
         public string CreatedByUserName { get; set; }

@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace AdionFA.UI.Station.Module.Dashboard.Validators
 {
-    public class ProjectGlobalConfigVMValidator : AbstractValidator<ProjectGlobalConfigurationModel>
+    public class ProjectGlobalConfigVMValidator : AbstractValidator<ConfigurationModel>
     {
         public ProjectGlobalConfigVMValidator()
         {

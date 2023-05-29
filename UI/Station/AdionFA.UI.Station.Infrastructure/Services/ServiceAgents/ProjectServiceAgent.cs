@@ -1,23 +1,21 @@
-﻿using AdionFA.Core.API.Contracts.Projects;
-
+﻿using AdionFA.Core.API.Contracts.Commons;
+using AdionFA.Core.API.Contracts.Projects;
 using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.TransferObject.Base;
-
+using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.Project;
-
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.AutoMapper;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-
+using AdionFA.UI.Station.Infrastructure.Model.Base;
+using AdionFA.UI.Station.Infrastructure.Model.Common;
+using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AutoMapper;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 {
@@ -43,7 +41,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    IList<ProjectDTO> all = IoC.Get<IProjectAPI>().GetAllProjects();
+                    IList<ProjectDTO> all = IoC.Get<IProjectAPI>().GetAllProject();
 
                     projects = Mapper.Map<IList<ProjectDTO>, IList<ProjectVM>>(all);
                 });
@@ -218,20 +216,20 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        // Project Configuration
+        // Configuration
 
-        public async Task<IList<ProjectGlobalConfigurationVM>> GetAllGlobalConfigurations(bool includeGraph = false)
+        public async Task<IList<ConfigurationVM>> GetAllConfiguration(bool includeGraph = false)
         {
             try
             {
-                IList<ProjectGlobalConfigurationDTO> all = Array.Empty<ProjectGlobalConfigurationDTO>().ToList();
+                IList<ConfigurationDTO> all = Array.Empty<ConfigurationDTO>().ToList();
 
                 await Task.Run(() =>
                 {
-                    all = IoC.Get<IProjectAPI>().GetAllGlobalConfigurations(includeGraph);
+                    all = IoC.Get<ISharedAPI>().GetAllConfiguration(includeGraph);
                 });
 
-                return Mapper.Map<IList<ProjectGlobalConfigurationDTO>, IList<ProjectGlobalConfigurationVM>>(all);
+                return Mapper.Map<IList<ConfigurationDTO>, IList<ConfigurationVM>>(all);
             }
             catch (Exception ex)
             {
@@ -240,16 +238,16 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ProjectGlobalConfigurationVM> GetGlobalConfiguration(int? globalConfigurationId = null, bool includeGraph = false)
+        public async Task<ConfigurationVM> GetConfiguration(int? configurationId = null, bool includeGraph = false)
         {
             try
             {
-                ProjectGlobalConfigurationVM vm = null;
+                ConfigurationVM vm = null;
                 await Task.Run(() =>
                 {
-                    var dto = IoC.Get<IProjectAPI>().GetGlobalConfiguration(globalConfigurationId, includeGraph);
+                    var dto = IoC.Get<ISharedAPI>().GetConfiguration(configurationId, includeGraph);
 
-                    vm = Mapper.Map<ProjectGlobalConfigurationDTO, ProjectGlobalConfigurationVM>(dto);
+                    vm = Mapper.Map<ConfigurationDTO, ConfigurationVM>(dto);
                 });
 
                 return vm;
@@ -261,18 +259,18 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ProjectGlobalConfigurationVM> GetGlobalConfiguration(int configurationId, bool includeGraph = false)
+        public async Task<ConfigurationVM> GetConfiguration(int configurationId, bool includeGraph = false)
         {
             try
             {
-                ProjectGlobalConfigurationDTO result = null;
+                ConfigurationDTO result = null;
 
                 await Task.Run(() =>
                 {
-                    result = IoC.Get<IProjectAPI>().GetGlobalConfiguration(configurationId, includeGraph);
+                    result = IoC.Get<ISharedAPI>().GetConfiguration(configurationId, includeGraph);
                 });
 
-                var vm = Mapper.Map<ProjectGlobalConfigurationDTO, ProjectGlobalConfigurationVM>(result);
+                var vm = Mapper.Map<ConfigurationDTO, ConfigurationVM>(result);
 
                 return vm;
             }
@@ -283,7 +281,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> UpdateGlobalConfiguration(ProjectGlobalConfigurationVM configuration)
+        public async Task<ResponseVM> UpdateConfiguration(ConfigurationVM configuration)
         {
             try
             {
@@ -291,9 +289,9 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    ProjectGlobalConfigurationDTO config = Mapper.Map<ProjectGlobalConfigurationVM, ProjectGlobalConfigurationDTO>(configuration);
+                    ConfigurationDTO config = Mapper.Map<ConfigurationVM, ConfigurationDTO>(configuration);
 
-                    result = IoC.Get<IProjectAPI>().UpdateGlobalConfiguration(config);
+                    result = IoC.Get<ISharedAPI>().UpdateConfiguration(config);
                 });
                 return Mapper.Map<ResponseDTO, ResponseVM>(result);
             }

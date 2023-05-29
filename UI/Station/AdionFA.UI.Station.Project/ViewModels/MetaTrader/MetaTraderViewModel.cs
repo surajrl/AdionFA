@@ -1,51 +1,43 @@
-﻿using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Infrastructure.Common.Extensions;
-using AdionFA.Infrastructure.Common.Extractor.Attributes;
-using AdionFA.Infrastructure.Common.Extractor.Contracts;
-using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.MetaTrader.Model;
-using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
+﻿using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.Infrastructure.Common.Helpers;
+using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
+using AdionFA.Infrastructure.Common.MetaTrader.Model;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
-
+using AdionFA.Infrastructure.I18n.Resources;
+using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
+using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.Enums;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.MetaTrader;
-using AdionFA.UI.Station.Project.AutoMapper;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-
+using AdionFA.UI.Station.Project.Validators.MetaTrader;
+using AutoMapper;
+using DynamicData;
 using NetMQ;
 using NetMQ.Sockets;
-using AutoMapper;
 using Newtonsoft.Json;
-using DynamicData;
-
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
-
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
-using AdionFA.Infrastructure.Common.Weka.Model;
-using AdionFA.UI.Station.Project.Validators.MetaTrader;
-using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
-using System.Windows.Data;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -201,8 +193,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             zmqModel.Id = MessagesFromCurrentPeriod;
                             zmqModel.TemporalityName = EnumUtil.GetTimeframeEnum(zmqModel.Temporality).GetMetadata().Name;
                             zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss");
-                            zmqModel.PutType = (int)MessageZMQPutTypeEnum.Input;
-                            zmqModel.PutTypeName = MessageZMQPutTypeEnum.Input.GetMetadata().Name;
+                            zmqModel.PutType = (int)MessageZMQPutType.Input;
+                            zmqModel.PutTypeName = MessageZMQPutType.Input.GetMetadata().Name;
 
                             progress.Report(zmqModel);
                         }
@@ -238,8 +230,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         var lastMessageInput = messageInputCopy.FirstOrDefault();
                         var candles = messageInputCopy.Select(m => new Candle
                         {
-                            Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time).TotalSeconds),
-                            Time = (long)TimeSpan.Parse(m.Time).TotalSeconds,
+                            Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time, CultureInfo.InvariantCulture).TotalSeconds),
+                            Time = (long)TimeSpan.Parse(m.Time, CultureInfo.InvariantCulture).TotalSeconds,
                             Open = (double)m.Open,
                             High = (double)m.High,
                             Low = (double)m.Low,
@@ -257,7 +249,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             if (isTrade)
                             {
                                 // Open operation request -----------------------------------------------
-                                if (node.Label.ToLower() == "up")
+                                if (node.Label.ToLower(CultureInfo.InvariantCulture) == "up")
                                 {
                                     requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
                                     Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
@@ -279,12 +271,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 {
                                     Id = MessageOutput.Count + 1,
                                     Date = _currentCandle.Date,
-                                    DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss"),
-                                    PutType = (int)MessageZMQPutTypeEnum.Output,
-                                    PutTypeName = MessageZMQPutTypeEnum.Output.GetMetadata().Name,
+                                    DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                                    PutType = (int)MessageZMQPutType.Output,
+                                    PutTypeName = MessageZMQPutType.Output.GetMetadata().Name,
                                     PositionType = (int)response.OrderType,
                                     PositionTypeName = response.OrderType.GetMetadata().Name,
-                                    Volume = decimal.Parse(response.Volume)
+                                    Volume = decimal.Parse(response.Volume, CultureInfo.InvariantCulture)
                                 };
 
                                 progress.Report(model);
@@ -439,9 +431,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ConfigurationBaseVM _configuration;
+        private ProjectConfigurationVM _configuration;
 
-        public ConfigurationBaseVM Configuration
+        public ProjectConfigurationVM Configuration
         {
             get => _configuration;
             set => SetProperty(ref _configuration, value);

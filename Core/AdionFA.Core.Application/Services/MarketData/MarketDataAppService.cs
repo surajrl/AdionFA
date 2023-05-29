@@ -1,12 +1,12 @@
-﻿using AdionFA.Core.Domain.Aggregates.MarketData;
-using AdionFA.Core.Application.Contracts.MarketData;
+﻿using AdionFA.Core.Application.Contracts.MarketData;
+using AdionFA.Core.Domain.Aggregates.MarketData;
 using AdionFA.Core.Domain.Contracts.MarketData;
+using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.MarketData;
 using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using AdionFA.TransferObject.MarketData;
-using AdionFA.TransferObject.Base;
 
 namespace AdionFA.Core.Application.Services.MarketData
 {

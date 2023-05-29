@@ -408,7 +408,7 @@
                                 <Image Source="{iconPacks:FontAwesomeImage Kind=ToolsSolid}"
                                        Height="15"
                                        Margin="5,0" />
-                                <TextBlock Text="{x:Static shellResources:ShellResources.ProjectGlobalConfig}" />
+                                <TextBlock Text="Configuration" />
                             </StackPanel>
                         </Button.Content>
                         <behaviors:Interaction.Triggers>

@@ -91,7 +91,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     ToolTip = $"Open {HamburgerMenuItems.MetaTrader}",
                 },
 
-                new ProjectSettingsViewModel(this)
+                new ProjectConfigurationViewModel(this)
                 {
                     Icon = new PackIconMaterial()
                     {
@@ -99,9 +99,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         Width = 20,
                         Height = 20
                     },
-                    Label = HamburgerMenuItems.Settings,
-                    Name = HamburgerMenuItems.Settings.Replace(" ", string.Empty),
-                    ToolTip = $"Open {HamburgerMenuItems.Settings}",
+                    Label = HamburgerMenuItems.ProjectConfiguration,
+                    Name = HamburgerMenuItems.ProjectConfiguration.Replace(" ", string.Empty),
+                    ToolTip = $"Open {HamburgerMenuItems.ProjectConfiguration}",
                 },
             };
         }

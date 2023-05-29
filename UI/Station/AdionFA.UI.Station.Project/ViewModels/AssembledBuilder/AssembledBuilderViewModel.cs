@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.I18n.Resources;
@@ -38,7 +37,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IAssembledBuilderService _assembledBuilderService;
-        private readonly IStrategyBuilderService _strategyBuilderService;
 
         private readonly IProjectServiceAgent _projectService;
         private readonly IMarketDataServiceAgent _historicalDataService;
@@ -52,7 +50,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
             _assembledBuilderService = IoC.Get<IAssembledBuilderService>();
-            _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
 
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
             _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
@@ -75,20 +72,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
-            try
+            if (item == HamburgerMenuItems.AssembledBuilder.Replace(" ", string.Empty))
             {
-                if (item == HamburgerMenuItems.AssembledBuilder.Replace(" ", string.Empty))
-                {
-                    PopulateViewModel();
-                }
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-
-                Trace.TraceError(ex.Message);
-
-                throw;
+                PopulateViewModel();
             }
         });
 
@@ -111,19 +97,20 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var projectHistoricalData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
 
-                var projectCandles = projectHistoricalData.HistoricalDataCandles.Select(
-                    hdCandle => new Candle
-                    {
-                        Date = hdCandle.StartDate,
-                        Time = hdCandle.StartTime,
-                        Open = hdCandle.Open,
-                        High = hdCandle.High,
-                        Low = hdCandle.Low,
-                        Close = hdCandle.Close,
-                        Volume = hdCandle.Volume,
-                        Spread = hdCandle.Spread
-                    }).OrderBy(d => d.Date)
-                    .ThenBy(d => d.Time).ToList();
+                var projectCandles = projectHistoricalData.HistoricalDataCandles.
+                Select(hdCandle => new Candle
+                {
+                    Date = hdCandle.StartDate,
+                    Time = hdCandle.StartTime,
+                    Open = hdCandle.Open,
+                    High = hdCandle.High,
+                    Low = hdCandle.Low,
+                    Close = hdCandle.Close,
+                    Volume = hdCandle.Volume,
+                    Spread = hdCandle.Spread
+                })
+                .OrderBy(d => d.Date)
+                .ThenBy(d => d.Time).ToList();
 
                 await Task.Factory.StartNew(() =>
                 {
@@ -266,7 +253,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
+                var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
                 Configuration = project?.ProjectConfigurations.FirstOrDefault();
 
                 if (!IsTransactionActive)
@@ -288,7 +275,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // View Bindings
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -296,7 +282,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _canExecute = true;
-
         public bool CanExecute
         {
             get => _canExecute;
@@ -304,7 +289,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ProjectConfigurationVM _configuration;
-
         public ProjectConfigurationVM Configuration
         {
             get => _configuration;
@@ -312,7 +296,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private AssembledBuilderModel _assembledBuilder;
-
         public AssembledBuilderModel AssembledBuilder
         {
             get => _assembledBuilder;

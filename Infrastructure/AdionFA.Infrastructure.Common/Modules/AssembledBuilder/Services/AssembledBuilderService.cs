@@ -10,7 +10,7 @@ using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Enums;
-using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.Project;
 using System;
 using System.Collections.Generic;
@@ -208,7 +208,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
             string nodeLabel,
             IList<string> parentNode,
             IList<BacktestModel> childNodes,
-            ConfigurationBaseDTO configuration,
+            ConfigurationDTO configuration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)

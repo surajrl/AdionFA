@@ -1,5 +1,4 @@
 ﻿using AdionFA.Core.Domain.Aggregates.MarketData;
-
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,6 +6,8 @@ namespace AdionFA.Core.Domain.Aggregates.Base
 {
     public class ConfigurationBase : TimeSensitiveBase
     {
+        // Period
+
         public DateTime? FromDateIS { get; set; }
         public DateTime? ToDateIS { get; set; }
 

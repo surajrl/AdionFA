@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AdionFA.UI.Station.Project.Views.ProjectSettingsView"
+﻿<UserControl x:Class="AdionFA.UI.Station.Project.Views.ProjectConfigurationView"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
@@ -15,7 +15,7 @@
              mc:Ignorable="d"
              d:DesignHeight="1750"
              d:DesignWidth="800"
-             x:Name="projectSettingsView">
+             x:Name="projectConfigurationView">
 
     <UserControl.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
@@ -38,8 +38,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             
-            <Button x:Name="RestoreProjectConfigurationBtnSave"
-                    Width="80"
+            <Button Width="80"
                     Height="40"
                     Margin="10 0 0 0"
                     HorizontalAlignment="Right"
@@ -57,8 +56,7 @@
                                 Width="25"
                                 Height="25"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button x:Name="ProjectConfigurationBtnSave"
-                    Grid.Column="1"
+            <Button Grid.Column="1"
                     Width="80"
                     Height="40"
                     HorizontalAlignment="Right"
@@ -83,7 +81,7 @@
         <ScrollViewer Grid.Row="1"
                       Padding="0 0 15 0">
             <StackPanel Orientation="Vertical">
-                <!--GeneralInformation-->
+                <!--General Information-->
                 <metro:MetroHeader Header="{x:Static commonResources:CommonResources.GeneralInformation}"
                                    Margin="0 0 0 15">
                     <Grid>
@@ -549,7 +547,7 @@
                                 <TextBlock>
                                         <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" />
                                         <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                        <Run Text="{Binding ElementName=projectSettingsView, Path=LabelRequiredProgressiveness}" /></TextBlock>
+                                        <Run Text="{Binding ElementName=projectConfigurationView, Path=LabelRequiredProgressiveness}" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown IsEnabled="{Binding ProjectConfiguration.IsProgressiveness}"
                                                  NumericInputMode="Decimal"

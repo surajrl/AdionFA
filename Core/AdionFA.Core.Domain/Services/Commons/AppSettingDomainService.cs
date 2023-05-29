@@ -10,21 +10,22 @@ namespace AdionFA.Core.Domain.Services.Commons
 {
     public class AppSettingDomainService : DomainServiceBase, IAppSettingDomainService
     {
-        public IRepository<Setting> SettingRepository { get; set; }
+        private readonly IRepository<Setting> _settingRepository;
 
-        public AppSettingDomainService(string tenantId, string ownerId, string owner,
-            IRepository<Setting> settingRepository) : base(tenantId, ownerId, owner)
+        public AppSettingDomainService(string ownerId, string owner,
+            IRepository<Setting> settingRepository)
+            : base(ownerId, owner)
         {
-            SettingRepository = settingRepository;
+            _settingRepository = settingRepository;
         }
 
-        // Setting
+        // App Settings
 
         public IList<Setting> GetAllAppSetting()
         {
             try
             {
-                return SettingRepository.GetAll().ToList();
+                return _settingRepository.GetAll().ToList();
             }
             catch (Exception ex)
             {
@@ -37,7 +38,7 @@ namespace AdionFA.Core.Domain.Services.Commons
         {
             try
             {
-                Setting setting = SettingRepository.FirstOrDefault(
+                Setting setting = _settingRepository.FirstOrDefault(
                     s => s.SettingId == settingId && (keySetting == null || s.Code == keySetting)
                 );
 
@@ -54,7 +55,7 @@ namespace AdionFA.Core.Domain.Services.Commons
         {
             try
             {
-                SettingRepository.Create(setting);
+                _settingRepository.Create(setting);
 
                 return setting.SettingId;
             }
@@ -69,7 +70,7 @@ namespace AdionFA.Core.Domain.Services.Commons
         {
             try
             {
-                SettingRepository.Update(setting);
+                _settingRepository.Update(setting);
                 return true;
             }
             catch (Exception ex)

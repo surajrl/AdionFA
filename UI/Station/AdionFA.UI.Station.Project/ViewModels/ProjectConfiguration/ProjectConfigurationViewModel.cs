@@ -22,14 +22,14 @@ using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
-    public class ProjectSettingsViewModel : MenuItemViewModel
+    public class ProjectConfigurationViewModel : MenuItemViewModel
     {
         private readonly IAppProjectService _appProjectService;
         private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IProjectServiceAgent _projectService;
         private readonly IEventAggregator _eventAggregator;
 
-        public ProjectSettingsViewModel(MainViewModel mainViewModel)
+        public ProjectConfigurationViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
             _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
@@ -44,38 +44,29 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
-            try
+            if (item == HamburgerMenuItems.ProjectConfiguration.Replace(" ", string.Empty))
             {
-                if (item == HamburgerMenuItems.Settings)
-                {
-                    PopulateViewModel(ProcessArgs.ProjectId);
-                }
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-                Trace.TraceError(ex.Message);
-                throw;
+                PopulateViewModel(ProcessArgs.ProjectId);
             }
         });
 
         public ICommand WithoutSchedulesCommand => new DelegateCommand(async () =>
         {
             var config = await _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
-            if (_projectConfiguration.WithoutSchedule)
+            if (ProjectConfiguration.WithoutSchedule)
             {
-                _projectConfiguration.FromTimeInSecondsEurope = _projectConfiguration.ToTimeInSecondsEurope =
-                _projectConfiguration.FromTimeInSecondsAmerica = _projectConfiguration.ToTimeInSecondsAmerica =
-                _projectConfiguration.FromTimeInSecondsAsia = _projectConfiguration.ToTimeInSecondsAsia = DateTime.UtcNow;
+                ProjectConfiguration.FromTimeInSecondsEurope = _projectConfiguration.ToTimeInSecondsEurope =
+                ProjectConfiguration.FromTimeInSecondsAmerica = _projectConfiguration.ToTimeInSecondsAmerica =
+                ProjectConfiguration.FromTimeInSecondsAsia = _projectConfiguration.ToTimeInSecondsAsia = DateTime.UtcNow;
 
-                _projectConfiguration.FromTimeInSecondsEurope = config.FromTimeInSecondsEurope;
-                _projectConfiguration.ToTimeInSecondsEurope = config.ToTimeInSecondsEurope;
+                ProjectConfiguration.FromTimeInSecondsEurope = config.FromTimeInSecondsEurope;
+                ProjectConfiguration.ToTimeInSecondsEurope = config.ToTimeInSecondsEurope;
 
-                _projectConfiguration.FromTimeInSecondsAmerica = config.FromTimeInSecondsAmerica;
-                _projectConfiguration.ToTimeInSecondsAmerica = config.ToTimeInSecondsAmerica;
+                ProjectConfiguration.FromTimeInSecondsAmerica = config.FromTimeInSecondsAmerica;
+                ProjectConfiguration.ToTimeInSecondsAmerica = config.ToTimeInSecondsAmerica;
 
-                _projectConfiguration.FromTimeInSecondsAsia = config.FromTimeInSecondsAsia;
-                _projectConfiguration.ToTimeInSecondsAsia = config.ToTimeInSecondsAsia;
+                ProjectConfiguration.FromTimeInSecondsAsia = config.FromTimeInSecondsAsia;
+                ProjectConfiguration.ToTimeInSecondsAsia = config.ToTimeInSecondsAsia;
             }
         });
 
@@ -201,11 +192,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             switch (response.MessageResource)
             {
                 case (int)MessageResourceEnum.CurrencyPairAndCurrencyPeriodMustBeSame:
-                    _projectConfiguration.SetError(nameof(_projectConfiguration.Symbol.SymbolId),
+                    ProjectConfiguration.SetError(nameof(ProjectConfiguration.Symbol.SymbolId),
                         ShowMessageControl(msg, showMessageInControl));
-                    _projectConfiguration.SetError(nameof(_projectConfiguration.Timeframe.TimeframeId),
+                    ProjectConfiguration.SetError(nameof(ProjectConfiguration.Timeframe.TimeframeId),
                         ShowMessageControl(msg, showMessageInControl));
-                    _projectConfiguration.SetError(nameof(_projectConfiguration.HistoricalDataId),
+                    ProjectConfiguration.SetError(nameof(ProjectConfiguration.HistoricalDataId),
                         ShowMessageControl(msg, showMessageInControl));
                     break;
             }
@@ -222,7 +213,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // View Bindings
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -230,15 +220,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _canExecute = true;
-
         public bool CanExecute
         {
             get => _canExecute;
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ProjectSettingsModel _projectConfiguration;
-        public ProjectSettingsModel ProjectConfiguration
+        private ProjectConfigurationModel _projectConfiguration;
+        public ProjectConfigurationModel ProjectConfiguration
         {
             get => _projectConfiguration;
             set => SetProperty(ref _projectConfiguration, value);

@@ -9,11 +9,11 @@ using System.Windows.Data;
 namespace AdionFA.UI.Station.Module.Dashboard
 {
     /// <summary>
-    /// Interaction logic for ProjectGlobalConfigurationView.xaml
+    /// Interaction logic for ConfigurationView.xaml
     /// </summary>
-    public partial class ProjectGlobalConfigurationView : UserControl
+    public partial class ConfigurationView : UserControl
     {
-        public ProjectGlobalConfigurationView(ProjectGlobalConfigurationViewModel viewModel)
+        public ConfigurationView(ConfigurationViewModel viewModel)
         {
             InitializeComponent();
             DataContext = viewModel;
@@ -22,7 +22,7 @@ namespace AdionFA.UI.Station.Module.Dashboard
         // Progressiveness
 
         public static readonly DependencyProperty LabelRequiredProgressivenessProperty =
-            DependencyProperty.Register("LabelRequiredProgressiveness", typeof(string), typeof(ProjectGlobalConfigurationView), new UIPropertyMetadata(string.Empty));
+            DependencyProperty.Register("LabelRequiredProgressiveness", typeof(string), typeof(ConfigurationView), new UIPropertyMetadata(string.Empty));
 
         public string LabelRequiredProgressiveness
         {
@@ -31,7 +31,7 @@ namespace AdionFA.UI.Station.Module.Dashboard
         }
 
         public static readonly DependencyProperty EnableProgressivenessProperty =
-            DependencyProperty.Register("EnableProgressiveness", typeof(bool), typeof(ProjectGlobalConfigurationView), new UIPropertyMetadata(false));
+            DependencyProperty.Register("EnableProgressiveness", typeof(bool), typeof(ConfigurationView), new UIPropertyMetadata(false));
 
         public bool EnableProgressiveness
         {
@@ -45,7 +45,7 @@ namespace AdionFA.UI.Station.Module.Dashboard
             {
                 LabelRequiredProgressiveness =
                     DataContext != null
-                    && !((ProjectGlobalConfigurationViewModel)DataContext).ProjectGlobalConfiguration.IsProgressiveness
+                    && !((ConfigurationViewModel)DataContext).Configuration.IsProgressiveness
                     ? string.Empty
                     : "*";
 
@@ -57,8 +57,8 @@ namespace AdionFA.UI.Station.Module.Dashboard
         {
             if (DataContext != null)
             {
-                var dcontext = (ProjectGlobalConfigurationViewModel)DataContext;
-                return dcontext.ProjectGlobalConfiguration.IsProgressiveness;
+                var dcontext = (ConfigurationViewModel)DataContext;
+                return dcontext.Configuration.IsProgressiveness;
             }
 
             return false;

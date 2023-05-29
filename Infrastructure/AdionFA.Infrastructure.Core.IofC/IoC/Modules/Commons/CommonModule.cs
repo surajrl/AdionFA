@@ -35,13 +35,12 @@ namespace AdionFA.Infrastructure.Core.IofC.Modules.Commons
             Kernel.Bind(typeof(IExpertAdvisorAppService)).To(typeof(ExpertAdvisorAppService));
 
             // Domain
+
             Kernel.Bind(typeof(IAppSettingDomainService)).To(typeof(AppSettingDomainService))
-                .WithConstructorArgument("tenantId", ctx => IoC.GetArgument(ctx, "tenantId"))
                 .WithConstructorArgument("ownerId", ctx => IoC.GetArgument(ctx, "ownerId"))
                 .WithConstructorArgument("owner", ctx => IoC.GetArgument(ctx, "owner"));
 
             Kernel.Bind(typeof(IExpertAdvisorDomainService)).To(typeof(ExpertAdvisorDomainService))
-                .WithConstructorArgument("tenantId", ctx => IoC.GetArgument(ctx, "tenantId"))
                 .WithConstructorArgument("ownerId", ctx => IoC.GetArgument(ctx, "ownerId"))
                 .WithConstructorArgument("owner", ctx => IoC.GetArgument(ctx, "owner"));
         }

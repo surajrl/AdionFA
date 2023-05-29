@@ -5,6 +5,8 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
 {
     public class ConfigurationBaseVM : TimeSensitiveBaseVM
     {
+        // Period
+
         private DateTime? _fromDateIS;
         public DateTime? FromDateIS
         {

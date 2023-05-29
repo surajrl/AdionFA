@@ -6,9 +6,6 @@ namespace AdionFA.Infrastructure.Common.Security.Model
     public class AdionIdentity : ClaimsIdentity
     {
         [IoCArgument]
-        public string TenantId { get; }
-
-        [IoCArgument]
         public string OwnerId { get; }
 
         [IoCArgument]
@@ -18,9 +15,8 @@ namespace AdionFA.Infrastructure.Common.Security.Model
         {
         }
 
-        public AdionIdentity(string tenantId, string ownerId, string owner)
+        public AdionIdentity(string ownerId, string owner)
         {
-            TenantId = tenantId;
             OwnerId = ownerId;
             Owner = owner;
         }

@@ -1,12 +1,9 @@
-﻿using AdionFA.Core.Domain.Aggregates.Common;
+﻿using AdionFA.Core.Application.Contracts.Commons;
+using AdionFA.Core.Domain.Aggregates.Common;
 using AdionFA.Core.Domain.Contracts.Commons;
-using AdionFA.Core.Application.Contracts.Commons;
-
-using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.Base;
-
+using AdionFA.TransferObject.Common;
 using Ninject;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,8 +12,6 @@ namespace AdionFA.Core.Application.Services.Commons
 {
     public class AppSettingAppService : AppServiceBase, IAppSettingAppService
     {
-        // Domain Services
-
         [Inject]
         public IAppSettingDomainService AppSettingDomainService { get; set; }
 

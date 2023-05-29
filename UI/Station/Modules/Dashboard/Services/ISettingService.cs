@@ -1,5 +1,5 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
+﻿using AdionFA.UI.Station.Infrastructure.Model.Common;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,13 +8,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 {
     public interface ISettingService
     {
-        // Global Configuration
+        // Configuration
 
-        Task<IList<ProjectGlobalConfigurationVM>> GetAllGlobalConfigurations(bool includeGraph = false);
+        Task<IList<ConfigurationVM>> GetAllConfiguration(bool includeGraph = false);
 
-        Task<ProjectGlobalConfigurationModel> GetGlobalConfiguration();
+        Task<ConfigurationModel> GetConfiguration();
 
-        Task<bool> UpdateGlobalConfiguration(ProjectGlobalConfigurationModel config);
+        Task<bool> UpdateConfiguration(ConfigurationModel config);
 
         // Historical Data
 

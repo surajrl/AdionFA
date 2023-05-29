@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.Logger.Services;
 using AdionFA.Infrastructure.Common.Security.Authorization;
 using AdionFA.Infrastructure.Common.Security.Helper;
 using AdionFA.Infrastructure.Common.Security.Model;
-using AdionFA.TransferObject.Base;
 using AutoMapper;
 using Ninject;
 using System;
@@ -21,9 +20,8 @@ namespace AdionFA.Infrastructure.Common.Base
 
     public abstract class InfrastructureServiceBase : IServiceBase
     {
-        public readonly string _tenantId;
-        public readonly string _ownerId;
-        public readonly string _owner;
+        private readonly string _ownerId;
+        private readonly string _owner;
 
         // Infrastructure
 
@@ -41,17 +39,15 @@ namespace AdionFA.Infrastructure.Common.Base
         {
             try
             {
-                _tenantId = Identity.TenantId;
                 _ownerId = Identity.OwnerId;
                 _owner = Identity.Owner;
 
-                Type type = AuthorizationMgmt.AuthorizeCall(_tenantId, _ownerId, _owner, sourceFilePath);
+                Type type = AuthorizationMgmt.AuthorizeCall(_ownerId, _owner, sourceFilePath);
 
                 // Log Info
                 MethodInfo m = typeof(InfrastructureServiceBase).GetMethod(nameof(InfrastructureServiceBase.LogInfoGet));
                 m.MakeGenericMethod(type).Invoke(this, new object[] { new LogModel
                 {
-                    _tenantId = _tenantId,
                     _owner = _owner
                 }, memberName, lineNumber, sourceFilePath });
             }
@@ -59,7 +55,6 @@ namespace AdionFA.Infrastructure.Common.Base
             {
                 LogException<Exception>(ex, new LogModel
                 {
-                    _tenantId = _tenantId,
                     _owner = _owner
                 }, memberName, lineNumber, sourceFilePath);
 
@@ -74,7 +69,6 @@ namespace AdionFA.Infrastructure.Common.Base
         {
             Logger.LogInfo<T>(model ?? new LogModel
             {
-                _tenantId = _tenantId,
                 _owner = _owner,
             }, LogActionEnum.Getting, memberName, lineNumber, filePath);
         }
@@ -84,7 +78,6 @@ namespace AdionFA.Infrastructure.Common.Base
         {
             Logger.LogInfo<T>(model ?? new LogModel
             {
-                _tenantId = _tenantId,
                 _owner = _owner,
             }, LogActionEnum.Creating, memberName, lineNumber, filePath);
         }
@@ -94,7 +87,6 @@ namespace AdionFA.Infrastructure.Common.Base
         {
             Logger.LogInfo<T>(model ?? new LogModel
             {
-                _tenantId = _tenantId,
                 _owner = _owner,
             }, LogActionEnum.Updating, memberName, lineNumber, filePath);
         }
@@ -105,7 +97,6 @@ namespace AdionFA.Infrastructure.Common.Base
         {
             Logger.LogInfo<T>(model ?? new LogModel
             {
-                _tenantId = _tenantId,
                 _owner = _owner,
                 param0 = ex.ToString(),
             }, LogActionEnum.Exception, memberName, lineNumber, filePath);

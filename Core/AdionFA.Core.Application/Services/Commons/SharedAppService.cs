@@ -10,20 +10,12 @@ namespace AdionFA.Core.Application.Services.Commons
 {
     public class SharedAppService : AppServiceBase, ISharedAppService
     {
-        #region Repostories
-
         [Inject]
         public IRepository<EntityServiceHost> EntityServiceHostRepository { get; set; }
-
-        #endregion Repostories
-
-        #region Ctor
 
         public SharedAppService() : base()
         {
         }
-
-        #endregion Ctor
 
         public EntityServiceHostDTO GetEntityServiceHost(int entityTypeId, int entityId)
         {

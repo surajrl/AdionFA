@@ -1,5 +1,5 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
+﻿using AdionFA.UI.Station.Infrastructure.Model.Common;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AutoMapper;
 
@@ -9,8 +9,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.AutoMapper
     {
         public AutoMappingSettingProfile()
         {
-            CreateMap<ProjectGlobalConfigurationVM, ProjectGlobalConfigurationModel>().ReverseMap();
-            CreateMap<ProjectGlobalScheduleConfigurationVM, ProjectGlobalScheduleConfigurationVM>().ReverseMap();
+            CreateMap<ConfigurationVM, ConfigurationModel>().ReverseMap();
+            CreateMap<ScheduleConfigurationVM, ScheduleConfigurationVM>().ReverseMap();
 
             CreateMap<HistoricalDataVM, UploadHistoricalDataModel>().ReverseMap();
             CreateMap<HistoricalDataCandleVM, HistoricalDataCandleSettingVM>()

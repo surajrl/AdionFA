@@ -13,35 +13,12 @@ namespace AdionFA.Core.API.Projects
 {
     public class ProjectAPI : IProjectAPI
     {
-        // Project Global Configuration
-
-        public IList<ProjectGlobalConfigurationDTO> GetAllGlobalConfigurations(bool includeGraph = false)
-        {
-            using var service = IoC.Get<IGlobalConfigurationAppService>();
-            return service.GetAllGlobalConfigurations(includeGraph);
-        }
-
-        public ProjectGlobalConfigurationDTO GetGlobalConfiguration(int? globalConfigurationId = null, bool includeGraph = false)
-        {
-            using IGlobalConfigurationAppService service = IoC.Get<IGlobalConfigurationAppService>();
-            return service.GetGlobalConfiguration(globalConfigurationId, includeGraph);
-        }
-
-        public ResponseDTO UpdateGlobalConfiguration(ProjectGlobalConfigurationDTO configuration)
-        {
-            using (var service = IoC.Get<IGlobalConfigurationAppService>())
-            using (service.Transaction<IAdionFADbContext>())
-            {
-                return service.UpdateGlobalConfiguration(configuration);
-            }
-        }
-
         // Project
 
-        public IList<ProjectDTO> GetAllProjects()
+        public IList<ProjectDTO> GetAllProject()
         {
             using var service = IoC.Get<IProjectAppService>();
-            return service.GetAllProjects();
+            return service.GetAllProject();
         }
 
         public ProjectDTO GetProject(int projectId, bool includeGraph = false)

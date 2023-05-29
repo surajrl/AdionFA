@@ -17,8 +17,8 @@ namespace AdionFA.Infrastructure.Enums
         [Metadata(codeKey: "PROJCONFIG", nameKey: "ProjectConfiguration", descriptionKey: "Project Configuration", resourceType: typeof(EnumResources))]
         ProjectConfiguration = 501,
 
-        [Metadata(codeKey: "CONFIG", nameKey: "ProjectGlobalConfiguration", descriptionKey: "Project Global Configuration", resourceType: typeof(EnumResources))]
-        ProjectGlobalConfiguration = 502,
+        [Metadata(codeKey: "CONFIG", nameKey: "Configuration", descriptionKey: "Configuration", resourceType: typeof(EnumResources))]
+        Configuration = 502,
 
         [Metadata(codeKey: "EXT", nameKey: "Extractor", descriptionKey: "Extractor", resourceType: typeof(EnumResources))]
         Extractor = 503,

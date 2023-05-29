@@ -5,13 +5,11 @@
         public const string ShellModule = "ShellModule";
 
         public const string CreateProjectView_SettingModule = "CreateProjectView_SettingModule";
-        public const string ProjectGlobalConfigView_SettingModule = "ProjectGlobalConfigView_SettingModule";
+        public const string ConfigurationView_SettingModule = "ConfigurationView_SettingModule";
         public const string HistoricalDataView_SettingModule = "HistoricalDataView_SettingModule";
         public const string HistoricalDataMTView_SettingModule = "HistoricalDataViewMT_SettingModule";
         public const string UploadHistoricalDataView_SettingModule = "UploadHistoricalDataView_SettingModule";
         public const string DownloaHistoricalDataView_SettingModule = "DownloadHistoricalDataView_SettingModule";
-        public const string TraderView_TraderModule = "TraderView_TraderModule";
-        public const string ToolsView_ToolsModule = "ToolsView_ToolsModule";
     }
 
     public static class FlyoutRegions

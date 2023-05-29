@@ -85,8 +85,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             {
                 Project = new CreateProjectModel();
 
-                var config = await _settingService.GetGlobalConfiguration();
-                Project.ConfigurationId = config.ProjectGlobalConfigurationId;
+                var config = await _settingService.GetConfiguration();
+                Project.ConfigurationId = config.ConfigurationId;
 
                 var historicalData = await _settingService.GetAllHistoricalData();
                 HistoricalData.Clear();

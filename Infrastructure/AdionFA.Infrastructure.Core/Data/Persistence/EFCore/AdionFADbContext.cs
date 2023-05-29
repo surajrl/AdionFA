@@ -44,6 +44,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             // Entity Configuration
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -62,9 +63,8 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
             MethodInfo m = typeof(EnumExtension).GetMethod("GetMetadata");
 
-            var userId = "11111111-1111-1111-11111111111111111";
-            var username = "sysadmin";
-            var tenantId = "22222222-2222-2222-2222-222222222222";
+            var userId = "0000";
+            var username = "admin";
 
             // Entity Type
 
@@ -75,16 +75,19 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     new EntityType
                     {
                         EntityTypeId = (int)et,
+
+                        // Reference Data Base
+
                         Code = meta.Code,
                         Name = meta.Name,
                         Description = meta.Description,
 
+                        // Entity Base
+
                         IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
                         CreatedById = userId,
-                        CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
+                        CreatedByUserName = username,
+                        CreatedOn = DateTime.UtcNow
                     }
                 );
             }
@@ -99,15 +102,17 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     {
                         SettingId = (int)setting,
 
+                        // Reference Data Base
+
                         Code = meta.Code,
                         Value = meta.Value,
 
+                        // Entity Base
+
                         IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
                         CreatedById = userId,
+                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
                     }
                 );
             }
@@ -119,16 +124,18 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 {
                     SymbolId = 1,
 
+                    // Reference Data Base
+
                     Code = "EURUSD",
                     Name = "EURUSD",
                     Description = "Euro vs US Dollar",
 
+                    // Entity Base
+
                     IsDeleted = false,
-                    Inaccesible = false,
-                    TenantId = tenantId,
                     CreatedById = userId,
+                    CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
-                    CreatedByUserName = username
                 });
 
             // Timeframe
@@ -141,17 +148,19 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     {
                         TimeframeId = (int)timeframe,
 
+                        // Reference Data Base
+
                         Code = meta.Code,
                         Name = meta.Name,
                         Value = meta.Value,
                         Description = meta.Description,
 
+                        // Entity Base
+
                         IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
                         CreatedById = userId,
+                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
                     }
                 );
             }
@@ -166,16 +175,18 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     {
                         MarketId = (int)market,
 
+                        // Reference Data Base
+
                         Code = meta.Code,
                         Name = meta.Name,
                         Description = meta.Description,
 
+                        // Entity Base
+
                         IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
                         CreatedById = userId,
+                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
                     }
                 );
             }
@@ -190,29 +201,27 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     {
                         MarketRegionId = (int)mr,
 
+                        // Reference Data Base
+
                         Code = meta.Code,
                         Name = meta.Name,
                         Description = meta.Description,
 
+                        // Entity Base
+
                         IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
                         CreatedById = userId,
+                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
                     }
                 );
             }
 
-            // Project Global Configuration
+            // Configuration
 
-            modelBuilder.Entity<ProjectGlobalConfiguration>().HasData(new ProjectGlobalConfiguration
+            modelBuilder.Entity<Configuration>().HasData(new Configuration
             {
-                ProjectGlobalConfigurationId = 1,
-
-                // Extractor
-
-                ExtractorMinVariation = 50,
+                ConfigurationId = 1,
 
                 // Period
 
@@ -222,14 +231,16 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 FromDateOS = null,
                 ToDateOS = null,
 
-                // Schedule
-
                 WithoutSchedule = true,
 
                 // Historical Data Information
 
                 SymbolId = 1,
                 TimeframeId = (int)TimeframeEnum.H1,
+
+                // Extractor
+
+                ExtractorMinVariation = 50,
 
                 // Weka
 
@@ -274,75 +285,97 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 // Entity Base
 
                 IsDeleted = false,
-                Inaccesible = false,
-                TenantId = tenantId,
                 CreatedById = userId,
+                CreatedByUserName = username,
                 CreatedOn = DateTime.UtcNow,
-                CreatedByUserName = username
             });
 
-            // Project Global Schedule Configuration
+            // Schedule Configuration
 
-            modelBuilder.Entity<ProjectGlobalScheduleConfiguration>().HasData(
-                new ProjectGlobalScheduleConfiguration
+            modelBuilder.Entity<ScheduleConfiguration>().HasData(
+                new ScheduleConfiguration
                 {
-                    Description = "Default Schedule America",
-                    ProjectGlobalScheduleConfigurationId = 1,
-                    ProjectGlobalConfigurationId = 1,
+                    ScheduleConfigurationId = 1,
+
+                    // Configuration
+
+                    ConfigurationId = 1,
+
+                    // Market Region
 
                     MarketRegionId = (int)MarketRegionEnum.America,
+
                     FromTimeInSeconds = 54000,
                     ToTimeInSeconds = 82800,
 
+                    // Time Sensitive Base
+
                     StartDate = DateTime.UtcNow,
                     EndDate = null,
+                    Description = "Default Schedule America",
+
+                    // Entity Base
 
                     IsDeleted = false,
-                    Inaccesible = false,
-                    TenantId = tenantId,
                     CreatedById = userId,
+                    CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
-                    CreatedByUserName = username
                 },
-                new ProjectGlobalScheduleConfiguration
+                new ScheduleConfiguration
                 {
-                    Description = "Default Schedule Europe",
-                    ProjectGlobalScheduleConfigurationId = 2,
-                    ProjectGlobalConfigurationId = 1,
+                    ScheduleConfigurationId = 2,
+
+                    // Configuration
+
+                    ConfigurationId = 1,
+
+                    // Market Region
 
                     MarketRegionId = (int)MarketRegionEnum.Europe,
+
                     FromTimeInSeconds = 32400,
                     ToTimeInSeconds = 64800,
 
+                    // Time Sensitive Base
+
                     StartDate = DateTime.UtcNow,
                     EndDate = null,
+                    Description = "Default Schedule Europe",
+
+                    // Entity Base
 
                     IsDeleted = false,
-                    Inaccesible = false,
-                    TenantId = tenantId,
                     CreatedById = userId,
+                    CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
-                    CreatedByUserName = username
                 },
-                new ProjectGlobalScheduleConfiguration
+                new ScheduleConfiguration
                 {
-                    Description = "Default Schedule Asia",
-                    ProjectGlobalScheduleConfigurationId = 3,
-                    ProjectGlobalConfigurationId = 1,
+                    ScheduleConfigurationId = 3,
+
+                    // Configuration
+
+                    ConfigurationId = 1,
+
+                    // Market Region
 
                     MarketRegionId = (int)MarketRegionEnum.Asia,
+
                     FromTimeInSeconds = 3600,
                     ToTimeInSeconds = 32400,
 
+                    // Time Sensitive Base
+
                     StartDate = DateTime.UtcNow,
                     EndDate = null,
+                    Description = "Default Schedule Asia",
+
+                    // Entity Base
 
                     IsDeleted = false,
-                    Inaccesible = false,
-                    TenantId = tenantId,
                     CreatedById = userId,
+                    CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
-                    CreatedByUserName = username
                 }
             );
 
@@ -356,17 +389,19 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     {
                         CurrencyId = (int)c,
 
+                        // Reference Data Base
+
                         Code = meta.Code,
                         Name = meta.Name,
                         Value = meta.Value,
                         Description = meta.Description,
 
+                        // Entity Base
+
                         IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
                         CreatedById = userId,
+                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
                     }
                 );
             }
@@ -377,6 +412,8 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
         public DbSet<EntityServiceHost> EntityServiceHosts { get; set; }
         public DbSet<EntityType> EntityTypes { get; set; }
         public DbSet<Setting> Settings { get; set; }
+        public DbSet<Configuration> Configurations { get; set; }
+        public DbSet<ScheduleConfiguration> ScheduleConfigurations { get; set; }
 
         // Market Data
 
@@ -395,8 +432,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectConfiguration> ProjectConfigurations { get; set; }
-        public DbSet<ProjectGlobalConfiguration> ProjectGlobalConfigurations { get; set; }
-        public DbSet<ProjectGlobalScheduleConfiguration> ProjectGlobalScheduleConfigurations { get; set; }
         public DbSet<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
 
         // Reference Data

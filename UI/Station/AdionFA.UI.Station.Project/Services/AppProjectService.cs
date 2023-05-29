@@ -32,15 +32,15 @@ namespace AdionFA.UI.Station.Project.Services
 
         // Project Configuration
 
-        public async Task<ProjectSettingsModel> GetProjectConfiguration(int projectId, bool includeGraph = false)
+        public async Task<ProjectConfigurationModel> GetProjectConfiguration(int projectId, bool includeGraph = false)
         {
             try
             {
                 ProjectConfigurationVM config =
                     await _projectService.GetProjectConfiguration(projectId, includeGraph);
 
-                ProjectSettingsModel pcsModel =
-                    _mapper.Map<ProjectConfigurationVM, ProjectSettingsModel>(config);
+                ProjectConfigurationModel pcsModel =
+                    _mapper.Map<ProjectConfigurationVM, ProjectConfigurationModel>(config);
 
                 ProjectScheduleConfigurationVM europa = config.ProjectScheduleConfigurations.FirstOrDefault(
                     gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe
@@ -72,7 +72,7 @@ namespace AdionFA.UI.Station.Project.Services
             }
         }
 
-        public async Task<ResponseVM> UpdateProjectConfiguration(ProjectSettingsModel config)
+        public async Task<ResponseVM> UpdateProjectConfiguration(ProjectConfigurationModel config)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace AdionFA.UI.Station.Project.Services
                 asia.FromTimeInSeconds = config.FromTimeInSecondsAsia.Hour * 3600;
                 asia.ToTimeInSeconds = config.ToTimeInSecondsAsia.Hour * 3600;
 
-                var configVm = _mapper.Map<ProjectConfigurationVM, ProjectSettingsModel>(config);
+                var configVm = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationModel>(config);
 
                 var response = await _projectService.UpdateProjectConfiguration(configVm);
 

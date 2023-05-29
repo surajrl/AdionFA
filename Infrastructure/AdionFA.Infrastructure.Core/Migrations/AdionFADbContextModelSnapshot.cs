@@ -17,6 +17,171 @@ namespace AdionFA.Infrastructure.Core.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
 
+            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Common.Configuration", b =>
+                {
+                    b.Property<int>("ConfigurationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("ABMinImprovePercent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ABTransactionsTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByUserName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DepthWeka")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ExtractorMinVariation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("FromDateIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("FromDateOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsProgressiveness")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("MaxRatioTree")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MaximumSeed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinimalSeed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("NTotalTree")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Progressiveness")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMaxPercentCorrelation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMaxTransactionsVariation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMinPercentSuccessIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMinPercentSuccessOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SBMinTransactionsIS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBMinTransactionsOS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBTransactionsTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBWinningStrategyDOWNTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBWinningStrategyUPTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SymbolId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TimeframeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ToDateIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ToDateOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalDecimalWeka")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalInstanceWeka")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedByUserName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("WithoutSchedule")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ConfigurationId");
+
+                    b.HasIndex("SymbolId");
+
+                    b.HasIndex("TimeframeId");
+
+                    b.ToTable("Configuration");
+
+                    b.HasData(
+                        new
+                        {
+                            ConfigurationId = 1,
+                            ABMinImprovePercent = 5m,
+                            ABTransactionsTarget = 600,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2719),
+                            DepthWeka = 6,
+                            Description = "Default Configuration",
+                            ExtractorMinVariation = 50,
+                            IsDeleted = false,
+                            IsProgressiveness = false,
+                            MaxRatioTree = 1.5m,
+                            MaximumSeed = 1000000,
+                            MinimalSeed = 100,
+                            NTotalTree = 300m,
+                            Progressiveness = 2m,
+                            SBMaxPercentCorrelation = 2m,
+                            SBMaxTransactionsVariation = 4m,
+                            SBMinPercentSuccessIS = 55m,
+                            SBMinPercentSuccessOS = 55m,
+                            SBMinTransactionsIS = 300,
+                            SBMinTransactionsOS = 100,
+                            SBTransactionsTarget = 300,
+                            SBWinningStrategyDOWNTarget = 6,
+                            SBWinningStrategyUPTarget = 6,
+                            StartDate = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2717),
+                            SymbolId = 1,
+                            TimeframeId = 5,
+                            TotalDecimalWeka = 5,
+                            TotalInstanceWeka = 1,
+                            WithoutSchedule = true
+                        });
+                });
+
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Common.EntityServiceHost", b =>
                 {
                     b.Property<int>("EntityServiceHostId")
@@ -38,17 +203,11 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<int>("EntityTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<long>("ProcessId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
                         .HasColumnType("TEXT");
@@ -86,16 +245,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -119,105 +272,190 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         {
                             EntityTypeId = 1,
                             Code = "SETT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 963, DateTimeKind.Utc).AddTicks(4475),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 707, DateTimeKind.Utc).AddTicks(9898),
                             Description = "Setting",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "Setting",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "Setting"
                         },
                         new
                         {
                             EntityTypeId = 400,
                             Code = "MKDT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 964, DateTimeKind.Utc).AddTicks(45),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 708, DateTimeKind.Utc).AddTicks(3198),
                             Description = "Market Data",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "MarketData",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "MarketData"
                         },
                         new
                         {
                             EntityTypeId = 500,
                             Code = "PROJ",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 964, DateTimeKind.Utc).AddTicks(5996),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 708, DateTimeKind.Utc).AddTicks(6438),
                             Description = "Project",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "Project",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "Project"
                         },
                         new
                         {
                             EntityTypeId = 501,
                             Code = "PROJCONFIG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 965, DateTimeKind.Utc).AddTicks(1491),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 708, DateTimeKind.Utc).AddTicks(9664),
                             Description = "Project Configuration",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "ProjectConfiguration",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "ProjectConfiguration"
                         },
                         new
                         {
                             EntityTypeId = 502,
                             Code = "CONFIG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 965, DateTimeKind.Utc).AddTicks(6921),
-                            Description = "Project Global Configuration",
-                            Inaccesible = false,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 709, DateTimeKind.Utc).AddTicks(2852),
+                            Description = "Configuration",
                             IsDeleted = false,
-                            Name = "ProjectGlobalConfiguration",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "Configuration"
                         },
                         new
                         {
                             EntityTypeId = 503,
                             Code = "EXT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 966, DateTimeKind.Utc).AddTicks(2328),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 709, DateTimeKind.Utc).AddTicks(6024),
                             Description = "Extractor",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "Extractor",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "Extractor"
                         },
                         new
                         {
                             EntityTypeId = 504,
                             Code = "SB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 966, DateTimeKind.Utc).AddTicks(7671),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 709, DateTimeKind.Utc).AddTicks(9220),
                             Description = "Strategy Builder",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "StrategyBuilder",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "StrategyBuilder"
                         },
                         new
                         {
                             EntityTypeId = 505,
                             Code = "AB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 967, DateTimeKind.Utc).AddTicks(3232),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 710, DateTimeKind.Utc).AddTicks(2362),
                             Description = "Assembled Builder",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "AssembledBuilder",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "AssembledBuilder"
+                        });
+                });
+
+            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Common.ScheduleConfiguration", b =>
+                {
+                    b.Property<int>("ScheduleConfigurationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ConfigurationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByUserName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("FromTimeInSeconds")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MarketRegionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ToTimeInSeconds")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedByUserName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ScheduleConfigurationId");
+
+                    b.HasIndex("ConfigurationId");
+
+                    b.HasIndex("MarketRegionId");
+
+                    b.ToTable("ScheduleConfiguration");
+
+                    b.HasData(
+                        new
+                        {
+                            ScheduleConfigurationId = 1,
+                            ConfigurationId = 1,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2744),
+                            Description = "Default Schedule America",
+                            FromTimeInSeconds = 54000,
+                            IsDeleted = false,
+                            MarketRegionId = 1,
+                            StartDate = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2743),
+                            ToTimeInSeconds = 82800
+                        },
+                        new
+                        {
+                            ScheduleConfigurationId = 2,
+                            ConfigurationId = 1,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2747),
+                            Description = "Default Schedule Europe",
+                            FromTimeInSeconds = 32400,
+                            IsDeleted = false,
+                            MarketRegionId = 2,
+                            StartDate = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2746),
+                            ToTimeInSeconds = 64800
+                        },
+                        new
+                        {
+                            ScheduleConfigurationId = 3,
+                            ConfigurationId = 1,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2750),
+                            Description = "Default Schedule Asia",
+                            FromTimeInSeconds = 3600,
+                            IsDeleted = false,
+                            MarketRegionId = 3,
+                            StartDate = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2748),
+                            ToTimeInSeconds = 32400
                         });
                 });
 
@@ -242,16 +480,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -275,72 +507,60 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         {
                             SettingId = 1,
                             Code = "Culture",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 967, DateTimeKind.Utc).AddTicks(9127),
-                            Inaccesible = false,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 710, DateTimeKind.Utc).AddTicks(5632),
                             IsDeleted = false,
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "eng"
                         },
                         new
                         {
                             SettingId = 2,
                             Code = "Theme",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 968, DateTimeKind.Utc).AddTicks(4641),
-                            Inaccesible = false,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 710, DateTimeKind.Utc).AddTicks(8775),
                             IsDeleted = false,
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "Light"
                         },
                         new
                         {
                             SettingId = 3,
                             Code = "Color",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 969, DateTimeKind.Utc).AddTicks(2735),
-                            Inaccesible = false,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 711, DateTimeKind.Utc).AddTicks(1893),
                             IsDeleted = false,
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "Orange"
                         },
                         new
                         {
                             SettingId = 4,
                             Code = "DefaultWorkspace",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 970, DateTimeKind.Utc).AddTicks(1262),
-                            Inaccesible = false,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 711, DateTimeKind.Utc).AddTicks(5076),
                             IsDeleted = false,
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             SettingId = 5,
                             Code = "Host",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 970, DateTimeKind.Utc).AddTicks(8615),
-                            Inaccesible = false,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 711, DateTimeKind.Utc).AddTicks(8234),
                             IsDeleted = false,
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "192.168.50.137"
                         },
                         new
                         {
                             SettingId = 6,
                             Code = "Port",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 971, DateTimeKind.Utc).AddTicks(6653),
-                            Inaccesible = false,
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 712, DateTimeKind.Utc).AddTicks(1412),
                             IsDeleted = false,
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "5555"
                         });
                 });
@@ -366,9 +586,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -380,9 +597,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
 
                     b.Property<int>("SymbolId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("TimeframeId")
                         .HasColumnType("INTEGER");
@@ -431,9 +645,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<int>("HistoricalDataId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -451,9 +662,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
 
                     b.Property<long>("StartTime")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
                         .HasColumnType("TEXT");
@@ -495,16 +703,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -528,14 +730,12 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         {
                             MarketId = 1,
                             Code = "Forex",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 979, DateTimeKind.Utc).AddTicks(5795),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 715, DateTimeKind.Utc).AddTicks(3153),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "Forex",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "Forex"
                         });
                 });
 
@@ -560,16 +760,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -593,40 +787,34 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         {
                             MarketRegionId = 1,
                             Code = "America",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 980, DateTimeKind.Utc).AddTicks(3883),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 715, DateTimeKind.Utc).AddTicks(6421),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "America",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "America"
                         },
                         new
                         {
                             MarketRegionId = 2,
                             Code = "Europe",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 981, DateTimeKind.Utc).AddTicks(1740),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 715, DateTimeKind.Utc).AddTicks(9558),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "Europe",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "Europe"
                         },
                         new
                         {
                             MarketRegionId = 3,
                             Code = "Asia",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(55),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(2671),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "Asia",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "Asia"
                         });
                 });
 
@@ -651,16 +839,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -684,14 +866,12 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         {
                             SymbolId = 1,
                             Code = "EURUSD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 971, DateTimeKind.Utc).AddTicks(6763),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 712, DateTimeKind.Utc).AddTicks(1455),
                             Description = "Euro vs US Dollar",
-                            Inaccesible = false,
                             IsDeleted = false,
-                            Name = "EURUSD",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
+                            Name = "EURUSD"
                         });
                 });
 
@@ -716,16 +896,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -749,126 +923,108 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         {
                             TimeframeId = 1,
                             Code = "M1",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 972, DateTimeKind.Utc).AddTicks(4605),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 712, DateTimeKind.Utc).AddTicks(4731),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "1 Minute",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "1"
                         },
                         new
                         {
                             TimeframeId = 2,
                             Code = "M5",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 973, DateTimeKind.Utc).AddTicks(2277),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 712, DateTimeKind.Utc).AddTicks(7900),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "5 Minute",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "5"
                         },
                         new
                         {
                             TimeframeId = 3,
                             Code = "M15",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 974, DateTimeKind.Utc).AddTicks(593),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 713, DateTimeKind.Utc).AddTicks(1032),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "15 Minute",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "15"
                         },
                         new
                         {
                             TimeframeId = 4,
                             Code = "M30",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 974, DateTimeKind.Utc).AddTicks(9553),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 713, DateTimeKind.Utc).AddTicks(4186),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "30 Minute",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "30"
                         },
                         new
                         {
                             TimeframeId = 5,
                             Code = "H1",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 975, DateTimeKind.Utc).AddTicks(8609),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 713, DateTimeKind.Utc).AddTicks(7319),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "1 Hour",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "16385"
                         },
                         new
                         {
                             TimeframeId = 6,
                             Code = "H4",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 976, DateTimeKind.Utc).AddTicks(6467),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 714, DateTimeKind.Utc).AddTicks(469),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "4 Hour",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "16388"
                         },
                         new
                         {
                             TimeframeId = 7,
                             Code = "D1",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 977, DateTimeKind.Utc).AddTicks(3749),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 714, DateTimeKind.Utc).AddTicks(3633),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "Daily",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "16408"
                         },
                         new
                         {
                             TimeframeId = 8,
                             Code = "W1",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 978, DateTimeKind.Utc).AddTicks(878),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 714, DateTimeKind.Utc).AddTicks(6808),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "Weekly",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "32769"
                         },
                         new
                         {
                             TimeframeId = 9,
                             Code = "MN1",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 978, DateTimeKind.Utc).AddTicks(8209),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 714, DateTimeKind.Utc).AddTicks(9956),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "Monthly",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "49153"
                         });
                 });
@@ -891,9 +1047,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Host")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -910,9 +1063,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ResponsePort")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -958,16 +1108,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ProjectName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -1027,9 +1171,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("HistoricalDataId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Inaccesible")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
@@ -1092,9 +1233,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<int>("SymbolId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("TimeframeId")
                         .HasColumnType("INTEGER");
 
@@ -1138,292 +1276,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.ToTable("ProjectConfiguration");
                 });
 
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectGlobalConfiguration", b =>
-                {
-                    b.Property<int>("ProjectGlobalConfigurationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("ABMinImprovePercent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ABTransactionsTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DepthWeka")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ExtractorMinVariation")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("FromDateIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("FromDateOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsProgressiveness")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("MaxRatioTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MaximumSeed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinimalSeed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("NTotalTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Progressiveness")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMaxPercentCorrelation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMaxTransactionsVariation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMinPercentSuccessIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMinPercentSuccessOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SBMinTransactionsIS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBMinTransactionsOS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBTransactionsTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBWinningStrategyDOWNTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBWinningStrategyUPTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SymbolId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("TimeframeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("ToDateIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ToDateOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("TotalDecimalWeka")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TotalInstanceWeka")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("WithoutSchedule")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ProjectGlobalConfigurationId");
-
-                    b.HasIndex("SymbolId");
-
-                    b.HasIndex("TimeframeId");
-
-                    b.ToTable("ProjectGlobalConfiguration");
-
-                    b.HasData(
-                        new
-                        {
-                            ProjectGlobalConfigurationId = 1,
-                            ABMinImprovePercent = 5m,
-                            ABTransactionsTarget = 600,
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(174),
-                            DepthWeka = 6,
-                            Description = "Default Configuration",
-                            ExtractorMinVariation = 50,
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            IsProgressiveness = false,
-                            MaxRatioTree = 1.5m,
-                            MaximumSeed = 1000000,
-                            MinimalSeed = 100,
-                            NTotalTree = 300m,
-                            Progressiveness = 2m,
-                            SBMaxPercentCorrelation = 2m,
-                            SBMaxTransactionsVariation = 4m,
-                            SBMinPercentSuccessIS = 55m,
-                            SBMinPercentSuccessOS = 55m,
-                            SBMinTransactionsIS = 300,
-                            SBMinTransactionsOS = 100,
-                            SBTransactionsTarget = 300,
-                            SBWinningStrategyDOWNTarget = 6,
-                            SBWinningStrategyUPTarget = 6,
-                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(162),
-                            SymbolId = 1,
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            TimeframeId = 5,
-                            TotalDecimalWeka = 5,
-                            TotalInstanceWeka = 1,
-                            WithoutSchedule = true
-                        });
-                });
-
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectGlobalScheduleConfiguration", b =>
-                {
-                    b.Property<int>("ProjectGlobalScheduleConfigurationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("FromTimeInSeconds")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("MarketRegionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProjectGlobalConfigurationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("ToTimeInSeconds")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ProjectGlobalScheduleConfigurationId");
-
-                    b.HasIndex("MarketRegionId");
-
-                    b.HasIndex("ProjectGlobalConfigurationId");
-
-                    b.ToTable("ProjectGlobalScheduleConfiguration");
-
-                    b.HasData(
-                        new
-                        {
-                            ProjectGlobalScheduleConfigurationId = 1,
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(248),
-                            Description = "Default Schedule America",
-                            FromTimeInSeconds = 54000,
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            MarketRegionId = 1,
-                            ProjectGlobalConfigurationId = 1,
-                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(246),
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            ToTimeInSeconds = 82800
-                        },
-                        new
-                        {
-                            ProjectGlobalScheduleConfigurationId = 2,
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(271),
-                            Description = "Default Schedule Europe",
-                            FromTimeInSeconds = 32400,
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            MarketRegionId = 2,
-                            ProjectGlobalConfigurationId = 1,
-                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(269),
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            ToTimeInSeconds = 64800
-                        },
-                        new
-                        {
-                            ProjectGlobalScheduleConfigurationId = 3,
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(276),
-                            Description = "Default Schedule Asia",
-                            FromTimeInSeconds = 3600,
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            MarketRegionId = 3,
-                            ProjectGlobalConfigurationId = 1,
-                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(275),
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            ToTimeInSeconds = 32400
-                        });
-                });
-
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectScheduleConfiguration", b =>
                 {
                     b.Property<int>("ProjectScheduleConfigurationId")
@@ -1448,9 +1300,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<int?>("FromTimeInSeconds")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -1461,9 +1310,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ToTimeInSeconds")
@@ -1508,16 +1354,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedById")
@@ -1541,2844 +1381,2457 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         {
                             CurrencyId = 1,
                             Code = "AFN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 983, DateTimeKind.Utc).AddTicks(986),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 716, DateTimeKind.Utc).AddTicks(7213),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 2,
                             Code = "AFA",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 983, DateTimeKind.Utc).AddTicks(8977),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 717, DateTimeKind.Utc).AddTicks(460),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 3,
                             Code = "ALL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 984, DateTimeKind.Utc).AddTicks(7783),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 717, DateTimeKind.Utc).AddTicks(3664),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 4,
                             Code = "DZD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 985, DateTimeKind.Utc).AddTicks(5946),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 717, DateTimeKind.Utc).AddTicks(6939),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 5,
                             Code = "ADF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 986, DateTimeKind.Utc).AddTicks(3388),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 718, DateTimeKind.Utc).AddTicks(262),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 6,
                             Code = "ADP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 987, DateTimeKind.Utc).AddTicks(1860),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 718, DateTimeKind.Utc).AddTicks(3501),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 7,
                             Code = "AOA",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 987, DateTimeKind.Utc).AddTicks(9620),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 718, DateTimeKind.Utc).AddTicks(6722),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 8,
                             Code = "AON",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 988, DateTimeKind.Utc).AddTicks(7752),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 718, DateTimeKind.Utc).AddTicks(9920),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 9,
                             Code = "ARS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 989, DateTimeKind.Utc).AddTicks(6658),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 719, DateTimeKind.Utc).AddTicks(3151),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 10,
                             Code = "AMD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 990, DateTimeKind.Utc).AddTicks(4655),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 719, DateTimeKind.Utc).AddTicks(6597),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 11,
                             Code = "AWG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 991, DateTimeKind.Utc).AddTicks(1625),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 719, DateTimeKind.Utc).AddTicks(9817),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 12,
                             Code = "AUD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 991, DateTimeKind.Utc).AddTicks(9803),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 720, DateTimeKind.Utc).AddTicks(3030),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 13,
                             Code = "ATS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 992, DateTimeKind.Utc).AddTicks(8192),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 720, DateTimeKind.Utc).AddTicks(6247),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 14,
                             Code = "AZM",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 993, DateTimeKind.Utc).AddTicks(5539),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 720, DateTimeKind.Utc).AddTicks(9492),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 15,
                             Code = "AZN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 994, DateTimeKind.Utc).AddTicks(3010),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 721, DateTimeKind.Utc).AddTicks(2713),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 16,
                             Code = "BSD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 995, DateTimeKind.Utc).AddTicks(1003),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 721, DateTimeKind.Utc).AddTicks(5929),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 17,
                             Code = "BHD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 995, DateTimeKind.Utc).AddTicks(9536),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 721, DateTimeKind.Utc).AddTicks(9143),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 18,
                             Code = "BDT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 996, DateTimeKind.Utc).AddTicks(6800),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 722, DateTimeKind.Utc).AddTicks(2338),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 19,
                             Code = "BBD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 997, DateTimeKind.Utc).AddTicks(4062),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 722, DateTimeKind.Utc).AddTicks(5611),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 20,
                             Code = "BEF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 998, DateTimeKind.Utc).AddTicks(2171),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 722, DateTimeKind.Utc).AddTicks(8839),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 21,
                             Code = "BZD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 998, DateTimeKind.Utc).AddTicks(9371),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 723, DateTimeKind.Utc).AddTicks(2098),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 22,
                             Code = "BMD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 999, DateTimeKind.Utc).AddTicks(6188),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 723, DateTimeKind.Utc).AddTicks(5296),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 23,
                             Code = "BTN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 0, DateTimeKind.Utc).AddTicks(3854),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 723, DateTimeKind.Utc).AddTicks(8946),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 24,
                             Code = "BOB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 1, DateTimeKind.Utc).AddTicks(2788),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 724, DateTimeKind.Utc).AddTicks(2176),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 25,
                             Code = "BAM",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 2, DateTimeKind.Utc).AddTicks(1168),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 724, DateTimeKind.Utc).AddTicks(5356),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 26,
                             Code = "BWP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 2, DateTimeKind.Utc).AddTicks(8832),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 724, DateTimeKind.Utc).AddTicks(8537),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 27,
                             Code = "BRL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 3, DateTimeKind.Utc).AddTicks(6943),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 725, DateTimeKind.Utc).AddTicks(1791),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 28,
                             Code = "GBP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 4, DateTimeKind.Utc).AddTicks(5772),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 725, DateTimeKind.Utc).AddTicks(5404),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 29,
                             Code = "BND",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 5, DateTimeKind.Utc).AddTicks(3719),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 725, DateTimeKind.Utc).AddTicks(8615),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 30,
                             Code = "BGN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 6, DateTimeKind.Utc).AddTicks(1963),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 726, DateTimeKind.Utc).AddTicks(2067),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 31,
                             Code = "BGL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 7, DateTimeKind.Utc).AddTicks(46),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 726, DateTimeKind.Utc).AddTicks(5372),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 32,
                             Code = "BIF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 7, DateTimeKind.Utc).AddTicks(7513),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 726, DateTimeKind.Utc).AddTicks(8575),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 33,
                             Code = "BYR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 8, DateTimeKind.Utc).AddTicks(5340),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 727, DateTimeKind.Utc).AddTicks(1795),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 34,
                             Code = "XOF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 9, DateTimeKind.Utc).AddTicks(4651),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 727, DateTimeKind.Utc).AddTicks(5037),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 35,
                             Code = "XAF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 10, DateTimeKind.Utc).AddTicks(2947),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 727, DateTimeKind.Utc).AddTicks(8250),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 36,
                             Code = "XPF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 10, DateTimeKind.Utc).AddTicks(8436),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 728, DateTimeKind.Utc).AddTicks(1487),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 37,
                             Code = "KHR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 11, DateTimeKind.Utc).AddTicks(3646),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 728, DateTimeKind.Utc).AddTicks(4826),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 38,
                             Code = "CAD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 11, DateTimeKind.Utc).AddTicks(8704),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 728, DateTimeKind.Utc).AddTicks(8160),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 39,
                             Code = "CVE",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 12, DateTimeKind.Utc).AddTicks(3497),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 729, DateTimeKind.Utc).AddTicks(1471),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 40,
                             Code = "KYD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 12, DateTimeKind.Utc).AddTicks(8311),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 729, DateTimeKind.Utc).AddTicks(4764),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 41,
                             Code = "CLP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 13, DateTimeKind.Utc).AddTicks(3281),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 729, DateTimeKind.Utc).AddTicks(8081),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 42,
                             Code = "CNY",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 13, DateTimeKind.Utc).AddTicks(8483),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 730, DateTimeKind.Utc).AddTicks(1386),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 43,
                             Code = "COP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 14, DateTimeKind.Utc).AddTicks(3253),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 730, DateTimeKind.Utc).AddTicks(4695),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 44,
                             Code = "KMF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 14, DateTimeKind.Utc).AddTicks(8153),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 730, DateTimeKind.Utc).AddTicks(8014),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 45,
                             Code = "CDF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 15, DateTimeKind.Utc).AddTicks(3082),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 731, DateTimeKind.Utc).AddTicks(1416),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 46,
                             Code = "CRC",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 15, DateTimeKind.Utc).AddTicks(7879),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 731, DateTimeKind.Utc).AddTicks(4763),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 47,
                             Code = "HRK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 16, DateTimeKind.Utc).AddTicks(2943),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 731, DateTimeKind.Utc).AddTicks(8023),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 48,
                             Code = "CUC",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 16, DateTimeKind.Utc).AddTicks(9179),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 732, DateTimeKind.Utc).AddTicks(1360),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 49,
                             Code = "CUP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 17, DateTimeKind.Utc).AddTicks(6407),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 732, DateTimeKind.Utc).AddTicks(4641),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 50,
                             Code = "CYP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 18, DateTimeKind.Utc).AddTicks(1763),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 732, DateTimeKind.Utc).AddTicks(7940),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 51,
                             Code = "CZK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 18, DateTimeKind.Utc).AddTicks(6918),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 733, DateTimeKind.Utc).AddTicks(1242),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 52,
                             Code = "DKK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 19, DateTimeKind.Utc).AddTicks(1897),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 733, DateTimeKind.Utc).AddTicks(4597),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 53,
                             Code = "DJF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 19, DateTimeKind.Utc).AddTicks(7028),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 733, DateTimeKind.Utc).AddTicks(8576),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 54,
                             Code = "DOP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 20, DateTimeKind.Utc).AddTicks(2449),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 734, DateTimeKind.Utc).AddTicks(2158),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 55,
                             Code = "NLG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 20, DateTimeKind.Utc).AddTicks(7507),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 734, DateTimeKind.Utc).AddTicks(6196),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 56,
                             Code = "XCD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 21, DateTimeKind.Utc).AddTicks(2351),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 734, DateTimeKind.Utc).AddTicks(9550),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 57,
                             Code = "XEU",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 21, DateTimeKind.Utc).AddTicks(7137),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 735, DateTimeKind.Utc).AddTicks(2944),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 58,
                             Code = "ECS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 22, DateTimeKind.Utc).AddTicks(2107),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 735, DateTimeKind.Utc).AddTicks(6325),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 59,
                             Code = "EGP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 22, DateTimeKind.Utc).AddTicks(6959),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 735, DateTimeKind.Utc).AddTicks(9631),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 60,
                             Code = "SVC",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 23, DateTimeKind.Utc).AddTicks(2575),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 736, DateTimeKind.Utc).AddTicks(2955),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 61,
                             Code = "EEK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 24, DateTimeKind.Utc).AddTicks(1998),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 736, DateTimeKind.Utc).AddTicks(6317),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 62,
                             Code = "ETB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 24, DateTimeKind.Utc).AddTicks(8287),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 737, DateTimeKind.Utc).AddTicks(163),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 63,
                             Code = "EUR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 25, DateTimeKind.Utc).AddTicks(3294),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 737, DateTimeKind.Utc).AddTicks(3521),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 64,
                             Code = "FKP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 25, DateTimeKind.Utc).AddTicks(8185),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 737, DateTimeKind.Utc).AddTicks(7031),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 65,
                             Code = "FJD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 26, DateTimeKind.Utc).AddTicks(3132),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 738, DateTimeKind.Utc).AddTicks(373),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 66,
                             Code = "FIM",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 26, DateTimeKind.Utc).AddTicks(8222),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 738, DateTimeKind.Utc).AddTicks(3877),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 67,
                             Code = "FRF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 27, DateTimeKind.Utc).AddTicks(2981),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 738, DateTimeKind.Utc).AddTicks(7321),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 68,
                             Code = "GMD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 27, DateTimeKind.Utc).AddTicks(7760),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 739, DateTimeKind.Utc).AddTicks(542),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 69,
                             Code = "GEL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 28, DateTimeKind.Utc).AddTicks(2689),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 739, DateTimeKind.Utc).AddTicks(3745),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 70,
                             Code = "DEM",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 28, DateTimeKind.Utc).AddTicks(7549),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 739, DateTimeKind.Utc).AddTicks(7002),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 71,
                             Code = "GHC",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 29, DateTimeKind.Utc).AddTicks(2460),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 740, DateTimeKind.Utc).AddTicks(261),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 72,
                             Code = "GHS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 29, DateTimeKind.Utc).AddTicks(7533),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 740, DateTimeKind.Utc).AddTicks(3981),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 73,
                             Code = "GIP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 30, DateTimeKind.Utc).AddTicks(3187),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 740, DateTimeKind.Utc).AddTicks(7409),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 74,
                             Code = "XAU",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 30, DateTimeKind.Utc).AddTicks(9216),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 741, DateTimeKind.Utc).AddTicks(647),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 75,
                             Code = "GRD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 31, DateTimeKind.Utc).AddTicks(5122),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 741, DateTimeKind.Utc).AddTicks(3927),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 76,
                             Code = "GTQ",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 32, DateTimeKind.Utc).AddTicks(1983),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 741, DateTimeKind.Utc).AddTicks(7330),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 77,
                             Code = "GNF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 33, DateTimeKind.Utc).AddTicks(152),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 742, DateTimeKind.Utc).AddTicks(646),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 78,
                             Code = "GYD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 34, DateTimeKind.Utc).AddTicks(661),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 742, DateTimeKind.Utc).AddTicks(3981),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 79,
                             Code = "HTG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 34, DateTimeKind.Utc).AddTicks(9289),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 742, DateTimeKind.Utc).AddTicks(7300),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 80,
                             Code = "HNL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 35, DateTimeKind.Utc).AddTicks(6582),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 743, DateTimeKind.Utc).AddTicks(566),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 81,
                             Code = "HKD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 36, DateTimeKind.Utc).AddTicks(3569),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 743, DateTimeKind.Utc).AddTicks(3916),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 82,
                             Code = "HUF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 37, DateTimeKind.Utc).AddTicks(2501),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 743, DateTimeKind.Utc).AddTicks(7269),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 83,
                             Code = "ISK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 38, DateTimeKind.Utc).AddTicks(1196),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 744, DateTimeKind.Utc).AddTicks(645),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 84,
                             Code = "INR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 38, DateTimeKind.Utc).AddTicks(8747),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 744, DateTimeKind.Utc).AddTicks(4029),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 85,
                             Code = "IDR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 39, DateTimeKind.Utc).AddTicks(6408),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 744, DateTimeKind.Utc).AddTicks(7238),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 86,
                             Code = "IRR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 40, DateTimeKind.Utc).AddTicks(3468),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 745, DateTimeKind.Utc).AddTicks(487),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 87,
                             Code = "IQD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 41, DateTimeKind.Utc).AddTicks(1168),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 745, DateTimeKind.Utc).AddTicks(3681),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 88,
                             Code = "IEP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 41, DateTimeKind.Utc).AddTicks(8350),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 745, DateTimeKind.Utc).AddTicks(6949),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 89,
                             Code = "ILS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 42, DateTimeKind.Utc).AddTicks(5334),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 746, DateTimeKind.Utc).AddTicks(220),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 90,
                             Code = "ITL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 43, DateTimeKind.Utc).AddTicks(2883),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 746, DateTimeKind.Utc).AddTicks(3396),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 91,
                             Code = "JMD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 44, DateTimeKind.Utc).AddTicks(943),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 746, DateTimeKind.Utc).AddTicks(6664),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 92,
                             Code = "JPY",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 44, DateTimeKind.Utc).AddTicks(8149),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 746, DateTimeKind.Utc).AddTicks(9867),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 93,
                             Code = "JOD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 45, DateTimeKind.Utc).AddTicks(5353),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 747, DateTimeKind.Utc).AddTicks(3038),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 94,
                             Code = "KHR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 46, DateTimeKind.Utc).AddTicks(2358),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 747, DateTimeKind.Utc).AddTicks(6271),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 95,
                             Code = "KZT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 46, DateTimeKind.Utc).AddTicks(9940),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 747, DateTimeKind.Utc).AddTicks(9699),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 96,
                             Code = "KES",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 47, DateTimeKind.Utc).AddTicks(8607),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 748, DateTimeKind.Utc).AddTicks(2917),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 97,
                             Code = "KRW",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 48, DateTimeKind.Utc).AddTicks(7928),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 748, DateTimeKind.Utc).AddTicks(6336),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 98,
                             Code = "KWD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 49, DateTimeKind.Utc).AddTicks(3802),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 748, DateTimeKind.Utc).AddTicks(9849),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 99,
                             Code = "KGS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 49, DateTimeKind.Utc).AddTicks(9302),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 749, DateTimeKind.Utc).AddTicks(3239),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 100,
                             Code = "LAK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 50, DateTimeKind.Utc).AddTicks(4547),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 749, DateTimeKind.Utc).AddTicks(6975),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 101,
                             Code = "LVL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 50, DateTimeKind.Utc).AddTicks(9739),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 750, DateTimeKind.Utc).AddTicks(634),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 102,
                             Code = "LBP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 51, DateTimeKind.Utc).AddTicks(5204),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 750, DateTimeKind.Utc).AddTicks(4268),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 103,
                             Code = "LSL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 52, DateTimeKind.Utc).AddTicks(598),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 750, DateTimeKind.Utc).AddTicks(7639),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 104,
                             Code = "LRD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 52, DateTimeKind.Utc).AddTicks(8715),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 751, DateTimeKind.Utc).AddTicks(1019),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 105,
                             Code = "LYD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 53, DateTimeKind.Utc).AddTicks(6967),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 751, DateTimeKind.Utc).AddTicks(4430),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 106,
                             Code = "LTL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 54, DateTimeKind.Utc).AddTicks(4434),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 751, DateTimeKind.Utc).AddTicks(7757),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 107,
                             Code = "LUF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 55, DateTimeKind.Utc).AddTicks(1880),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 752, DateTimeKind.Utc).AddTicks(1079),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 108,
                             Code = "MOP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 55, DateTimeKind.Utc).AddTicks(9870),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 752, DateTimeKind.Utc).AddTicks(4404),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 109,
                             Code = "MKD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 56, DateTimeKind.Utc).AddTicks(7734),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 752, DateTimeKind.Utc).AddTicks(7716),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 110,
                             Code = "MGF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 57, DateTimeKind.Utc).AddTicks(5755),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 753, DateTimeKind.Utc).AddTicks(1034),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 111,
                             Code = "MWK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 58, DateTimeKind.Utc).AddTicks(3543),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 753, DateTimeKind.Utc).AddTicks(4367),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 112,
                             Code = "MGA",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 59, DateTimeKind.Utc).AddTicks(1431),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 753, DateTimeKind.Utc).AddTicks(7610),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 113,
                             Code = "MYR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 59, DateTimeKind.Utc).AddTicks(7259),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 754, DateTimeKind.Utc).AddTicks(832),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 114,
                             Code = "MVR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 60, DateTimeKind.Utc).AddTicks(3001),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 754, DateTimeKind.Utc).AddTicks(4039),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 115,
                             Code = "MTL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 60, DateTimeKind.Utc).AddTicks(8544),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 754, DateTimeKind.Utc).AddTicks(7299),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 116,
                             Code = "MRO",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 61, DateTimeKind.Utc).AddTicks(3904),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 755, DateTimeKind.Utc).AddTicks(532),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 117,
                             Code = "MUR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 61, DateTimeKind.Utc).AddTicks(9707),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 755, DateTimeKind.Utc).AddTicks(3708),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 118,
                             Code = "MXN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 62, DateTimeKind.Utc).AddTicks(5107),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 755, DateTimeKind.Utc).AddTicks(6956),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 119,
                             Code = "MDL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 63, DateTimeKind.Utc).AddTicks(614),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 756, DateTimeKind.Utc).AddTicks(369),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 120,
                             Code = "MNT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 64, DateTimeKind.Utc).AddTicks(3464),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 756, DateTimeKind.Utc).AddTicks(3696),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 121,
                             Code = "MAD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 65, DateTimeKind.Utc).AddTicks(1159),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 756, DateTimeKind.Utc).AddTicks(6905),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 122,
                             Code = "MZM",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 66, DateTimeKind.Utc).AddTicks(92),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 757, DateTimeKind.Utc).AddTicks(272),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 123,
                             Code = "MZN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 68, DateTimeKind.Utc).AddTicks(2045),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 757, DateTimeKind.Utc).AddTicks(3542),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 124,
                             Code = "MMK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 69, DateTimeKind.Utc).AddTicks(873),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 757, DateTimeKind.Utc).AddTicks(6819),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 125,
                             Code = "ANG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 69, DateTimeKind.Utc).AddTicks(8963),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 758, DateTimeKind.Utc).AddTicks(65),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 126,
                             Code = "NAD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 70, DateTimeKind.Utc).AddTicks(8824),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 758, DateTimeKind.Utc).AddTicks(3275),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 127,
                             Code = "NPR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 71, DateTimeKind.Utc).AddTicks(7080),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 758, DateTimeKind.Utc).AddTicks(6483),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 128,
                             Code = "NLG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 72, DateTimeKind.Utc).AddTicks(9851),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 758, DateTimeKind.Utc).AddTicks(9690),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 129,
                             Code = "NZD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 74, DateTimeKind.Utc).AddTicks(2880),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 759, DateTimeKind.Utc).AddTicks(2968),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 130,
                             Code = "NIO",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 75, DateTimeKind.Utc).AddTicks(2543),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 759, DateTimeKind.Utc).AddTicks(6224),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 131,
                             Code = "NGN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 76, DateTimeKind.Utc).AddTicks(6332),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 759, DateTimeKind.Utc).AddTicks(9405),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 132,
                             Code = "KPW",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 77, DateTimeKind.Utc).AddTicks(5306),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 760, DateTimeKind.Utc).AddTicks(2643),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 133,
                             Code = "NOK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 78, DateTimeKind.Utc).AddTicks(3000),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 760, DateTimeKind.Utc).AddTicks(5932),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 134,
                             Code = "OMR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 79, DateTimeKind.Utc).AddTicks(3708),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 760, DateTimeKind.Utc).AddTicks(9173),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 135,
                             Code = "PKR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 80, DateTimeKind.Utc).AddTicks(8379),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 761, DateTimeKind.Utc).AddTicks(2581),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 136,
                             Code = "XPD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 81, DateTimeKind.Utc).AddTicks(9990),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 762, DateTimeKind.Utc).AddTicks(5996),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 137,
                             Code = "PAB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 83, DateTimeKind.Utc).AddTicks(212),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 763, DateTimeKind.Utc).AddTicks(143),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 138,
                             Code = "PGK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 84, DateTimeKind.Utc).AddTicks(562),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 763, DateTimeKind.Utc).AddTicks(3364),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 139,
                             Code = "PYG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 85, DateTimeKind.Utc).AddTicks(892),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 763, DateTimeKind.Utc).AddTicks(6556),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 140,
                             Code = "PEN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 85, DateTimeKind.Utc).AddTicks(9781),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 763, DateTimeKind.Utc).AddTicks(9811),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 141,
                             Code = "PHP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 86, DateTimeKind.Utc).AddTicks(7710),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 764, DateTimeKind.Utc).AddTicks(2963),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 142,
                             Code = "XPT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 87, DateTimeKind.Utc).AddTicks(4498),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 764, DateTimeKind.Utc).AddTicks(6580),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 143,
                             Code = "Mexico",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 88, DateTimeKind.Utc).AddTicks(1959),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 764, DateTimeKind.Utc).AddTicks(9933),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 144,
                             Code = "PLN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 88, DateTimeKind.Utc).AddTicks(8631),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 765, DateTimeKind.Utc).AddTicks(3190),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 145,
                             Code = "PTE",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 89, DateTimeKind.Utc).AddTicks(4821),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 765, DateTimeKind.Utc).AddTicks(6456),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 146,
                             Code = "GBP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 90, DateTimeKind.Utc).AddTicks(4020),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 765, DateTimeKind.Utc).AddTicks(9727),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 147,
                             Code = "ROL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 91, DateTimeKind.Utc).AddTicks(5563),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 766, DateTimeKind.Utc).AddTicks(3405),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 148,
                             Code = "RON",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 92, DateTimeKind.Utc).AddTicks(5435),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 766, DateTimeKind.Utc).AddTicks(6895),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 149,
                             Code = "RUB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 93, DateTimeKind.Utc).AddTicks(5015),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 767, DateTimeKind.Utc).AddTicks(244),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 150,
                             Code = "RWF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 94, DateTimeKind.Utc).AddTicks(3593),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 767, DateTimeKind.Utc).AddTicks(3423),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 151,
                             Code = "WST",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 95, DateTimeKind.Utc).AddTicks(3549),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 767, DateTimeKind.Utc).AddTicks(6578),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 152,
                             Code = "STD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 96, DateTimeKind.Utc).AddTicks(5227),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 767, DateTimeKind.Utc).AddTicks(9716),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 153,
                             Code = "SAR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 97, DateTimeKind.Utc).AddTicks(6081),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 768, DateTimeKind.Utc).AddTicks(2832),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 154,
                             Code = "RSD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 98, DateTimeKind.Utc).AddTicks(4769),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 768, DateTimeKind.Utc).AddTicks(5957),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 155,
                             Code = "SCR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 99, DateTimeKind.Utc).AddTicks(3037),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 768, DateTimeKind.Utc).AddTicks(9238),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 156,
                             Code = "SLL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 100, DateTimeKind.Utc).AddTicks(1256),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 769, DateTimeKind.Utc).AddTicks(2400),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 157,
                             Code = "XAG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 100, DateTimeKind.Utc).AddTicks(9670),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 769, DateTimeKind.Utc).AddTicks(5696),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 158,
                             Code = "SGD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 101, DateTimeKind.Utc).AddTicks(6213),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 769, DateTimeKind.Utc).AddTicks(8824),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 159,
                             Code = "SKK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 102, DateTimeKind.Utc).AddTicks(1856),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 770, DateTimeKind.Utc).AddTicks(2119),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 160,
                             Code = "SIT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 102, DateTimeKind.Utc).AddTicks(7592),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 770, DateTimeKind.Utc).AddTicks(5230),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 161,
                             Code = "SBD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 103, DateTimeKind.Utc).AddTicks(3583),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 770, DateTimeKind.Utc).AddTicks(8496),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 162,
                             Code = "SOS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 103, DateTimeKind.Utc).AddTicks(9397),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 771, DateTimeKind.Utc).AddTicks(1623),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 163,
                             Code = "ZAR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 104, DateTimeKind.Utc).AddTicks(4756),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 771, DateTimeKind.Utc).AddTicks(4896),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 164,
                             Code = "ESP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 105, DateTimeKind.Utc).AddTicks(44),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 771, DateTimeKind.Utc).AddTicks(8019),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 165,
                             Code = "LKR",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 105, DateTimeKind.Utc).AddTicks(5441),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 772, DateTimeKind.Utc).AddTicks(1123),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 166,
                             Code = "SHP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 106, DateTimeKind.Utc).AddTicks(1297),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 772, DateTimeKind.Utc).AddTicks(4241),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 167,
                             Code = "SDD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 106, DateTimeKind.Utc).AddTicks(7303),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 772, DateTimeKind.Utc).AddTicks(7364),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 168,
                             Code = "SDG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 107, DateTimeKind.Utc).AddTicks(4236),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 773, DateTimeKind.Utc).AddTicks(475),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 169,
                             Code = "SDP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 108, DateTimeKind.Utc).AddTicks(2857),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 773, DateTimeKind.Utc).AddTicks(3595),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 170,
                             Code = "SRD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 109, DateTimeKind.Utc).AddTicks(7105),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 773, DateTimeKind.Utc).AddTicks(6812),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 171,
                             Code = "SRG",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 110, DateTimeKind.Utc).AddTicks(4486),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 773, DateTimeKind.Utc).AddTicks(9936),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 172,
                             Code = "SZL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 113, DateTimeKind.Utc).AddTicks(993),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 774, DateTimeKind.Utc).AddTicks(3042),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 173,
                             Code = "SEK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 113, DateTimeKind.Utc).AddTicks(9054),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 774, DateTimeKind.Utc).AddTicks(6165),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 174,
                             Code = "CHF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 114, DateTimeKind.Utc).AddTicks(4834),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 774, DateTimeKind.Utc).AddTicks(9256),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 175,
                             Code = "SYP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 115, DateTimeKind.Utc).AddTicks(141),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 775, DateTimeKind.Utc).AddTicks(2339),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 176,
                             Code = "TWD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 115, DateTimeKind.Utc).AddTicks(5404),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 775, DateTimeKind.Utc).AddTicks(5488),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 177,
                             Code = "TJS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 116, DateTimeKind.Utc).AddTicks(1423),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 775, DateTimeKind.Utc).AddTicks(8678),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 178,
                             Code = "TZS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 116, DateTimeKind.Utc).AddTicks(6988),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 776, DateTimeKind.Utc).AddTicks(1827),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 179,
                             Code = "THB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 117, DateTimeKind.Utc).AddTicks(2657),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 776, DateTimeKind.Utc).AddTicks(4959),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 180,
                             Code = "TMM",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 117, DateTimeKind.Utc).AddTicks(7886),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 776, DateTimeKind.Utc).AddTicks(8088),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 181,
                             Code = "TMT",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 118, DateTimeKind.Utc).AddTicks(2968),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 777, DateTimeKind.Utc).AddTicks(1190),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 182,
                             Code = "TOP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 118, DateTimeKind.Utc).AddTicks(8175),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 777, DateTimeKind.Utc).AddTicks(4693),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 183,
                             Code = "TTD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 119, DateTimeKind.Utc).AddTicks(3408),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 777, DateTimeKind.Utc).AddTicks(7847),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 184,
                             Code = "TND",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 119, DateTimeKind.Utc).AddTicks(8463),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 778, DateTimeKind.Utc).AddTicks(1205),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 185,
                             Code = "TRL",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 120, DateTimeKind.Utc).AddTicks(3730),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 778, DateTimeKind.Utc).AddTicks(4359),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 186,
                             Code = "TRY",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 120, DateTimeKind.Utc).AddTicks(9392),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 778, DateTimeKind.Utc).AddTicks(7573),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 187,
                             Code = "UGX",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 121, DateTimeKind.Utc).AddTicks(4405),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 779, DateTimeKind.Utc).AddTicks(719),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 188,
                             Code = "UAH",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 121, DateTimeKind.Utc).AddTicks(9521),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 779, DateTimeKind.Utc).AddTicks(3873),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 189,
                             Code = "UAH",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 122, DateTimeKind.Utc).AddTicks(4690),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 779, DateTimeKind.Utc).AddTicks(7237),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 190,
                             Code = "GBP",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 123, DateTimeKind.Utc).AddTicks(110),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 780, DateTimeKind.Utc).AddTicks(357),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 191,
                             Code = "USD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 123, DateTimeKind.Utc).AddTicks(5286),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 780, DateTimeKind.Utc).AddTicks(3568),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 192,
                             Code = "UYU",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 124, DateTimeKind.Utc).AddTicks(3204),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 780, DateTimeKind.Utc).AddTicks(6736),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 193,
                             Code = "UZS",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 125, DateTimeKind.Utc).AddTicks(4449),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 780, DateTimeKind.Utc).AddTicks(9879),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 194,
                             Code = "AED",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 126, DateTimeKind.Utc).AddTicks(5004),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 781, DateTimeKind.Utc).AddTicks(3057),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 195,
                             Code = "VUV",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 127, DateTimeKind.Utc).AddTicks(1807),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 781, DateTimeKind.Utc).AddTicks(6398),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 196,
                             Code = "VEB",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 128, DateTimeKind.Utc).AddTicks(1166),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 781, DateTimeKind.Utc).AddTicks(9773),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 197,
                             Code = "VEF",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 129, DateTimeKind.Utc).AddTicks(744),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 782, DateTimeKind.Utc).AddTicks(3161),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 198,
                             Code = "VND",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 129, DateTimeKind.Utc).AddTicks(9689),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 782, DateTimeKind.Utc).AddTicks(6621),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 199,
                             Code = "YER",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 130, DateTimeKind.Utc).AddTicks(7572),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 782, DateTimeKind.Utc).AddTicks(9846),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 200,
                             Code = "YUN",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 131, DateTimeKind.Utc).AddTicks(3644),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 783, DateTimeKind.Utc).AddTicks(3077),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 201,
                             Code = "ZMK",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 131, DateTimeKind.Utc).AddTicks(9012),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 783, DateTimeKind.Utc).AddTicks(6333),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 202,
                             Code = "ZMW",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 132, DateTimeKind.Utc).AddTicks(4119),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 783, DateTimeKind.Utc).AddTicks(9484),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         },
                         new
                         {
                             CurrencyId = 203,
                             Code = "ZWD",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 132, DateTimeKind.Utc).AddTicks(9230),
+                            CreatedById = "0000",
+                            CreatedByUserName = "admin",
+                            CreatedOn = new DateTime(2023, 5, 29, 17, 38, 38, 784, DateTimeKind.Utc).AddTicks(2689),
                             Description = "",
-                            Inaccesible = false,
                             IsDeleted = false,
                             Name = "",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = ""
                         });
+                });
+
+            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Common.Configuration", b =>
+                {
+                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.Symbol", "Symbol")
+                        .WithMany()
+                        .HasForeignKey("SymbolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.Timeframe", "Timeframe")
+                        .WithMany()
+                        .HasForeignKey("TimeframeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Symbol");
+
+                    b.Navigation("Timeframe");
                 });
 
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Common.EntityServiceHost", b =>
@@ -4390,6 +3843,23 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("EntityType");
+                });
+
+            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Common.ScheduleConfiguration", b =>
+                {
+                    b.HasOne("AdionFA.Core.Domain.Aggregates.Common.Configuration", "Configuration")
+                        .WithMany("ScheduleConfigurations")
+                        .HasForeignKey("ConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.MarketRegion", "MarketRegion")
+                        .WithMany()
+                        .HasForeignKey("MarketRegionId");
+
+                    b.Navigation("Configuration");
+
+                    b.Navigation("MarketRegion");
                 });
 
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.MarketData.HistoricalData", b =>
@@ -4474,42 +3944,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Navigation("Timeframe");
                 });
 
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectGlobalConfiguration", b =>
-                {
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.Symbol", "Symbol")
-                        .WithMany()
-                        .HasForeignKey("SymbolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.Timeframe", "Timeframe")
-                        .WithMany()
-                        .HasForeignKey("TimeframeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Symbol");
-
-                    b.Navigation("Timeframe");
-                });
-
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectGlobalScheduleConfiguration", b =>
-                {
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.MarketRegion", "MarketRegion")
-                        .WithMany()
-                        .HasForeignKey("MarketRegionId");
-
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.Project.ProjectGlobalConfiguration", "ProjectGlobalConfiguration")
-                        .WithMany("ProjectGlobalScheduleConfigurations")
-                        .HasForeignKey("ProjectGlobalConfigurationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MarketRegion");
-
-                    b.Navigation("ProjectGlobalConfiguration");
-                });
-
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectScheduleConfiguration", b =>
                 {
                     b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.MarketRegion", "MarketRegion")
@@ -4527,6 +3961,11 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Navigation("ProjectConfiguration");
                 });
 
+            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Common.Configuration", b =>
+                {
+                    b.Navigation("ScheduleConfigurations");
+                });
+
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.MarketData.HistoricalData", b =>
                 {
                     b.Navigation("HistoricalDataCandles");
@@ -4542,11 +3981,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectConfiguration", b =>
                 {
                     b.Navigation("ProjectScheduleConfigurations");
-                });
-
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectGlobalConfiguration", b =>
-                {
-                    b.Navigation("ProjectGlobalScheduleConfigurations");
                 });
 #pragma warning restore 612, 618
         }

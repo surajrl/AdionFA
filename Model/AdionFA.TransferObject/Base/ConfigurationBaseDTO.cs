@@ -5,6 +5,8 @@ namespace AdionFA.TransferObject.Base
 {
     public class ConfigurationBaseDTO : TimeSensitiveBaseDTO
     {
+        // Period
+
         public DateTime? FromDateIS { get; set; }
         public DateTime? ToDateIS { get; set; }
 

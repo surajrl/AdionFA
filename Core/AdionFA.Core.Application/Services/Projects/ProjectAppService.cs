@@ -1,17 +1,15 @@
-﻿using AdionFA.Core.Application.Contracts.MarketData;
+﻿using AdionFA.Core.Application.Contract.Commons;
+using AdionFA.Core.Application.Contracts.MarketData;
 using AdionFA.Core.Application.Contracts.Projects;
 using AdionFA.Core.Domain.Aggregates.Project;
-using AdionFA.Core.Domain.Contracts.Repositories;
 using AdionFA.Core.Domain.Contracts.Projects;
-
+using AdionFA.Core.Domain.Contracts.Repositories;
 using AdionFA.Infrastructure.Enums;
-
-using AdionFA.TransferObject.Project;
-using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.Base;
-
+using AdionFA.TransferObject.Common;
+using AdionFA.TransferObject.MarketData;
+using AdionFA.TransferObject.Project;
 using Ninject;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +20,7 @@ namespace AdionFA.Core.Application.Services.Projects
     public class ProjectAppService : AppServiceBase, IProjectAppService
     {
         [Inject]
-        public IGlobalConfigurationAppService GlobalConfigurationAppService { get; set; }
+        public IConfigurationAppService ConfigurationAppService { get; set; }
 
         [Inject]
         public IMarketDataAppService MarketDataAppService { get; set; }
@@ -30,17 +28,17 @@ namespace AdionFA.Core.Application.Services.Projects
         [Inject]
         public IProjectDomainService ProjectDomainService { get; set; }
 
-        public IRepository<ProjectConfiguration> ProjectConfigurationRepository { get; set; }
+        private readonly IRepository<ProjectConfiguration> _projectConfigurationRepository;
 
         public ProjectAppService(IRepository<ProjectConfiguration> projectConfigurationRepository)
             : base()
         {
-            ProjectConfigurationRepository = projectConfigurationRepository;
+            _projectConfigurationRepository = projectConfigurationRepository;
         }
 
         // Project
 
-        public IList<ProjectDTO> GetAllProjects()
+        public IList<ProjectDTO> GetAllProject()
         {
             try
             {
@@ -74,15 +72,15 @@ namespace AdionFA.Core.Application.Services.Projects
             }
         }
 
-        public ResponseDTO CreateProject(ProjectDTO project, int? globalConfigurationId = null, int? marketDataId = null)
+        public ResponseDTO CreateProject(ProjectDTO project, int? configurationId = null, int? marketDataId = null)
         {
             try
             {
                 var response = new ResponseDTO { IsSuccess = false };
 
-                Project p = Mapper.Map<Project>(project);
+                var p = Mapper.Map<Project>(project);
 
-                ProjectGlobalConfigurationDTO pgc = GlobalConfigurationAppService.GetGlobalConfiguration(globalConfigurationId);
+                var pgc = ConfigurationAppService.GetConfiguration(configurationId);
 
                 var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(pgc, marketDataId ?? 0);
                 if (!validation.IsSuccess)
@@ -91,7 +89,7 @@ namespace AdionFA.Core.Application.Services.Projects
                     return response;
                 }
 
-                var pId = ProjectDomainService.CreateProject(p, pgc.ProjectGlobalConfigurationId, marketDataId);
+                var pId = ProjectDomainService.CreateProject(p, pgc.ConfigurationId, marketDataId);
                 response.IsSuccess = pId > 0;
                 response.EntityId = pId.ToString();
 
@@ -263,7 +261,7 @@ namespace AdionFA.Core.Application.Services.Projects
             }
         }
 
-        private ResponseDTO CurrencyPairAndCurrencyPeriodMustBeSameValidation(ConfigurationBaseDTO c, int marketDataId)
+        private ResponseDTO CurrencyPairAndCurrencyPeriodMustBeSameValidation(ConfigurationDTO c, int marketDataId)
         {
             var response = new ResponseDTO { IsSuccess = true };
 
@@ -298,7 +296,7 @@ namespace AdionFA.Core.Application.Services.Projects
                 if (projectConf != null)
                 {
                     projectConf.IsFavorite = isPinned;
-                    ProjectConfigurationRepository.Update(projectConf);
+                    _projectConfigurationRepository.Update(projectConf);
                     response.IsSuccess = true;
                 }
 

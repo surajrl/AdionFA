@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace AdionFA.Infrastructure.Core.Data.Repositories
 {
@@ -30,12 +29,10 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
         {
             try
             {
-                entity.TenantId = _tenantId;
                 entity.CreatedById = _ownerId;
                 entity.CreatedByUserName = _owner;
 
                 entity.IsDeleted = false;
-                entity.Inaccesible = false;
                 entity.CreatedOn = DateTime.UtcNow;
 
                 DatabaseContext.Set<TEntity>().Add(entity);

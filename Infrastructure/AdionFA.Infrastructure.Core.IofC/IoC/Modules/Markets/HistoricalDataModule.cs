@@ -24,7 +24,6 @@ namespace AdionFA.Infrastructure.Core.IofC.Modules.Markets
             // Domain
 
             Kernel.Bind(typeof(IMarketDataDomainService)).To(typeof(MarketDataDomainService))
-                .WithConstructorArgument("tenantId", ctx => IoC.GetArgument(ctx, "tenantId"))
                 .WithConstructorArgument("ownerId", ctx => IoC.GetArgument(ctx, "ownerId"))
                 .WithConstructorArgument("owner", ctx => IoC.GetArgument(ctx, "owner"));
         }

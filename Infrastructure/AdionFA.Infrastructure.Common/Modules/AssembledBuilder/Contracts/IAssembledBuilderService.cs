@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.Project;
 using System.Collections.Generic;
 using System.Threading;
@@ -26,7 +26,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Contracts
             string nodeLabel,
             IList<string> parentNode,
             IList<BacktestModel> childNodes,
-            ConfigurationBaseDTO configuration,
+            ConfigurationDTO configuration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);

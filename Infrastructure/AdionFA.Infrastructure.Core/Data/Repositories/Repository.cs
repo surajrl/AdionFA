@@ -9,8 +9,7 @@ namespace AdionFA.Infrastructure.Core.Data.Repositories
         public Repository(IUnitOfWork<AdionFADbContext> unitOfWork)
         {
             DatabaseContext = ((UnitOfWork<AdionFADbContext>)unitOfWork)._context;
-            
-            _tenantId = unitOfWork._tenantId;
+
             _ownerId = unitOfWork._ownerId;
             _owner = unitOfWork._owner;
         }

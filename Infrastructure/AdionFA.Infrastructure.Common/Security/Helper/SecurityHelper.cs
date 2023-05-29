@@ -14,9 +14,8 @@ namespace AdionFA.Infrastructure.Common.Security.Helper
 
         public static AdionIdentity Identity => Principal?.Identity;
 
-        public static string DefaultTenantId = "22222222-2222-2222-2222-222222222222";
-        public static string DefaultOwnerId = "11111111-1111-1111-11111111111111111";
-        public static string DefaultOwner = "sysadmin";
+        public static string DefaultOwnerId = "0000";
+        public static string DefaultOwner = "admin";
 
         public static Dictionary<string, string> IdentityToArguments()
         {

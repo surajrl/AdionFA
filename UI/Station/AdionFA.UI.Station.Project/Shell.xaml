@@ -61,8 +61,8 @@
                 <views:MetaTraderView DataContext="{Binding}"/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vmodel:ProjectSettingsViewModel}">
-                <views:ProjectSettingsView DataContext="{Binding}"/>
+            <DataTemplate DataType="{x:Type vmodel:ProjectConfigurationViewModel}">
+                <views:ProjectConfigurationView DataContext="{Binding}"/>
             </DataTemplate>
         </Grid.Resources>
 
@@ -79,16 +79,6 @@
                              OptionsItemCommand="{x:Static projectcommands:AppProjectCommands.SelectItemHamburgerMenuCommand}"
                              OptionsItemCommandParameter="{Binding ElementName=ProjectWizardMenuControl, Path=SelectedOptionsItem.Name}"
                              IsEnabled="{Binding IsTransactionActive}">
-
-            <!-- Events -->
-            <!--<behaviors:Interaction.Triggers>
-                <behaviors:EventTrigger EventName="ItemClick">
-                    <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=DataContext.PopulateViewModelCommand}"/>
-                </behaviors:EventTrigger>
-                <behaviors:EventTrigger EventName="OptionsItemClick">
-                    <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=DataContext.PopulateViewModelCommand}"/>
-                </behaviors:EventTrigger>
-            </behaviors:Interaction.Triggers>-->
 
             <!--  Header  -->
             <metro:HamburgerMenu.HamburgerMenuHeaderTemplate>

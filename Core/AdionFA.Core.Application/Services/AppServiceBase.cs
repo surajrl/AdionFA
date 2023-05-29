@@ -8,44 +8,35 @@ namespace AdionFA.Core.Application.Services
 {
     public class AppServiceBase : InfrastructureServiceBase
     {
-        #region Transactional
-
         [Inject]
         public ITransaction Transactional { get; set; }
 
-        #endregion
-
-        #region Ctor
-
         public AppServiceBase(
-            [CallerMemberName] string memberName = "", 
-            [CallerLineNumber] int lineNumber = 0, 
-            [CallerFilePath] string sourceFilePath = "") : base(memberName, lineNumber, sourceFilePath)
+            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string sourceFilePath = "")
+            : base(memberName, lineNumber, sourceFilePath)
         {
         }
 
-        #endregion
+        // Data
 
-        #region Data
-
-        public IDisposable Transaction<T>() 
+        public IDisposable Transaction<T>()
         {
             return Transactional.Transactional<T>();
         }
 
         public IDisposable Transaction<T, X>()
         {
-            return Transactional.Transactional<T,X>();
+            return Transactional.Transactional<T, X>();
         }
 
-        public void Dispose() 
+        public void Dispose()
         {
             Transactional.ReleaseDbContext();
         }
 
-        #endregion
-
-        #region Logger
+        // Logger
 
         public void LogInfoGet<T>(
             [CallerMemberName] string memberName = "", [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
@@ -68,10 +59,8 @@ namespace AdionFA.Core.Application.Services
         public void LogException<T>(
             Exception ex,
             [CallerMemberName] string memberName = "", [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
-        { 
+        {
             base.LogException<T>(ex, memberName: memberName, lineNumber: lineNumber, filePath: filePath);
         }
-
-        #endregion
     }
 }

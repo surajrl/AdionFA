@@ -6,15 +6,9 @@ namespace AdionFA.Core.API.Contracts.Projects
 {
     public interface IProjectAPI
     {
-        // Global Configuration
-
-        IList<ProjectGlobalConfigurationDTO> GetAllGlobalConfigurations(bool includeGraph = false);
-        ProjectGlobalConfigurationDTO GetGlobalConfiguration(int? configurationId = null, bool includeGraph = false);
-        ResponseDTO UpdateGlobalConfiguration(ProjectGlobalConfigurationDTO configuration);
-
         // Project
 
-        IList<ProjectDTO> GetAllProjects();
+        IList<ProjectDTO> GetAllProject();
         ProjectDTO GetProject(int projectId, bool includeGraph = false);
         ResponseDTO CreateProject(ProjectDTO project, int? globalConfigurationId = null, int? marketDataId = null);
         ResponseDTO UpdateProject(ProjectDTO project);

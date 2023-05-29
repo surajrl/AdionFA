@@ -1,7 +1,6 @@
 ﻿using AdionFA.Core.Domain.Aggregates.MarketData;
 using AdionFA.Core.Domain.Contracts.MarketData;
 using AdionFA.Core.Domain.Contracts.Repositories;
-using AdionFA.Infrastructure.Core.Data.Repositories.Extension;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,21 +13,21 @@ namespace AdionFA.Core.Domain.Services.MarketData
     {
         // Repositories
 
-        public IRepository<HistoricalData> HistoricalDataRepository { get; set; }
-        public IRepository<HistoricalDataCandle> HistoricalDataCandleRepository { get; set; }
-        public IRepository<Timeframe> TimeframeRepository { get; set; }
-        public IRepository<Symbol> SymbolRepository { get; set; }
+        private readonly IRepository<HistoricalData> _historicalDataRepository;
+        private readonly IRepository<HistoricalDataCandle> _historicalDataCandleRepository;
+        private readonly IRepository<Timeframe> _timeframeRepository;
+        private readonly IRepository<Symbol> _symbolRepository;
 
-        public MarketDataDomainService(string tenantId, string ownerId, string owner,
+        public MarketDataDomainService(string ownerId, string owner,
             IRepository<HistoricalData> marketDataRepository,
             IRepository<HistoricalDataCandle> marketDataDetailRepository,
             IRepository<Timeframe> timeframeRepository,
-            IRepository<Symbol> symbolRepository) : base(tenantId, ownerId, owner)
+            IRepository<Symbol> symbolRepository) : base(ownerId, owner)
         {
-            HistoricalDataRepository = marketDataRepository;
-            HistoricalDataCandleRepository = marketDataDetailRepository;
-            TimeframeRepository = timeframeRepository;
-            SymbolRepository = symbolRepository;
+            _historicalDataRepository = marketDataRepository;
+            _historicalDataCandleRepository = marketDataDetailRepository;
+            _timeframeRepository = timeframeRepository;
+            _symbolRepository = symbolRepository;
         }
 
         // Historical Data
@@ -40,7 +39,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
                 Expression<Func<HistoricalData, bool>> projection = hd => (hd.EndDate ?? DateTime.MinValue) == DateTime.MinValue;
                 Expression<Func<HistoricalData, dynamic>>[] includes = { hd => hd.HistoricalDataCandles };
 
-                var result = HistoricalDataRepository.GetAll(projection, includeGraph ? includes : null).ToList();
+                var result = _historicalDataRepository.GetAll(projection, includeGraph ? includes : null).ToList();
 
                 return result;
             }
@@ -61,8 +60,8 @@ namespace AdionFA.Core.Domain.Services.MarketData
                     (hd.EndDate ?? DateTime.MinValue) == DateTime.MinValue;
 
                 var h = includeGraph ?
-                    HistoricalDataRepository.FirstOrDefault(predicate, hd => hd.HistoricalDataCandles)
-                    : HistoricalDataRepository.FirstOrDefault(predicate);
+                    _historicalDataRepository.FirstOrDefault(predicate, hd => hd.HistoricalDataCandles)
+                    : _historicalDataRepository.FirstOrDefault(predicate);
 
                 return h;
             }
@@ -77,7 +76,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                var h = HistoricalDataRepository.GetAll(
+                var h = _historicalDataRepository.GetAll(
                     h => h.MarketId == marketId &&
                     h.SymbolId == symbolId &&
                     h.TimeframeId == timeframeId &&
@@ -99,7 +98,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                var exisitingHd = HistoricalDataRepository.GetAll(hd =>
+                var exisitingHd = _historicalDataRepository.GetAll(hd =>
                 hd.MarketId == historicalData.MarketId &&
                 hd.TimeframeId == historicalData.TimeframeId &&
                 hd.SymbolId == historicalData.SymbolId);
@@ -110,7 +109,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
                     foreach (var hd in exisitingHd)
                     {
                         hd.EndDate = DateTime.UtcNow.AddDays(-1);
-                        HistoricalDataRepository.Update(hd);
+                        _historicalDataRepository.Update(hd);
                     }
                 }
 
@@ -119,14 +118,12 @@ namespace AdionFA.Core.Domain.Services.MarketData
                 foreach (var candle in historicalData.HistoricalDataCandles)
                 {
                     candle.IsDeleted = false;
-                    candle.Inaccesible = false;
-                    candle.TenantId = _tenantId;
                     candle.CreatedById = _ownerId;
                     candle.CreatedByUserName = _owner;
                     candle.CreatedOn = DateTime.UtcNow;
                 }
 
-                HistoricalDataRepository.Create(historicalData);
+                _historicalDataRepository.Create(historicalData);
 
                 return historicalData.HistoricalDataId;
             }
@@ -141,7 +138,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                var hdId = HistoricalDataRepository.FirstOrDefault(hd =>
+                var hdId = _historicalDataRepository.FirstOrDefault(hd =>
                 hd.MarketId == historicalData.MarketId &&
                 hd.SymbolId == historicalData.SymbolId &&
                 hd.TimeframeId == historicalData.TimeframeId)?.HistoricalDataId;
@@ -149,23 +146,21 @@ namespace AdionFA.Core.Domain.Services.MarketData
                 if (hdId != null && hdId > 0)
                 {
                     historicalData.HistoricalDataId = (int)hdId;
-                    var hdCandles = HistoricalDataCandleRepository.GetAll(candle => candle.HistoricalDataId == hdId);
-                    HistoricalDataCandleRepository.Delete(hdCandles);
+                    var hdCandles = _historicalDataCandleRepository.GetAll(candle => candle.HistoricalDataId == hdId);
+                    _historicalDataCandleRepository.Delete(hdCandles);
 
-                    HistoricalDataRepository.Delete(historicalData);
+                    _historicalDataRepository.Delete(historicalData);
                 }
 
                 foreach (var candle in historicalData.HistoricalDataCandles)
                 {
                     candle.IsDeleted = false;
-                    candle.Inaccesible = false;
-                    candle.TenantId = _tenantId;
                     candle.CreatedById = _ownerId;
                     candle.CreatedByUserName = _owner;
                     candle.CreatedOn = DateTime.UtcNow;
                 }
 
-                HistoricalDataRepository.Create(historicalData);
+                _historicalDataRepository.Create(historicalData);
 
                 return historicalData.HistoricalDataId;
             }
@@ -181,7 +176,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                IList<Timeframe> timeframes = TimeframeRepository.GetAll().ToList();
+                IList<Timeframe> timeframes = _timeframeRepository.GetAll().ToList();
                 return timeframes;
             }
             catch (Exception ex)
@@ -198,7 +193,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
                 Expression<Func<Timeframe, bool>> predicate = s => s.TimeframeId == timeframeId;
                 var includes = new List<Expression<Func<Timeframe, dynamic>>> { };
 
-                return TimeframeRepository.FirstOrDefault(predicate, includes.ToArray());
+                return _timeframeRepository.FirstOrDefault(predicate, includes.ToArray());
             }
             catch (Exception ex)
             {
@@ -213,7 +208,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                IList<Symbol> result = SymbolRepository.GetAll().ToList();
+                IList<Symbol> result = _symbolRepository.GetAll().ToList();
 
                 return result;
             }
@@ -231,7 +226,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
                 Expression<Func<Symbol, bool>> predicate = s => s.SymbolId == symbolId;
                 var includes = new List<Expression<Func<Symbol, dynamic>>> { };
 
-                return SymbolRepository.FirstOrDefault(predicate, includes.ToArray());
+                return _symbolRepository.FirstOrDefault(predicate, includes.ToArray());
             }
             catch (Exception ex)
             {
@@ -247,7 +242,7 @@ namespace AdionFA.Core.Domain.Services.MarketData
                 Expression<Func<Symbol, bool>> predicate = s => s.Name == symbolName;
                 var includes = new List<Expression<Func<Symbol, dynamic>>> { };
 
-                return SymbolRepository.FirstOrDefault(predicate, includes.ToArray());
+                return _symbolRepository.FirstOrDefault(predicate, includes.ToArray());
             }
             catch (Exception ex)
             {
@@ -260,12 +255,12 @@ namespace AdionFA.Core.Domain.Services.MarketData
         {
             try
             {
-                var all = SymbolRepository.GetAll(s => s.Name == symbol.Name);
+                var all = _symbolRepository.GetAll(s => s.Name == symbol.Name);
 
                 if (all.Any())
                     return null;
 
-                SymbolRepository.Create(symbol);
+                _symbolRepository.Create(symbol);
                 return symbol.SymbolId;
             }
             catch (Exception ex)

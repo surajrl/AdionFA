@@ -1,14 +1,14 @@
 ﻿using AdionFA.Core.Domain.Resources;
 using System;
 
-namespace AdionFA.Core.Domain.Exceptions.MetaTrader
+namespace AdionFA.Core.Domain.Exceptions
 {
     [Serializable]
     public class PropertiesWithSameValueAdionException : Exception
     {
-        public PropertiesWithSameValueAdionException() : base(ExceptionMessages.PropertiesWithSameValue) {}
+        public PropertiesWithSameValueAdionException() : base(ExceptionMessages.PropertiesWithSameValue) { }
 
-        public PropertiesWithSameValueAdionException(string message) : base(message){}
+        public PropertiesWithSameValueAdionException(string message) : base(message) { }
 
         public PropertiesWithSameValueAdionException(string message, Exception exception) : base(message, exception) { }
 

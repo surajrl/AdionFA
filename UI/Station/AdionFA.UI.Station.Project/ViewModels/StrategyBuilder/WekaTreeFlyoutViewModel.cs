@@ -1,22 +1,16 @@
-﻿using Prism.Commands;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using System.Linq;
-using Prism.Ioc;
-using System;
-using System.Diagnostics;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
-using AdionFA.Infrastructure.Common.Helpers;
+﻿using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
-using AutoMapper;
-using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.Infrastructure.Common.Weka.Model;
+using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using AdionFA.UI.Station.Infrastructure.Services;
+using AdionFA.UI.Station.Project.AutoMapper;
+using AutoMapper;
+using Prism.Commands;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {

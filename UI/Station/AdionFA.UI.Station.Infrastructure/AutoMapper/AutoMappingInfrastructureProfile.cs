@@ -23,12 +23,15 @@ namespace AdionFA.UI.Station.Infrastructure.AutoMapper
             // Base
 
             CreateMap<ResponseVM, ResponseDTO>().ReverseMap();
+            CreateMap<ConfigurationBaseVM, ConfigurationBaseDTO>().ReverseMap();
 
             // Common
 
             CreateMap<EntityServiceHostDTO, EntityServiceHostVM>().ReverseMap();
             CreateMap<EntityTypeDTO, EntityTypeVM>().ReverseMap();
             CreateMap<SettingDTO, SettingVM>().ReverseMap();
+            CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
+            CreateMap<ScheduleConfigurationDTO, ScheduleConfigurationVM>().ReverseMap();
 
             // Market Data
 
@@ -43,8 +46,6 @@ namespace AdionFA.UI.Station.Infrastructure.AutoMapper
 
             CreateMap<ProjectDTO, ProjectVM>().ReverseMap();
             CreateMap<ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
-            CreateMap<ProjectGlobalConfigurationDTO, ProjectGlobalConfigurationVM>().ReverseMap();
-            CreateMap<ProjectGlobalScheduleConfigurationDTO, ProjectGlobalScheduleConfigurationVM>().ReverseMap();
             CreateMap<ProjectScheduleConfigurationDTO, ProjectScheduleConfigurationVM>().ReverseMap();
 
             // MetaTrader

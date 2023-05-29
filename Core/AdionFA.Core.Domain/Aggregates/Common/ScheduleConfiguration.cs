@@ -4,17 +4,17 @@ using AdionFA.Core.Domain.Aggregates.MarketData;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AdionFA.Core.Domain.Aggregates.Project
+namespace AdionFA.Core.Domain.Aggregates.Common
 {
-    [Table(nameof(ProjectGlobalScheduleConfiguration))]
-    public class ProjectGlobalScheduleConfiguration : TimeSensitiveBase
+    [Table(nameof(ScheduleConfiguration))]
+    public class ScheduleConfiguration : TimeSensitiveBase
     {
         [Key]
-        public int ProjectGlobalScheduleConfigurationId { get; set; }
+        public int ScheduleConfigurationId { get; set; }
 
-        public int ProjectGlobalConfigurationId { get; set; }
-        [ForeignKey(nameof(ProjectGlobalConfigurationId))]
-        public ProjectGlobalConfiguration ProjectGlobalConfiguration { get; set; }
+        public int ConfigurationId { get; set; }
+        [ForeignKey(nameof(ConfigurationId))]
+        public Configuration Configuration { get; set; }
 
         public int? MarketRegionId { get; set; }
         [ForeignKey(nameof(MarketRegionId))]

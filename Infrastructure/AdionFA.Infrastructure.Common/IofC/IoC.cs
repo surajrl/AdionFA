@@ -16,15 +16,14 @@ namespace AdionFA.Infrastructure.Common.IofC
             Kernel.Load(module);
         }
 
-        public static T Get<T>(string tenantId = null, string ownerId = null, string owner = null)
+        public static T Get<T>(string ownerId = null, string owner = null)
         {
             AdionIdentity Identity = SecurityHelper.Identity;
 
-            var parameters = new Ninject.Parameters.ConstructorArgument[3]
+            var parameters = new Ninject.Parameters.ConstructorArgument[2]
             {
-            new Ninject.Parameters.ConstructorArgument("tenantId", tenantId ?? Identity?.TenantId),
-            new Ninject.Parameters.ConstructorArgument("ownerId", ownerId ?? Identity?.OwnerId),
-            new Ninject.Parameters.ConstructorArgument("owner", owner ?? Identity?.Owner)
+                new Ninject.Parameters.ConstructorArgument("ownerId", ownerId ?? Identity?.OwnerId),
+                new Ninject.Parameters.ConstructorArgument("owner", owner ?? Identity?.Owner)
             };
 
             return Kernel.Get<T>(parameters);

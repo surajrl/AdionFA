@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Module.Dashboard.AutoMapper;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AutoMapper;
@@ -16,7 +16,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
     public class SettingService : ISettingService
     {
         private readonly IMapper _mapper;
-
         private readonly IMarketDataServiceAgent _marketDataService;
         private readonly IProjectServiceAgent _projectService;
 
@@ -35,12 +34,12 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 
         // Global Configuration
 
-        public async Task<IList<ProjectGlobalConfigurationVM>> GetAllGlobalConfigurations(bool includeGraph = false)
+        public async Task<IList<ConfigurationVM>> GetAllConfiguration(bool includeGraph = false)
         {
             try
             {
-                var list = await _projectService.GetAllGlobalConfigurations(includeGraph);
-                var vm = _mapper.Map<IList<ProjectGlobalConfigurationVM>, IList<ProjectGlobalConfigurationVM>>(list);
+                var list = await _projectService.GetAllConfiguration(includeGraph);
+                var vm = _mapper.Map<IList<ConfigurationVM>, IList<ConfigurationVM>>(list);
                 return vm;
             }
             catch (Exception ex)
@@ -50,25 +49,25 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        public async Task<ProjectGlobalConfigurationModel> GetGlobalConfiguration()
+        public async Task<ConfigurationModel> GetConfiguration()
         {
             try
             {
-                var globalConfig = await _projectService.GetGlobalConfiguration(includeGraph: true);
-                var result = _mapper.Map<ProjectGlobalConfigurationVM, ProjectGlobalConfigurationModel>(globalConfig);
+                var globalConfig = await _projectService.GetConfiguration(includeGraph: true);
+                var result = _mapper.Map<ConfigurationVM, ConfigurationModel>(globalConfig);
 
-                var europa = globalConfig.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe);
-                result.GlobalScheduleEuropeId = europa.ProjectGlobalScheduleConfigurationId;
+                var europa = globalConfig.ScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe);
+                result.ScheduleEuropeId = europa.ScheduleConfigurationId;
                 result.FromTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.FromTimeInSeconds ?? 0);
                 result.ToTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.ToTimeInSeconds ?? 0);
 
-                var america = globalConfig.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.America);
-                result.GlobalScheduleAmericaId = america.ProjectGlobalScheduleConfigurationId;
+                var america = globalConfig.ScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.America);
+                result.ScheduleAmericaId = america.ScheduleConfigurationId;
                 result.FromTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.FromTimeInSeconds ?? 0);
                 result.ToTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.ToTimeInSeconds ?? 0);
 
-                var asia = globalConfig.ProjectGlobalScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia);
-                result.GlobalScheduleAsiaId = asia.ProjectGlobalScheduleConfigurationId;
+                var asia = globalConfig.ScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia);
+                result.ScheduleAsiaId = asia.ScheduleConfigurationId;
                 result.FromTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.FromTimeInSeconds ?? 0);
                 result.ToTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.ToTimeInSeconds ?? 0);
 
@@ -81,7 +80,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
             }
         }
 
-        public async Task<bool> UpdateGlobalConfiguration(ProjectGlobalConfigurationModel config)
+        public async Task<bool> UpdateConfiguration(ConfigurationModel config)
         {
             try
             {
@@ -89,7 +88,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 
                 // Convert Hours to Milliseconds Europe
 
-                var europa = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
+                var europa = config.ScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe
                     );
                 europa.FromTimeInSeconds = config.FromTimeInSecondsEurope?.Hour * factor;
@@ -97,7 +96,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 
                 // Convert Hours to Milliseconds America
 
-                var america = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
+                var america = config.ScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.America
                     );
                 america.FromTimeInSeconds = config.FromTimeInSecondsAmerica?.Hour * factor;
@@ -105,15 +104,15 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 
                 // Convert Hours to Milliseconds Asia
 
-                var asia = config.ProjectGlobalScheduleConfigurations.FirstOrDefault(
+                var asia = config.ScheduleConfigurations.FirstOrDefault(
                         gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia
                     );
                 asia.FromTimeInSeconds = config.FromTimeInSecondsAsia?.Hour * factor;
                 asia.ToTimeInSeconds = config.ToTimeInSecondsAsia?.Hour * factor;
 
-                var configVm = _mapper.Map<ProjectGlobalConfigurationVM, ProjectGlobalConfigurationModel>(config);
+                var configVm = _mapper.Map<ConfigurationVM, ConfigurationModel>(config);
 
-                var response = await _projectService.UpdateGlobalConfiguration(configVm);
+                var response = await _projectService.UpdateConfiguration(configVm);
                 return response.IsSuccess;
             }
             catch (Exception ex)

@@ -1,10 +1,10 @@
-﻿using AdionFA.TransferObject.Base;
+﻿using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.MarketData;
 using System.Collections.Generic;
 
 namespace AdionFA.TransferObject.Project
 {
-    public class ProjectConfigurationDTO : ConfigurationBaseDTO
+    public class ProjectConfigurationDTO : ConfigurationDTO
     {
         public int ProjectConfigurationId { get; set; }
 
@@ -16,7 +16,6 @@ namespace AdionFA.TransferObject.Project
 
         public bool IsFavorite { get; set; }
         public string WorkspacePath { get; set; }
-
         public IList<ProjectScheduleConfigurationDTO> ProjectScheduleConfigurations { get; set; }
     }
 }
