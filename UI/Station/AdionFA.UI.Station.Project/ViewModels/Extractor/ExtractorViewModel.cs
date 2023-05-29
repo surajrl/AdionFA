@@ -1,16 +1,20 @@
 ﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
+using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.Extractor;
 using AdionFA.UI.Station.Project.Services;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Project.Validators.Extractor;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
@@ -18,14 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AdionFA.UI.Station.Project.Validators.Extractor;
-using AdionFA.UI.Station.Project.Model.Configuration;
-using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -137,11 +137,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 var executing = ExtractorStatusEnum.Executing.GetMetadata();
                                 extractionProcess.Status = executing.Name;
                                 extractionProcess.Message = executing.Description;
-                                var extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles.ToList(), projectConfig.TimeframeId, projectConfig.Variation);
+                                var extractions = _extractorService.DoExtraction(StartDate.Value, EndDate.Value, indicators, candles.ToList(), projectConfig.TimeframeId, projectConfig.ExtractorMinVariation);
                                 //-------------------------------------
 
                                 extractionProcess.Message = "Writing Extraction File";
-                                var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss");
+                                var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
                                 var nameSignature = extractionProcess.TemplateName.Replace(".csv", string.Empty);
 
                                 _extractorService.ExtractorWrite(
@@ -231,7 +231,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var timeframeVM = await _historicalDataService.GetTimeframe(pcVM.TimeframeId).ConfigureAwait(true);
                 Timeframe = timeframeVM.Name;
 
-                Variation = pcVM?.Variation ?? 0;
+                Variation = pcVM?.ExtractorMinVariation ?? 0;
                 WithoutSchedule = pcVM?.WithoutSchedule ?? false;
                 StartDate = pcVM.FromDateIS;
                 EndDate = pcVM.ToDateIS;
@@ -303,72 +303,64 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         // Bindable Model
 
-        private bool istransactionActive;
-
+        private bool _isTransactionActive;
         public bool IsTransactionActive
         {
-            get => istransactionActive;
-            set => SetProperty(ref istransactionActive, value);
+            get => _isTransactionActive;
+            set => SetProperty(ref _isTransactionActive, value);
         }
 
-        private bool canExecute = false;
-
+        private bool _canExecute;
         public bool CanExecute
         {
-            get => canExecute;
-            set => SetProperty(ref canExecute, value);
+            get => _canExecute;
+            set => SetProperty(ref _canExecute, value);
         }
 
-        private DateTime? startDate;
-
+        private DateTime? _startDate;
         public DateTime? StartDate
         {
-            get => startDate;
-            set => SetProperty(ref startDate, value);
+            get => _startDate;
+            set => SetProperty(ref _startDate, value);
         }
 
-        private DateTime? endDate;
-
+        private DateTime? _endDate;
         public DateTime? EndDate
         {
-            get => endDate;
-            set => SetProperty(ref endDate, value);
+            get => _endDate;
+            set => SetProperty(ref _endDate, value);
         }
 
-        private decimal variation;
-
+        private decimal _variation;
         public decimal Variation
         {
-            get => variation;
-            set => SetProperty(ref variation, value);
+            get => _variation;
+            set => SetProperty(ref _variation, value);
         }
 
-        private bool withoutSchedule;
-
+        private bool _withoutSchedule;
         public bool WithoutSchedule
         {
-            get => withoutSchedule;
-            set => this.SetProperty(ref withoutSchedule, value);
+            get => _withoutSchedule;
+            set => SetProperty(ref _withoutSchedule, value);
         }
 
-        private string extractorPath;
+        private string _extractorPath;
 
         public string ExtractorPath
         {
-            get => extractorPath;
-            set => SetProperty(ref extractorPath, value);
+            get => _extractorPath;
+            set => SetProperty(ref _extractorPath, value);
         }
 
-        private string symbol;
-
+        private string _symbol;
         public string Symbol
         {
-            get => symbol;
-            set => SetProperty(ref symbol, value);
+            get => _symbol;
+            set => SetProperty(ref _symbol, value);
         }
 
         private string _timeframe;
-
         public string Timeframe
         {
             get => _timeframe;
@@ -376,19 +368,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private HistoricalDataVM _historicalData;
-
         public HistoricalDataVM HistoricalData
         {
             get => _historicalData;
             set => SetProperty(ref _historicalData, value);
         }
 
-        private ObservableCollection<ExtractionProcessModel> extractionProcessList;
-
+        private ObservableCollection<ExtractionProcessModel> _extractionProcessList;
         public ObservableCollection<ExtractionProcessModel> ExtractionProcessList
         {
-            get => extractionProcessList;
-            set => SetProperty(ref extractionProcessList, value);
+            get => _extractionProcessList;
+            set => SetProperty(ref _extractionProcessList, value);
         }
     }
 }

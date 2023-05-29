@@ -5,13 +5,15 @@ namespace AdionFA.Infrastructure.Common.Weka.Model
 {
     public class REPTreeNodeModel
     {
+        public string HistoricalData { get; set; }
+
         // Weka
 
         public List<string> Node { get; set; }
         public double TotalUP { get; set; }
         public double TotalDOWN { get; set; }
-        public double RatioDOWN { get; set; }
         public double RatioUP { get; set; }
+        public double RatioDOWN { get; set; }
         public double RatioMax { get; set; }
         public double Total { get; set; }
         public string Label { get; set; }
@@ -35,11 +37,10 @@ namespace AdionFA.Infrastructure.Common.Weka.Model
         public double PercentSuccessOs { get; set; }
         public double ProgressivenessOs { get; set; }
 
-        // Other
+        // Result
 
         public double VariationPercent { get; set; }
         public double Progressiveness { get; set; }
         public bool WinningStrategy { get; set; }
-        public string HistoricalData { get; set; }
     }
 }

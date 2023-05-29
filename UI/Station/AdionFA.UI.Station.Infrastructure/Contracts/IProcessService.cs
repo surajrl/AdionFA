@@ -5,9 +5,9 @@
         void StartProcessProject(int? projectId);
 
         void StartProcessWekaJava();
-        void StartProcessMetaTrader();
 
         void EndAllProcessProject(bool? includeStation);
+
         bool AnyProcessProject();
     }
 }

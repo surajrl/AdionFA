@@ -1,24 +1,41 @@
-﻿using AdionFA.Infrastructure.Common.Extractor.Model;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-
+using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Project;
-
 using System.Collections.Generic;
+using System.Threading;
 
 namespace AdionFA.Infrastructure.Common.AssembledBuilder.Contracts
 {
     public interface IAssembledBuilderService
     {
-        AssembledBuilderModel LoadStrategyModel(string projectName);
+        AssembledBuilderModel LoadStrategyBuilderResult(string projectName);
 
-        void ExtractorExecute(
-            string projectName, AssembledBuilderModel model, IEnumerable<Candle> candles, ProjectConfigurationDTO config);
+        // Extraction
 
-        public void Build(string projectName, ProjectConfigurationDTO config, IEnumerable<Candle> candles);
+        void CreateExtraction(
+            string projectName,
+            AssembledBuilderModel assembledBuilder,
+            IEnumerable<Candle> candles,
+            ProjectConfigurationDTO projectConfiguration);
+
+        // Backtest
+
+        StrategyBuilderModel BuildBacktestOfNode(
+            string nodeLabel,
+            IList<string> parentNode,
+            IList<BacktestModel> childNodes,
+            ConfigurationBaseDTO configuration,
+            IEnumerable<Candle> candles,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken);
+
 
         // Serialization
-        void BacktestSerialize(string projectName, BacktestModel model);
-        BacktestModel BacktestDeserialize(string path);
+
+        void SerializeBacktest(string projectName, BacktestModel backtestModel);
+
+        BacktestModel DeserializeBacktest(string path);
     }
 }

@@ -1,67 +1,76 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
+using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+using AdionFA.Infrastructure.Common.Directories.Contracts;
+using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Logger.Helpers;
+using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.Weka.Model;
+using AdionFA.Infrastructure.Common.Weka.Services;
+using AdionFA.Infrastructure.I18n.Resources;
+using AdionFA.TransferObject.Project;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Services;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Project.Validators.AssembledBuilder;
 using AutoMapper;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Input;
-using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.UI.Station.Project.Model.AssembledBuilder;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
-using AdionFA.Infrastructure.Common.Logger.Helpers;
-using AdionFA.UI.Station.Project.Validators.AssembledBuilder;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.Infrastructure.Common.Extractor.Model;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Threading;
-using AdionFA.TransferObject.Project;
-using AdionFA.UI.Station.Infrastructure.Helpers;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
-    public class AssembledBuilderViewModel : MenuItemViewModel
+    public class AssembledBuilderViewModel : MenuItemViewModel, IDisposable
     {
-        public readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
+        private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IAssembledBuilderService _assembledBuilderService;
+        private readonly IStrategyBuilderService _strategyBuilderService;
+
         private readonly IProjectServiceAgent _projectService;
         private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IEventAggregator _eventAggregator;
 
-        private ProjectVM _project;
-        private AssembledBuilderModel _asembledBuilderModel;
+        private readonly ManualResetEventSlim _manualResetEventSlim;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         public AssembledBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
+            _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
             _assembledBuilderService = IoC.Get<IAssembledBuilderService>();
+            _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
 
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
             _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
-
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
+
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
 
-            Model = new();
+            AssembledBuilder = new();
+
+            _cancellationTokenSource = new();
+            _manualResetEventSlim = new(true);
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
@@ -102,51 +111,138 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var projectHistoricalData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
 
-                IEnumerable<Candle> projectCandles = projectHistoricalData.HistoricalDataCandles.Select(
-                        hdCandle => new Candle
-                        {
-                            Date = hdCandle.StartDate,
-                            Time = hdCandle.StartTime,
-                            Open = hdCandle.Open,
-                            High = hdCandle.High,
-                            Low = hdCandle.Low,
-                            Close = hdCandle.Close,
-                            Volume = hdCandle.Volume,
-                            Spread = hdCandle.Spread
-                        }
-                    ).OrderBy(d => d.Date).ThenBy(d => d.Time).ToList();
+                var projectCandles = projectHistoricalData.HistoricalDataCandles.Select(
+                    hdCandle => new Candle
+                    {
+                        Date = hdCandle.StartDate,
+                        Time = hdCandle.StartTime,
+                        Open = hdCandle.Open,
+                        High = hdCandle.High,
+                        Low = hdCandle.Low,
+                        Close = hdCandle.Close,
+                        Volume = hdCandle.Volume,
+                        Spread = hdCandle.Spread
+                    }).OrderBy(d => d.Date)
+                    .ThenBy(d => d.Time).ToList();
 
                 await Task.Factory.StartNew(() =>
                 {
-                    var config = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
+                    var configuration = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
 
-                    // Extractor
+                    // Extraction of UP and DOWN Nodes
 
-                    _assembledBuilderService.ExtractorExecute(ProcessArgs.ProjectName, _asembledBuilderModel, projectCandles, config);
+                    Debug.WriteLine("Started Assembled Builder Extraction");
+
+                    _assembledBuilderService.CreateExtraction(ProcessArgs.ProjectName, AssembledBuilder, projectCandles, configuration);
+
+                    Debug.WriteLine("Finished Assembled Builder Extraction");
 
                     // Strategy
 
-                    _assembledBuilderService.Build(ProcessArgs.ProjectName, config, projectCandles);
+                    // UP Nodes
+
+                    Debug.WriteLine("Started Assembled Builder UP Nodes");
+
+                    var directory = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("UP");
+                    var extractions = _projectDirectoryService.GetFilesInPath(directory);
+
+                    if (!extractions.Any())
+                    {
+                        IsTransactionActive = false;
+                        MessageHelper.ShowMessage(this,
+                            CommonResources.AssembledBuilder,
+                            "No UP extractions found in the Assembled Builder directory");
+
+                        return;
+                    }
+
+                    foreach (var extraction in extractions)
+                    {
+                        var wekaApi = new WekaApiClient();
+                        IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
+                            extraction.FullName,
+                            configuration.DepthWeka,
+                            configuration.TotalDecimalWeka,
+                            configuration.MinimalSeed,
+                            configuration.MaximumSeed,
+                            configuration.TotalInstanceWeka,
+                            (double)configuration.MaxRatioTree,
+                            (double)configuration.NTotalTree,
+                            true);
+
+                        if (!responseWeka.Any())
+                        {
+                            IsTransactionActive = false;
+                            MessageHelper.ShowMessage(this,
+                                CommonResources.AssembledBuilder,
+                                "No Weka trees found");
+
+                            return;
+                        }
+
+                        foreach (var wekaTree in responseWeka)
+                        {
+                            var validNodes = wekaTree.NodeOutput.Where(tree => tree.Winner).ToList();
+
+                            if (!validNodes.Any())
+                            {
+                                IsTransactionActive = false;
+                                MessageHelper.ShowMessage(this,
+                                    CommonResources.AssembledBuilder,
+                                    "No winning nodes found in Weka tree");
+
+                                return;
+                            }
+
+                            foreach (var node in validNodes)
+                            {
+                                var strategyBuilder = _assembledBuilderService.BuildBacktestOfNode(
+                                    node.Label,
+                                    node.Node,
+                                    AssembledBuilder.UPBacktests,
+                                    configuration,
+                                    projectCandles,
+                                    _manualResetEventSlim,
+                                    _cancellationTokenSource.Token);
+
+                                if (strategyBuilder.WinningStrategy)
+                                {
+                                    _assembledBuilderService.SerializeBacktest(ProcessArgs.ProjectName, strategyBuilder.IS);
+                                }
+                            }
+                        }
+                    }
+
+                    Debug.WriteLine("Finished Assembled Builder UP Nodes");
+
+                    // DOWN Nodes
+
+                    Debug.WriteLine("Started Assembled Builder DOWN Nodes");
+
+                    // ...
+
+                    Debug.WriteLine("Finished Assembled Builder DOWN Nodes");
+
+                    // ...
+
                 }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
 
                 IsTransactionActive = false;
-                bool result = true;
 
                 // Result Message
 
-                string msg = result ? MessageResources.AssembledBuilderCompleted : MessageResources.EntityErrorTransaction;
-                MessageHelper.ShowMessage(this, CommonResources.AssembledBuilder, msg);
+                MessageHelper.ShowMessage(this,
+                    CommonResources.AssembledBuilder,
+                    MessageResources.AssembledBuilderCompleted);
             }
             catch (Exception ex)
             {
-                IsTransactionActive = false;
-
                 LogHelper.LogException<AssembledBuilderViewModel>(ex);
-
                 throw;
             }
             finally
             {
+                IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
@@ -162,55 +258,23 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = false;
 
                 Trace.TraceError(ex.Message);
-
                 throw;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
-
-        public ICommand TreeCollapseExpandAllBtnCommand => new DelegateCommand<string>(label =>
-        {
-            try
-            {
-                if (Model != null && !string.IsNullOrEmpty(label?.Trim()))
-                {
-                    if (label == "up")
-                    {
-                        Model.ChangeExpandedAll(Model.UPNodes);
-                    }
-                    if (label == "down")
-                    {
-                        Model.ChangeExpandedAll(Model.DOWNNodes);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-
-                Trace.TraceError(ex.Message);
-
-                throw;
-            }
-        }, _ => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public async void PopulateViewModel()
         {
             try
             {
-                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
-                Configuration = _project?.ProjectConfigurations.FirstOrDefault();
+                var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
+                Configuration = project?.ProjectConfigurations.FirstOrDefault();
 
                 if (!IsTransactionActive)
                 {
-                    var model = _assembledBuilderService.LoadStrategyModel(ProcessArgs.ProjectName);
+                    AssembledBuilder.UPBacktests?.Clear();
+                    AssembledBuilder.DOWNBacktests?.Clear();
 
-                    Model.UPNodes.Clear();
-                    Model.UPNodes.Add(MapToTreeObservableNode(model.UPNode, true, isBacktestExpanded: false));
-
-                    Model.DOWNNodes.Clear();
-                    Model.DOWNNodes.Add(MapToTreeObservableNode(model.DOWNNode, true, isBacktestExpanded: false));
-
-                    _asembledBuilderModel = model;
+                    AssembledBuilder = _assembledBuilderService.LoadStrategyBuilderResult(ProcessArgs.ProjectName);
                 }
             }
             catch (Exception ex)
@@ -220,77 +284,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        public NodeAssembledBindableModel MapToTreeObservableNode(
-            NodeAssembledModel source,
-            bool isAllExpanded = false,
-            bool isStartExpanded = false,
-            bool isBacktestExpanded = false)
-        {
-            NodeAssembledBindableModel node = Recursive(source);
-            return node;
 
-            NodeAssembledBindableModel Recursive(NodeAssembledModel source, int level = 0)
-            {
-                NodeAssembledBindableModel node = null;
-                if (source != null)
-                {
-                    if (source is StartNodeAssembledModel)
-                    {
-                        node = new StartNodeAssembledBindableModel
-                        {
-                            IsExpanded = isStartExpanded ? isStartExpanded : isAllExpanded,
-                            Level = level,
-                            Label = source.Label,
-                            Name = source.Name,
-                            Type = source.Type,
-                        };
-                    }
+        // View Bindings
 
-                    if (source is EndNodeAssembledModel)
-                    {
-                        node = new EndNodeAssembledBindableModel
-                        {
-                            IsExpanded = false,
-                            Level = level,
-                            Label = source.Label,
-                            Name = source.Name,
-                            Type = source.Type,
-                        };
-                    }
-
-                    if (source is BacktestNodeAssembledModel)
-                    {
-                        node = new BacktestNodeAssembledBindableModel
-                        {
-                            IsExpanded = isBacktestExpanded ? isBacktestExpanded : isAllExpanded,
-                            Level = level,
-                            Label = source.Label,
-                            Name = source.Name,
-                            Type = source.Type,
-                        };
-                    }
-
-                    level++;
-                    int branch = 0;
-                    while (branch < source.Nodes.Count)
-                    {
-                        node?.Nodes.Add(Recursive(source.Nodes[branch], level));
-                        branch++;
-                    }
-                }
-
-                return node;
-            }
-        }
-
-        // Bindable Model
-
-        private bool _istransactionActive;
+        private bool _isTransactionActive;
 
         public bool IsTransactionActive
         {
-            get => _istransactionActive;
-            set => SetProperty(ref _istransactionActive, value);
+            get => _isTransactionActive;
+            set => SetProperty(ref _isTransactionActive, value);
         }
 
         private bool _canExecute = true;
@@ -309,12 +311,45 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _configuration, value);
         }
 
-        private AssembledBuilderBindableModel _model;
+        private AssembledBuilderModel _assembledBuilder;
 
-        public AssembledBuilderBindableModel Model
+        public AssembledBuilderModel AssembledBuilder
         {
-            get => _model;
-            set => SetProperty(ref _model, value);
+            get => _assembledBuilder;
+            set => SetProperty(ref _assembledBuilder, value);
+        }
+
+        // IDisposable Implementation
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~AssembledBuilderViewModel()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

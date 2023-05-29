@@ -107,16 +107,6 @@ namespace AdionFA.UI.Station.Module.Shell.ViewModels
             set => SetProperty(ref name, value);
         }
 
-        public string ProjectStepIcon
-        {
-            get { return Hierarchy?.Project?.ProjectStepIcon ?? string.Empty; }
-        }
-
-        public string CurrentProjectStep
-        {
-            get { return Hierarchy?.Project?.CurrentProjectStep ?? string.Empty; }
-        }
-
         public DateTime LastLoadOn
         {
             get { return Hierarchy?.Project?.LastLoadOn ?? DateTime.MinValue; }
@@ -139,7 +129,7 @@ namespace AdionFA.UI.Station.Module.Shell.ViewModels
         }
 
         public ObservableCollection<ProjectTreeViewModel> Children { get; } = new ObservableCollection<ProjectTreeViewModel>();
-        
+
         #endregion
     }
 }

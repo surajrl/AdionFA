@@ -1,37 +1,34 @@
-﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Contracts;
+﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
+using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Base;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-using System.Diagnostics;
-using AdionFA.Infrastructure.Common.Managements;
 using System.Threading;
-using AdionFA.Infrastructure.Common.Weka.Model;
-using System.Timers;
 
 namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 {
     public class StrategyBuilderService : IStrategyBuilderService
     {
-        private readonly IProjectDirectoryService ProjectDirectoryService;
-        private readonly IExtractorService ExtractorService;
+        private readonly IProjectDirectoryService _projectDirectoryService;
+        private readonly IExtractorService _extractorService;
 
         public StrategyBuilderService()
         {
-            ProjectDirectoryService = IoC.Get<IProjectDirectoryService>();
-            ExtractorService = IoC.Get<IExtractorService>();
+            _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
+            _extractorService = IoC.Get<IExtractorService>();
         }
 
-        // Strategy
+        // Correlation
 
         public CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType)
         {
@@ -54,7 +51,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 // UP IS Nodes
 
-                ProjectDirectoryService.GetFilesInPath(directoryUP, "*.xml").ToList().ForEach(file =>
+                _projectDirectoryService.GetFilesInPath(directoryUP, "*.xml").ToList().ForEach(file =>
                 {
                     if (file.Name.Contains("BACKTEST"))
                     {
@@ -76,15 +73,15 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         }
                         else
                         {
-                            ProjectDirectoryService.DeleteFile(file.FullName);                              // Delete the file with the backtest
-                            ProjectDirectoryService.DeleteFile(file.FullName.Replace("BACKTEST", "NODE"));  // Delete the file with the node
+                            _projectDirectoryService.DeleteFile(file.FullName);                              // Delete the file with the backtest
+                            _projectDirectoryService.DeleteFile(file.FullName.Replace("BACKTEST", "NODE"));  // Delete the file with the node
                         }
                     }
                 });
 
                 // DOWN IS Nodes
 
-                ProjectDirectoryService.GetFilesInPath(directoryDOWN, "*.xml").ToList().ForEach(file =>
+                _projectDirectoryService.GetFilesInPath(directoryDOWN, "*.xml").ToList().ForEach(file =>
                 {
                     if (file.Name.Contains("BACKTEST"))
                     {
@@ -106,8 +103,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         }
                         else
                         {
-                            ProjectDirectoryService.DeleteFile(file.FullName);                              // Delete the file with the backtest
-                            ProjectDirectoryService.DeleteFile(file.FullName.Replace("BACKTEST", "NODE"));  // Delete the file with the node
+                            _projectDirectoryService.DeleteFile(file.FullName);                              // Delete the file with the backtest
+                            _projectDirectoryService.DeleteFile(file.FullName.Replace("BACKTEST", "NODE"));  // Delete the file with the node
                         }
                     }
                 });
@@ -117,7 +114,6 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             catch (Exception ex)
             {
                 LogHelper.LogException<IStrategyBuilderService>(ex);
-
                 throw;
             }
         }
@@ -129,13 +125,13 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             foreach (var backtest in backtests)
             {
                 var coincidences =
-                    backtest.Backtests
-                    .Where(operation => btModel.Backtests.Any(_bto => _bto.Date == operation.Date))
+                    backtest.BacktestOperations
+                    .Where(operation => btModel.BacktestOperations.Any(_bto => _bto.Date == operation.Date))
                     .ToList();
 
                 var totalCoincidences = coincidences.Count;
-                var btItemCount = backtest.Backtests.Count;
-                var btModelCount = btModel.Backtests.Count;
+                var btItemCount = backtest.BacktestOperations.Count;
+                var btModelCount = btModel.BacktestOperations.Count;
 
                 var percentBtItem = totalCoincidences * 100 / btItemCount;
                 var percentBtModel = totalCoincidences * 100 / btModelCount;
@@ -161,50 +157,55 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest
 
-        public StrategyBuilderModel BacktestBuild(
+        public StrategyBuilderModel BuildBacktest(
             string nodeLabel,
             List<string> node,
-            ConfigurationBaseDTO config,
-            IEnumerable<Candle> allCandles,
-            CancellationToken cancellationToken,
-            ManualResetEventSlim manualResetEvent)
+            ConfigurationBaseDTO configuration,
+            IEnumerable<Candle> candles,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken)
         {
             try
             {
-                var backtestIS = ExecuteBacktest(
-                    nodeLabel,
-                    config.FromDateIS.Value,
-                    config.ToDateIS.Value,
-                    node,
-                    allCandles,
-                    config.TimeframeId,
-                    cancellationToken,
-                    manualResetEvent);
+                var strategyBuilder = new StrategyBuilderModel();
 
-                var backtestOS = ExecuteBacktest(
+                strategyBuilder.OS = ExecuteBacktest(
                     nodeLabel,
-                    config.FromDateOS.Value,
-                    config.ToDateOS.Value,
+                    configuration.FromDateOS.Value,
+                    configuration.ToDateOS.Value,
+                    configuration.TimeframeId,
+                    candles,
                     node,
-                    allCandles,
-                    config.TimeframeId,
-                    cancellationToken,
-                    manualResetEvent);
+                    manualResetEvent,
+                    cancellationToken);
 
-                var stb = new StrategyBuilderModel
+                if (!ApplyWinningStrategyRulesOS(strategyBuilder.OS, configuration))
                 {
-                    IS = backtestIS,
-                    OS = backtestOS
-                };
+                    strategyBuilder.WinningStrategy = false;
+                    return strategyBuilder;
+                }
 
-                stb.WinningStrategy = ApplyWinningStrategyRules(
-                    backtestIS,
-                    backtestOS,
-                    config,
-                    stb.VariationPercent,
-                    stb.Progressiveness);
+                strategyBuilder.IS = ExecuteBacktest(
+                    nodeLabel,
+                    configuration.FromDateIS.Value,
+                    configuration.ToDateIS.Value,
+                    configuration.TimeframeId,
+                    candles,
+                    node,
+                    manualResetEvent,
+                    cancellationToken);
 
-                return stb;
+                if (!ApplyWinningStrategyRulesIS(strategyBuilder.IS, configuration))
+                {
+                    strategyBuilder.WinningStrategy = false;
+                    return strategyBuilder;
+                }
+
+                strategyBuilder.WinningStrategy =
+                    strategyBuilder.VariationPercent <= (double)configuration.SBMaxTransactionsVariation
+                    && (!configuration.IsProgressiveness || strategyBuilder.Progressiveness <= (double)configuration.Progressiveness);
+
+                return strategyBuilder;
             }
             catch (Exception ex)
             {
@@ -213,170 +214,82 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        public BacktestModel ExecuteBacktest(
+        private BacktestModel ExecuteBacktest(
             string nodeLabel,
             DateTime fromDate,
             DateTime toDate,
-            List<string> node,
-            IEnumerable<Candle> allCandles,
             int timeframeId,
-            CancellationToken cancellationToken,
-            ManualResetEventSlim manualResetEvent)
+            IEnumerable<Candle> candles,
+            List<string> node,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken)
         {
             try
             {
+                var nodeIndicators = _extractorService.BuildIndicatorsFromNode(node);
+
+                var candlesRange = (from candle in candles
+                                    let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
+                                    where dt >= fromDate && dt <= toDate
+                                    select candle).ToList();
+
                 var backtest = new BacktestModel
                 {
                     Label = nodeLabel,
                     FromDate = fromDate,
                     ToDate = toDate,
-                    PeriodId = timeframeId,
+                    TimeframeId = timeframeId,
                     Node = node.ToList(),
 
-                    Backtests = new List<BacktestOperationModel>()
+                    BacktestOperations = new List<BacktestOperationModel>(),
+                    TotalOpportunity = candlesRange.Count
                 };
 
-                var indicators = ExtractorService.BuildIndicatorsFromNode(node);
-
-                if (indicators.Any())
+                for (var candleIdx = 0; candleIdx < candlesRange.Count - 1; candleIdx++)
                 {
-                    var toListStopwatch = new Stopwatch();
-                    toListStopwatch.Start();
+                    manualResetEvent.Wait();
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    var candlesFromTo = (from c in allCandles
-                                         let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
-                                         where dt >= fromDate && dt <= toDate
-                                         select c)
-                                         .ToList();
-
-                    toListStopwatch.Stop();
-                    Debug.WriteLine($"{toListStopwatch.Elapsed:mm\\:ss\\.ffffff}");
-
-                    backtest.TotalOpportunity = candlesFromTo.Count;
-
-                    var candleHistory = new List<Candle>();
-
-                    for (var candleIdx = 0; candleIdx < candlesFromTo.Count - 1; candleIdx++)
+                    var firstCandle = candlesRange[0];
+                    var nextCandle = candlesRange[candleIdx + 1];
+                    var currentCandle = new Candle
                     {
-                        manualResetEvent.Wait();
-                        cancellationToken.ThrowIfCancellationRequested();
+                        Date = candlesRange[candleIdx].Date,
+                        Time = candlesRange[candleIdx].Time,
 
-                        var firstCandle = candlesFromTo[0];
-                        var currentCandle = new Candle
+                        Open = candlesRange[candleIdx].Open,
+                        High = candlesRange[candleIdx].Open,
+                        Low = candlesRange[candleIdx].Open,
+                        Close = candlesRange[candleIdx].Open,
+
+                        Spread = candlesRange[candleIdx].Spread
+                    };
+
+                    if (ApproveCandle(nodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
+                    {
+                        backtest.TotalTrades++;
+
+                        var isWinnerTrade = false;
+                        var spread = currentCandle.Spread * 0.00001;
+
+                        isWinnerTrade = backtest.Label.ToLower() == "up"
+                            ? (currentCandle.Open + spread) < nextCandle.Open
+                            : currentCandle.Open > (nextCandle.Open + spread);
+
+                        if (isWinnerTrade)
                         {
-                            Date = candlesFromTo[candleIdx].Date,
-                            Time = candlesFromTo[candleIdx].Time,
-
-                            Open = candlesFromTo[candleIdx].Open,
-                            High = candlesFromTo[candleIdx].Open,
-                            Low = candlesFromTo[candleIdx].Open,
-                            Close = candlesFromTo[candleIdx].Open,
-
-                            Spread = candlesFromTo[candleIdx].Spread
-                        };
-                        var nextCandle = candlesFromTo[candleIdx + 1];
-
-                        var firstCandleDt = DateTimeHelper.BuildDateTime(timeframeId, firstCandle.Date, firstCandle.Time);
-                        var currentCandleDt = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time);
-
-                        var extractorResult = new List<IndicatorBase>();
-
-                        if (candleIdx == 0)
-                        {
-                            candleHistory.Add(currentCandle);
-
-                            extractorResult = ExtractorService.DoBacktest(
-                                currentCandle,
-                                currentCandle,
-                                indicators,
-                                candleHistory);
+                            backtest.WinningTrades++;
                         }
                         else
                         {
-                            candleHistory = (from c in candlesFromTo
-                                             let dt = DateTimeHelper.BuildDateTime(timeframeId, c.Date, c.Time)
-                                             where dt >= firstCandleDt && dt < currentCandleDt
-                                             select c).ToList();
-
-                            candleHistory.Add(currentCandle);
-
-                            extractorResult = ExtractorService.DoBacktest(
-                                firstCandle,
-                                currentCandle,
-                                indicators,
-                                candleHistory);
+                            backtest.LosingTrades++;
                         }
 
-                        if (!extractorResult.Any())
+                        backtest.BacktestOperations.Add(new BacktestOperationModel
                         {
-                            continue;
-                        }
-
-                        var passed = 0;
-
-                        foreach (var indicator in extractorResult)
-                        {
-                            if (indicator.OutNBElement == 0)
-                            {
-                                continue;
-                            }
-
-                            var output = indicator.Output[indicator.OutNBElement - 1];
-
-                            switch (indicator.Operator)
-                            {
-                                case MathOperatorEnum.GreaterThanOrEqual:
-                                    passed += output >= indicator.Value ? 1 : 0;
-                                    break;
-
-                                case MathOperatorEnum.LessThanOrEqual:
-                                    passed += output <= indicator.Value ? 1 : 0;
-                                    break;
-
-                                case MathOperatorEnum.GreaterThan:
-                                    passed += output > indicator.Value ? 1 : 0;
-                                    break;
-
-                                case MathOperatorEnum.LessThan:
-                                    passed += output < indicator.Value ? 1 : 0;
-                                    break;
-
-                                case MathOperatorEnum.Equal:
-                                    passed += output == indicator.Value ? 1 : 0;
-                                    break;
-                            }
-                        }
-
-                        if (passed == extractorResult.ToList().Count)
-                        {
-                            backtest.TotalTrades++;
-
-                            var isWinnerTrade = false;
-                            var spread = currentCandle.Spread * 0.00001;
-                            if (backtest.Label.ToLower() == "up")
-                            {
-                                isWinnerTrade = (currentCandle.Open + spread) < nextCandle.Open;
-                            }
-                            else
-                            {
-                                isWinnerTrade = currentCandle.Open > (nextCandle.Open + spread);
-                            }
-
-                            if (isWinnerTrade)
-                            {
-                                backtest.WinningTrades++;
-                            }
-                            else
-                            {
-                                backtest.LosingTrades++;
-                            }
-
-                            backtest.Backtests.Add(new BacktestOperationModel
-                            {
-                                Date = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time),
-                                IsWinner = isWinnerTrade
-                            });
-                        }
+                            Date = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time),
+                            IsWinner = isWinnerTrade
+                        });
                     }
                 }
 
@@ -389,20 +302,85 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        private static bool ApplyWinningStrategyRules(
-            BacktestModel bkmIS,
-            BacktestModel bkmOS,
-            ConfigurationBaseDTO config,
-            double variationPercent,
-            double progressiveness)
+        private bool ApproveCandle(IList<IndicatorBase> nodeIndicators, int candleIdx, Candle firstCandle, Candle currentCandle, List<Candle> candlesRange)
         {
-            return bkmIS.WinningTrades >= config.MinTransactionCountIS &&
-                    bkmIS.PercentSuccess >= (double)config.MinPercentSuccessIS &&
-                    bkmOS.WinningTrades >= config.MinTransactionCountOS &&
-                    bkmOS.PercentSuccess >= (double)config.MinPercentSuccessOS &&
-                    variationPercent <= (double)config.VariationTransaction &&
+            var tempRemovedCandle = candlesRange[candleIdx];
+            candlesRange.RemoveAt(candleIdx);
+            candlesRange.Insert(candleIdx, currentCandle);
 
-                    (!config.IsProgressiveness || progressiveness <= (double)config.Progressiveness);
+            var nodeIndicatorResults = _extractorService.CalculateNodeIndicators(
+                firstCandle,
+                currentCandle,
+                nodeIndicators,
+                candlesRange.GetRange(0, candleIdx + 1));
+
+            candlesRange.RemoveAt(candleIdx);
+            candlesRange.Insert(candleIdx, tempRemovedCandle);
+
+
+            for (var i = 0; i < nodeIndicatorResults.Count; i++)
+            {
+                var indicator = nodeIndicatorResults[i];
+
+                if (indicator.OutNBElement == 0)
+                {
+                    continue;
+                }
+
+                var output = indicator.Output[indicator.OutNBElement - 1];
+
+                switch (indicator.Operator)
+                {
+                    case MathOperatorEnum.GreaterThanOrEqual:
+                        if (output >= indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.LessThanOrEqual:
+                        if (output <= indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.GreaterThan:
+                        if (output > indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.LessThan:
+                        if (output < indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.Equal:
+                        if (output == indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool ApplyWinningStrategyRulesIS(BacktestModel backtestIS, ConfigurationBaseDTO configuration)
+        {
+            return backtestIS.WinningTrades >= configuration.SBMinTransactionsIS
+                && backtestIS.PercentSuccess >= (double)configuration.SBMinPercentSuccessIS;
+        }
+
+        private bool ApplyWinningStrategyRulesOS(BacktestModel backtestOS, ConfigurationBaseDTO configuration)
+        {
+            return backtestOS.WinningTrades >= configuration.SBMinTransactionsOS
+               && backtestOS.PercentSuccess >= (double)configuration.SBMinPercentSuccessOS;
         }
 
         // Backtest Serialization

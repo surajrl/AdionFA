@@ -30,7 +30,6 @@ namespace AdionFA.Core.Domain.Services.Projects
                 IList<ProjectGlobalConfiguration> result = includeGraph ? ProjectGlobalConfigurationRepository.GetAll(
                     gc => gc.Symbol,
                     gc => gc.Timeframe,
-                    gc => gc.CurrencySpread,
                     gc => gc.ProjectGlobalScheduleConfigurations
                 ).ToList() : ProjectGlobalConfigurationRepository.GetAll().ToList();
 
@@ -54,7 +53,6 @@ namespace AdionFA.Core.Domain.Services.Projects
                     ? ProjectGlobalConfigurationRepository.FirstOrDefault(predicate,
                         gc => gc.Symbol,
                         gc => gc.Timeframe,
-                        gc => gc.CurrencySpread,
                         gc => gc.ProjectGlobalScheduleConfigurations
                     ) : ProjectGlobalConfigurationRepository.FirstOrDefault(predicate);
 

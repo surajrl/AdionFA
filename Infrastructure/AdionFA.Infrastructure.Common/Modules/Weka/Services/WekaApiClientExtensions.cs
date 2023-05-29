@@ -11,14 +11,14 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
         public static IList<REPTreeOutputModel> GetREPTreeClassifier(
             this IWekaApiClient operations,
             string path,
-            int? maxDepth = default(int?),
-            int? numDecimalPlaces = default(int?),
-            int? minSeed = default(int?),
-            int? maxSeed = default(int?),
-            int? instances = default(int?),
-            double? ratio = default(double?),
+            int? maxDepth = default,
+            int? numDecimalPlaces = default,
+            int? minSeed = default,
+            int? maxSeed = default,
+            int? instances = default,
+            double? ratio = default,
             double? total = default,
-            bool? isAssembled = default(bool?))
+            bool? isAssembled = default)
         {
             return Task.Factory.StartNew(s => ((IWekaApiClient)s).GetREPTreeClassifierAsync(
                 path,
@@ -29,7 +29,8 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
                 instances,
                 ratio,
                 total,
-                isAssembled), operations, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default).Unwrap().GetAwaiter().GetResult();
+                isAssembled),
+                operations, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default).Unwrap().GetAwaiter().GetResult();
         }
 
         public static async Task<IList<REPTreeOutputModel>> GetREPTreeClassifierAsync(

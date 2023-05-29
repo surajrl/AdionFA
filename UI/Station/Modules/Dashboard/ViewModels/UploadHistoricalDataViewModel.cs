@@ -1,6 +1,4 @@
-﻿using AdionFA.Core.Domain.Aggregates.MarketData;
-using AdionFA.Infrastructure.Common.Extractor.Model;
-using AdionFA.Infrastructure.Common.Helpers;
+﻿using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
 using AdionFA.Infrastructure.I18n.Resources;
@@ -12,11 +10,9 @@ using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AdionFA.UI.Station.Module.Dashboard.Services;
-using AdionFA.UI.Station.Modules.Trader.Infrastructure;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -170,13 +166,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             if (!Timeframes.Any())
             {
                 var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
-                timeframes.ForEach(Timeframes.Add);
+                timeframes.ToList().ForEach(Timeframes.Add);
             }
 
             if (!Symbols.Any())
             {
                 var symbols = await _marketDataService.GetAllSymbol().ConfigureAwait(true);
-                symbols.ForEach(Symbols.Add);
+                symbols.ToList().ForEach(Symbols.Add);
             }
         }
 

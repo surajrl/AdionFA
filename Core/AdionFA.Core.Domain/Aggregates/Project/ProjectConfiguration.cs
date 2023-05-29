@@ -10,8 +10,6 @@ namespace AdionFA.Core.Domain.Aggregates.Project
     [Table(nameof(ProjectConfiguration))]
     public class ProjectConfiguration : ConfigurationBase
     {
-        #region Properties
-
         [Key]
         public int ProjectConfigurationId { get; set; }
 
@@ -26,12 +24,8 @@ namespace AdionFA.Core.Domain.Aggregates.Project
         public bool IsFavorite { get; set; }
         public string WorkspacePath { get; set; }
 
-        #endregion Properties
-
-        #region Navegation Properties
+        // Navigation
 
         public ICollection<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
-
-        #endregion Navegation Properties
     }
 }

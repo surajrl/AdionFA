@@ -1,24 +1,23 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
+using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+using AdionFA.Infrastructure.Common.Directories.Contracts;
+using AdionFA.Infrastructure.Common.Extensions;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
-using AdionFA.Infrastructure.Common.Weka.Model;
-using AdionFA.Infrastructure.Common.Weka.Services;
+using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Enums;
+using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Project;
-using AdionFA.Infrastructure.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 {
@@ -26,200 +25,173 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
     {
         // Services
 
-        private readonly IProjectDirectoryService ProjectDirectoryService;
-        private readonly IExtractorService ExtractorService;
-        private readonly IStrategyBuilderService StrategyBuilderService;
+        private readonly IProjectDirectoryService _projectDirectoryService;
+        private readonly IExtractorService _extractorService;
 
         public AssembledBuilderService()
         {
-            ProjectDirectoryService = IoC.Get<IProjectDirectoryService>();
-            ExtractorService = IoC.Get<IExtractorService>();
-            StrategyBuilderService = IoC.Get<IStrategyBuilderService>();
+            _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
+            _extractorService = IoC.Get<IExtractorService>();
         }
 
-        public AssembledBuilderModel LoadStrategyModel(string projectName)
+        public AssembledBuilderModel LoadStrategyBuilderResult(string projectName)
         {
             try
             {
-                var model = new AssembledBuilderModel();
+                var assembledBuilder = new AssembledBuilderModel();
 
-                // UP
+                // Load UP Nodes
 
-                StartNodeAssembledModel upNodeStart = AssembledBuilderModel.Start("UP");
-                EndNodeAssembledModel upNodeEnd = AssembledBuilderModel.End("UP");
+                var upDirectory = projectName.ProjectStrategyBuilderNodesUPDirectory();
+                _projectDirectoryService.GetFilesInPath(upDirectory, "*.xml").ToList().ForEach(file =>
+                {
+                    if (file.Name.Contains("BACKTEST"))
+                    {
+                        var backtest = SerializerHelper.XMLDeSerializeObject<BacktestModel>(file.FullName);
+                        assembledBuilder.UPBacktests.Add(backtest);
+                    }
+                });
 
-                upNodeStart.Nodes = LoadNodes(projectName, "up");
-                upNodeStart.Nodes.ForEach(n => n.Nodes.Add(upNodeEnd));
+                // Load DOWN Nodes
 
-                if (upNodeStart.Nodes.Count > 0)
-                    model.UPNode = upNodeStart;
+                var downDirectory = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                _projectDirectoryService.GetFilesInPath(downDirectory, "*.xml").ToList().ForEach(file =>
+                {
+                    if (file.Name.Contains("BACKTEST"))
+                    {
+                        var backtest = SerializerHelper.XMLDeSerializeObject<BacktestModel>(file.FullName);
+                        assembledBuilder.DOWNBacktests.Add(backtest);
+                    }
+                });
 
-                // DOWN
-
-                StartNodeAssembledModel downNodeStart = AssembledBuilderModel.Start("DOWN");
-                EndNodeAssembledModel downNodeEnd = AssembledBuilderModel.End("DOWN");
-
-                downNodeStart.Nodes = LoadNodes(projectName, "down");
-                downNodeStart.Nodes.ForEach(n => n.Nodes.Add(downNodeEnd));
-
-                if (downNodeStart.Nodes.Count > 0)
-                    model.DOWNNode = downNodeStart;
-
-                return model;
+                return assembledBuilder;
             }
             catch (Exception ex)
             {
                 LogHelper.LogException<AssembledBuilderService>(ex);
                 throw;
             }
-
-            // Load Nodes
-            List<NodeAssembledModel> LoadNodes(string projectName, string label)
-            {
-                try
-                {
-                    var result = new List<NodeAssembledModel>();
-
-                    var path = label.ToLower() == "up" ?
-                        projectName.ProjectStrategyBuilderNodesUPDirectory() :
-                        projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-
-                    if (path != null)
-                    {
-                        ProjectDirectoryService.GetFilesInPath(path, "*.xml")
-                            .ToList().ForEach(fi =>
-                            {
-                                if (fi.Name.Contains("BACKTEST"))
-                                {
-                                    var model = SerializerHelper.XMLDeSerializeObject<BacktestModel>(fi.FullName);
-                                    result.Add(new BacktestNodeAssembledModel
-                                    {
-                                        Backtest = model,
-                                        Type = NodeAssembledTypeEnum.Backtest,
-                                    });
-                                }
-                            });
-                    }
-
-                    return result;
-                }
-                catch (Exception ex)
-                {
-                    LogHelper.LogException<AssembledBuilderService>(ex);
-                    throw;
-                }
-            }
         }
 
-        public void ExtractorExecute(
-            string projectName, AssembledBuilderModel model, IEnumerable<Candle> candles, ProjectConfigurationDTO config)
+        public void CreateExtraction(
+            string projectName,
+            AssembledBuilderModel assembledBuilder,
+            IEnumerable<Candle> candles,
+            ProjectConfigurationDTO configuration)
         {
             try
             {
-                if (model?.UPNode?.Nodes?.Any() ?? false)
+                if (assembledBuilder.UPBacktests?.Any() ?? false)
                 {
                     Extractor("up");
                 }
 
-                if (model?.DOWNNode?.Nodes?.Any() ?? false)
+                if (assembledBuilder.DOWNBacktests?.Any() ?? false)
                 {
                     Extractor("down");
                 }
 
                 void Extractor(string label)
                 {
-                    NodeAssembledModel node = label == "up" ? model.UPNode : model.DOWNNode;
+                    var backtests = label == "up" ?
+                        assembledBuilder.UPBacktests :
+                        assembledBuilder.DOWNBacktests;
 
                     var directory = label == "up" ?
-                        projectName.ProjectAssembledBuilderExtractorUPDirectory()
-                        : projectName.ProjectAssembledBuilderExtractorDOWNDirectory();
+                        projectName.ProjectAssembledBuilderExtractorUPDirectory() :
+                        projectName.ProjectAssembledBuilderExtractorDOWNDirectory();
 
-                    List<NodeAssembledModel> backtestNodes = node.ConvertTreeToList<NodeAssembledModel, BacktestNodeAssembledModel>();
+                    var operations = backtests
+                        .SelectMany(backtest => backtest.BacktestOperations
+                        .OrderBy(backtestOperation => backtestOperation.Date)).ToList();
 
-                    List<BacktestModel> backtests = (from bn in backtestNodes
-                                                     let bt = (bn as BacktestNodeAssembledModel).Backtest
-                                                     select bt).ToList();
-
-                    List<BacktestOperationModel> operations = backtests.SelectMany(bt => bt.Backtests.OrderBy(o => o.Date)).ToList();
-
-                    if (operations.Any() && ProjectDirectoryService.DeleteAllFiles(directory, option: SearchOption.AllDirectories, isBackup: false))
+                    if (operations.Any() && _projectDirectoryService.DeleteAllFiles(directory, option: SearchOption.AllDirectories, isBackup: false))
                     {
-                        var first = operations.FirstOrDefault().Date;
-                        var last = operations.LastOrDefault().Date;
+                        var firstOperation = operations.FirstOrDefault().Date;
+                        var lastOperation = operations.LastOrDefault().Date;
 
-                        var templates = ProjectDirectoryService.GetFilesInPath(
-                            projectName.ProjectExtractorTemplatesDirectory()).ToList();
+                        var templates = _projectDirectoryService.GetFilesInPath(projectName.ProjectExtractorTemplatesDirectory()).ToList();
 
-                        Parallel.ForEach(templates,
-                            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 },
-                            fi =>
+                        Parallel.ForEach(
+                            templates,
+                            new ParallelOptions { MaxDegreeOfParallelism = 1 },
+                            file =>
                             {
-                                var indicators = ExtractorService.BuildIndicatorsFromCSV(fi.FullName);
-                                var extractions = ExtractorService.DoExtraction(first, last, indicators, candles.ToList(), config.TimeframeId, config.Variation);
+                                var indicators = _extractorService.BuildIndicatorsFromCSV(file.FullName);
+                                var extractions = _extractorService.DoExtraction(
+                                    firstOperation,
+                                    lastOperation,
+                                    indicators,
+                                    candles.ToList(),
+                                    configuration.TimeframeId,
+                                    configuration.ExtractorMinVariation);
 
-                                foreach (var ex in extractions)
+                                foreach (var extraction in extractions)
                                 {
-                                    var intervals = (from il in ex.IntervalLabels.Select((_il, _idx) => new { _idx, _il })
-                                                     let ops = operations.Where(op => op.Date == il._il.Interval)
-                                                     where ops.Any()
+                                    var intervals = (from il in extraction.IntervalLabels.Select((_il, _idx) => new { _idx, _il })
+                                                     let backtestOperation = operations.Where(operation => operation.Date == il._il.Interval)
+                                                     where backtestOperation.Any()
                                                      select new
                                                      {
                                                          idx = il._idx,
                                                          il = new IntervalLabel
                                                          {
                                                              Interval = il._il.Interval,
-                                                             Label = ops.Any(op => op.IsWinner) ? "WINNER" : "LOSER"
+                                                             Label = backtestOperation.Any(operation => operation.IsWinner) ? "UP" : "DOWN"
                                                          },
                                                      }).ToList();
 
-                                    ex.IntervalLabels = intervals.Select(a => a.il).ToArray();
+                                    extraction.IntervalLabels = intervals.Select(a => a.il).ToArray();
 
                                     var outputExtraction = new List<double>();
                                     foreach (var idx in intervals.Select(a => a.idx))
                                     {
-                                        outputExtraction.Add(ex.Output[idx]);
+                                        outputExtraction.Add(extraction.Output[idx]);
                                     }
 
-                                    ex.Output = outputExtraction.ToArray();
+                                    extraction.Output = outputExtraction.ToArray();
                                 }
 
-                                string timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss");
-                                string nameSignature = fi.Name.Replace(".csv", string.Empty);
-                                string output = projectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv");
+                                var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss");
+                                var nameSignature = file.Name.Replace(".csv", string.Empty);
+                                var output = projectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv");
 
-                                ExtractorService.ExtractorWrite(output, extractions, 0, 0);
+                                _extractorService.ExtractorWrite(output, extractions, 0, 0);
 
-                                if (!config.WithoutSchedule && config.ProjectScheduleConfigurations.Any())
+                                if (!configuration.WithoutSchedule && configuration.ProjectScheduleConfigurations.Any())
                                 {
                                     // America
-                                    config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.America,
-                                        out DateTime FromTimeInSecondsAmerica, out DateTime ToTimeInSecondsAmerica);
 
-                                    ExtractorService.ExtractorWrite(
+                                    configuration.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.America,
+                                        out DateTime fromTimeInSecondsAmerica, out DateTime toTimeInSecondsAmerica);
+
+                                    _extractorService.ExtractorWrite(
                                         projectName.ProjectAssembledBuilderExtractorAmericaDirectory(label, $"{nameSignature}.{timeSignature}.America.csv"),
                                         indicators,
-                                        FromTimeInSecondsAmerica.Hour, ToTimeInSecondsAmerica.Hour
-                                    );
+                                        fromTimeInSecondsAmerica.Hour,
+                                        toTimeInSecondsAmerica.Hour);
 
                                     // Europe
-                                    config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Europe,
-                                        out DateTime FromTimeInSecondsEurope, out DateTime ToTimeInSecondsEurope);
 
-                                    ExtractorService.ExtractorWrite(
+                                    configuration.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Europe,
+                                        out DateTime fromTimeInSecondsEurope, out DateTime toTimeInSecondsEurope);
+
+                                    _extractorService.ExtractorWrite(
                                         projectName.ProjectAssembledBuilderExtractorEuropeDirectory(label, $"{nameSignature}.{timeSignature}.Europe.csv"),
                                         indicators,
-                                        FromTimeInSecondsEurope.Hour, ToTimeInSecondsEurope.Hour
-                                    );
+                                        fromTimeInSecondsEurope.Hour,
+                                        toTimeInSecondsEurope.Hour);
 
                                     // Asia
-                                    config.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Asia,
-                                        out DateTime FromTimeInSecondsAsia, out DateTime ToTimeInSecondsAsia);
 
-                                    ExtractorService.ExtractorWrite(
+                                    configuration.ProjectScheduleConfigurations.ToList().MarketStartTime(MarketRegionEnum.Asia,
+                                        out DateTime fromTimeInSecondsAsia, out DateTime toTimeInSecondsAsia);
+
+                                    _extractorService.ExtractorWrite(
                                         projectName.ProjectAssembledBuilderExtractorAsiaDirectory(label, $"{nameSignature}.{timeSignature}.Asia.csv"),
                                         indicators,
-                                        FromTimeInSecondsAsia.Hour, ToTimeInSecondsAsia.Hour
-                                    );
+                                        fromTimeInSecondsAsia.Hour,
+                                        toTimeInSecondsAsia.Hour);
                                 }
                             });
                     }
@@ -232,83 +204,246 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
             }
         }
 
-        public void Build(string projectName, ProjectConfigurationDTO config, IEnumerable<Candle> candles)
+        public StrategyBuilderModel BuildBacktestOfNode(
+            string nodeLabel,
+            IList<string> parentNode,
+            IList<BacktestModel> childNodes,
+            ConfigurationBaseDTO configuration,
+            IEnumerable<Candle> candles,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken)
+        {
+            var strategyBuilder = new StrategyBuilderModel();
+
+            strategyBuilder.IS = ExecuteBacktest(
+                nodeLabel,
+                configuration.FromDateIS.Value,
+                configuration.ToDateIS.Value,
+                configuration.TimeframeId,
+                candles,
+                parentNode,
+                childNodes,
+                manualResetEvent,
+                cancellationToken);
+
+            var meanPercentSuccessIS = childNodes
+                .Where(backtest => backtest.Label.ToLower() == "up")
+                .Select(backtest => backtest.Variation)
+                .Sum() / childNodes.Count;
+
+            var winningStrategyIS =
+                ((decimal)strategyBuilder.IS.PercentSuccess - meanPercentSuccessIS) >= configuration.ABMinImprovePercent
+                && strategyBuilder.IS.TotalTrades >= configuration.ABTransactionsTarget;
+
+            if (!winningStrategyIS)
+            {
+                return strategyBuilder;
+            }
+
+            strategyBuilder.OS = ExecuteBacktest(
+                nodeLabel,
+                configuration.FromDateOS.Value,
+                configuration.ToDateOS.Value,
+                configuration.TimeframeId,
+                candles,
+                parentNode,
+                childNodes,
+                manualResetEvent,
+                cancellationToken);
+
+            strategyBuilder.WinningStrategy =
+                    strategyBuilder.VariationPercent <= (double)configuration.SBMaxTransactionsVariation
+                    && (!configuration.IsProgressiveness || strategyBuilder.Progressiveness <= (double)configuration.Progressiveness);
+
+
+            return strategyBuilder;
+        }
+
+        private BacktestModel ExecuteBacktest(
+            string nodeLabel,
+            DateTime fromDate,
+            DateTime toDate,
+            int timeframeId,
+            IEnumerable<Candle> candles,
+            IList<string> parentNode,
+            IList<BacktestModel> childNodes,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken)
         {
             try
             {
-                StartProcessing("UP");
-                StartProcessing("DOWN");
+                var parentNodeIndicators = _extractorService.BuildIndicatorsFromNode(parentNode);
 
-                void StartProcessing(string label)
+                var candlesRange = (from candle in candles
+                                    let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
+                                    where dt >= fromDate && dt <= toDate
+                                    select candle).ToList();
+
+                var backtest = new BacktestModel
                 {
-                    string directory = projectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory(label);
-                    IEnumerable<FileInfo> extractions = ProjectDirectoryService.GetFilesInPath(directory);
-                    if (extractions.Any())
+                    Label = nodeLabel,
+                    FromDate = fromDate,
+                    ToDate = toDate,
+                    TimeframeId = timeframeId,
+                    Node = parentNode.ToList(),
+
+                    BacktestOperations = new List<BacktestOperationModel>(),
+                    TotalOpportunity = candlesRange.Count
+                };
+
+                for (var candleIdx = 0; candleIdx < candlesRange.Count - 1; candleIdx++)
+                {
+                    manualResetEvent.Wait();
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var firstCandle = candlesRange[0];
+                    var nextCandle = candlesRange[candleIdx + 1];
+                    var currentCandle = new Candle
                     {
-                        Parallel.ForEach(extractions,
-                            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 },
-                            ext =>
+                        Date = candlesRange[candleIdx].Date,
+                        Time = candlesRange[candleIdx].Time,
+
+                        Open = candlesRange[candleIdx].Open,
+                        High = candlesRange[candleIdx].Open,
+                        Low = candlesRange[candleIdx].Open,
+                        Close = candlesRange[candleIdx].Open,
+
+                        Spread = candlesRange[candleIdx].Spread
+                    };
+
+
+                    if (ApproveCandle(parentNodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
+                    {
+                        foreach (var childNode in childNodes)
+                        {
+                            var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
+                            if (ApproveCandle(childNodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
                             {
-                                // Weka
+                                backtest.TotalTrades++;
 
-                                var wekaApi = new WekaApiClient();
-                                IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
-                                    ext.FullName,
-                                    config.DepthWeka,
-                                    config.TotalDecimalWeka,
-                                    config.MinimalSeed, config.MaximumSeed,
-                                    config.TotalInstanceWeka,
-                                    (double)config.MaxRatioTree,
-                                    (double)config.NTotalTree,
-                                    true
-                                );
+                                var isWinnerTrade = false;
+                                var spread = currentCandle.Spread * 0.00001;
 
-                                // Strategy
+                                isWinnerTrade = backtest.Label.ToLower() == "up"
+                                    ? (currentCandle.Open + spread) < nextCandle.Open
+                                    : currentCandle.Open > (nextCandle.Open + spread);
 
-                                foreach (var instance in responseWeka)
+                                if (isWinnerTrade)
                                 {
-                                    var winningNodes = instance.NodeOutput.Where(m => m.Winner).ToList();
-                                    winningNodes.ForEach(m =>
-                                    {
-                                        m.Node = new List<string>(m.Node.OrderByDescending(n => n).ToList());
-                                    });
-
-                                    foreach (var node in winningNodes)
-                                    {
-                                        var stb = StrategyBuilderService.BacktestBuild(label, node.Node.ToList(), config, candles.ToList(), new System.Threading.CancellationToken(), new System.Threading.ManualResetEventSlim(false));
-
-                                        // Serialization
-
-                                        if (stb.WinningStrategy)
-                                        {
-                                            BacktestSerialize(projectName, stb.IS);
-                                        }
-                                    }
+                                    backtest.WinningTrades++;
                                 }
-                            });
+                                else
+                                {
+                                    backtest.LosingTrades++;
+                                }
+
+                                backtest.BacktestOperations.Add(new BacktestOperationModel
+                                {
+                                    Date = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time),
+                                    IsWinner = isWinnerTrade
+                                });
+
+                                break;
+                            }
+                        }
                     }
                 }
+
+                return backtest;
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<AssembledBuilderService>(ex);
+                LogHelper.LogException<Exception>(ex);
                 throw;
             }
         }
 
-        // Serialization
-
-        public void BacktestSerialize(string projectName, BacktestModel model)
+        private bool ApproveCandle(IList<IndicatorBase> nodeIndicators, int candleIdx, Candle firstCandle, Candle currentCandle, List<Candle> candlesRange)
         {
-            string directory = model.Label.ToLower() == "up"
-                                        ? projectName.ProjectAssembledBuilderNodesUPDirectory()
-                                        : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+            var tempRemovedCandle = candlesRange[candleIdx];
+            candlesRange.RemoveAt(candleIdx);
+            candlesRange.Insert(candleIdx, currentCandle);
 
-            SerializerHelper.XMLSerializeObject(model, string.Format(@"{0}\{1}.xml", directory,
-                                            RegexHelper.GetValidFileName(model.NodeName(), "_")));
+            var nodeIndicatorResults = _extractorService.CalculateNodeIndicators(
+                firstCandle,
+                currentCandle,
+                nodeIndicators,
+                candlesRange.GetRange(0, candleIdx + 1));
+
+            candlesRange.RemoveAt(candleIdx);
+            candlesRange.Insert(candleIdx, tempRemovedCandle);
+
+
+            for (var i = 0; i < nodeIndicatorResults.Count; i++)
+            {
+                var indicator = nodeIndicatorResults[i];
+
+                if (indicator.OutNBElement == 0)
+                {
+                    continue;
+                }
+
+                var output = indicator.Output[indicator.OutNBElement - 1];
+
+                switch (indicator.Operator)
+                {
+                    case MathOperatorEnum.GreaterThanOrEqual:
+                        if (output >= indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.LessThanOrEqual:
+                        if (output <= indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.GreaterThan:
+                        if (output > indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.LessThan:
+                        if (output < indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.Equal:
+                        if (output == indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+                }
+            }
+
+            return true;
         }
 
-        public BacktestModel BacktestDeserialize(string path)
+        // Backtest Serialization
+
+        public void SerializeBacktest(string projectName, BacktestModel model)
+        {
+            var directory = model.Label.ToLower() == "up" ?
+                projectName.ProjectAssembledBuilderNodesUPDirectory() :
+                projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+
+
+            var filename = string.Format(@"{0}\{1}.xml",
+                directory,
+                RegexHelper.GetValidFileName(model.NodeName(), "_"));
+
+            SerializerHelper.XMLSerializeObject(model, filename);
+        }
+
+        public BacktestModel DeserializeBacktest(string path)
         {
             return SerializerHelper.XMLDeSerializeObject<BacktestModel>(path);
         }

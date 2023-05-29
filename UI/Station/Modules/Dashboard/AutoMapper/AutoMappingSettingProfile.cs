@@ -9,7 +9,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.AutoMapper
     {
         public AutoMappingSettingProfile()
         {
-            CreateMap<ProjectGlobalConfigurationVM, ProjectGlobalConfigModel>().ReverseMap();
+            CreateMap<ProjectGlobalConfigurationVM, ProjectGlobalConfigurationModel>().ReverseMap();
             CreateMap<ProjectGlobalScheduleConfigurationVM, ProjectGlobalScheduleConfigurationVM>().ReverseMap();
 
             CreateMap<HistoricalDataVM, UploadHistoricalDataModel>().ReverseMap();

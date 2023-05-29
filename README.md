@@ -15,23 +15,19 @@ Backtest Model
 Strategy builder
 - Runs a backtest on each node (IS data and OS data).
 
-## AdionFA Station Project to MetaTrader Communication Protocol 
-
-AdionFA
-- Pull Socket: Receives data from MetaTrader and adds to an input message queue 
-- Request Socket: Takes data from input message queue, sends trade order to MetaTrader, receives trade execution from MetaTrader and adds it to an output queue
-
-MetaTrader
-- Push Socket: Sends data to AdionFA
-- Response Socket: Receives trade order from AdionFA, send trade execution to AdionFA
-
-All the sockets use the same host (e.g. 127.0.0.1)
-Pull-Push sockets use the same port (e.g. 5556)
-Request-Response sockets use the same port (e.g. 5555)
-
-## AdionFA Station to MetaTrader Communication Protocol
-
 ## Weka Configuration
 
 Instances -> Number of trees created per extractor
 NTotals ->
+
+## Strategy Builder Configuration
+
+- Winning Strategy UP
+- Winning Strategy DOWN
+- Transactions Target
+- Variation Percent
+- Correlation Percent
+- Transactions (IS)
+- Transactions (OS)
+- Success Rate Percent (IS)
+- Success Rate Percent (OS)

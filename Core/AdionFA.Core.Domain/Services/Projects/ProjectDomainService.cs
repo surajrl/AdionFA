@@ -17,11 +17,11 @@ namespace AdionFA.Core.Domain.Services.Projects
     {
         // Repositories
 
-        private readonly IRepository<Project> ProjectRepository;
-        private readonly IRepository<ProjectGlobalConfiguration> ProjectGlobalConfigurationRepository;
-        private readonly IRepository<ProjectConfiguration> ProjectConfigurationRepository;
-        private readonly IRepository<ProjectScheduleConfiguration> ProjectScheduleConfigurationRepository;
-        private readonly IRepository<EntityServiceHost> EntityServiceHostRepository;
+        private readonly IRepository<Project> _projectRepository;
+        private readonly IRepository<ProjectGlobalConfiguration> _projectGlobalConfigurationRepository;
+        private readonly IRepository<ProjectConfiguration> _projectConfigurationRepository;
+        private readonly IRepository<ProjectScheduleConfiguration> _projectScheduleConfigurationRepository;
+        private readonly IRepository<EntityServiceHost> _entityServiceHostRepository;
 
         public ProjectDomainService(string tenantId, string ownerId, string owner,
             IRepository<Project> projectRepository,
@@ -30,24 +30,24 @@ namespace AdionFA.Core.Domain.Services.Projects
             IRepository<ProjectScheduleConfiguration> projectScheduleConfigurationRepository,
             IRepository<EntityServiceHost> entityServiceHostRepository) : base(tenantId, ownerId, owner)
         {
-            ProjectRepository = projectRepository;
-            ProjectGlobalConfigurationRepository = projectGlobalConfigurationRepository;
-            ProjectConfigurationRepository = projectConfigurationRepository;
-            ProjectScheduleConfigurationRepository = projectScheduleConfigurationRepository;
-            EntityServiceHostRepository = entityServiceHostRepository;
+            _projectRepository = projectRepository;
+            _projectGlobalConfigurationRepository = projectGlobalConfigurationRepository;
+            _projectConfigurationRepository = projectConfigurationRepository;
+            _projectScheduleConfigurationRepository = projectScheduleConfigurationRepository;
+            _entityServiceHostRepository = entityServiceHostRepository;
         }
 
         public IList<Project> GetAllProjects()
         {
             try
             {
-                List<Project> all = ProjectRepository.GetAll(
+                List<Project> all = _projectRepository.GetAll(
                     p => p.ProjectConfigurations
                 ).ToList();
 
                 int[] pIds = all.Select(p => p.ProjectId).ToArray();
 
-                var processHistory = from esh in EntityServiceHostRepository.GetAll(_esh => pIds.Contains(_esh.EntityId) && _esh.EntityTypeId == (int)EntityTypeEnum.Project)
+                var processHistory = from esh in _entityServiceHostRepository.GetAll(_esh => pIds.Contains(_esh.EntityId) && _esh.EntityTypeId == (int)EntityTypeEnum.Project)
                                      select esh;
 
                 all.ForEach(p =>
@@ -75,10 +75,9 @@ namespace AdionFA.Core.Domain.Services.Projects
                 var includes = new List<Expression<Func<Project, dynamic>>> { };
                 if (includeGraph)
                 {
-                    includes.Add(p => p.ProjectStep);
                     includes.Add(p => p.ExpertAdvisors);
 
-                    Project p = ProjectRepository.FirstOrDefault(predicate, includes.ToArray());
+                    Project p = _projectRepository.FirstOrDefault(predicate, includes.ToArray());
 
                     var pconfig = GetProjectConfiguration(p.ProjectId, true);
                     p.ProjectConfigurations = new List<ProjectConfiguration>()
@@ -86,14 +85,13 @@ namespace AdionFA.Core.Domain.Services.Projects
                         pconfig
                     };
 
-                    var entityHost = EntityServiceHostRepository.FirstOrDefault(
+                    var entityHost = _entityServiceHostRepository.FirstOrDefault(
                         eh => eh.EntityId == p.ProjectId && eh.EntityTypeId == (int)EntityTypeEnum.Project);
-                    //p.ProcessId = entityHost.ProcessId;
 
                     return p;
                 }
 
-                return ProjectRepository.FirstOrDefault(predicate, includes.ToArray());
+                return _projectRepository.FirstOrDefault(predicate, includes.ToArray());
             }
             catch (Exception ex)
             {
@@ -109,16 +107,15 @@ namespace AdionFA.Core.Domain.Services.Projects
                 Project p = new()
                 {
                     ProjectName = project.ProjectName,
-                    ProjectStepId = project.ProjectStepId,
                     ProjectConfigurations = new List<ProjectConfiguration>(),
                 };
 
-                // Find ProjectGlobalConfiguration
+                // Find Project Global Configuration
 
-                ProjectGlobalConfiguration configuration = ProjectGlobalConfigurationRepository.FirstOrDefault(
+                var configuration = _projectGlobalConfigurationRepository.FirstOrDefault(
                     c => c.ProjectGlobalConfigurationId == globalConfigurationId,
-                    c => c.ProjectGlobalScheduleConfigurations
-                ) ?? throw new GlobalConfigurationNotFoundException();
+                    c => c.ProjectGlobalScheduleConfigurations)
+                    ?? throw new GlobalConfigurationNotFoundException();
 
                 ProjectConfiguration projectConfiguration = new()
                 {
@@ -130,7 +127,7 @@ namespace AdionFA.Core.Domain.Services.Projects
 
                     // Extractor
 
-                    Variation = configuration.Variation,
+                    ExtractorMinVariation = configuration.ExtractorMinVariation,
 
                     // Period
 
@@ -138,66 +135,46 @@ namespace AdionFA.Core.Domain.Services.Projects
                     ToDateIS = configuration.ToDateIS,
                     FromDateOS = configuration.FromDateOS,
                     ToDateOS = configuration.ToDateOS,
-
-                    // Schedule
-
                     WithoutSchedule = configuration.WithoutSchedule,
 
                     // Currency
 
                     SymbolId = configuration.SymbolId,
                     TimeframeId = configuration.TimeframeId,
-                    CurrencySpreadId = configuration.CurrencySpreadId,
 
                     // Weka
 
                     TotalInstanceWeka = configuration.TotalInstanceWeka,
-
                     DepthWeka = configuration.DepthWeka,
-                    MinAdjustDepthWeka = configuration.MinAdjustDepthWeka,
-
                     TotalDecimalWeka = configuration.TotalDecimalWeka,
                     MinimalSeed = configuration.MinimalSeed,
                     MaximumSeed = configuration.MaximumSeed,
-
                     MaxRatioTree = configuration.MaxRatioTree,
-                    MinAdjustMaxRatioTree = configuration.MinAdjustMaxRatioTree,
-
                     NTotalTree = configuration.NTotalTree,
-                    MinAdjustNTotalTree = configuration.MinAdjustNTotalTree,
 
                     // Strategy Builder
 
-                    MinTransactionCountIS = configuration.MinTransactionCountIS,
-                    MinAdjustMinTransactionCountIS = configuration.MinAdjustMinTransactionCountIS,
-                    MinPercentSuccessIS = configuration.MinPercentSuccessIS,
-                    MinAdjustMinPercentSuccessIS = configuration.MinAdjustMinPercentSuccessIS,
+                    SBMinTransactionsIS = configuration.SBMinTransactionsIS,
+                    SBMinPercentSuccessIS = configuration.SBMinPercentSuccessIS,
 
-                    MinTransactionCountOS = configuration.MinTransactionCountOS,
-                    MinAdjustMinTransactionCountOS = configuration.MinAdjustMinTransactionCountOS,
-                    MinPercentSuccessOS = configuration.MinPercentSuccessOS,
-                    MinAdjustMinPercentSuccessOS = configuration.MinAdjustMinPercentSuccessOS,
+                    SBMinTransactionsOS = configuration.SBMinTransactionsIS,
+                    SBMinPercentSuccessOS = configuration.SBMaxTransactionsVariation,
 
-                    VariationTransaction = configuration.VariationTransaction,
-                    MinAdjustVariationTransaction = configuration.MinAdjustVariationTransaction,
+                    SBMaxTransactionsVariation = configuration.SBMaxTransactionsVariation,
 
                     Progressiveness = configuration.Progressiveness,
-                    MinAdjustProgressiveness = configuration.MinAdjustProgressiveness,
                     IsProgressiveness = configuration.IsProgressiveness,
 
-                    MaxPercentCorrelation = configuration.MaxPercentCorrelation,
+                    SBMaxPercentCorrelation = configuration.SBMaxPercentCorrelation,
 
-                    WinningStrategyTotalUP = configuration.WinningStrategyTotalUP,
-                    WinningStrategyTotalDOWN = configuration.WinningStrategyTotalDOWN,
-
-                    AutoAdjustConfig = configuration.AutoAdjustConfig,
-                    MaxAdjustConfig = configuration.MaxAdjustConfig,
+                    SBWinningStrategyUPTarget = configuration.SBWinningStrategyUPTarget,
+                    SBWinningStrategyDOWNTarget = configuration.SBWinningStrategyDOWNTarget,
+                    SBTransactionsTarget = configuration.SBTransactionsTarget,
 
                     // Assembled Builder
 
-                    TransactionTarget = configuration.TransactionTarget,
-                    MinAssemblyPercent = configuration.MinAssemblyPercent,
-                    TotalAssemblyIterations = configuration.TotalAssemblyIterations,
+                    ABTransactionsTarget = configuration.ABTransactionsTarget,
+                    ABMinImprovePercent = configuration.ABMinImprovePercent,
 
                     ProjectScheduleConfigurations = new List<ProjectScheduleConfiguration>(),
 
@@ -238,7 +215,7 @@ namespace AdionFA.Core.Domain.Services.Projects
                 }
 
                 p.ProjectConfigurations.Add(projectConfiguration);
-                ProjectRepository.Create(p);
+                _projectRepository.Create(p);
 
                 return p.ProjectId;
             }
@@ -255,7 +232,7 @@ namespace AdionFA.Core.Domain.Services.Projects
             {
                 if (project.ProjectId > 0)
                 {
-                    ProjectRepository.Update(project);
+                    _projectRepository.Update(project);
 
                     project.ProjectConfigurations?.ToList().ForEach(pc =>
                     {
@@ -281,13 +258,12 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                ProjectConfiguration pc = includeGraph ? ProjectConfigurationRepository.FirstOrDefault(
+                var pc = includeGraph ? _projectConfigurationRepository.FirstOrDefault(
                     pc => pc.ProjectId == projectId && pc.EndDate == null,
                     pc => pc.ProjectScheduleConfigurations,
-                    pc => pc.HistoricalData
-                ) : ProjectConfigurationRepository.FirstOrDefault(
-                    pc => pc.ProjectId == projectId && pc.EndDate == null
-                );
+                    pc => pc.HistoricalData)
+                    : _projectConfigurationRepository.FirstOrDefault(pc => pc.ProjectId == projectId && pc.EndDate == null);
+
                 return pc;
             }
             catch (Exception ex)
@@ -301,11 +277,11 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                ProjectConfigurationRepository.CloseTemporalRecord();
+                _projectConfigurationRepository.CloseTemporalRecord();
 
                 projectConfiguration.StartDate = DateTime.UtcNow;
 
-                ProjectConfigurationRepository.Create(projectConfiguration);
+                _projectConfigurationRepository.Create(projectConfiguration);
 
                 return projectConfiguration.ProjectConfigurationId;
             }
@@ -322,14 +298,14 @@ namespace AdionFA.Core.Domain.Services.Projects
             {
                 if (projectConfiguration.ProjectConfigurationId > 0)
                 {
-                    ProjectConfigurationRepository.Update(projectConfiguration);
+                    _projectConfigurationRepository.Update(projectConfiguration);
 
                     if ((projectConfiguration.ProjectScheduleConfigurations?.Count ?? 0) > 0)
                     {
                         foreach (var sch in projectConfiguration.ProjectScheduleConfigurations)
                         {
                             if (sch.ProjectScheduleConfigurationId > 0)
-                                ProjectScheduleConfigurationRepository.Update(sch);
+                                _projectScheduleConfigurationRepository.Update(sch);
                         }
                     }
 
@@ -349,11 +325,11 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                ProjectGlobalConfiguration configuration = ProjectGlobalConfigurationRepository.FirstOrDefault(
+                ProjectGlobalConfiguration configuration = _projectGlobalConfigurationRepository.FirstOrDefault(
                     c => c.EndDate == null,
                     c => c.ProjectGlobalScheduleConfigurations) ?? throw new GlobalConfigurationNotFoundException();
 
-                ProjectConfigurationRepository.CloseTemporalRecord();
+                _projectConfigurationRepository.CloseTemporalRecord();
 
                 ProjectConfiguration projectConfiguration = new()
                 {
@@ -365,7 +341,7 @@ namespace AdionFA.Core.Domain.Services.Projects
 
                     // Extractor
 
-                    Variation = configuration.Variation,
+                    ExtractorMinVariation = configuration.ExtractorMinVariation,
 
                     // Period
 
@@ -382,57 +358,40 @@ namespace AdionFA.Core.Domain.Services.Projects
 
                     SymbolId = configuration.SymbolId,
                     TimeframeId = configuration.TimeframeId,
-                    CurrencySpreadId = configuration.CurrencySpreadId,
 
                     // Weka
 
                     TotalInstanceWeka = configuration.TotalInstanceWeka,
-
                     DepthWeka = configuration.DepthWeka,
-                    MinAdjustDepthWeka = configuration.MinAdjustDepthWeka,
-
                     TotalDecimalWeka = configuration.TotalDecimalWeka,
                     MinimalSeed = configuration.MinimalSeed,
                     MaximumSeed = configuration.MaximumSeed,
-
                     MaxRatioTree = configuration.MaxRatioTree,
-                    MinAdjustMaxRatioTree = configuration.MinAdjustMaxRatioTree,
-
                     NTotalTree = configuration.NTotalTree,
-                    MinAdjustNTotalTree = configuration.MinAdjustNTotalTree,
 
                     // Strategy Builder
 
-                    MinTransactionCountIS = configuration.MinTransactionCountIS,
-                    MinAdjustMinTransactionCountIS = configuration.MinAdjustMinTransactionCountIS,
-                    MinPercentSuccessIS = configuration.MinPercentSuccessIS,
-                    MinAdjustMinPercentSuccessIS = configuration.MinAdjustMinPercentSuccessIS,
+                    SBMinTransactionsIS = configuration.SBMinTransactionsIS,
+                    SBMinPercentSuccessIS = configuration.SBMinPercentSuccessIS,
 
-                    MinTransactionCountOS = configuration.MinTransactionCountOS,
-                    MinAdjustMinTransactionCountOS = configuration.MinAdjustMinTransactionCountOS,
-                    MinPercentSuccessOS = configuration.MinPercentSuccessOS,
-                    MinAdjustMinPercentSuccessOS = configuration.MinAdjustMinPercentSuccessOS,
+                    SBMinTransactionsOS = configuration.SBMinTransactionsIS,
+                    SBMinPercentSuccessOS = configuration.SBMaxTransactionsVariation,
 
-                    VariationTransaction = configuration.VariationTransaction,
-                    MinAdjustVariationTransaction = configuration.MinAdjustVariationTransaction,
+                    SBMaxTransactionsVariation = configuration.SBMaxTransactionsVariation,
 
                     Progressiveness = configuration.Progressiveness,
-                    MinAdjustProgressiveness = configuration.MinAdjustProgressiveness,
                     IsProgressiveness = configuration.IsProgressiveness,
 
-                    MaxPercentCorrelation = configuration.MaxPercentCorrelation,
+                    SBMaxPercentCorrelation = configuration.SBMaxPercentCorrelation,
 
-                    WinningStrategyTotalUP = configuration.WinningStrategyTotalUP,
-                    WinningStrategyTotalDOWN = configuration.WinningStrategyTotalDOWN,
-
-                    AutoAdjustConfig = configuration.AutoAdjustConfig,
-                    MaxAdjustConfig = configuration.MaxAdjustConfig,
+                    SBWinningStrategyUPTarget = configuration.SBWinningStrategyUPTarget,
+                    SBWinningStrategyDOWNTarget = configuration.SBWinningStrategyDOWNTarget,
+                    SBTransactionsTarget = configuration.SBTransactionsTarget,
 
                     // Assembled Builder
 
-                    TransactionTarget = configuration.TransactionTarget,
-                    MinAssemblyPercent = configuration.MinAssemblyPercent,
-                    TotalAssemblyIterations = configuration.TotalAssemblyIterations,
+                    ABTransactionsTarget = configuration.ABTransactionsTarget,
+                    ABMinImprovePercent = configuration.ABMinImprovePercent,
 
                     ProjectScheduleConfigurations = new List<ProjectScheduleConfiguration>(),
 
@@ -463,7 +422,7 @@ namespace AdionFA.Core.Domain.Services.Projects
                     }
                 }
 
-                ProjectConfigurationRepository.Create(projectConfiguration);
+                _projectConfigurationRepository.Create(projectConfiguration);
 
                 return projectConfiguration;
             }
@@ -480,7 +439,7 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                var esh = EntityServiceHostRepository.FirstOrDefault(
+                var esh = _entityServiceHostRepository.FirstOrDefault(
                     _esh => _esh.EntityId == entityId &&
                             _esh.EntityTypeId == entityTypeId);
 
@@ -494,9 +453,9 @@ namespace AdionFA.Core.Domain.Services.Projects
                 esh.UpdatedById = _ownerId;
 
                 if (esh.EntityServiceHostId == 0)
-                    EntityServiceHostRepository.Create(esh);
+                    _entityServiceHostRepository.Create(esh);
                 else
-                    EntityServiceHostRepository.Update(esh);
+                    _entityServiceHostRepository.Update(esh);
 
                 return true;
             }

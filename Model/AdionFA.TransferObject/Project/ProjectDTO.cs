@@ -8,36 +8,24 @@ namespace AdionFA.TransferObject.Project
 {
     public class ProjectDTO : EntityBaseDTO
     {
-        #region Properties
-
         public int ProjectId { get; set; }
 
         public string ProjectName { get; set; }
 
-        public int ProjectStepId { get; set; }
-        public ProjectStepDTO ProjectStep { get; set; }
 
-        #endregion
-
-        #region Navegation Properties
+        // Navigation
 
         public IList<ProjectConfigurationDTO> ProjectConfigurations { get; set; }
 
         public ICollection<ExpertAdvisorDTO> ExpertAdvisors { get; set; }
 
-        #endregion
-
-        #region Not Mapped
+        // Not Mapped
 
         public DateTime? ProcessLastDate { get; set; }
 
         public long ProcessId { get; set; }
 
-        #endregion
-
-        #region Validators
-
-        #region CurrencyPairAndCurrencyPeriodMustBeSameValidation
+        // Validators
 
         public static ResponseDTO CurrencyPairAndCurrencyPeriodMustBeSameValidation(
             int cCurrencyPairId, int cCurrencyPeriodId,
@@ -63,9 +51,5 @@ namespace AdionFA.TransferObject.Project
 
             return vr;
         }
-
-        #endregion
-
-        #endregion
     }
 }

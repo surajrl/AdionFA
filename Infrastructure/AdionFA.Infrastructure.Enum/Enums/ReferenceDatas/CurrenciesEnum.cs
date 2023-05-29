@@ -39,54 +39,6 @@ namespace AdionFA.Infrastructure.Enums
         MN1 = 9
     }
 
-    public enum CurrencySpreadEnum
-    {
-        [Metadata("One", "One", valueKey: "1", resourceType: typeof(EnumResources))]
-        One = 1,
-
-        [Metadata("Two", "Two", valueKey: "2", resourceType: typeof(EnumResources))]
-        Two = 2,
-
-        [Metadata("Three", "Three", valueKey: "3", resourceType: typeof(EnumResources))]
-        Three = 3,
-
-        [Metadata("Four", "Four", valueKey: "4", resourceType: typeof(EnumResources))]
-        Four = 4,
-
-        [Metadata("Five", "Five", valueKey: "5", resourceType: typeof(EnumResources))]
-        Five = 5,
-
-        [Metadata("Six", "Six", valueKey: "6", resourceType: typeof(EnumResources))]
-        Six = 6,
-
-        [Metadata("Seven", "Seven", valueKey: "7", resourceType: typeof(EnumResources))]
-        Seven = 7,
-
-        [Metadata("Eight", "Eight", valueKey: "8", resourceType: typeof(EnumResources))]
-        Eight = 8,
-
-        [Metadata("Nine", "Nine", valueKey: "9", resourceType: typeof(EnumResources))]
-        Nine = 9,
-
-        [Metadata("Ten", "Ten", valueKey: "10", resourceType: typeof(EnumResources))]
-        Ten = 10,
-
-        [Metadata("Eleven", "Eleven", valueKey: "11", resourceType: typeof(EnumResources))]
-        Eleven = 11,
-
-        [Metadata("Twelve", "Twelve", valueKey: "12", resourceType: typeof(EnumResources))]
-        Twelve = 12,
-
-        [Metadata("Thirteen", "Thirteen", valueKey: "13", resourceType: typeof(EnumResources))]
-        Thirteen = 13,
-
-        [Metadata("Fourteen", "Fourteen", valueKey: "14", resourceType: typeof(EnumResources))]
-        Fourteen = 14,
-
-        [Metadata("Fifteen", "Fifteen", valueKey: "15", resourceType: typeof(EnumResources))]
-        Fifteen = 15,
-    }
-
     public enum CurrencyEnum
     {
         [Metadata("AFN", resourceType: typeof(CurrenciesResources))]

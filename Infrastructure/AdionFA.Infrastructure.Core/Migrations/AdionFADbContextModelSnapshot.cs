@@ -121,7 +121,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SETT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 799, DateTimeKind.Utc).AddTicks(3688),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 963, DateTimeKind.Utc).AddTicks(4475),
                             Description = "Setting",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -134,7 +134,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MKDT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 800, DateTimeKind.Utc).AddTicks(853),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 964, DateTimeKind.Utc).AddTicks(45),
                             Description = "Market Data",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -147,7 +147,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PROJ",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 800, DateTimeKind.Utc).AddTicks(5950),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 964, DateTimeKind.Utc).AddTicks(5996),
                             Description = "Project",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -160,7 +160,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PROJCONFIG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 801, DateTimeKind.Utc).AddTicks(1235),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 965, DateTimeKind.Utc).AddTicks(1491),
                             Description = "Project Configuration",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -173,7 +173,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CONFIG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 801, DateTimeKind.Utc).AddTicks(6624),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 965, DateTimeKind.Utc).AddTicks(6921),
                             Description = "Project Global Configuration",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -186,7 +186,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "EXT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 802, DateTimeKind.Utc).AddTicks(1778),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 966, DateTimeKind.Utc).AddTicks(2328),
                             Description = "Extractor",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -196,10 +196,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         new
                         {
                             EntityTypeId = 504,
-                            Code = "STRBUILD",
+                            Code = "SB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 802, DateTimeKind.Utc).AddTicks(9940),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 966, DateTimeKind.Utc).AddTicks(7671),
                             Description = "Strategy Builder",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -209,10 +209,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         new
                         {
                             EntityTypeId = 505,
-                            Code = "ASSBUILD",
+                            Code = "AB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 803, DateTimeKind.Utc).AddTicks(5535),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 967, DateTimeKind.Utc).AddTicks(3232),
                             Description = "Assembled Builder",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -277,7 +277,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Culture",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 804, DateTimeKind.Utc).AddTicks(1394),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 967, DateTimeKind.Utc).AddTicks(9127),
                             Inaccesible = false,
                             IsDeleted = false,
                             TenantId = "22222222-2222-2222-2222-222222222222",
@@ -289,7 +289,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Theme",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 804, DateTimeKind.Utc).AddTicks(6552),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 968, DateTimeKind.Utc).AddTicks(4641),
                             Inaccesible = false,
                             IsDeleted = false,
                             TenantId = "22222222-2222-2222-2222-222222222222",
@@ -301,7 +301,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Color",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 805, DateTimeKind.Utc).AddTicks(1261),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 969, DateTimeKind.Utc).AddTicks(2735),
                             Inaccesible = false,
                             IsDeleted = false,
                             TenantId = "22222222-2222-2222-2222-222222222222",
@@ -313,7 +313,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "DefaultWorkspace",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 805, DateTimeKind.Utc).AddTicks(5691),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 970, DateTimeKind.Utc).AddTicks(1262),
                             Inaccesible = false,
                             IsDeleted = false,
                             TenantId = "22222222-2222-2222-2222-222222222222",
@@ -325,7 +325,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Host",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 805, DateTimeKind.Utc).AddTicks(9764),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 970, DateTimeKind.Utc).AddTicks(8615),
                             Inaccesible = false,
                             IsDeleted = false,
                             TenantId = "22222222-2222-2222-2222-222222222222",
@@ -337,273 +337,11 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Port",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 806, DateTimeKind.Utc).AddTicks(3861),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 971, DateTimeKind.Utc).AddTicks(6653),
                             Inaccesible = false,
                             IsDeleted = false,
                             TenantId = "22222222-2222-2222-2222-222222222222",
                             Value = "5555"
-                        });
-                });
-
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.MarketData.CurrencySpread", b =>
-                {
-                    b.Property<int>("CurrencySpreadId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("CurrencySpreadId");
-
-                    b.ToTable("CurrencySpread");
-
-                    b.HasData(
-                        new
-                        {
-                            CurrencySpreadId = 1,
-                            Code = "One",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 806, DateTimeKind.Utc).AddTicks(8005),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "One",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "1"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 2,
-                            Code = "Two",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 807, DateTimeKind.Utc).AddTicks(1873),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Two",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "2"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 3,
-                            Code = "Three",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 807, DateTimeKind.Utc).AddTicks(5886),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Three",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "3"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 4,
-                            Code = "Four",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 807, DateTimeKind.Utc).AddTicks(9699),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Four",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "4"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 5,
-                            Code = "Five",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 808, DateTimeKind.Utc).AddTicks(3795),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Five",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "5"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 6,
-                            Code = "Six",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 808, DateTimeKind.Utc).AddTicks(8740),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Six",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "6"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 7,
-                            Code = "Seven",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 809, DateTimeKind.Utc).AddTicks(6029),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Seven",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "7"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 8,
-                            Code = "Eight",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 810, DateTimeKind.Utc).AddTicks(8002),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Eight",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "8"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 9,
-                            Code = "Nine",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 811, DateTimeKind.Utc).AddTicks(9621),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Nine",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "9"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 10,
-                            Code = "Ten",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 812, DateTimeKind.Utc).AddTicks(7889),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Ten",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "10"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 11,
-                            Code = "Eleven",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 813, DateTimeKind.Utc).AddTicks(5582),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Eleven",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "11"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 12,
-                            Code = "Twelve",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 814, DateTimeKind.Utc).AddTicks(9077),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Twelve",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "12"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 13,
-                            Code = "Thirteen",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 815, DateTimeKind.Utc).AddTicks(5114),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Thirteen",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "13"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 14,
-                            Code = "Fourteen",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 816, DateTimeKind.Utc).AddTicks(328),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Fourteen",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "14"
-                        },
-                        new
-                        {
-                            CurrencySpreadId = 15,
-                            Code = "Fifteen",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 816, DateTimeKind.Utc).AddTicks(5530),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Fifteen",
-                            TenantId = "22222222-2222-2222-2222-222222222222",
-                            Value = "15"
                         });
                 });
 
@@ -792,7 +530,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Forex",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 822, DateTimeKind.Utc).AddTicks(3151),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 979, DateTimeKind.Utc).AddTicks(5795),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -857,7 +595,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "America",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 822, DateTimeKind.Utc).AddTicks(8430),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 980, DateTimeKind.Utc).AddTicks(3883),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -870,7 +608,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Europe",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 823, DateTimeKind.Utc).AddTicks(3535),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 981, DateTimeKind.Utc).AddTicks(1740),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -883,7 +621,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Asia",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 823, DateTimeKind.Utc).AddTicks(8413),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(55),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -948,7 +686,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "EURUSD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 806, DateTimeKind.Utc).AddTicks(3910),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 971, DateTimeKind.Utc).AddTicks(6763),
                             Description = "Euro vs US Dollar",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1013,7 +751,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "M1",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 817, DateTimeKind.Utc).AddTicks(847),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 972, DateTimeKind.Utc).AddTicks(4605),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1027,7 +765,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "M5",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 817, DateTimeKind.Utc).AddTicks(5769),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 973, DateTimeKind.Utc).AddTicks(2277),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1041,7 +779,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "M15",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 818, DateTimeKind.Utc).AddTicks(5030),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 974, DateTimeKind.Utc).AddTicks(593),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1055,7 +793,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "M30",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 819, DateTimeKind.Utc).AddTicks(2114),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 974, DateTimeKind.Utc).AddTicks(9553),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1069,7 +807,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "H1",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 819, DateTimeKind.Utc).AddTicks(8045),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 975, DateTimeKind.Utc).AddTicks(8609),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1083,7 +821,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "H4",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 820, DateTimeKind.Utc).AddTicks(3702),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 976, DateTimeKind.Utc).AddTicks(6467),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1097,7 +835,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "D1",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 820, DateTimeKind.Utc).AddTicks(8831),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 977, DateTimeKind.Utc).AddTicks(3749),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1111,7 +849,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "W1",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 821, DateTimeKind.Utc).AddTicks(3311),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 978, DateTimeKind.Utc).AddTicks(878),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1125,7 +863,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MN1",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 821, DateTimeKind.Utc).AddTicks(8191),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 978, DateTimeKind.Utc).AddTicks(8209),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -1205,69 +943,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.ToTable("ExpertAdvisor");
                 });
 
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Organization.Organization", b =>
-                {
-                    b.Property<string>("OrganizationId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("LegalName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ParentOrganizationId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("OrganizationId");
-
-                    b.HasIndex("ParentOrganizationId");
-
-                    b.ToTable("Organization");
-
-                    b.HasData(
-                        new
-                        {
-                            OrganizationId = "22222222-2222-2222-2222-222222222222",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9029),
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            LegalName = "AdionFA",
-                            Name = "AdionFA",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
-                        });
-                });
-
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.Project", b =>
                 {
                     b.Property<int>("ProjectId")
@@ -1292,9 +967,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<string>("ProjectName")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProjectStepId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("TenantId")
                         .HasColumnType("TEXT");
 
@@ -1312,8 +984,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.HasIndex("ProjectName")
                         .IsUnique();
 
-                    b.HasIndex("ProjectStepId");
-
                     b.ToTable("Project");
                 });
 
@@ -1323,7 +993,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("AutoAdjustConfig")
+                    b.Property<decimal>("ABMinImprovePercent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ABTransactionsTarget")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedById")
@@ -1335,9 +1008,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("CurrencySpreadId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("DepthWeka")
                         .HasColumnType("INTEGER");
 
@@ -1346,6 +1016,9 @@ namespace AdionFA.Infrastructure.Core.Migrations
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("ExtractorMinVariation")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("FromDateIS")
                         .HasColumnType("TEXT");
@@ -1368,58 +1041,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<bool>("IsProgressiveness")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MaxAdjustConfig")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("MaxPercentCorrelation")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("MaxRatioTree")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MaximumSeed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinAdjustDepthWeka")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("MinAdjustMaxRatioTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustMinPercentSuccessIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustMinPercentSuccessOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MinAdjustMinTransactionCountIS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinAdjustMinTransactionCountOS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("MinAdjustNTotalTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustProgressiveness")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustVariationTransaction")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAssemblyPercent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinPercentSuccessIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinPercentSuccessOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MinTransactionCountIS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinTransactionCountOS")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MinimalSeed")
@@ -1432,6 +1057,33 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("SBMaxPercentCorrelation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMaxTransactionsVariation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMinPercentSuccessIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMinPercentSuccessOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SBMinTransactionsIS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBMinTransactionsOS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBTransactionsTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBWinningStrategyDOWNTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBWinningStrategyUPTarget")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartDate")
@@ -1452,16 +1104,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("ToDateOS")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TotalAssemblyIterations")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("TotalDecimalWeka")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalInstanceWeka")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TransactionTarget")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UpdatedById")
@@ -1473,18 +1119,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Variation")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("VariationTransaction")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("WinningStrategyTotalDOWN")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("WinningStrategyTotalUP")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("WithoutSchedule")
                         .HasColumnType("INTEGER");
 
@@ -1492,8 +1126,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("ProjectConfigurationId");
-
-                    b.HasIndex("CurrencySpreadId");
 
                     b.HasIndex("HistoricalDataId");
 
@@ -1512,7 +1144,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("AutoAdjustConfig")
+                    b.Property<decimal>("ABMinImprovePercent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ABTransactionsTarget")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedById")
@@ -1524,9 +1159,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("CurrencySpreadId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("DepthWeka")
                         .HasColumnType("INTEGER");
 
@@ -1535,6 +1167,9 @@ namespace AdionFA.Infrastructure.Core.Migrations
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("ExtractorMinVariation")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("FromDateIS")
                         .HasColumnType("TEXT");
@@ -1551,58 +1186,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<bool>("IsProgressiveness")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MaxAdjustConfig")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("MaxPercentCorrelation")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("MaxRatioTree")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MaximumSeed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinAdjustDepthWeka")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("MinAdjustMaxRatioTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustMinPercentSuccessIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustMinPercentSuccessOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MinAdjustMinTransactionCountIS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinAdjustMinTransactionCountOS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("MinAdjustNTotalTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustProgressiveness")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAdjustVariationTransaction")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinAssemblyPercent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinPercentSuccessIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("MinPercentSuccessOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MinTransactionCountIS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinTransactionCountOS")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MinimalSeed")
@@ -1613,6 +1200,33 @@ namespace AdionFA.Infrastructure.Core.Migrations
 
                     b.Property<decimal>("Progressiveness")
                         .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMaxPercentCorrelation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMaxTransactionsVariation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMinPercentSuccessIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SBMinPercentSuccessOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SBMinTransactionsIS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBMinTransactionsOS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBTransactionsTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBWinningStrategyDOWNTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SBWinningStrategyUPTarget")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
@@ -1632,16 +1246,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("ToDateOS")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TotalAssemblyIterations")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("TotalDecimalWeka")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalInstanceWeka")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TransactionTarget")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UpdatedById")
@@ -1653,24 +1261,10 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Variation")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("VariationTransaction")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("WinningStrategyTotalDOWN")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("WinningStrategyTotalUP")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("WithoutSchedule")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProjectGlobalConfigurationId");
-
-                    b.HasIndex("CurrencySpreadId");
 
                     b.HasIndex("SymbolId");
 
@@ -1682,49 +1276,37 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         new
                         {
                             ProjectGlobalConfigurationId = 1,
-                            AutoAdjustConfig = false,
+                            ABMinImprovePercent = 5m,
+                            ABTransactionsTarget = 600,
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9238),
-                            CurrencySpreadId = 5,
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(174),
                             DepthWeka = 6,
                             Description = "Default Configuration",
+                            ExtractorMinVariation = 50,
                             Inaccesible = false,
                             IsDeleted = false,
                             IsProgressiveness = false,
-                            MaxAdjustConfig = 5,
-                            MaxPercentCorrelation = 2m,
                             MaxRatioTree = 1.5m,
                             MaximumSeed = 1000000,
-                            MinAdjustDepthWeka = 5,
-                            MinAdjustMaxRatioTree = 1m,
-                            MinAdjustMinPercentSuccessIS = 50m,
-                            MinAdjustMinPercentSuccessOS = 50m,
-                            MinAdjustMinTransactionCountIS = 360,
-                            MinAdjustMinTransactionCountOS = 180,
-                            MinAdjustNTotalTree = 150m,
-                            MinAdjustProgressiveness = 2m,
-                            MinAdjustVariationTransaction = 4m,
-                            MinAssemblyPercent = 5m,
-                            MinPercentSuccessIS = 55m,
-                            MinPercentSuccessOS = 55m,
-                            MinTransactionCountIS = 300,
-                            MinTransactionCountOS = 100,
                             MinimalSeed = 100,
                             NTotalTree = 300m,
                             Progressiveness = 2m,
-                            StartDate = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9234),
+                            SBMaxPercentCorrelation = 2m,
+                            SBMaxTransactionsVariation = 4m,
+                            SBMinPercentSuccessIS = 55m,
+                            SBMinPercentSuccessOS = 55m,
+                            SBMinTransactionsIS = 300,
+                            SBMinTransactionsOS = 100,
+                            SBTransactionsTarget = 300,
+                            SBWinningStrategyDOWNTarget = 6,
+                            SBWinningStrategyUPTarget = 6,
+                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(162),
                             SymbolId = 1,
                             TenantId = "22222222-2222-2222-2222-222222222222",
                             TimeframeId = 5,
-                            TotalAssemblyIterations = 1,
                             TotalDecimalWeka = 5,
                             TotalInstanceWeka = 1,
-                            TransactionTarget = 600,
-                            Variation = 50,
-                            VariationTransaction = 4m,
-                            WinningStrategyTotalDOWN = 6,
-                            WinningStrategyTotalUP = 6,
                             WithoutSchedule = true
                         });
                 });
@@ -1797,14 +1379,14 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             ProjectGlobalScheduleConfigurationId = 1,
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9290),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(248),
                             Description = "Default Schedule America",
                             FromTimeInSeconds = 54000,
                             Inaccesible = false,
                             IsDeleted = false,
                             MarketRegionId = 1,
                             ProjectGlobalConfigurationId = 1,
-                            StartDate = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9288),
+                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(246),
                             TenantId = "22222222-2222-2222-2222-222222222222",
                             ToTimeInSeconds = 82800
                         },
@@ -1813,14 +1395,14 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             ProjectGlobalScheduleConfigurationId = 2,
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9296),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(271),
                             Description = "Default Schedule Europe",
                             FromTimeInSeconds = 32400,
                             Inaccesible = false,
                             IsDeleted = false,
                             MarketRegionId = 2,
                             ProjectGlobalConfigurationId = 1,
-                            StartDate = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9295),
+                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(269),
                             TenantId = "22222222-2222-2222-2222-222222222222",
                             ToTimeInSeconds = 64800
                         },
@@ -1829,14 +1411,14 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             ProjectGlobalScheduleConfigurationId = 3,
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9300),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(276),
                             Description = "Default Schedule Asia",
                             FromTimeInSeconds = 3600,
                             Inaccesible = false,
                             IsDeleted = false,
                             MarketRegionId = 3,
                             ProjectGlobalConfigurationId = 1,
-                            StartDate = new DateTime(2023, 5, 21, 22, 24, 33, 836, DateTimeKind.Utc).AddTicks(9298),
+                            StartDate = new DateTime(2023, 5, 28, 23, 22, 45, 982, DateTimeKind.Utc).AddTicks(275),
                             TenantId = "22222222-2222-2222-2222-222222222222",
                             ToTimeInSeconds = 32400
                         });
@@ -1905,110 +1487,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.ToTable("ProjectScheduleConfiguration");
                 });
 
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectStep", b =>
-                {
-                    b.Property<int>("ProjectStepId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Inaccesible")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ProjectStepId");
-
-                    b.ToTable("ProjectStep");
-
-                    b.HasData(
-                        new
-                        {
-                            ProjectStepId = 1,
-                            Code = "InitialConfiguration",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 837, DateTimeKind.Utc).AddTicks(6404),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Initial Configuration",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
-                        },
-                        new
-                        {
-                            ProjectStepId = 2,
-                            Code = "DataExtractor",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 838, DateTimeKind.Utc).AddTicks(1232),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Data Extractor",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
-                        },
-                        new
-                        {
-                            ProjectStepId = 3,
-                            Code = "MacroTransformation",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 838, DateTimeKind.Utc).AddTicks(6132),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Macro Transformation",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
-                        },
-                        new
-                        {
-                            ProjectStepId = 4,
-                            Code = "ChileanTrees",
-                            CreatedById = "11111111-1111-1111-11111111111111111",
-                            CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 839, DateTimeKind.Utc).AddTicks(859),
-                            Description = "",
-                            Inaccesible = false,
-                            IsDeleted = false,
-                            Name = "Chilean Trees",
-                            TenantId = "22222222-2222-2222-2222-222222222222"
-                        });
-                });
-
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.ReferenceData.Currency", b =>
                 {
                     b.Property<int>("CurrencyId")
@@ -2065,7 +1543,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AFN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 839, DateTimeKind.Utc).AddTicks(7201),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 983, DateTimeKind.Utc).AddTicks(986),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2079,7 +1557,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AFA",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 840, DateTimeKind.Utc).AddTicks(2016),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 983, DateTimeKind.Utc).AddTicks(8977),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2093,7 +1571,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ALL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 840, DateTimeKind.Utc).AddTicks(6457),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 984, DateTimeKind.Utc).AddTicks(7783),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2107,7 +1585,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "DZD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 841, DateTimeKind.Utc).AddTicks(849),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 985, DateTimeKind.Utc).AddTicks(5946),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2121,7 +1599,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ADF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 841, DateTimeKind.Utc).AddTicks(5441),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 986, DateTimeKind.Utc).AddTicks(3388),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2135,7 +1613,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ADP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 841, DateTimeKind.Utc).AddTicks(9948),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 987, DateTimeKind.Utc).AddTicks(1860),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2149,7 +1627,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AOA",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 843, DateTimeKind.Utc).AddTicks(3357),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 987, DateTimeKind.Utc).AddTicks(9620),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2163,7 +1641,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AON",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 844, DateTimeKind.Utc).AddTicks(6656),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 988, DateTimeKind.Utc).AddTicks(7752),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2177,7 +1655,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ARS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 845, DateTimeKind.Utc).AddTicks(8634),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 989, DateTimeKind.Utc).AddTicks(6658),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2191,7 +1669,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AMD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 846, DateTimeKind.Utc).AddTicks(4932),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 990, DateTimeKind.Utc).AddTicks(4655),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2205,7 +1683,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AWG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 847, DateTimeKind.Utc).AddTicks(512),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 991, DateTimeKind.Utc).AddTicks(1625),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2219,7 +1697,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AUD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 847, DateTimeKind.Utc).AddTicks(5895),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 991, DateTimeKind.Utc).AddTicks(9803),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2233,7 +1711,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ATS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 848, DateTimeKind.Utc).AddTicks(1031),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 992, DateTimeKind.Utc).AddTicks(8192),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2247,7 +1725,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AZM",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 848, DateTimeKind.Utc).AddTicks(5116),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 993, DateTimeKind.Utc).AddTicks(5539),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2261,7 +1739,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AZN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 848, DateTimeKind.Utc).AddTicks(9140),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 994, DateTimeKind.Utc).AddTicks(3010),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2275,7 +1753,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BSD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 849, DateTimeKind.Utc).AddTicks(2907),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 995, DateTimeKind.Utc).AddTicks(1003),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2289,7 +1767,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BHD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 849, DateTimeKind.Utc).AddTicks(6829),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 995, DateTimeKind.Utc).AddTicks(9536),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2303,7 +1781,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BDT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 850, DateTimeKind.Utc).AddTicks(4181),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 996, DateTimeKind.Utc).AddTicks(6800),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2317,7 +1795,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BBD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 851, DateTimeKind.Utc).AddTicks(314),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 997, DateTimeKind.Utc).AddTicks(4062),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2331,7 +1809,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BEF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 851, DateTimeKind.Utc).AddTicks(7294),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 998, DateTimeKind.Utc).AddTicks(2171),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2345,7 +1823,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BZD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 852, DateTimeKind.Utc).AddTicks(3521),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 998, DateTimeKind.Utc).AddTicks(9371),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2359,7 +1837,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BMD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 852, DateTimeKind.Utc).AddTicks(8342),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 45, 999, DateTimeKind.Utc).AddTicks(6188),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2373,7 +1851,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BTN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 853, DateTimeKind.Utc).AddTicks(2508),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 0, DateTimeKind.Utc).AddTicks(3854),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2387,7 +1865,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BOB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 853, DateTimeKind.Utc).AddTicks(6547),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 1, DateTimeKind.Utc).AddTicks(2788),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2401,7 +1879,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BAM",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 854, DateTimeKind.Utc).AddTicks(635),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 2, DateTimeKind.Utc).AddTicks(1168),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2415,7 +1893,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BWP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 854, DateTimeKind.Utc).AddTicks(5399),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 2, DateTimeKind.Utc).AddTicks(8832),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2429,7 +1907,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BRL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 854, DateTimeKind.Utc).AddTicks(9418),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 3, DateTimeKind.Utc).AddTicks(6943),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2443,7 +1921,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GBP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 855, DateTimeKind.Utc).AddTicks(3228),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 4, DateTimeKind.Utc).AddTicks(5772),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2457,7 +1935,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BND",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 855, DateTimeKind.Utc).AddTicks(6996),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 5, DateTimeKind.Utc).AddTicks(3719),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2471,7 +1949,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BGN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 856, DateTimeKind.Utc).AddTicks(779),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 6, DateTimeKind.Utc).AddTicks(1963),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2485,7 +1963,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BGL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 856, DateTimeKind.Utc).AddTicks(4609),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 7, DateTimeKind.Utc).AddTicks(46),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2499,7 +1977,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BIF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 856, DateTimeKind.Utc).AddTicks(8436),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 7, DateTimeKind.Utc).AddTicks(7513),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2513,7 +1991,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "BYR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 857, DateTimeKind.Utc).AddTicks(2263),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 8, DateTimeKind.Utc).AddTicks(5340),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2527,7 +2005,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XOF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 857, DateTimeKind.Utc).AddTicks(6100),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 9, DateTimeKind.Utc).AddTicks(4651),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2541,7 +2019,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XAF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 857, DateTimeKind.Utc).AddTicks(9874),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 10, DateTimeKind.Utc).AddTicks(2947),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2555,7 +2033,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XPF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 858, DateTimeKind.Utc).AddTicks(4375),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 10, DateTimeKind.Utc).AddTicks(8436),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2569,7 +2047,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KHR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 859, DateTimeKind.Utc).AddTicks(3119),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 11, DateTimeKind.Utc).AddTicks(3646),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2583,7 +2061,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CAD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 860, DateTimeKind.Utc).AddTicks(6745),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 11, DateTimeKind.Utc).AddTicks(8704),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2597,7 +2075,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CVE",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 861, DateTimeKind.Utc).AddTicks(8484),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 12, DateTimeKind.Utc).AddTicks(3497),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2611,7 +2089,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KYD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 862, DateTimeKind.Utc).AddTicks(6248),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 12, DateTimeKind.Utc).AddTicks(8311),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2625,7 +2103,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CLP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 863, DateTimeKind.Utc).AddTicks(3658),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 13, DateTimeKind.Utc).AddTicks(3281),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2639,7 +2117,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CNY",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 864, DateTimeKind.Utc).AddTicks(76),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 13, DateTimeKind.Utc).AddTicks(8483),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2653,7 +2131,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "COP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 864, DateTimeKind.Utc).AddTicks(7980),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 14, DateTimeKind.Utc).AddTicks(3253),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2667,7 +2145,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KMF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 865, DateTimeKind.Utc).AddTicks(4916),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 14, DateTimeKind.Utc).AddTicks(8153),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2681,7 +2159,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CDF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 866, DateTimeKind.Utc).AddTicks(1837),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 15, DateTimeKind.Utc).AddTicks(3082),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2695,7 +2173,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CRC",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 866, DateTimeKind.Utc).AddTicks(7708),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 15, DateTimeKind.Utc).AddTicks(7879),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2709,7 +2187,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "HRK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 867, DateTimeKind.Utc).AddTicks(3045),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 16, DateTimeKind.Utc).AddTicks(2943),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2723,7 +2201,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CUC",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 867, DateTimeKind.Utc).AddTicks(8525),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 16, DateTimeKind.Utc).AddTicks(9179),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2737,7 +2215,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CUP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 868, DateTimeKind.Utc).AddTicks(4974),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 17, DateTimeKind.Utc).AddTicks(6407),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2751,7 +2229,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CYP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 869, DateTimeKind.Utc).AddTicks(286),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 18, DateTimeKind.Utc).AddTicks(1763),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2765,7 +2243,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CZK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 869, DateTimeKind.Utc).AddTicks(6014),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 18, DateTimeKind.Utc).AddTicks(6918),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2779,7 +2257,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "DKK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 870, DateTimeKind.Utc).AddTicks(1489),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 19, DateTimeKind.Utc).AddTicks(1897),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2793,7 +2271,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "DJF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 870, DateTimeKind.Utc).AddTicks(6666),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 19, DateTimeKind.Utc).AddTicks(7028),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2807,7 +2285,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "DOP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 871, DateTimeKind.Utc).AddTicks(2140),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 20, DateTimeKind.Utc).AddTicks(2449),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2821,7 +2299,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NLG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 871, DateTimeKind.Utc).AddTicks(7754),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 20, DateTimeKind.Utc).AddTicks(7507),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2835,7 +2313,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XCD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 872, DateTimeKind.Utc).AddTicks(2637),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 21, DateTimeKind.Utc).AddTicks(2351),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2849,7 +2327,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XEU",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 872, DateTimeKind.Utc).AddTicks(7594),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 21, DateTimeKind.Utc).AddTicks(7137),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2863,7 +2341,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ECS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 873, DateTimeKind.Utc).AddTicks(3737),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 22, DateTimeKind.Utc).AddTicks(2107),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2877,7 +2355,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "EGP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 873, DateTimeKind.Utc).AddTicks(9375),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 22, DateTimeKind.Utc).AddTicks(6959),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2891,7 +2369,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SVC",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 874, DateTimeKind.Utc).AddTicks(5225),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 23, DateTimeKind.Utc).AddTicks(2575),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2905,7 +2383,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "EEK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 875, DateTimeKind.Utc).AddTicks(3938),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 24, DateTimeKind.Utc).AddTicks(1998),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2919,7 +2397,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ETB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 876, DateTimeKind.Utc).AddTicks(6406),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 24, DateTimeKind.Utc).AddTicks(8287),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2933,7 +2411,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "EUR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 877, DateTimeKind.Utc).AddTicks(5434),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 25, DateTimeKind.Utc).AddTicks(3294),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2947,7 +2425,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "FKP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 878, DateTimeKind.Utc).AddTicks(4232),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 25, DateTimeKind.Utc).AddTicks(8185),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2961,7 +2439,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "FJD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 878, DateTimeKind.Utc).AddTicks(9246),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 26, DateTimeKind.Utc).AddTicks(3132),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2975,7 +2453,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "FIM",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 879, DateTimeKind.Utc).AddTicks(3829),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 26, DateTimeKind.Utc).AddTicks(8222),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -2989,7 +2467,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "FRF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 879, DateTimeKind.Utc).AddTicks(8492),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 27, DateTimeKind.Utc).AddTicks(2981),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3003,7 +2481,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GMD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 880, DateTimeKind.Utc).AddTicks(3661),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 27, DateTimeKind.Utc).AddTicks(7760),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3017,7 +2495,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GEL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 880, DateTimeKind.Utc).AddTicks(9135),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 28, DateTimeKind.Utc).AddTicks(2689),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3031,7 +2509,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "DEM",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 881, DateTimeKind.Utc).AddTicks(4599),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 28, DateTimeKind.Utc).AddTicks(7549),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3045,7 +2523,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GHC",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 882, DateTimeKind.Utc).AddTicks(4392),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 29, DateTimeKind.Utc).AddTicks(2460),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3059,7 +2537,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GHS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 883, DateTimeKind.Utc).AddTicks(1012),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 29, DateTimeKind.Utc).AddTicks(7533),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3073,7 +2551,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GIP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 883, DateTimeKind.Utc).AddTicks(5449),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 30, DateTimeKind.Utc).AddTicks(3187),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3087,7 +2565,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XAU",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 883, DateTimeKind.Utc).AddTicks(9418),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 30, DateTimeKind.Utc).AddTicks(9216),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3101,7 +2579,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GRD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 884, DateTimeKind.Utc).AddTicks(3310),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 31, DateTimeKind.Utc).AddTicks(5122),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3115,7 +2593,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GTQ",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 884, DateTimeKind.Utc).AddTicks(7268),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 32, DateTimeKind.Utc).AddTicks(1983),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3129,7 +2607,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GNF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 885, DateTimeKind.Utc).AddTicks(1224),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 33, DateTimeKind.Utc).AddTicks(152),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3143,7 +2621,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GYD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 885, DateTimeKind.Utc).AddTicks(5198),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 34, DateTimeKind.Utc).AddTicks(661),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3157,7 +2635,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "HTG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 885, DateTimeKind.Utc).AddTicks(9399),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 34, DateTimeKind.Utc).AddTicks(9289),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3171,7 +2649,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "HNL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 886, DateTimeKind.Utc).AddTicks(3195),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 35, DateTimeKind.Utc).AddTicks(6582),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3185,7 +2663,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "HKD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 886, DateTimeKind.Utc).AddTicks(6979),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 36, DateTimeKind.Utc).AddTicks(3569),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3199,7 +2677,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "HUF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 887, DateTimeKind.Utc).AddTicks(1233),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 37, DateTimeKind.Utc).AddTicks(2501),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3213,7 +2691,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ISK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 887, DateTimeKind.Utc).AddTicks(5018),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 38, DateTimeKind.Utc).AddTicks(1196),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3227,7 +2705,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "INR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 887, DateTimeKind.Utc).AddTicks(8678),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 38, DateTimeKind.Utc).AddTicks(8747),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3241,7 +2719,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "IDR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 888, DateTimeKind.Utc).AddTicks(2284),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 39, DateTimeKind.Utc).AddTicks(6408),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3255,7 +2733,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "IRR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 888, DateTimeKind.Utc).AddTicks(6032),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 40, DateTimeKind.Utc).AddTicks(3468),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3269,7 +2747,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "IQD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 888, DateTimeKind.Utc).AddTicks(9679),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 41, DateTimeKind.Utc).AddTicks(1168),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3283,7 +2761,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "IEP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 889, DateTimeKind.Utc).AddTicks(3423),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 41, DateTimeKind.Utc).AddTicks(8350),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3297,7 +2775,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ILS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 889, DateTimeKind.Utc).AddTicks(7095),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 42, DateTimeKind.Utc).AddTicks(5334),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3311,7 +2789,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ITL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 890, DateTimeKind.Utc).AddTicks(888),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 43, DateTimeKind.Utc).AddTicks(2883),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3325,7 +2803,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "JMD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 890, DateTimeKind.Utc).AddTicks(4354),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 44, DateTimeKind.Utc).AddTicks(943),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3339,7 +2817,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "JPY",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 890, DateTimeKind.Utc).AddTicks(7858),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 44, DateTimeKind.Utc).AddTicks(8149),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3353,7 +2831,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "JOD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 891, DateTimeKind.Utc).AddTicks(1498),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 45, DateTimeKind.Utc).AddTicks(5353),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3367,7 +2845,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KHR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 891, DateTimeKind.Utc).AddTicks(4965),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 46, DateTimeKind.Utc).AddTicks(2358),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3381,7 +2859,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KZT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 891, DateTimeKind.Utc).AddTicks(8536),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 46, DateTimeKind.Utc).AddTicks(9940),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3395,7 +2873,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KES",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 892, DateTimeKind.Utc).AddTicks(3601),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 47, DateTimeKind.Utc).AddTicks(8607),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3409,7 +2887,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KRW",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 893, DateTimeKind.Utc).AddTicks(797),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 48, DateTimeKind.Utc).AddTicks(7928),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3423,7 +2901,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KWD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 894, DateTimeKind.Utc).AddTicks(11),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 49, DateTimeKind.Utc).AddTicks(3802),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3437,7 +2915,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KGS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 895, DateTimeKind.Utc).AddTicks(419),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 49, DateTimeKind.Utc).AddTicks(9302),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3451,7 +2929,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LAK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 895, DateTimeKind.Utc).AddTicks(6873),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 50, DateTimeKind.Utc).AddTicks(4547),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3465,7 +2943,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LVL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 896, DateTimeKind.Utc).AddTicks(2741),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 50, DateTimeKind.Utc).AddTicks(9739),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3479,7 +2957,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LBP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 896, DateTimeKind.Utc).AddTicks(7385),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 51, DateTimeKind.Utc).AddTicks(5204),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3493,7 +2971,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LSL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 897, DateTimeKind.Utc).AddTicks(4566),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 52, DateTimeKind.Utc).AddTicks(598),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3507,7 +2985,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LRD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 898, DateTimeKind.Utc).AddTicks(3290),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 52, DateTimeKind.Utc).AddTicks(8715),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3521,7 +2999,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LYD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 898, DateTimeKind.Utc).AddTicks(9013),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 53, DateTimeKind.Utc).AddTicks(6967),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3535,7 +3013,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LTL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 899, DateTimeKind.Utc).AddTicks(3512),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 54, DateTimeKind.Utc).AddTicks(4434),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3549,7 +3027,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LUF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 899, DateTimeKind.Utc).AddTicks(8191),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 55, DateTimeKind.Utc).AddTicks(1880),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3563,7 +3041,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MOP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 900, DateTimeKind.Utc).AddTicks(3032),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 55, DateTimeKind.Utc).AddTicks(9870),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3577,7 +3055,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MKD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 900, DateTimeKind.Utc).AddTicks(7883),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 56, DateTimeKind.Utc).AddTicks(7734),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3591,7 +3069,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MGF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 901, DateTimeKind.Utc).AddTicks(2922),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 57, DateTimeKind.Utc).AddTicks(5755),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3605,7 +3083,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MWK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 901, DateTimeKind.Utc).AddTicks(9348),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 58, DateTimeKind.Utc).AddTicks(3543),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3619,7 +3097,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MGA",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 902, DateTimeKind.Utc).AddTicks(4439),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 59, DateTimeKind.Utc).AddTicks(1431),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3633,7 +3111,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MYR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 902, DateTimeKind.Utc).AddTicks(9349),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 59, DateTimeKind.Utc).AddTicks(7259),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3647,7 +3125,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MVR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 903, DateTimeKind.Utc).AddTicks(4222),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 60, DateTimeKind.Utc).AddTicks(3001),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3661,7 +3139,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MTL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 903, DateTimeKind.Utc).AddTicks(8963),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 60, DateTimeKind.Utc).AddTicks(8544),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3675,7 +3153,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MRO",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 904, DateTimeKind.Utc).AddTicks(3406),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 61, DateTimeKind.Utc).AddTicks(3904),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3689,7 +3167,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MUR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 904, DateTimeKind.Utc).AddTicks(8070),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 61, DateTimeKind.Utc).AddTicks(9707),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3703,7 +3181,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MXN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 905, DateTimeKind.Utc).AddTicks(2981),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 62, DateTimeKind.Utc).AddTicks(5107),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3717,7 +3195,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MDL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 905, DateTimeKind.Utc).AddTicks(7602),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 63, DateTimeKind.Utc).AddTicks(614),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3731,7 +3209,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MNT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 906, DateTimeKind.Utc).AddTicks(2706),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 64, DateTimeKind.Utc).AddTicks(3464),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3745,7 +3223,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MAD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 906, DateTimeKind.Utc).AddTicks(8277),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 65, DateTimeKind.Utc).AddTicks(1159),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3759,7 +3237,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MZM",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 907, DateTimeKind.Utc).AddTicks(3449),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 66, DateTimeKind.Utc).AddTicks(92),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3773,7 +3251,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MZN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 907, DateTimeKind.Utc).AddTicks(8801),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 68, DateTimeKind.Utc).AddTicks(2045),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3787,7 +3265,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "MMK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 908, DateTimeKind.Utc).AddTicks(3392),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 69, DateTimeKind.Utc).AddTicks(873),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3801,7 +3279,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ANG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 909, DateTimeKind.Utc).AddTicks(51),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 69, DateTimeKind.Utc).AddTicks(8963),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3815,7 +3293,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NAD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 909, DateTimeKind.Utc).AddTicks(7229),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 70, DateTimeKind.Utc).AddTicks(8824),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3829,7 +3307,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NPR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 910, DateTimeKind.Utc).AddTicks(4146),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 71, DateTimeKind.Utc).AddTicks(7080),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3843,7 +3321,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NLG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 911, DateTimeKind.Utc).AddTicks(1904),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 72, DateTimeKind.Utc).AddTicks(9851),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3857,7 +3335,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NZD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 911, DateTimeKind.Utc).AddTicks(7377),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 74, DateTimeKind.Utc).AddTicks(2880),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3871,7 +3349,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NIO",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 912, DateTimeKind.Utc).AddTicks(1522),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 75, DateTimeKind.Utc).AddTicks(2543),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3885,7 +3363,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NGN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 912, DateTimeKind.Utc).AddTicks(5611),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 76, DateTimeKind.Utc).AddTicks(6332),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3899,7 +3377,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "KPW",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 913, DateTimeKind.Utc).AddTicks(1802),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 77, DateTimeKind.Utc).AddTicks(5306),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3913,7 +3391,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "NOK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 913, DateTimeKind.Utc).AddTicks(8302),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 78, DateTimeKind.Utc).AddTicks(3000),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3927,7 +3405,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "OMR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 914, DateTimeKind.Utc).AddTicks(5221),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 79, DateTimeKind.Utc).AddTicks(3708),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3941,7 +3419,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PKR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 915, DateTimeKind.Utc).AddTicks(2166),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 80, DateTimeKind.Utc).AddTicks(8379),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3955,7 +3433,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XPD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 915, DateTimeKind.Utc).AddTicks(6722),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 81, DateTimeKind.Utc).AddTicks(9990),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3969,7 +3447,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PAB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 916, DateTimeKind.Utc).AddTicks(976),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 83, DateTimeKind.Utc).AddTicks(212),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3983,7 +3461,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PGK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 916, DateTimeKind.Utc).AddTicks(4929),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 84, DateTimeKind.Utc).AddTicks(562),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -3997,7 +3475,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PYG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 916, DateTimeKind.Utc).AddTicks(9200),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 85, DateTimeKind.Utc).AddTicks(892),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4011,7 +3489,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PEN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 917, DateTimeKind.Utc).AddTicks(3758),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 85, DateTimeKind.Utc).AddTicks(9781),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4025,7 +3503,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PHP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 917, DateTimeKind.Utc).AddTicks(8515),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 86, DateTimeKind.Utc).AddTicks(7710),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4039,7 +3517,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XPT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 918, DateTimeKind.Utc).AddTicks(3611),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 87, DateTimeKind.Utc).AddTicks(4498),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4053,7 +3531,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "Mexico",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 918, DateTimeKind.Utc).AddTicks(8195),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 88, DateTimeKind.Utc).AddTicks(1959),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4067,7 +3545,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PLN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 919, DateTimeKind.Utc).AddTicks(2541),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 88, DateTimeKind.Utc).AddTicks(8631),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4081,7 +3559,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "PTE",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 919, DateTimeKind.Utc).AddTicks(7242),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 89, DateTimeKind.Utc).AddTicks(4821),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4095,7 +3573,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GBP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 920, DateTimeKind.Utc).AddTicks(1398),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 90, DateTimeKind.Utc).AddTicks(4020),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4109,7 +3587,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ROL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 923, DateTimeKind.Utc).AddTicks(2047),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 91, DateTimeKind.Utc).AddTicks(5563),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4123,7 +3601,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "RON",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 923, DateTimeKind.Utc).AddTicks(7408),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 92, DateTimeKind.Utc).AddTicks(5435),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4137,7 +3615,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "RUB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 924, DateTimeKind.Utc).AddTicks(3212),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 93, DateTimeKind.Utc).AddTicks(5015),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4151,7 +3629,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "RWF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 924, DateTimeKind.Utc).AddTicks(8509),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 94, DateTimeKind.Utc).AddTicks(3593),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4165,7 +3643,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "WST",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 925, DateTimeKind.Utc).AddTicks(3803),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 95, DateTimeKind.Utc).AddTicks(3549),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4179,7 +3657,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "STD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 928, DateTimeKind.Utc).AddTicks(678),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 96, DateTimeKind.Utc).AddTicks(5227),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4193,7 +3671,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SAR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 929, DateTimeKind.Utc).AddTicks(973),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 97, DateTimeKind.Utc).AddTicks(6081),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4207,7 +3685,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "RSD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 929, DateTimeKind.Utc).AddTicks(8319),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 98, DateTimeKind.Utc).AddTicks(4769),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4221,7 +3699,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SCR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 930, DateTimeKind.Utc).AddTicks(3688),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 99, DateTimeKind.Utc).AddTicks(3037),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4235,7 +3713,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SLL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 930, DateTimeKind.Utc).AddTicks(8243),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 100, DateTimeKind.Utc).AddTicks(1256),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4249,7 +3727,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "XAG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 931, DateTimeKind.Utc).AddTicks(3010),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 100, DateTimeKind.Utc).AddTicks(9670),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4263,7 +3741,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SGD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 931, DateTimeKind.Utc).AddTicks(7328),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 101, DateTimeKind.Utc).AddTicks(6213),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4277,7 +3755,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SKK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 932, DateTimeKind.Utc).AddTicks(2080),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 102, DateTimeKind.Utc).AddTicks(1856),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4291,7 +3769,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SIT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 932, DateTimeKind.Utc).AddTicks(6085),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 102, DateTimeKind.Utc).AddTicks(7592),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4305,7 +3783,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SBD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 933, DateTimeKind.Utc).AddTicks(80),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 103, DateTimeKind.Utc).AddTicks(3583),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4319,7 +3797,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SOS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 933, DateTimeKind.Utc).AddTicks(4094),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 103, DateTimeKind.Utc).AddTicks(9397),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4333,7 +3811,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ZAR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 933, DateTimeKind.Utc).AddTicks(7949),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 104, DateTimeKind.Utc).AddTicks(4756),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4347,7 +3825,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ESP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 934, DateTimeKind.Utc).AddTicks(2720),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 105, DateTimeKind.Utc).AddTicks(44),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4361,7 +3839,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "LKR",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 934, DateTimeKind.Utc).AddTicks(7323),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 105, DateTimeKind.Utc).AddTicks(5441),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4375,7 +3853,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SHP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 935, DateTimeKind.Utc).AddTicks(1577),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 106, DateTimeKind.Utc).AddTicks(1297),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4389,7 +3867,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SDD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 935, DateTimeKind.Utc).AddTicks(5568),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 106, DateTimeKind.Utc).AddTicks(7303),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4403,7 +3881,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SDG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 935, DateTimeKind.Utc).AddTicks(9447),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 107, DateTimeKind.Utc).AddTicks(4236),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4417,7 +3895,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SDP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 936, DateTimeKind.Utc).AddTicks(3305),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 108, DateTimeKind.Utc).AddTicks(2857),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4431,7 +3909,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SRD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 936, DateTimeKind.Utc).AddTicks(7035),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 109, DateTimeKind.Utc).AddTicks(7105),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4445,7 +3923,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SRG",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 937, DateTimeKind.Utc).AddTicks(835),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 110, DateTimeKind.Utc).AddTicks(4486),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4459,7 +3937,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SZL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 937, DateTimeKind.Utc).AddTicks(4556),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 113, DateTimeKind.Utc).AddTicks(993),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4473,7 +3951,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SEK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 937, DateTimeKind.Utc).AddTicks(8374),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 113, DateTimeKind.Utc).AddTicks(9054),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4487,7 +3965,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "CHF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 938, DateTimeKind.Utc).AddTicks(2163),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 114, DateTimeKind.Utc).AddTicks(4834),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4501,7 +3979,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "SYP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 938, DateTimeKind.Utc).AddTicks(5889),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 115, DateTimeKind.Utc).AddTicks(141),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4515,7 +3993,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TWD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 938, DateTimeKind.Utc).AddTicks(9632),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 115, DateTimeKind.Utc).AddTicks(5404),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4529,7 +4007,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TJS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 939, DateTimeKind.Utc).AddTicks(3580),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 116, DateTimeKind.Utc).AddTicks(1423),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4543,7 +4021,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TZS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 939, DateTimeKind.Utc).AddTicks(7017),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 116, DateTimeKind.Utc).AddTicks(6988),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4557,7 +4035,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "THB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 940, DateTimeKind.Utc).AddTicks(446),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 117, DateTimeKind.Utc).AddTicks(2657),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4571,7 +4049,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TMM",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 940, DateTimeKind.Utc).AddTicks(3884),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 117, DateTimeKind.Utc).AddTicks(7886),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4585,7 +4063,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TMT",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 940, DateTimeKind.Utc).AddTicks(7238),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 118, DateTimeKind.Utc).AddTicks(2968),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4599,7 +4077,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TOP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 941, DateTimeKind.Utc).AddTicks(682),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 118, DateTimeKind.Utc).AddTicks(8175),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4613,7 +4091,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TTD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 941, DateTimeKind.Utc).AddTicks(4285),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 119, DateTimeKind.Utc).AddTicks(3408),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4627,7 +4105,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TND",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 941, DateTimeKind.Utc).AddTicks(7822),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 119, DateTimeKind.Utc).AddTicks(8463),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4641,7 +4119,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TRL",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 942, DateTimeKind.Utc).AddTicks(2577),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 120, DateTimeKind.Utc).AddTicks(3730),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4655,7 +4133,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "TRY",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 943, DateTimeKind.Utc).AddTicks(562),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 120, DateTimeKind.Utc).AddTicks(9392),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4669,7 +4147,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "UGX",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 944, DateTimeKind.Utc).AddTicks(4550),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 121, DateTimeKind.Utc).AddTicks(4405),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4683,7 +4161,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "UAH",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 945, DateTimeKind.Utc).AddTicks(5371),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 121, DateTimeKind.Utc).AddTicks(9521),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4697,7 +4175,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "UAH",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 946, DateTimeKind.Utc).AddTicks(649),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 122, DateTimeKind.Utc).AddTicks(4690),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4711,7 +4189,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "GBP",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 946, DateTimeKind.Utc).AddTicks(4752),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 123, DateTimeKind.Utc).AddTicks(110),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4725,7 +4203,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "USD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 946, DateTimeKind.Utc).AddTicks(8882),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 123, DateTimeKind.Utc).AddTicks(5286),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4739,7 +4217,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "UYU",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 947, DateTimeKind.Utc).AddTicks(4021),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 124, DateTimeKind.Utc).AddTicks(3204),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4753,7 +4231,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "UZS",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 947, DateTimeKind.Utc).AddTicks(8592),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 125, DateTimeKind.Utc).AddTicks(4449),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4767,7 +4245,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "AED",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 948, DateTimeKind.Utc).AddTicks(2724),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 126, DateTimeKind.Utc).AddTicks(5004),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4781,7 +4259,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "VUV",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 948, DateTimeKind.Utc).AddTicks(6674),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 127, DateTimeKind.Utc).AddTicks(1807),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4795,7 +4273,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "VEB",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 949, DateTimeKind.Utc).AddTicks(633),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 128, DateTimeKind.Utc).AddTicks(1166),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4809,7 +4287,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "VEF",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 949, DateTimeKind.Utc).AddTicks(4494),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 129, DateTimeKind.Utc).AddTicks(744),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4823,7 +4301,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "VND",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 949, DateTimeKind.Utc).AddTicks(8214),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 129, DateTimeKind.Utc).AddTicks(9689),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4837,7 +4315,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "YER",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 950, DateTimeKind.Utc).AddTicks(1912),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 130, DateTimeKind.Utc).AddTicks(7572),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4851,7 +4329,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "YUN",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 950, DateTimeKind.Utc).AddTicks(5811),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 131, DateTimeKind.Utc).AddTicks(3644),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4865,7 +4343,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ZMK",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 950, DateTimeKind.Utc).AddTicks(9523),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 131, DateTimeKind.Utc).AddTicks(9012),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4879,7 +4357,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ZMW",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 951, DateTimeKind.Utc).AddTicks(3348),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 132, DateTimeKind.Utc).AddTicks(4119),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4893,7 +4371,7 @@ namespace AdionFA.Infrastructure.Core.Migrations
                             Code = "ZWD",
                             CreatedById = "11111111-1111-1111-11111111111111111",
                             CreatedByUserName = "sysadmin",
-                            CreatedOn = new DateTime(2023, 5, 21, 22, 24, 33, 951, DateTimeKind.Utc).AddTicks(7124),
+                            CreatedOn = new DateTime(2023, 5, 28, 23, 22, 46, 132, DateTimeKind.Utc).AddTicks(9230),
                             Description = "",
                             Inaccesible = false,
                             IsDeleted = false,
@@ -4963,34 +4441,8 @@ namespace AdionFA.Infrastructure.Core.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Organization.Organization", b =>
-                {
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.Organization.Organization", "ParentOrganization")
-                        .WithMany()
-                        .HasForeignKey("ParentOrganizationId");
-
-                    b.Navigation("ParentOrganization");
-                });
-
-            modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.Project", b =>
-                {
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.Project.ProjectStep", "ProjectStep")
-                        .WithMany()
-                        .HasForeignKey("ProjectStepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProjectStep");
-                });
-
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectConfiguration", b =>
                 {
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.CurrencySpread", "CurrencySpread")
-                        .WithMany()
-                        .HasForeignKey("CurrencySpreadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.HistoricalData", "HistoricalData")
                         .WithMany()
                         .HasForeignKey("HistoricalDataId");
@@ -5013,8 +4465,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CurrencySpread");
-
                     b.Navigation("HistoricalData");
 
                     b.Navigation("Project");
@@ -5026,12 +4476,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
 
             modelBuilder.Entity("AdionFA.Core.Domain.Aggregates.Project.ProjectGlobalConfiguration", b =>
                 {
-                    b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.CurrencySpread", "CurrencySpread")
-                        .WithMany()
-                        .HasForeignKey("CurrencySpreadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AdionFA.Core.Domain.Aggregates.MarketData.Symbol", "Symbol")
                         .WithMany()
                         .HasForeignKey("SymbolId")
@@ -5043,8 +4487,6 @@ namespace AdionFA.Infrastructure.Core.Migrations
                         .HasForeignKey("TimeframeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("CurrencySpread");
 
                     b.Navigation("Symbol");
 

@@ -1,67 +1,48 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using Prism.Unity;
 using System;
 
 namespace AdionFA.UI.Station.Infrastructure.Model.Base
 {
     public class ConfigurationBaseVM : TimeSensitiveBaseVM
     {
-        // Extractor
-
-        private int _variation;
-
-        public int Variation
-        {
-            get => _variation;
-            set => SetProperty(ref _variation, value);
-        }
-
-        // Period
-
-        private DateTime? fromDateOS;
-
-        public DateTime? FromDateOS
-        {
-            get => fromDateOS;
-            set => SetProperty(ref fromDateOS, value);
-        }
-
-        private DateTime? toDateOS;
-
-        public DateTime? ToDateOS
-        {
-            get => toDateOS;
-            set => SetProperty(ref toDateOS, value);
-        }
-
-        private DateTime? fromDateIS;
-
+        private DateTime? _fromDateIS;
         public DateTime? FromDateIS
         {
-            get => fromDateIS;
-            set => SetProperty(ref fromDateIS, value);
+            get => _fromDateIS;
+            set => SetProperty(ref _fromDateIS, value);
         }
 
-        private DateTime? toDateIS;
-
+        private DateTime? _toDateIS;
         public DateTime? ToDateIS
         {
-            get => toDateIS;
-            set => SetProperty(ref toDateIS, value);
+            get => _toDateIS;
+            set => SetProperty(ref _toDateIS, value);
         }
 
-        private bool withoutSchedule;
+        private DateTime? _fromDateOS;
+        public DateTime? FromDateOS
+        {
+            get => _fromDateOS;
+            set => SetProperty(ref _fromDateOS, value);
+        }
 
+        private DateTime? _toDateOS;
+        public DateTime? ToDateOS
+        {
+            get => _toDateOS;
+            set => SetProperty(ref _toDateOS, value);
+        }
+
+        private bool _withoutSchedule;
         public bool WithoutSchedule
         {
-            get => withoutSchedule;
-            set => SetProperty(ref withoutSchedule, value);
+            get => _withoutSchedule;
+            set => SetProperty(ref _withoutSchedule, value);
         }
 
-        // Symbol
+        // Historical Data Information
 
         private int _symbolId;
-
         public int SymbolId
         {
             get => _symbolId;
@@ -69,17 +50,13 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private SymbolVM _symbol;
-
         public SymbolVM Symbol
         {
             get => _symbol;
             set => SetProperty(ref _symbol, value);
         }
 
-        // Timeframe
-
         private int _timeframeId;
-
         public int TimeframeId
         {
             get => _timeframeId;
@@ -87,35 +64,25 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private TimeframeVM _timeframe;
-
         public TimeframeVM Timeframe
         {
             get => _timeframe;
             set => SetProperty(ref _timeframe, value);
         }
 
-        // CurrencySpreadId
+        // Extractor
 
-        private int _currencySpreadId;
-
-        public int CurrencySpreadId
+        private int _extractorMinVariation;
+        public int ExtractorMinVariation
         {
-            get => _currencySpreadId;
-            set => SetProperty(ref _currencySpreadId, value);
+            get => _extractorMinVariation;
+            set => SetProperty(ref _extractorMinVariation, value);
         }
 
-        private CurrencySpreadVM currencySpread;
-
-        public CurrencySpreadVM CurrencySpread
-        {
-            get => currencySpread;
-            set => SetProperty(ref currencySpread, value);
-        }
 
         // Weka
 
         private int _totalInstanceWeka;
-
         public int TotalInstanceWeka
         {
             get => _totalInstanceWeka;
@@ -123,303 +90,141 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
         private int _depthWeka;
-
         public int DepthWeka
         {
             get => _depthWeka;
             set => SetProperty(ref _depthWeka, value);
         }
 
-        private int minAdjustDepthWeka;
-
-        public int MinAdjustDepthWeka
-        {
-            get => minAdjustDepthWeka;
-            set => SetProperty(ref minAdjustDepthWeka, value);
-        }
-
-        private int totalDecimalWeka;
-
+        private int _totalDecimalWeka;
         public int TotalDecimalWeka
         {
-            get => totalDecimalWeka;
-            set => SetProperty(ref totalDecimalWeka, value);
+            get => _totalDecimalWeka;
+            set => SetProperty(ref _totalDecimalWeka, value);
         }
 
-        private int minimalSeed;
-
+        private int _minimalSeed;
         public int MinimalSeed
         {
-            get => minimalSeed;
-            set => SetProperty(ref minimalSeed, value);
+            get => _minimalSeed;
+            set => SetProperty(ref _minimalSeed, value);
         }
 
-        private int maximumSeed;
-
+        private int _maximumSeed;
         public int MaximumSeed
         {
-            get => maximumSeed;
-            set => SetProperty(ref maximumSeed, value);
+            get => _maximumSeed;
+            set => SetProperty(ref _maximumSeed, value);
         }
 
-        private decimal maxRatioTree;
-
+        private decimal _maxRatioTree;
         public decimal MaxRatioTree
         {
-            get => maxRatioTree;
-            set => SetProperty(ref maxRatioTree, value);
+            get => _maxRatioTree;
+            set => SetProperty(ref _maxRatioTree, value);
         }
 
-        private decimal minAdjustMaxRatioTree;
-
-        public decimal MinAdjustMaxRatioTree
-        {
-            get => minAdjustMaxRatioTree;
-            set => SetProperty(ref minAdjustMaxRatioTree, value);
-        }
-
-        private decimal nTotalTree;
-
+        private decimal _nTotalTree;
         public decimal NTotalTree
         {
-            get => nTotalTree;
-            set => SetProperty(ref nTotalTree, value);
-        }
-
-        private decimal minAdjustNTotalTree;
-
-        public decimal MinAdjustNTotalTree
-        {
-            get => minAdjustNTotalTree;
-            set => SetProperty(ref minAdjustNTotalTree, value);
+            get => _nTotalTree;
+            set => SetProperty(ref _nTotalTree, value);
         }
 
         // Strategy Builder
 
-        private int minTransactionCountIS;
-
-        public int MinTransactionCountIS
+        private int _sbMinTransactionsIS;
+        public int SBMinTransactionsIS
         {
-            get => minTransactionCountIS;
-            set => SetProperty(ref minTransactionCountIS, value);
+            get => _sbMinTransactionsIS;
+            set => SetProperty(ref _sbMinTransactionsIS, value);
         }
 
-        private int minAdjustMinTransactionCountIS;
-
-        public int MinAdjustMinTransactionCountIS
+        private decimal _sbMinPercentSuccessIS;
+        public decimal SBMinPercentSuccessIS
         {
-            get => minAdjustMinTransactionCountIS;
-            set => SetProperty(ref minAdjustMinTransactionCountIS, value);
+            get => _sbMinPercentSuccessIS;
+            set => SetProperty(ref _sbMinPercentSuccessIS, value);
         }
 
-        private decimal minPercentSuccessIS;
-
-        public decimal MinPercentSuccessIS
+        private int _sbMinTransactionsOS;
+        public int SBMinTransactionsOS
         {
-            get => minPercentSuccessIS;
-            set => SetProperty(ref minPercentSuccessIS, value);
+            get => _sbMinTransactionsOS;
+            set => SetProperty(ref _sbMinTransactionsOS, value);
         }
 
-        private decimal minAdjustMinPercentSuccessIS;
-
-        public decimal MinAdjustMinPercentSuccessIS
+        private decimal _sbMinPercentSuccessOS;
+        public decimal SBMinPercentSuccessOS
         {
-            get => minAdjustMinPercentSuccessIS;
-            set => SetProperty(ref minAdjustMinPercentSuccessIS, value);
+            get => _sbMinPercentSuccessOS;
+            set => SetProperty(ref _sbMinPercentSuccessOS, value);
         }
 
-        #region MinTransactionCountOS
-
-        private int minTransactionCountOS;
-
-        public int MinTransactionCountOS
+        private decimal _sbMaxTransactionsVariation;
+        public decimal SBMaxTransactionsVariation
         {
-            get => minTransactionCountOS;
-            set => SetProperty(ref minTransactionCountOS, value);
+            get => _sbMaxTransactionsVariation;
+            set => SetProperty(ref _sbMaxTransactionsVariation, value);
         }
 
-        #endregion MinTransactionCountOS
-
-        #region MinAdjustMinTransactionCountOS
-
-        private int minAdjustMinTransactionCountOS;
-
-        public int MinAdjustMinTransactionCountOS
-        {
-            get => minAdjustMinTransactionCountOS;
-            set => SetProperty(ref minAdjustMinTransactionCountOS, value);
-        }
-
-        #endregion MinAdjustMinTransactionCountOS
-
-        #region MinPercentSuccessOS
-
-        private decimal minPercentSuccessOS;
-
-        public decimal MinPercentSuccessOS
-        {
-            get => minPercentSuccessOS;
-            set => SetProperty(ref minPercentSuccessOS, value);
-        }
-
-        #endregion MinPercentSuccessOS
-
-        #region MinAdjustMinPercentSuccessOS
-
-        private decimal minAdjustMinPercentSuccessOS;
-
-        public decimal MinAdjustMinPercentSuccessOS
-        {
-            get => minAdjustMinPercentSuccessOS;
-            set => SetProperty(ref minAdjustMinPercentSuccessOS, value);
-        }
-
-        #endregion MinAdjustMinPercentSuccessOS
-
-        #region VariationTransaction
-
-        private decimal variationTransaction;
-
-        public decimal VariationTransaction
-        {
-            get => variationTransaction;
-            set => SetProperty(ref variationTransaction, value);
-        }
-
-        #endregion VariationTransaction
-
-        #region MinAdjustVariationTransaction
-
-        private decimal minAdjustVariationTransaction;
-
-        public decimal MinAdjustVariationTransaction
-        {
-            get => minAdjustVariationTransaction;
-            set => SetProperty(ref minAdjustVariationTransaction, value);
-        }
-
-        #endregion MinAdjustVariationTransaction
-
-        #region Progressiveness
-
-        private decimal progressiveness;
-
-        public decimal Progressiveness
-        {
-            get => progressiveness;
-            set => SetProperty(ref progressiveness, value);
-        }
-
-        #endregion Progressiveness
-
-        #region MinAdjustProgressiveness
-
-        private decimal minAdjustProgressiveness;
-
-        public decimal MinAdjustProgressiveness
-        {
-            get => minAdjustProgressiveness;
-            set => SetProperty(ref minAdjustProgressiveness, value);
-        }
-
-        #endregion MinAdjustProgressiveness
-
-        #region IsProgressiveness
-
-        private bool isProgressiveness;
-
+        private bool _isProgressiveness;
         public bool IsProgressiveness
         {
-            get => isProgressiveness;
-            set => SetProperty(ref isProgressiveness, value);
+            get => _isProgressiveness;
+            set => SetProperty(ref _isProgressiveness, value);
         }
 
-        #endregion IsProgressiveness
-
-        #region MaxPercentCorrelation
-
-        private decimal maxPercentCorrelation;
-
-        public decimal MaxPercentCorrelation
+        private decimal _progressiveness;
+        public decimal Progressiveness
         {
-            get => maxPercentCorrelation;
-            set => SetProperty(ref maxPercentCorrelation, value);
+            get => _progressiveness;
+            set => SetProperty(ref _progressiveness, value);
         }
 
-        #endregion MaxPercentCorrelation
-
-        #region WinningStrategyTotalUP
-
-        private int winningStrategyTotalUP;
-
-        public int WinningStrategyTotalUP
+        private decimal _sbMaxPercentCorrelation;
+        public decimal SBMaxPercentCorrelation
         {
-            get => winningStrategyTotalUP;
-            set => SetProperty(ref winningStrategyTotalUP, value);
+            get => _sbMaxPercentCorrelation;
+            set => SetProperty(ref _sbMaxPercentCorrelation, value);
         }
 
-        #endregion WinningStrategyTotalUP
-
-        #region WinningStrategyTotalDOWN
-
-        private int winningStrategyTotalDOWN;
-
-        public int WinningStrategyTotalDOWN
+        private int _sbWinningStrategyUPTarget;
+        public int SBWinningStrategyUPTarget
         {
-            get => winningStrategyTotalDOWN;
-            set => SetProperty(ref winningStrategyTotalDOWN, value);
+            get => _sbWinningStrategyUPTarget;
+            set => SetProperty(ref _sbWinningStrategyUPTarget, value);
         }
 
-        #endregion WinningStrategyTotalDOWN
-
-        #region AutoAdjustConfig
-
-        private bool autoAdjustConfig;
-
-        public bool AutoAdjustConfig
+        private int _sbWinningStrategyDOWNTarget;
+        public int SBWinningStrategyDOWNTarget
         {
-            get => autoAdjustConfig;
-            set => SetProperty(ref autoAdjustConfig, value);
+            get => _sbWinningStrategyDOWNTarget;
+            set => SetProperty(ref _sbWinningStrategyDOWNTarget, value);
         }
 
-        #endregion AutoAdjustConfig
-
-        #region MaxAdjustConfig
-
-        private int maxAdjustConfig;
-
-        public int MaxAdjustConfig
+        private int _sbTransactionsTarget;
+        public int SBTransactionsTarget
         {
-            get => maxAdjustConfig;
-            set => SetProperty(ref maxAdjustConfig, value);
+            get => _sbTransactionsTarget;
+            set => SetProperty(ref _sbTransactionsTarget, value);
         }
 
-        #endregion MaxAdjustConfig
 
         // Assembled Builder
 
-        private int transactionTarget;
-
-        public int TransactionTarget
+        private int _abTransactionsTarget;
+        public int ABTransactionsTarget
         {
-            get => transactionTarget;
-            set => SetProperty(ref transactionTarget, value);
+            get => _abTransactionsTarget;
+            set => SetProperty(ref _abTransactionsTarget, value);
         }
 
-        private decimal minAssemblyPercent;
-
-        public decimal MinAssemblyPercent
+        private decimal _abMinImprovePercent;
+        public decimal ABMinImprovePercent
         {
-            get => minAssemblyPercent;
-            set => SetProperty(ref minAssemblyPercent, value);
-        }
-
-        private int totalAssemblyIterations;
-
-        public int TotalAssemblyIterations
-        {
-            get => totalAssemblyIterations;
-            set => SetProperty(ref totalAssemblyIterations, value);
+            get => _abMinImprovePercent;
+            set => SetProperty(ref _abMinImprovePercent, value);
         }
     }
 }

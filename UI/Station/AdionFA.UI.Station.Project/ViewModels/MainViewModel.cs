@@ -1,26 +1,15 @@
-﻿using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Services;
-using AdionFA.UI.Station.Infrastructure.Base;
+﻿using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Project.Features;
 using MahApps.Metro.IconPacks;
 using System.Collections.ObjectModel;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        // Properties
-
-        private ObservableCollection<MenuItemViewModel> _menuItems;
-        private ObservableCollection<MenuItemViewModel> _menuOptionItems;
-
-        private string projectName;
-        private string projectStepName;
-
-        private bool istransactionActive;
-
-        protected readonly IProjectServiceAgent _projectService;
+        private readonly IProjectServiceAgent _projectService;
 
         public MainViewModel(
             IProjectServiceAgent appProjectService)
@@ -119,34 +108,39 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         // View Bindings
 
+        private ObservableCollection<MenuItemViewModel> _menuItems;
         public ObservableCollection<MenuItemViewModel> MenuItems
         {
             get => _menuItems;
             set => SetProperty(ref _menuItems, value);
         }
 
+        private ObservableCollection<MenuItemViewModel> _menuOptionItems;
         public ObservableCollection<MenuItemViewModel> MenuOptionItems
         {
             get => _menuOptionItems;
             set => SetProperty(ref _menuOptionItems, value);
         }
 
+        private string _projectName;
         public string ProjectName
         {
-            get => projectName;
-            set => SetProperty(ref projectName, value);
+            get => _projectName;
+            set => SetProperty(ref _projectName, value);
         }
 
+        private string _projectStepName;
         public string ProjectNameStep
         {
-            get => projectStepName;
-            set => SetProperty(ref projectStepName, value);
+            get => _projectStepName;
+            set => SetProperty(ref _projectStepName, value);
         }
 
+        private bool _isTransactionActive;
         public bool IsTransactionActive
         {
-            get => istransactionActive;
-            set => SetProperty(ref istransactionActive, value);
+            get => _isTransactionActive;
+            set => SetProperty(ref _isTransactionActive, value);
         }
     }
 }

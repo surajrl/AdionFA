@@ -1,29 +1,28 @@
 ﻿using AdionFA.Infrastructure.Common.Helpers;
+using AdionFA.Infrastructure.Common.MetaTrader.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
+using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
-using AdionFA.UI.Station.Modules.Trader.Infrastructure;
-using Prism.Ioc;
+using AdionFA.UI.Station.Module.Dashboard.Services;
+using DynamicData;
+using NetMQ;
+using NetMQ.Sockets;
+using Newtonsoft.Json;
 using Prism.Commands;
+using Prism.Ioc;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.Infrastructure.I18n.Resources;
 using System.Diagnostics;
-using AdionFA.UI.Station.Module.Dashboard.Services;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using NetMQ.Sockets;
-using NetMQ;
-using Newtonsoft.Json;
-using DynamicData;
+using System.Linq;
 using System.Threading.Tasks;
-using AdionFA.Infrastructure.Common.MetaTrader.Model;
+using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 {
@@ -206,7 +205,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     if (!Timeframes.Any())
                     {
                         var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
-                        timeframes.ForEach(Timeframes.Add);
+                        timeframes.ToList().ForEach(Timeframes.Add);
                     }
 
                     IsTransactionActive = false;

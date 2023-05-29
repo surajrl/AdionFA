@@ -61,7 +61,7 @@ namespace AdionFA.UI.Station.Project.Views
             if (toggleSwitch != null)
             {
                 LabelRequiredAdjustConfig =
-                    DataContext != null && !((ProjectSettingsViewModel)DataContext).ProjectConfiguration.AutoAdjustConfig ? string.Empty : "*";
+                    DataContext != null && !true ? string.Empty : "*";
 
                 LabelRequiredProgressiveness =
                     DataContext != null && !((ProjectSettingsViewModel)DataContext).ProjectConfiguration.IsProgressiveness ? string.Empty : "*";
@@ -76,7 +76,7 @@ namespace AdionFA.UI.Station.Project.Views
             if (toggleSwitch != null)
             {
                 LabelRequiredAdjustConfig =
-                    DataContext != null && !((ProjectSettingsViewModel)DataContext).ProjectConfiguration.AutoAdjustConfig ? string.Empty : "*";
+                    DataContext != null && !false ? string.Empty : "*";
 
                 EnableProgressiveness = IsEnableProgressiveness();
                 LabelRequiredAdjustProgressiveness = !EnableProgressiveness ? string.Empty : "*";
@@ -88,7 +88,7 @@ namespace AdionFA.UI.Station.Project.Views
             if (DataContext != null)
             {
                 var dcontext = (ProjectSettingsViewModel)DataContext;
-                return dcontext.ProjectConfiguration.AutoAdjustConfig && dcontext.ProjectConfiguration.IsProgressiveness;
+                return dcontext.ProjectConfiguration.IsProgressiveness;
             }
 
             return false;

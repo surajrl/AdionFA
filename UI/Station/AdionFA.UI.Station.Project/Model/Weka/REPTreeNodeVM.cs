@@ -10,6 +10,14 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
 {
     public class REPTreeNodeVM : ViewModelBase
     {
+        private string _historicalData;
+
+        public string HistoricalData
+        {
+            get => _historicalData;
+            set => SetProperty(ref _historicalData, value);
+        }
+
         public REPTreeOutputVM Tree { get; set; }
         public StrategyBuilderProcessModel StrategyBuilderProcess { get; set; }
 
@@ -157,19 +165,11 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
             set => SetProperty(ref _correlationPass, value);
         }
 
-        // Other
+        // Results
 
         public double VariationPercent => Math.Abs(PercentSuccessIs - PercentSuccessOs);
         public double Progressiveness => Math.Abs(ProgressivenessIs - ProgressivenessOs);
         public bool WinningStrategy { get; set; }
-
-        private string _historicalData;
-
-        public string HistoricalData
-        {
-            get => _historicalData;
-            set => SetProperty(ref _historicalData, value);
-        }
 
         public bool IsBacktestCompleted { get; set; }
 

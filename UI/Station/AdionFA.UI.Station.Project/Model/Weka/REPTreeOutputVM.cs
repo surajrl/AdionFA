@@ -6,6 +6,8 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
 {
     public class REPTreeOutputVM : ViewModelBase
     {
+        // Weka
+
         private int _seed;
 
         public int Seed
@@ -45,6 +47,8 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
             get => _message;
             set => SetProperty(ref _message, value);
         }
+
+        // Other View Bindings
 
         private bool? _hasWinningStrategy;
 
@@ -86,7 +90,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
             set => SetProperty(ref _validNodes, value);
         }
 
-        public int _counterProgressBar;
+        private int _counterProgressBar;
 
         public int CounterProgressBar
         {

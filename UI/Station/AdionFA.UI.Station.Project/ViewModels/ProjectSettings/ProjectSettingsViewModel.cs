@@ -1,25 +1,24 @@
-﻿using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Enums;
+﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
+using AdionFA.Infrastructure.I18n.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
+using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
+using AdionFA.UI.Station.Infrastructure.Helpers;
+using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
+using AdionFA.UI.Station.Project.Model.Configuration;
 using AdionFA.UI.Station.Project.Services;
+using DynamicData;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Windows.Input;
-using AdionFA.UI.Station.Project.Model.Configuration;
 using System.Linq;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.Infrastructure.I18n.Enums;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using DynamicData;
+using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
@@ -132,8 +131,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 IsTransactionActive = false;
 
-                string msg = (result?.IsSuccess ?? false) ? MessageResources.EntitySaveSuccess
-                    : result?.Message ?? MessageResources.EntityErrorTransaction;
+                string msg = (result?.IsSuccess ?? false)
+                ? MessageResources.EntitySaveSuccess
+                : result?.Message ?? MessageResources.EntityErrorTransaction;
 
                 MessageHelper.ShowMessage(this,
                     CommonResources.ProjectConfigurationRestore,
@@ -170,9 +170,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Id = timeframe.TimeframeId,
                 Name = timeframe.Name
             }));
-
-            CurrencySpreads.Clear();
-            CurrencySpreads.AddRange(EnumUtil.ToEnumerable<CurrencySpreadEnum>(true));
 
             HistoricalDataList.Clear();
             HistoricalDataList.Insert(0, new Metadata
@@ -241,7 +238,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ProjectSettingsModel _projectConfiguration;
-
         public ProjectSettingsModel ProjectConfiguration
         {
             get => _projectConfiguration;
@@ -250,7 +246,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ObservableCollection<Metadata> Symbols { get; } = new ObservableCollection<Metadata>();
         public ObservableCollection<Metadata> Timeframes { get; } = new ObservableCollection<Metadata>();
-        public ObservableCollection<Metadata> CurrencySpreads { get; } = new ObservableCollection<Metadata>();
         public ObservableCollection<Metadata> HistoricalDataList { get; } = new ObservableCollection<Metadata>();
     }
 }

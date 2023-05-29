@@ -8,7 +8,6 @@ using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AdionFA.UI.Station.Module.Dashboard.Services;
-using AdionFA.UI.Station.Modules.Trader.Infrastructure;
 using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
@@ -63,11 +62,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 Symbols?.Clear();
                 var symbols = await _historicalDataService.GetAllSymbol().ConfigureAwait(true);
-                symbols.ForEach(Symbols.Add);
+                symbols.ToList().ForEach(Symbols.Add);
 
                 Timeframes?.Clear();
                 var timeframes = await _historicalDataService.GetAllTimeframe().ConfigureAwait(true);
-                timeframes.ForEach(Timeframes.Add);
+                timeframes.ToList().ForEach(Timeframes.Add);
 
                 LoadHistoricalData();
             }

@@ -48,7 +48,7 @@ namespace AdionFA.UI.Station
         {
             new IoC().Setup();
 
-            #region Identity
+            // Identity
 
             AdionIdentity Identity = new(SecurityHelper.DefaultTenantId, SecurityHelper.DefaultOwnerId, SecurityHelper.DefaultOwner);
             AdionPrincipal Principal = new()
@@ -58,15 +58,11 @@ namespace AdionFA.UI.Station
 
             AppDomain.CurrentDomain.SetThreadPrincipal(Principal);
 
-            #endregion Identity
-
-            #region Application commands
+            // Application Commands
 
             containerRegistry.RegisterSingleton<IApplicationCommands, ApplicationCommandsProxy>();
 
-            #endregion Application commands
-
-            #region Infrastructure Services
+            // Infrastructure Services
 
             containerRegistry.RegisterSingleton<IMarketDataServiceAgent, MarketDataServiceAgent>();
             containerRegistry.RegisterSingleton<IProjectServiceAgent, ProjectServiceAgent>();
@@ -76,21 +72,14 @@ namespace AdionFA.UI.Station
             containerRegistry.RegisterInstance<IFlyoutService>(Container.Resolve<FlyoutService>());
             containerRegistry.RegisterInstance<IProcessService>(Container.Resolve<ProcessService>());
 
-            //containerRegistry.Register<ISchedulerProvider>(() => new SchedulerProvider(Dispatcher));
-
-            #endregion Infrastructure Services
-
-            #region FluentValidation
+            // Fluent Validation
 
             ValidatorOptions.Global.LanguageManager = new FluentValidatorLanguageManager();
             ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
-            //ValidatorOptions.Global.DefaultClassLevelCascadeMode = CascadeMode.Stop;
 
-            #endregion FluentValidation
+            // Global Exception
 
-            #region Global Exception
-
-            Application.Current.DispatcherUnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs e) =>
+            Current.DispatcherUnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs e) =>
             {
                 e.Handled = true;
                 MessageBox.Show(e.Exception.Message);
@@ -100,8 +89,6 @@ namespace AdionFA.UI.Station
             {
                 MessageBox.Show(e.ExceptionObject.ToString());
             });
-
-            #endregion Global Exception
         }
 
         private void CurrentDomain_ProcessExit(object sender, EventArgs e)
@@ -126,14 +113,6 @@ namespace AdionFA.UI.Station
                 ModuleName = settingModuleType.Name,
                 ModuleType = settingModuleType.AssemblyQualifiedName,
             });
-
-            /*
-            Type tradeModuleType = typeof(TraderModule);
-            moduleCatalog.AddModule(new ModuleInfo()
-            {
-                ModuleName = tradeModuleType.Name,
-                ModuleType = tradeModuleType.AssemblyQualifiedName,
-            });*/
         }
 
         protected override IModuleCatalog CreateModuleCatalog()
@@ -142,8 +121,6 @@ namespace AdionFA.UI.Station
             return catalog;
         }
 
-        //private Server server { get; set; }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -151,14 +128,6 @@ namespace AdionFA.UI.Station
             ContainerLocator.Current.Resolve<IApplicationCommands>().EndAllProcessProjectCommand.Execute(false);
 
             ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
-            //ContainerLocator.Current.Resolve<IProcessService>().StartProcessMetaTrader();
-
-            /*server = new Server
-            {
-                Services = { ProjectRPCServicePartial.BindService(new ProjectRPCServerService()) },
-                Ports = { new ServerPort("localhost", (int)PortEnum.ServerRPCPort, ServerCredentials.Insecure) }
-            };
-            server.Start();*/
         }
 
         protected override void OnInitialized()
@@ -166,7 +135,7 @@ namespace AdionFA.UI.Station
             ISharedServiceAgent settingService = ContainerLocator.Current.Resolve<ISharedServiceAgent>();
             IProjectDirectoryService directoryService = IoC.Get<IProjectDirectoryService>();
 
-            #region Workspace
+            // Workspace
 
             var workspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace);
             if (Directory.Exists(workspace.Value))
@@ -176,9 +145,7 @@ namespace AdionFA.UI.Station
 
             directoryService.CreateDefaultWorkspace();
 
-            #endregion Workspace
-
-            #region Theme
+            // Theme
 
             SettingVM themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
             ThemeManager.Current.ChangeThemeBaseColor(Application.Current, themeSetting?.Value ?? "Light");
@@ -186,9 +153,7 @@ namespace AdionFA.UI.Station
             SettingVM colorSetting = settingService.GetSetting((int)SettingEnum.Color);
             ThemeManager.Current.ChangeThemeColorScheme(Application.Current, colorSetting?.Value ?? "Orange");
 
-            #endregion Theme
-
-            #region Culture
+            // Culture
 
             var culturesAvailables = AppSettingsManager.Instance.Get<AppSettings>().Cultures?.Split(",");
 
@@ -202,8 +167,6 @@ namespace AdionFA.UI.Station
 
             Thread.CurrentThread.CurrentCulture = Culture;
             Thread.CurrentThread.CurrentUICulture = Culture;
-
-            #endregion Culture
 
             base.OnInitialized();
         }

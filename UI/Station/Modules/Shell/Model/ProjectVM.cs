@@ -1,5 +1,4 @@
-﻿using AdionFA.Infrastructure.Enums;
-using System;
+﻿using System;
 
 namespace AdionFA.UI.Station.Module.Shell.Model
 {
@@ -7,15 +6,11 @@ namespace AdionFA.UI.Station.Module.Shell.Model
     {
         public int ProjectId { get; set; }
         public string Name { get; set; }
-        
+
         public string WorkspacePath { get; set; }
         public string WorkspacePathCut { get; set; }
 
         public bool IsFavorite { get; set; }
-
-        public int CurrentProjectStepId { get; set; }
-        public string CurrentProjectStep => ((ProjectStepEnum)CurrentProjectStepId).GetMetadata()?.Name ?? string.Empty;
-        public string ProjectStepIcon => !string.IsNullOrEmpty(CurrentProjectStep) ? $"{CurrentProjectStep.Replace(" ", string.Empty)}Icon" : string.Empty;
 
         public long? ProcessId { get; set; }
         public DateTime? ProcessLastDate { get; set; }

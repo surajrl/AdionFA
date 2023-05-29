@@ -1,5 +1,4 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Services;
-using AdionFA.Infrastructure.Enums;
+﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Module.Shell.AutoMapper;
 using AutoMapper;
@@ -49,7 +48,7 @@ namespace AdionFA.UI.Station.Module.Shell.Services
                 var projects = await ProjectService.GetAllProjects();
                 var result = (from p in projects
                               let config = p.ProjectConfigurations.FirstOrDefault(c => c.EndDate == null)
-                              let workspace = config?.WorkspacePath != null 
+                              let workspace = config?.WorkspacePath != null
                                     ? config?.WorkspacePath + "\\" + ProjectDirectoryEnum.Projects.GetDescription() + "\\" + p.ProjectName : null
                               select new Model.ProjectVM
                               {
@@ -58,7 +57,6 @@ namespace AdionFA.UI.Station.Module.Shell.Services
                                   WorkspacePath = workspace ?? "...",
                                   WorkspacePathCut = (workspace?.Length ?? 0) > 53 ? workspace.Substring(0, 50) + "..." : workspace ?? "...",
                                   IsFavorite = config?.IsFavorite ?? false,
-                                  CurrentProjectStepId = p.ProjectStepId,
                                   LastLoadOn = p.ProcessLastDate ?? DateTime.MinValue,
                                   ProcessId = p.ProcessId,
                                   CreateOn = p.CreatedOn ?? DateTime.MinValue,

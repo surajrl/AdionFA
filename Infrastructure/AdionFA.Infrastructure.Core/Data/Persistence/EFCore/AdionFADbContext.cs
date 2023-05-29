@@ -1,7 +1,6 @@
 ﻿using AdionFA.Core.Domain.Aggregates.Common;
 using AdionFA.Core.Domain.Aggregates.MarketData;
 using AdionFA.Core.Domain.Aggregates.MetaTrader;
-using AdionFA.Core.Domain.Aggregates.Organization;
 using AdionFA.Core.Domain.Aggregates.Project;
 using AdionFA.Core.Domain.Aggregates.ReferenceData;
 
@@ -17,8 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
-using TALib;
 
 namespace AdionFA.Infrastructure.Core.Data.Persistence
 {
@@ -134,31 +131,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                     CreatedByUserName = username
                 });
 
-            // Currency Spread
-
-            foreach (var csp in Enum.GetValues(typeof(CurrencySpreadEnum)))
-            {
-                var meta = (Metadata)m.Invoke(csp, new object[] { csp });
-                modelBuilder.Entity<CurrencySpread>().HasData(
-                    new CurrencySpread
-                    {
-                        CurrencySpreadId = (int)csp,
-
-                        Code = meta.Code,
-                        Name = meta.Name,
-                        Value = meta.Value,
-                        Description = meta.Description,
-
-                        IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
-                        CreatedById = userId,
-                        CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
-                    }
-                );
-            }
-
             // Timeframe
 
             foreach (var timeframe in Enum.GetValues(typeof(TimeframeEnum)))
@@ -232,23 +204,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 );
             }
 
-            // Organization
-
-            modelBuilder.Entity<Organization>().HasData(new Organization
-            {
-                OrganizationId = tenantId,
-
-                Name = "AdionFA",
-                LegalName = "AdionFA",
-
-                IsDeleted = false,
-                Inaccesible = false,
-                TenantId = tenantId,
-                CreatedById = userId,
-                CreatedOn = DateTime.UtcNow,
-                CreatedByUserName = username
-            });
-
             // Project Global Configuration
 
             modelBuilder.Entity<ProjectGlobalConfiguration>().HasData(new ProjectGlobalConfiguration
@@ -257,7 +212,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                 // Extractor
 
-                Variation = 50,
+                ExtractorMinVariation = 50,
 
                 // Period
 
@@ -275,56 +230,40 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                 SymbolId = 1,
                 TimeframeId = (int)TimeframeEnum.H1,
-                CurrencySpreadId = (int)CurrencySpreadEnum.Five,
 
                 // Weka
 
                 TotalInstanceWeka = 1,
-
                 DepthWeka = 6,
-                MinAdjustDepthWeka = 5,
-
                 TotalDecimalWeka = 5,
                 MinimalSeed = 100,
                 MaximumSeed = 1000000,
-
                 MaxRatioTree = (decimal)1.5,
-                MinAdjustMaxRatioTree = 1,
                 NTotalTree = 300,
-                MinAdjustNTotalTree = 150,
 
                 // Strategy Builder
 
-                MinTransactionCountIS = 300,
-                MinAdjustMinTransactionCountIS = 360,
-                MinPercentSuccessIS = 55,
-                MinAdjustMinPercentSuccessIS = 50,
+                SBMinTransactionsIS = 300,
+                SBMinPercentSuccessIS = 55,
 
-                MinTransactionCountOS = 100,
-                MinAdjustMinTransactionCountOS = 180,
-                MinPercentSuccessOS = 55,
-                MinAdjustMinPercentSuccessOS = 50,
+                SBMinTransactionsOS = 100,
+                SBMinPercentSuccessOS = 55,
 
-                VariationTransaction = 4,
-                MinAdjustVariationTransaction = 4,
+                SBMaxTransactionsVariation = 4,
 
                 Progressiveness = 2,
-                MinAdjustProgressiveness = 2,
                 IsProgressiveness = false,
 
-                MaxPercentCorrelation = 2,
+                SBMaxPercentCorrelation = 2,
 
-                WinningStrategyTotalUP = 6,
-                WinningStrategyTotalDOWN = 6,
-
-                AutoAdjustConfig = false,
-                MaxAdjustConfig = 5,
+                SBWinningStrategyDOWNTarget = 6,
+                SBWinningStrategyUPTarget = 6,
+                SBTransactionsTarget = 300,
 
                 // Assembled Builder
 
-                TransactionTarget = 600,
-                MinAssemblyPercent = 5,
-                TotalAssemblyIterations = 1,
+                ABTransactionsTarget = 600,
+                ABMinImprovePercent = 5,
 
                 // Time Sensitive Base
 
@@ -407,29 +346,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 }
             );
 
-            // Project Step
-
-            foreach (var ps in Enum.GetValues(typeof(ProjectStepEnum)))
-            {
-                var meta = (Metadata)m.Invoke(ps, new object[] { ps });
-                modelBuilder.Entity<ProjectStep>().HasData(
-                    new ProjectStep
-                    {
-                        ProjectStepId = (int)ps,
-                        Code = meta.Code,
-                        Name = meta.Name,
-                        Description = meta.Description,
-
-                        IsDeleted = false,
-                        Inaccesible = false,
-                        TenantId = tenantId,
-                        CreatedById = userId,
-                        CreatedOn = DateTime.UtcNow,
-                        CreatedByUserName = username
-                    }
-                );
-            }
-
             // Currencies
 
             foreach (var c in Enum.GetValues(typeof(CurrencyEnum)))
@@ -466,7 +382,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
         public DbSet<Symbol> Symbols { get; set; }
         public DbSet<Timeframe> Timeframes { get; set; }
-        public DbSet<CurrencySpread> CurrencySpreads { get; set; }
         public DbSet<Market> Markets { get; set; }
         public DbSet<HistoricalData> HistoricalDatas { get; set; }
         public DbSet<HistoricalDataCandle> HistoricalDataCandles { get; set; }
@@ -483,7 +398,6 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
         public DbSet<ProjectGlobalConfiguration> ProjectGlobalConfigurations { get; set; }
         public DbSet<ProjectGlobalScheduleConfiguration> ProjectGlobalScheduleConfigurations { get; set; }
         public DbSet<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
-        public DbSet<ProjectStep> ProjectSteps { get; set; }
 
         // Reference Data
 

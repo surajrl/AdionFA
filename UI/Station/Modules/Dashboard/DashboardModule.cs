@@ -14,7 +14,7 @@ namespace AdionFA.UI.Station.Module.Dashboard
             var regionManager = containerProvider.Resolve<IRegionManager>();
 
             regionManager.RegisterViewWithRegion(AppRegions.CreateProjectView_SettingModule, typeof(CreateProjectView));
-            regionManager.RegisterViewWithRegion(AppRegions.ProjectGlobalConfigView_SettingModule, typeof(ProjectGlobalConfigView));
+            regionManager.RegisterViewWithRegion(AppRegions.ProjectGlobalConfigView_SettingModule, typeof(ProjectGlobalConfigurationView));
             regionManager.RegisterViewWithRegion(AppRegions.HistoricalDataView_SettingModule, typeof(HistoricalDataView));
             regionManager.RegisterViewWithRegion(AppRegions.HistoricalDataMTView_SettingModule, typeof(HistoricalDataView));
             regionManager.RegisterViewWithRegion(AppRegions.UploadHistoricalDataView_SettingModule, typeof(UploadHistoricalDataView));

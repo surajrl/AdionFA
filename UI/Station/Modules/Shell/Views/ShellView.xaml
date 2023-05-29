@@ -16,7 +16,8 @@
              x:Class="AdionFA.UI.Station.Module.Shell.ShellView"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450"
+             d:DesignWidth="800">
 
     <Grid Margin="45,20">
         <Grid.RowDefinitions>
@@ -33,13 +34,20 @@
         <!--#region Search Ctrol-->
 
         <StackPanel>
-            <Label Content="{x:Static shellResources:ShellResources.OpenRecent}" Grid.Column="1" FontSize="16" />
-            <searchTextBoxControl:SearchTextBoxControl Padding="7" Margin="0, 10"
-                                                       Name="searchTextBox" Text="{Binding SearchableText, Mode=TwoWay}" SectionsSelected="{Binding SectionsSelected, Mode=TwoWay}"
+            <Label Content="{x:Static shellResources:ShellResources.OpenRecent}"
+                   Grid.Column="1"
+                   FontSize="16" />
+            <searchTextBoxControl:SearchTextBoxControl Padding="7"
+                                                       Margin="0, 10"
+                                                       Name="searchTextBox"
+                                                       Text="{Binding SearchableText, Mode=TwoWay}"
+                                                       SectionsSelected="{Binding SectionsSelected, Mode=TwoWay}"
                                                        SectionsList="{Binding HistoricalTimeGrouping}">
                 <behaviors:Interaction.Triggers>
-                    <behaviors:EventTrigger SourceName="searchTextBox" EventName="OnSearch">
-                        <behaviors:InvokeCommandAction Command="{Binding FilterProjectHierarchyCommand}" CommandParameter="{Binding ElementName=searchTextBox, Path=Text}" />
+                    <behaviors:EventTrigger SourceName="searchTextBox"
+                                            EventName="OnSearch">
+                        <behaviors:InvokeCommandAction Command="{Binding FilterProjectHierarchyCommand}"
+                                                       CommandParameter="{Binding ElementName=searchTextBox, Path=Text}" />
                     </behaviors:EventTrigger>
                 </behaviors:Interaction.Triggers>
             </searchTextBoxControl:SearchTextBoxControl>
@@ -49,39 +57,66 @@
 
         <!--#region Tree-->
 
-        <TreeView Name="projectTreeView" ItemsSource="{Binding ProjectHierarchy}" Grid.Column="0" Grid.Row="1">
+        <TreeView Name="projectTreeView"
+                  ItemsSource="{Binding ProjectHierarchy}"
+                  Grid.Column="0"
+                  Grid.Row="1">
 
             <TreeView.Resources>
-                <Style TargetType="{x:Type TreeView}" BasedOn="{StaticResource MahApps.Styles.TreeView}">
-                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
+                <Style TargetType="{x:Type TreeView}"
+                       BasedOn="{StaticResource MahApps.Styles.TreeView}">
+                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                            Value="Hidden" />
                     <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible" />
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                                    Value="Visible" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
 
-                <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
-                    <Setter Property="Focusable" Value="False" />
-                    <Setter Property="Width" Value="19" />
-                    <Setter Property="Height" Value="13" />
+                <Style x:Key="ExpandCollapseToggleStyle"
+                       TargetType="{x:Type ToggleButton}">
+                    <Setter Property="Focusable"
+                            Value="False" />
+                    <Setter Property="Width"
+                            Value="19" />
+                    <Setter Property="Height"
+                            Value="13" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                <Border Width="19" Height="13" Background="Transparent">
-                                    <Border Width="9" Height="9" SnapsToDevicePixels="true" BorderBrush="#FF7898B5" BorderThickness="1" CornerRadius="1">
+                                <Border Width="19"
+                                        Height="13"
+                                        Background="Transparent">
+                                    <Border Width="9"
+                                            Height="9"
+                                            SnapsToDevicePixels="true"
+                                            BorderBrush="#FF7898B5"
+                                            BorderThickness="1"
+                                            CornerRadius="1">
                                         <Border.Background>
-                                            <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                                                <GradientStop Color="White" Offset=".2" />
-                                                <GradientStop Color="#FFC0B7A6" Offset="1" />
+                                            <LinearGradientBrush EndPoint="1,1"
+                                                                 StartPoint="0,0">
+                                                <GradientStop Color="White"
+                                                              Offset=".2" />
+                                                <GradientStop Color="#FFC0B7A6"
+                                                              Offset="1" />
                                             </LinearGradientBrush>
                                         </Border.Background>
-                                        <Path x:Name="ExpandPath" Fill="Black" Margin="1,1,1,1" Data="M 0 2 L 0 3 L 2 3 L 2 5 L 3 5 L 3 3 L 5 3 L 5 2 L 3 2 L 3 0 L 2 0 L 2 2 Z" />
+                                        <Path x:Name="ExpandPath"
+                                              Fill="Black"
+                                              Margin="1,1,1,1"
+                                              Data="M 0 2 L 0 3 L 2 3 L 2 5 L 3 5 L 3 3 L 5 3 L 5 2 L 3 2 L 3 0 L 2 0 L 2 2 Z" />
                                     </Border>
                                 </Border>
                                 <ControlTemplate.Triggers>
-                                    <Trigger Property="IsChecked" Value="True">
-                                        <Setter Property="Data" TargetName="ExpandPath" Value="M 0 2 L 0 3 L 5 3 L 5 2 Z" />
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                        <Setter Property="Data"
+                                                TargetName="ExpandPath"
+                                                Value="M 0 2 L 0 3 L 5 3 L 5 2 Z" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -89,10 +124,14 @@
                     </Setter>
                 </Style>
 
-                <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
-                    <Setter Property="Visibility" Value="{Binding IsVisibility}" />
-                    <Setter Property="Focusable" Value="False" />
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                <Style TargetType="{x:Type TreeViewItem}"
+                       BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
+                    <Setter Property="Visibility"
+                            Value="{Binding IsVisibility}" />
+                    <Setter Property="Focusable"
+                            Value="False" />
+                    <Setter Property="IsExpanded"
+                            Value="{Binding IsExpanded}" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type TreeViewItem}">
@@ -107,36 +146,55 @@
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
 
-                                    <ToggleButton x:Name="Expander" Grid.Column="0" Grid.Row="0"
-                                                  ClickMode="Press" Style="{StaticResource ExpandCollapseToggleStyle}"
+                                    <ToggleButton x:Name="Expander"
+                                                  Grid.Column="0"
+                                                  Grid.Row="0"
+                                                  ClickMode="Press"
+                                                  Style="{StaticResource ExpandCollapseToggleStyle}"
                                                   IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" />
 
-                                    <Border x:Name="Bd" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Margin="25,0"
-                                        SnapsToDevicePixels="true"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        Padding="{TemplateBinding Padding}">
+                                    <Border x:Name="Bd"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="3"
+                                            Grid.Row="0"
+                                            Margin="25,0"
+                                            SnapsToDevicePixels="true"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Padding="{TemplateBinding Padding}">
                                         <ContentPresenter x:Name="PART_Header"
-                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                      ContentSource="Header" />
+                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                          ContentSource="Header" />
                                     </Border>
-                                    <ItemsPresenter x:Name="ItemsHost" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" />
+                                    <ItemsPresenter x:Name="ItemsHost"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="3"
+                                                    Grid.Row="1" />
                                 </Grid>
                                 <ControlTemplate.Triggers>
-                                    <Trigger Property="IsExpanded" Value="false">
-                                        <Setter Property="Visibility" TargetName="ItemsHost" Value="Collapsed" />
+                                    <Trigger Property="IsExpanded"
+                                             Value="false">
+                                        <Setter Property="Visibility"
+                                                TargetName="ItemsHost"
+                                                Value="Collapsed" />
                                     </Trigger>
-                                    <Trigger Property="HasItems" Value="false">
-                                        <Setter Property="Visibility" TargetName="Expander" Value="Hidden" />
+                                    <Trigger Property="HasItems"
+                                             Value="false">
+                                        <Setter Property="Visibility"
+                                                TargetName="Expander"
+                                                Value="Hidden" />
                                     </Trigger>
                                     <MultiTrigger>
                                         <MultiTrigger.Conditions>
-                                            <Condition Property="HasItems" Value="False" />
-                                            <Condition Property="IsMouseOver" Value="True" />
+                                            <Condition Property="HasItems"
+                                                       Value="False" />
+                                            <Condition Property="IsMouseOver"
+                                                       Value="True" />
                                         </MultiTrigger.Conditions>
-                                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent4}" />
+                                        <Setter Property="Background"
+                                                Value="{DynamicResource MahApps.Brushes.Accent4}" />
                                     </MultiTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -144,7 +202,9 @@
                     </Setter>
                 </Style>
 
-                <DataTemplate x:Key="fff" x:Name="fff" DataType="{x:Type model:ProjectHierarchicalVM}">
+                <DataTemplate x:Key="fff"
+                              x:Name="fff"
+                              DataType="{x:Type model:ProjectHierarchicalVM}">
                     <Grid Margin="10,15,0,10">
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -156,20 +216,25 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                            <StackPanel Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,0,10,0">
-                                <Image helpers:ImageHelper.SourceResourceKey="{Binding ProjectStepIcon}" Width="15" Margin="5"
-                                   VerticalAlignment="Center" ToolTip="{Binding CurrentProjectStep}" />
-                            </StackPanel>
-                            <TextBlock x:Name="ProjectNameTextBlock" Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Orientation="Horizontal">
+                            <TextBlock x:Name="ProjectNameTextBlock"
+                                       Text="{Binding Name}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center">
                                 <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding ProjectStartCommand}" MouseAction="LeftClick" />
+                                    <MouseBinding Command="{Binding ProjectStartCommand}"
+                                                  MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Style.Triggers>
-                                            <Trigger Property ="IsMouseOver" Value="True">
-                                                <Setter Property="Cursor" Value="Hand" />
+                                            <Trigger Property="IsMouseOver"
+                                                     Value="True">
+                                                <Setter Property="Cursor"
+                                                        Value="Hand" />
                                             </Trigger>
                                         </Style.Triggers>
                                     </Style>
@@ -177,17 +242,28 @@
                             </TextBlock>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,10,0" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <TextBlock  Text="{Binding LastLoadOn}" Margin="10,0"
+                        <StackPanel Grid.Row="0"
+                                    Grid.Column="2"
+                                    Margin="0,0,10,0"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right">
+                            <TextBlock  Text="{Binding LastLoadOn}"
+                                        Margin="10,0"
                                         Foreground="{StaticResource TextBox_LabelTextColor}" />
 
-                            <Button x:Name="ProjectPinBtn" VerticalAlignment="Top" Style="{StaticResource CommandButtonStyle}">
-                                <iconPacks:PackIconMaterial x:Name="PinIcon" Kind="Pin" ToolTip="{x:Static shellResources:ShellResources.PinOn}"
-                                                        Foreground="{DynamicResource MahApps.Brushes.Accent4}"
-                                                        Width="15" Height="15" />
+                            <Button x:Name="ProjectPinBtn"
+                                    VerticalAlignment="Top"
+                                    Style="{StaticResource CommandButtonStyle}">
+                                <iconPacks:PackIconMaterial x:Name="PinIcon"
+                                                            Kind="Pin"
+                                                            ToolTip="{x:Static shellResources:ShellResources.PinOn}"
+                                                            Foreground="{DynamicResource MahApps.Brushes.Accent4}"
+                                                            Width="15"
+                                                            Height="15" />
 
                                 <behaviors:Interaction.Triggers>
-                                    <behaviors:EventTrigger SourceName="ProjectPinBtn" EventName="Click">
+                                    <behaviors:EventTrigger SourceName="ProjectPinBtn"
+                                                            EventName="Click">
                                         <behaviors:InvokeCommandAction Command="{Binding CommandPin}" />
                                         <!--<behaviors:InvokeCommandAction
                                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}, Path=DataContext.UpdateProjectHierarchyInMemoryCommand}"
@@ -197,8 +273,13 @@
                             </Button>
                         </StackPanel>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="35,0,0,0" Text="{Binding WorkspacePathCut}"
-                                   Foreground="{StaticResource TextBox_LabelTextColor}" ToolTip="{Binding WorkspacePath}" />
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   Margin="35,0,0,0"
+                                   Text="{Binding WorkspacePathCut}"
+                                   Foreground="{StaticResource TextBox_LabelTextColor}"
+                                   ToolTip="{Binding WorkspacePath}" />
 
                         <!--<behaviors:Interaction.Triggers>
                             <behaviors:EventTrigger SourceName="aaa" EventName="Click">
@@ -207,14 +288,27 @@
                         </behaviors:Interaction.Triggers>-->
                     </Grid>
                     <DataTemplate.Triggers>
-                        <Trigger SourceName="PinIcon" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PinIcon" Property="Foreground" Value="Black" />
-                            <Setter TargetName="PinIcon" Property="Cursor" Value="Hand" />
+                        <Trigger SourceName="PinIcon"
+                                 Property="IsMouseOver"
+                                 Value="True">
+                            <Setter TargetName="PinIcon"
+                                    Property="Foreground"
+                                    Value="Black" />
+                            <Setter TargetName="PinIcon"
+                                    Property="Cursor"
+                                    Value="Hand" />
                         </Trigger>
-                        <DataTrigger Binding="{Binding IsPinned}" Value="True">
-                            <Setter TargetName="PinIcon" Property="Kind" Value="PinOff" />
-                            <Setter TargetName="PinIcon" Property="ToolTip" Value="{x:Static shellResources:ShellResources.PinOff}" />
-                            <Setter TargetName="PinIcon" Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                        <DataTrigger Binding="{Binding IsPinned}"
+                                     Value="True">
+                            <Setter TargetName="PinIcon"
+                                    Property="Kind"
+                                    Value="PinOff" />
+                            <Setter TargetName="PinIcon"
+                                    Property="ToolTip"
+                                    Value="{x:Static shellResources:ShellResources.PinOff}" />
+                            <Setter TargetName="PinIcon"
+                                    Property="Foreground"
+                                    Value="{DynamicResource MahApps.Brushes.Accent}" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
@@ -223,7 +317,10 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}"
                                           ItemTemplate="{StaticResource fff}">
-                    <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Margin="5,0,0,0" />
+                    <TextBlock Text="{Binding Name}"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Margin="5,0,0,0" />
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
@@ -234,12 +331,20 @@
 
         <!--#region Sidebar Left-->
 
-        <StackPanel Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,50,0,0">
+        <StackPanel Grid.Column="1"
+                    Grid.RowSpan="2"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Margin="0,50,0,0">
 
             <!--#region Logo-->
 
-            <Image Source="{StaticResource Logo}" Height="82" Width="161" />
-            <Label Content="{x:Static commonResources:CommonResources.WelcomeMessage}" FontSize="28" Margin="20" />
+            <Image Source="{StaticResource Logo}"
+                   Height="82"
+                   Width="161" />
+            <Label Content="{x:Static commonResources:CommonResources.WelcomeMessage}"
+                   FontSize="28"
+                   Margin="20" />
 
             <!--#endregion-->
 
@@ -260,17 +365,23 @@
                 </Grid.ColumnDefinitions>
 
                 <!--#region Create Project-->
-
-                <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,10">
-                    <Button x:Name="NewProjectBtn" Style="{StaticResource CommandButtonStyle}">
+                <StackPanel Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Left"
+                            Margin="0,10">
+                    <Button x:Name="NewProjectBtn"
+                            Style="{StaticResource CommandButtonStyle}">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{iconPacks:FontAwesomeImage Kind=PlusSolid}" Height="15" Margin="5,0" />
+                                <Image Source="{iconPacks:FontAwesomeImage Kind=PlusSolid}"
+                                       Height="15"
+                                       Margin="5,0" />
                                 <TextBlock Text="{x:Static shellResources:ShellResources.CreateProject}" />
                             </StackPanel>
                         </Button.Content>
                         <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="NewProjectBtn" EventName="Click">
+                            <behaviors:EventTrigger SourceName="NewProjectBtn"
+                                                    EventName="Click">
                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -282,36 +393,27 @@
                         </behaviors:Interaction.Triggers>
                     </Button>
                 </StackPanel>
-
-                <!--#endregion-->
-
-                <!--#region Import/Export Project-->
-
-                <!--<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,10">
-                    <Button x:Name="OpenImportProjectBtn" Style="{StaticResource CommandButtonStyle}">
-                        <Button.Content>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="{iconPacks:FontAwesomeImage Kind=FolderOpenSolid}" Height="15" Margin="5,0" />
-                                <TextBlock Text="{x:Static shellResources:ShellResources.OpenOrImport}" />
-                            </StackPanel>
-                        </Button.Content>
-                    </Button>
-                </StackPanel>-->
-
                 <!--#endregion-->
 
                 <!--#region Configuration-->
-
-                <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,10">
-                    <Button x:Name="ConfigurationBtn" Style="{StaticResource CommandButtonStyle}">
+                <StackPanel Grid.Row="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Left"
+                            Margin="0,10">
+                    <Button x:Name="ConfigurationBtn"
+                            Style="{StaticResource CommandButtonStyle}">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{iconPacks:FontAwesomeImage Kind=ToolsSolid}" Height="15" Margin="5,0" />
+                                <Image Source="{iconPacks:FontAwesomeImage Kind=ToolsSolid}"
+                                       Height="15"
+                                       Margin="5,0" />
                                 <TextBlock Text="{x:Static shellResources:ShellResources.ProjectGlobalConfig}" />
                             </StackPanel>
                         </Button.Content>
                         <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="ConfigurationBtn" EventName="Click">
+                            <behaviors:EventTrigger SourceName="ConfigurationBtn"
+                                                    EventName="Click">
                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -328,16 +430,24 @@
 
                 <!--#region History-->
 
-                <StackPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,10">
-                    <Button x:Name="MarketDataBtn" Style="{StaticResource CommandButtonStyle}">
+                <StackPanel Grid.Row="3"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Left"
+                            Margin="0,10">
+                    <Button x:Name="HistoricalDataBtn"
+                            Style="{StaticResource CommandButtonStyle}">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{iconPacks:FontAwesomeImage Kind=DatabaseSolid}" Height="15" Margin="5,0" />
+                                <Image Source="{iconPacks:FontAwesomeImage Kind=DatabaseSolid}"
+                                       Height="15"
+                                       Margin="5,0" />
                                 <TextBlock Text="{x:Static shellResources:ShellResources.HistoricalData}" />
                             </StackPanel>
                         </Button.Content>
                         <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="MarketDataBtn" EventName="Click">
+                            <behaviors:EventTrigger SourceName="HistoricalDataBtn"
+                                                    EventName="Click">
                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -349,32 +459,6 @@
                         </behaviors:Interaction.Triggers>
                     </Button>
                 </StackPanel>
-
-                <!--#endregion-->
-
-                <!--#region Trader-->
-
-                <!--<StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,10">
-                    <Button x:Name="TraderBtn" Style="{StaticResource CommandButtonStyle}">
-                        <Button.Content>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="{iconPacks:FontAwesomeImage Kind=TengeSolid}" Height="15" Margin="5,0" />
-                                <TextBlock Text="{x:Static commonResources:CommonResources.TraderCenter}" />
-                            </StackPanel>
-                        </Button.Content>
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="TraderBtn" EventName="Click">
-                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                    <behaviors:InvokeCommandAction.CommandParameter>
-                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutTrader}" />
-                                        </MultiBinding>
-                                    </behaviors:InvokeCommandAction.CommandParameter>
-                                </behaviors:InvokeCommandAction>
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
-                    </Button>
-                </StackPanel>-->
 
                 <!--#endregion-->
             </Grid>

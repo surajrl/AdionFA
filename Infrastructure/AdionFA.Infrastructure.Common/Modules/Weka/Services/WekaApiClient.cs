@@ -26,19 +26,22 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
 
         public async Task<HttpOperationResponse<IList<REPTreeOutputModel>>> GetREPTreeClassifierWithHttpMessagesAsync(
             string path,
-            int? maxDepth = default(int?),
-            int? numDecimalPlaces = default(int?),
-            int? minSeed = default(int?),
-            int? maxSeed = default(int?),
-            int? instances = default(int?),
-            double? ratio = default(double?),
-            double? total = default(double?),
-            bool? isAssembled = default(bool?),
-            Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+            int? maxDepth = default,
+            int? numDecimalPlaces = default,
+            int? minSeed = default,
+            int? maxSeed = default,
+            int? instances = default,
+            double? ratio = default,
+            double? total = default,
+            bool? isAssembled = default,
+            Dictionary<string, List<string>> customHeaders = null,
+            CancellationToken cancellationToken = default)
         {
             // Tracing
+
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
             string _invocationId = null;
+
             if (_shouldTrace)
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
@@ -55,13 +58,19 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
                     { "isAssembled", isAssembled },
                     { "cancellationToken", cancellationToken }
                 };
+
                 ServiceClientTracing.Enter(_invocationId, this, "GetREPTreeClassifier", tracingParameters);
             }
+
             // Construct URL
+
             var _baseUrl = BaseUri.AbsoluteUri;
             var _url = new Uri(new Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "weka.reptree").ToString();
-            var _queryParameters = new List<string>();
-            _queryParameters.Add(string.Format("path={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(path, this.SerializationSettings).Trim('"'))));
+            var _queryParameters = new List<string>
+            {
+                string.Format("path={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(path, this.SerializationSettings).Trim('"')))
+            };
+
             if (maxDepth != null)
             {
                 _queryParameters.Add(string.Format("maxDepth={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(maxDepth, this.SerializationSettings).Trim('"'))));
@@ -99,11 +108,13 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             {
                 _url += "?" + string.Join("&", _queryParameters);
             }
+
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
             HttpResponseMessage _httpResponse = null;
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new Uri(_url);
+
             // Set Headers
             if (customHeaders != null)
             {
@@ -119,26 +130,34 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
 
             // Serialize Request
             string _requestContent = null;
+
             // Set Credentials
             if (this.Credentials != null)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await this.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
             }
+
             // Send Request
             if (_shouldTrace)
             {
                 ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
             }
+
             cancellationToken.ThrowIfCancellationRequested();
+
             _httpResponse = await this.HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+
             if (_shouldTrace)
             {
                 ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
             }
+
             HttpStatusCode _statusCode = _httpResponse.StatusCode;
+
             cancellationToken.ThrowIfCancellationRequested();
             string _responseContent = null;
+
             if ((int)_statusCode != 200)
             {
                 var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
@@ -156,6 +175,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
                 }
                 throw ex;
             }
+
             // Create Result
             var _result = new HttpOperationResponse<IList<REPTreeOutputModel>>();
             _result.Request = _httpRequest;
@@ -365,6 +385,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
         /// An optional partial-method to perform custom initialization.
         ///</summary>
         partial void CustomInitialize();
+
         /// <summary>
         /// Initializes client properties.
         /// </summary>

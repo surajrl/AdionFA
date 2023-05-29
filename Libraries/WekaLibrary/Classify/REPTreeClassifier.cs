@@ -18,8 +18,8 @@ namespace WekaLibrary
         private List<REPTree> Trees = new List<REPTree>();
         public List<REPTreeOutputModel> Output { get; private set; }
 
-        public const string UP = "UP";
-        public const string DOWN = "DOWN";
+        public const string WINNER = "WINNER";
+        public const string LOSER = "LOSER";
 
         public REPTreeClassifier(REPTreeOptionsModel model, int maxInstances = 1, Random r = null)
         {
@@ -73,7 +73,7 @@ namespace WekaLibrary
                         REPTree tree = (REPTree)e;
                         tree.buildClassifier(data);
                         string treeOutput = tree.toString();
-                        REPTreeOutputModel output = new REPTreeOutputModel 
+                        REPTreeOutputModel output = new REPTreeOutputModel
                         {
                             Seed = tree.getSeed(),
                             TreeOutput = treeOutput,
@@ -89,7 +89,7 @@ namespace WekaLibrary
                         {
                             count++;
                             var node = BuildNode(line);
-                            if(node != null)
+                            if (node != null)
                             {
                                 output.NodeOutput.Add(node);
                             }
@@ -125,11 +125,11 @@ namespace WekaLibrary
             try
             {
                 REPTreeNodeModel result = null;
-                bool isDown = node.Contains(DOWN);
-                bool isUp = node.Contains(UP);
+                bool isDown = node.Contains(LOSER);
+                bool isUp = node.Contains(WINNER);
                 if (isDown || isUp)
                 {
-                    string pattern = isDown ? DOWN : isUp ? UP : string.Empty;
+                    string pattern = isDown ? LOSER : isUp ? WINNER : string.Empty;
                     if (pattern != string.Empty)
                     {
                         string data = node.Substring(node.IndexOf(pattern)).Replace(" ", string.Empty);

@@ -1,0 +1,598 @@
+﻿<UserControl x:Class="AdionFA.UI.Station.Module.Dashboard.ProjectGlobalConfigurationView"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:commonResources="clr-namespace:AdionFA.Infrastructure.I18n.Resources;assembly=AdionFA.Infrastructure.I18n"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:AdionFA.UI.Station.Module.Dashboard"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             dialog:DialogParticipation.Register="{Binding}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             Margin="20 10 10 5"
+             x:Name="projectGlobalConfigView">
+
+    <UserControl.Resources>
+        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 0 15</Thickness>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid HorizontalAlignment="Right"
+              Margin="0 0 0 10">
+            <Button x:Name="ProjectGlobalConfigurationShellBtnSave"
+                    Width="80"
+                    Height="40"
+                    Command="{Binding SaveBtnCommand}"
+                    HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <iconPacks:FontAwesome Kind="SaveRegular"
+                                           Width="14" />
+                    <Label Content="Save"
+                           FontSize="11" />
+                </StackPanel>
+            </Button>
+            <metro:ProgressRing IsActive="True"
+                                Width="25"
+                                Height="25"
+                                Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </Grid>
+
+        <ScrollViewer Grid.Row="1"
+                      Padding="0 0 15 0">
+            <StackPanel Orientation="Vertical">
+                <!--GeneralInformation-->
+                <metro:MetroHeader Header="{x:Static commonResources:CommonResources.GeneralInformation}"
+                                   Margin="0 0 0 15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--#region Description-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                        <Run Text="{x:Static commonResources:CommonResources.Description}" />
+                                        <Run Text="*" /></TextBlock>
+                            </Label>
+                            <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                     Text="{Binding ProjectGlobalConfiguration.Description, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                    </Grid>
+                </metro:MetroHeader>
+                <!--Currency-->
+                <metro:MetroHeader Margin="0 0 0 15"
+                                   Header="{x:Static commonResources:CommonResources.Currency}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--#region Symbol-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.Symbols}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <ComboBox ItemsSource="{Binding Symbols}"
+                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id"
+                                      SelectedValue="{Binding ProjectGlobalConfiguration.SymbolId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region Timeframe-->
+                        <StackPanel Grid.Column="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                        <Run Text="{x:Static commonResources:CommonResources.Timeframe}" />
+                                        <Run Text="*" /></TextBlock>
+                            </Label>
+                            <ComboBox ItemsSource="{Binding Timeframes}"
+                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id"
+                                      SelectedValue="{Binding ProjectGlobalConfiguration.TimeframeId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                    </Grid>
+                </metro:MetroHeader>
+                <!--Schedule-->
+                <metro:MetroHeader Header="{x:Static commonResources:CommonResources.Schedule}"
+                                   Margin="0 0 0 15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <!--#region Without Schedule-->
+                            <CheckBox Content="{x:Static commonResources:CommonResources.WithoutSchedules}"
+                                      IsChecked="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                      Command="{Binding WithoutSchedulesCommand}" />
+                            <!--#endregion-->
+                        </StackPanel>
+                        <GroupBox Header="{x:Static commonResources:CommonResources.Europe}"
+                                  Grid.Row="1"
+                                  Margin="{StaticResource ColumnMargin}">
+                            <StackPanel Margin="{StaticResource ColumnMargin}">
+                                <!--#region FromTimeInSecondsEurope-->
+                                <Label>
+                                    <TextBlock>
+                                        <Run Text="{x:Static commonResources:CommonResources.StartTime}" />
+                                            <Run Text="*" /></TextBlock>
+                                </Label>
+                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.FromTimeInSecondsEurope, Mode=TwoWay}"
+                                                  Culture="(Default)" />
+                                <!--#endregion-->
+                                <!--#region ToTimeInSecondsEurope-->
+                                <Label>
+                                    <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.EndTime}" />
+                                            <Run Text="*" /></TextBlock>
+                                </Label>
+                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.ToTimeInSecondsEurope, Mode=TwoWay}"
+                                                  Culture="(Default)" />
+                                <!--#endregion-->
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="{x:Static commonResources:CommonResources.America}"
+                                  Grid.Row="1"
+                                  Grid.Column="1"
+                                  Margin="{StaticResource ColumnMargin}">
+                            <StackPanel Margin="{StaticResource ColumnMargin}">
+                                <!--#region FromTimeInSecondsAmerica-->
+                                <Label>
+                                    <TextBlock>
+                                      
+                                        <Run Text="{x:Static commonResources:CommonResources.StartTime}" />
+                                            <Run Text="*" /></TextBlock>
+                                </Label>
+                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.FromTimeInSecondsAmerica, Mode=TwoWay,
+                                                                    ValidatesOnNotifyDataErrors=True}"
+                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                  Culture="(Default)" />
+                                <!--#endregion-->
+                                <!--#region ToTimeInSecondsAmerica-->
+                                <Label>
+                                    <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.EndTime}" />
+                                            <Run Text="*" /></TextBlock>
+                                </Label>
+                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.ToTimeInSecondsAmerica, Mode=TwoWay}"
+                                                  Culture="(Default)" />
+                                <!--#endregion-->
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="{x:Static commonResources:CommonResources.Asia}"
+                                  Grid.Row="1"
+                                  Grid.Column="2"
+                                  Margin="{StaticResource ColumnMargin}">
+                            <StackPanel Margin="{StaticResource ColumnMargin}">
+                                <!--#region FromTimeInSecondsAsia-->
+                                <Label>
+                                    <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.StartTime}" />
+                                            <Run Text="*" /></TextBlock>
+                                </Label>
+                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.FromTimeInSecondsAsia, Mode=TwoWay}"
+                                                  Culture="(Default)" />
+                                <!--#endregion-->
+                                <!--#region ToTimeInSecondsAsia-->
+                                <Label>
+                                    <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.EndTime}" />
+                                            <Run Text="*" /></TextBlock>
+                                </Label>
+                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                  IsEnabled="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
+                                                  IsReadOnly="{Binding ProjectGlobalConfiguration.WithoutSchedule, Mode=TwoWay}"
+                                                  SelectedDateTime="{Binding ProjectGlobalConfiguration.ToTimeInSecondsAsia, Mode=TwoWay}"
+                                                  Culture="(Default)" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </GroupBox>
+                    </Grid>
+                </metro:MetroHeader>
+                <!--Extractor-->
+                <metro:MetroHeader Header="{x:Static commonResources:CommonResources.Extractor}"
+                                   Margin="0 0 0 15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <!--#region Minimum Variation-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="Minimum Variation" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown NumericInputMode="Numbers"
+                                                 Minimum="0"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.ExtractorMinVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                    </Grid>
+                </metro:MetroHeader>
+                <!--Weka-->
+                <metro:MetroHeader Margin="0 0 0 15"
+                                   Header="{x:Static commonResources:CommonResources.Weka}">
+                    <Grid Margin="0 10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <!--#region TotalInstanceWeka-->
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.Instances}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.TotalInstanceWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
+                            <!--#region MinimalSeed-->
+                            <Label>
+                                <TextBlock>
+                                        <Run Text="{x:Static commonResources:CommonResources.Minimal}" />
+                                        <Run Text="{x:Static commonResources:CommonResources.Seed}" />
+                                        <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.MinimalSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
+                            <!--#region NTotalTree-->
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.NTotals}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.NTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
+                        </StackPanel>
+                        <StackPanel Grid.Column="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <!--#region TotalDecimalWeka-->
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.Decimals}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.TotalDecimalWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
+                            <!--#region MaximumSeed-->
+                            <Label>
+                                <TextBlock>
+                                        <Run Text="{x:Static commonResources:CommonResources.Maximum}" />
+                                        <Run Text="{x:Static commonResources:CommonResources.Seed}" />
+                                        <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.MaximumSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
+                            <!--#region MaxRatioTree-->
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.Ratio}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.MaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <!--#endregion-->
+                        </StackPanel>
+                        <!--#region DepthWeka-->
+                        <StackPanel Grid.Column="2"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.Depth}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.DepthWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                    </Grid>
+                </metro:MetroHeader>
+                <!--StrategyBuilder-->
+                <metro:MetroHeader Margin="0 0 0 15"
+                                   Header="{x:Static commonResources:CommonResources.StrategyBuilder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--#region Winning Strategy UP Target-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="Winning Strategy UP Target" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBWinningStrategyUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region Winning Strategy UP Target-->
+                        <StackPanel Grid.Column="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="Winning Strategy DOWN Target" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBWinningStrategyDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region TransactionTarget-->
+                        <StackPanel Grid.Column="2"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.TransactionsTarget}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region VariationTransaction-->
+                        <StackPanel Grid.Row="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="{x:Static commonResources:CommonResources.Variation}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBMaxTransactionsVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region ActivateProgressiveness-->
+                        <StackPanel Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                        <Run Text="{x:Static commonResources:CommonResources.ActivateProgressiveness}" /></TextBlock>
+                            </Label>
+                            <metro:ToggleSwitch Margin="0 -3"
+                                                Toggled="ProgressivenessToggleSwitch_Toggled"
+                                                IsOn="{Binding ProjectGlobalConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region Progressiveness-->
+                        <StackPanel Grid.Column="2"
+                                    Grid.Row="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label IsEnabled="{Binding ProjectGlobalConfiguration.IsProgressiveness}">
+                                <TextBlock>
+                                        <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" />
+                                        <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                        <Run Text="{Binding ElementName=projectGlobalConfigView, Path=LabelRequiredProgressiveness}" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown IsEnabled="{Binding ProjectGlobalConfiguration.IsProgressiveness}"
+                                                 NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.Progressiveness, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region MaxPercentCorrelation-->
+                        <StackPanel Grid.Row="1"
+                                    Grid.Column="3"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                            <Run Text="{x:Static commonResources:CommonResources.Correlation}" />
+                                            <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                            <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBMaxPercentCorrelation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region MinTransactionCountIS-->
+                        <StackPanel Grid.Row="2"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                        <Run Text="Minimum" />
+                                        <Run Text="{x:Static commonResources:CommonResources.Transactions}" />
+                                        <Run Text="{x:Static commonResources:CommonResources.IS}" />
+                                        <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 NumericInputMode="Numbers"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBMinTransactionsIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region MinPercentSuccessIS-->
+                        <StackPanel Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="Minimum" />
+                                    <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.IS}" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBMinPercentSuccessIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region MinTransactionCountOS-->
+                        <StackPanel Grid.Row="3"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="Minimum" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Transactions}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.OS}" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBMinTransactionsOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region MinPercentSuccessOS-->
+                        <StackPanel Grid.Row="3"
+                                    Grid.Column="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="Minimum" />
+                                    <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                    <Run Text="{x:Static commonResources:CommonResources.OS}" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.SBMinPercentSuccessOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                    </Grid>
+                </metro:MetroHeader>
+                <!--Assembled Builder-->
+                <metro:MetroHeader Header="{x:Static commonResources:CommonResources.AssembledBuilder}"
+                                   Margin="0 0 0 15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--#region Transactions Target (IS)-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="Transactions Target (IS)" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.ABTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#region Minimum Success Rate Improvement Percent-->
+                        <StackPanel Grid.Column="1"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label>
+                                <TextBlock>
+                                    <Run Text="Minimum Success Rate Improvement Percent" />
+                                    <Run Text="*" /></TextBlock>
+                            </Label>
+                            <metro:NumericUpDown NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectGlobalConfiguration.ABMinImprovePercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                    </Grid>
+                </metro:MetroHeader>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

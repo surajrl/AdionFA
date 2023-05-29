@@ -1,8 +1,16 @@
-﻿using AdionFA.Infrastructure.Common.Extractor.Model;
+﻿using AdionFA.Infrastructure.Common.Attributes;
+using AdionFA.Infrastructure.Common.Base;
+using AdionFA.Infrastructure.Common.Extensions;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
+using AdionFA.Infrastructure.Common.Extractor.Mappers;
+using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.Infrastructure.Common.Helpers;
+using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Mappers;
 using AdionFA.Infrastructure.Enums;
+using AdionFA.Infrastructure.I18n.Resources;
 using CsvHelper;
+using CsvHelper.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,27 +18,17 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using AdionFA.Infrastructure.Common.Extractor.Mappers;
-using AdionFA.Infrastructure.Common.Extensions;
-using CsvHelper.Configuration;
-using AdionFA.Infrastructure.Common.Base;
-using AdionFA.Infrastructure.Common.Attributes;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.Infrastructure.Common.Logger.Helpers;
-using AdionFA.Infrastructure.Common.Helpers;
-using Microsoft.AspNetCore.Identity;
-using System.Runtime.InteropServices;
 
 namespace AdionFA.Infrastructure.Common.Extractor.Services
 {
     public class ExtractorService : InfrastructureServiceBase, IExtractorService
     {
-        public ExtractorService() : base()
+        public ExtractorService()
+            : base()
         {
         }
 
-        public List<IndicatorBase> BuildIndicatorsFromCSV(string path)
+        public IList<IndicatorBase> BuildIndicatorsFromCSV(string path)
         {
             try
             {
@@ -188,7 +186,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             }
         }
 
-        public List<IndicatorBase> BuildIndicatorsFromNode(List<string> node)
+        public IList<IndicatorBase> BuildIndicatorsFromNode(IList<string> node)
         {
             try
             {
@@ -526,10 +524,10 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             }
         }
 
-        public List<IndicatorBase> DoBacktest(
+        public IList<IndicatorBase> CalculateNodeIndicators(
             Candle firstCandle,
             Candle currentCandle,
-            List<IndicatorBase> indicators,
+            IList<IndicatorBase> indicators,
             IEnumerable<Candle> candleHistory)
         {
             try
@@ -556,11 +554,11 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             }
         }
 
-        public List<IndicatorBase> DoExtraction(
+        public IList<IndicatorBase> DoExtraction(
             DateTime from,
             DateTime to,
-            List<IndicatorBase> indicators,
-            List<Candle> candles,
+            IList<IndicatorBase> indicators,
+            IList<Candle> candles,
             int timeframeId,
             decimal variation = 0)
         {
@@ -622,7 +620,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             double[] high,
             double[] low,
             double[] close,
-            List<IndicatorBase> indicators,
+            IList<IndicatorBase> indicators,
             IEnumerable<Candle> candlesRange,
             int timeframeId,
             bool isExtraction)
@@ -846,7 +844,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             };
         }
 
-        public bool ExtractorWrite(string path, List<IndicatorBase> indicators, int fromRegionTime = 0, int toRegionTime = 0)
+        public bool ExtractorWrite(string path, IList<IndicatorBase> indicators, int fromRegionTime = 0, int toRegionTime = 0)
         {
             try
             {
@@ -915,10 +913,9 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     csv.WriteField("LABEL");
                     csv.NextRecord();
 
-                    var intervals = indicators.FirstOrDefault().IntervalLabels.Where(
-                        il => (fromRegionTime == 0 || il.Interval.Hour >= fromRegionTime) &&
-                                (toRegionTime == 0 || il.Interval.Hour <= toRegionTime)
-                    ).ToArray();
+                    var intervals = indicators.FirstOrDefault().IntervalLabels.Where(intervalLabel =>
+                    (fromRegionTime == 0 || intervalLabel.Interval.Hour >= fromRegionTime)
+                    && (toRegionTime == 0 || intervalLabel.Interval.Hour <= toRegionTime)).ToArray();
 
                     for (int i = 0; i < rowCount; i++)
                     {
@@ -948,7 +945,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             return false;
         }
 
-        public List<Candle> GetCandles(string filePath)
+        public IList<Candle> GetCandles(string filePath)
         {
             try
             {

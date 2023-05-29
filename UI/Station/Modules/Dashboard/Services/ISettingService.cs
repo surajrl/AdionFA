@@ -12,9 +12,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 
         Task<IList<ProjectGlobalConfigurationVM>> GetAllGlobalConfigurations(bool includeGraph = false);
 
-        Task<ProjectGlobalConfigModel> GetGlobalConfiguration();
+        Task<ProjectGlobalConfigurationModel> GetGlobalConfiguration();
 
-        Task<bool> UpdateGlobalConfiguration(ProjectGlobalConfigModel config);
+        Task<bool> UpdateGlobalConfiguration(ProjectGlobalConfigurationModel config);
 
         // Historical Data
 

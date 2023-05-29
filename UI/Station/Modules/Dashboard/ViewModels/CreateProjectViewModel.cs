@@ -4,7 +4,6 @@ using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Module.Dashboard.Model;
 using AdionFA.UI.Station.Module.Dashboard.Services;
@@ -28,25 +27,22 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         {
             _settingService = settingService;
 
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
 
-        private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        private ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutCreateProject))
             {
                 PopulateViewModel();
             }
-        }
+        });
 
-        public DelegateCommand CreateProjectBtnCommand => new DelegateCommand(async () =>
+        public ICommand CreateProjectBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
-                var validator = project.Validate();
+                var validator = Project.Validate();
                 if (!validator.IsValid)
                 {
                     IsTransactionActive = false;
@@ -61,7 +57,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 IsTransactionActive = true;
 
                 // Create / Update
-                var result = await _settingService.CreateProject(project);
+                var result = await _settingService.CreateProject(Project);
 
                 if (result)
                 {
@@ -72,11 +68,12 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 MessageHelper.ShowMessage(this,
                     EntityTypeEnum.Project.GetMetadata().Description,
-                        result ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
+                    result ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
             }
             catch (Exception ex)
             {
                 IsTransactionActive = false;
+
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -86,13 +83,10 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         {
             if (!IsTransactionActive)
             {
-                Project = new CreateProjectModel
-                {
-                    ProjectStepId = (int)ProjectStepEnum.InitialConfiguration
-                };
+                Project = new CreateProjectModel();
 
                 var config = await _settingService.GetGlobalConfiguration();
-                project.ConfigurationId = config.ProjectGlobalConfigurationId;
+                Project.ConfigurationId = config.ProjectGlobalConfigurationId;
 
                 var historicalData = await _settingService.GetAllHistoricalData();
                 HistoricalData.Clear();
@@ -115,12 +109,12 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             set => SetProperty(ref _isTransactionActive, value);
         }
 
-        private CreateProjectModel project;
+        private CreateProjectModel _project;
 
         public CreateProjectModel Project
         {
-            get => project;
-            set => SetProperty(ref project, value);
+            get => _project;
+            set => SetProperty(ref _project, value);
         }
 
         public ObservableCollection<Metadata> HistoricalData { get; } = new ObservableCollection<Metadata>();

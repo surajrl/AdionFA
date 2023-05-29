@@ -6,26 +6,26 @@ namespace AdionFA.Infrastructure.Common.Extractor.Contracts
 {
     public interface IExtractorService
     {
-        List<IndicatorBase> BuildIndicatorsFromCSV(string path);
+        IList<IndicatorBase> BuildIndicatorsFromCSV(string path);
 
-        List<IndicatorBase> BuildIndicatorsFromNode(List<string> node);
+        IList<IndicatorBase> BuildIndicatorsFromNode(IList<string> node);
 
-        List<IndicatorBase> DoExtraction(
+        IList<IndicatorBase> DoExtraction(
             DateTime from,
             DateTime to,
-            List<IndicatorBase> indicators,
-            List<Candle> candles,
+            IList<IndicatorBase> indicators,
+            IList<Candle> candles,
             int timeframeId,
             decimal variation = 0);
 
-        List<IndicatorBase> DoBacktest(
+        IList<IndicatorBase> CalculateNodeIndicators(
             Candle firstCandle,
             Candle currentCandle,
-            List<IndicatorBase> indicators,
+            IList<IndicatorBase> indicators,
             IEnumerable<Candle> candleHistory);
 
-        List<Candle> GetCandles(string historyFilePath);
+        IList<Candle> GetCandles(string historyFilePath);
 
-        bool ExtractorWrite(string path, List<IndicatorBase> indicators, int fromTime = 0, int toTime = 0);
+        bool ExtractorWrite(string path, IList<IndicatorBase> indicators, int fromTime = 0, int toTime = 0);
     }
 }

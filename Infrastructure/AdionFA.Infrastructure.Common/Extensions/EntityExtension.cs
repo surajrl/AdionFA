@@ -8,7 +8,7 @@ namespace AdionFA.Infrastructure.Common.Extensions
 {
     public static class EntityExtension
     {
-        #region ProjectScheduleConfiguration
+        // Project Schedule Configuration
 
         public static void MarketStartTime(this List<ProjectScheduleConfigurationDTO> schedules, MarketRegionEnum region
             , out DateTime starttime, out DateTime endtime)
@@ -24,8 +24,5 @@ namespace AdionFA.Infrastructure.Common.Extensions
             starttime = DateTime.MinValue.AddSeconds(projectSchedule.FromTimeInSeconds ?? 0);
             endtime = DateTime.MinValue.AddSeconds(projectSchedule.ToTimeInSeconds ?? 0);
         }
-
-        #endregion
-
     }
 }

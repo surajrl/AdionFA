@@ -21,7 +21,6 @@ namespace AdionFA.UI.Station.Module.Shell
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellHistoricalDataFlyout));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellUploadHistoricalDataFlyout));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellDownloadHistoricalDataFlyout));
-            regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellTraderFlyout));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

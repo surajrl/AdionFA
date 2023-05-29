@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AdionFA.UI.Station.Infrastructure.Helpers
 {
@@ -15,7 +16,9 @@ namespace AdionFA.UI.Station.Infrastructure.Helpers
             {
                 DialogTitleFontSize = 16,
                 DialogMessageFontSize = 12,
-                ColorScheme = MetroDialogColorScheme.Theme
+                ColorScheme = MetroDialogColorScheme.Theme,
+                AffirmativeButtonText = "Yes",
+                NegativeButtonText = "No",
             };
         }
 
@@ -24,6 +27,14 @@ namespace AdionFA.UI.Station.Infrastructure.Helpers
             await Dialog.ShowMessageAsync(context,
                 title, $"{message ?? string.Empty}",
                 settings: _setting);
+        }
+
+        public static async Task<MessageDialogResult> ShowMessageInput(object context, string title, string message)
+        {
+            return await Dialog.ShowMessageAsync(context,
+                title, $"{message ?? string.Empty}",
+                MessageDialogStyle.AffirmativeAndNegative,
+                settings: _setting).ConfigureAwait(false);
         }
 
         public static async void ShowMessages(object context, string title, string[] messages)

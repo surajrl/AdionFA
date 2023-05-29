@@ -16,7 +16,8 @@ using static AdionFA.Infrastructure.Common.Logger.Enums.LoggerEnum;
 namespace AdionFA.Infrastructure.Common.Base
 {
     public interface IServiceBase
-    { }
+    {
+    }
 
     public abstract class InfrastructureServiceBase : IServiceBase
     {

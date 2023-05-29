@@ -8,9 +8,9 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
     {
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
-        public int PeriodId { get; set; }
+        public int TimeframeId { get; set; }
         public decimal Variation { get; set; }
-        public List<BacktestOperationModel> Backtests { get; set; }
+        public List<BacktestOperationModel> BacktestOperations { get; set; }
         public bool CorrelationPass { get; set; }
 
         // Weka

@@ -55,25 +55,14 @@ namespace AdionFA.UI.Station.Infrastructure.Services
 
         public void StartProcessWekaJava()
         {
-            ProcessStartInfo st = new()
+            var wekaProcessStartInfo = new ProcessStartInfo()
             {
                 FileName = "java.exe",
                 Arguments = "-jar " + Directory.GetCurrentDirectory() + "\\Resources\\Weka\\AdionFA.WekaLibrary-0.0.1-SNAPSHOT.jar",
                 CreateNoWindow = true
             };
-            Process.Start(st);
-        }
 
-        public void StartProcessMetaTrader()
-        {
-            ProcessStartInfo metaTraderProcess = new()
-            {
-                FileName = """C:\\Program Files\\MetaTrader 5\\terminal64.exe""",
-                Arguments = "/config:" + Directory.GetCurrentDirectory() + "\\MetaTrader\\config.ini",
-                CreateNoWindow = true
-            };
-
-            Process.Start(metaTraderProcess);
+            Process.Start(wekaProcessStartInfo);
         }
 
         public void EndAllProcessProject(bool? includeStation)
