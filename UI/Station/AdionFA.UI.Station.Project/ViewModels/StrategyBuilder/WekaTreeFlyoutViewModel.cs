@@ -8,7 +8,9 @@ using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AutoMapper;
 using Prism.Commands;
+using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 
@@ -31,7 +33,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleWekaTree))
+            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleWekaTree, StringComparison.Ordinal))
             {
                 var projection = ((ObservableCollection<REPTreeNodeVM>)flyoutModel.Model)
                     .Where(m => m.Winner)
@@ -51,7 +53,9 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         public ICommand SaveNodeCommand => new DelegateCommand<REPTreeNodeVM>(node =>
         {
             var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
-            SerializerHelper.XMLSerializeObject(_mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node), string.Format(@"{0}\{1}.xml", directory, RegexHelper.GetValidFileName(node.NodeName(), "_")));
+            var filename = $"NODE-{RegexHelper.GetValidFileName(node.Name, "_")}-{node.TotalTradesIs}.xml";
+
+            SerializerHelper.XMLSerializeObject(_mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node), string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", directory, filename));
         });
 
         // View Bindings

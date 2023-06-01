@@ -9,7 +9,7 @@ using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
-using AdionFA.TransferObject.Common;
+using AdionFA.TransferObject.Project;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,10 +157,10 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest
 
-        public StrategyBuilderModel BuildBacktest(
+        public StrategyBuilderModel BuildBacktestOfNode(
             string nodeLabel,
-            List<string> node,
-            ConfigurationDTO configuration,
+            IList<string> node,
+            ProjectConfigurationDTO projectConfiguration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
@@ -170,40 +170,44 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                 var strategyBuilder = new StrategyBuilderModel();
 
                 strategyBuilder.OS = ExecuteBacktest(
+                    EntityTypeEnum.StrategyBuilder,
                     nodeLabel,
-                    configuration.FromDateOS.Value,
-                    configuration.ToDateOS.Value,
-                    configuration.TimeframeId,
+                    projectConfiguration.FromDateOS.Value,
+                    projectConfiguration.ToDateOS.Value,
+                    projectConfiguration.TimeframeId,
                     candles,
                     node,
+                    null,
                     manualResetEvent,
                     cancellationToken);
 
-                if (!ApplyWinningStrategyRulesOS(strategyBuilder.OS, configuration))
+                if (!ApplyWinningStrategyRulesOS(strategyBuilder.OS, projectConfiguration))
                 {
                     strategyBuilder.WinningStrategy = false;
                     return strategyBuilder;
                 }
 
                 strategyBuilder.IS = ExecuteBacktest(
+                    EntityTypeEnum.StrategyBuilder,
                     nodeLabel,
-                    configuration.FromDateIS.Value,
-                    configuration.ToDateIS.Value,
-                    configuration.TimeframeId,
+                    projectConfiguration.FromDateIS.Value,
+                    projectConfiguration.ToDateIS.Value,
+                    projectConfiguration.TimeframeId,
                     candles,
                     node,
+                    null,
                     manualResetEvent,
                     cancellationToken);
 
-                if (!ApplyWinningStrategyRulesIS(strategyBuilder.IS, configuration))
+                if (!ApplyWinningStrategyRulesIS(strategyBuilder.IS, projectConfiguration))
                 {
                     strategyBuilder.WinningStrategy = false;
                     return strategyBuilder;
                 }
 
                 strategyBuilder.WinningStrategy =
-                    strategyBuilder.VariationPercent <= (double)configuration.SBMaxTransactionsVariation
-                    && (!configuration.IsProgressiveness || strategyBuilder.Progressiveness <= (double)configuration.Progressiveness);
+                    strategyBuilder.VariationPercent <= (double)projectConfiguration.SBMaxTransactionsVariation
+                    && (!projectConfiguration.IsProgressiveness || strategyBuilder.Progressiveness <= (double)projectConfiguration.Progressiveness);
 
                 return strategyBuilder;
             }
@@ -214,19 +218,21 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        private BacktestModel ExecuteBacktest(
-            string nodeLabel,
+        public BacktestModel ExecuteBacktest(
+            EntityTypeEnum entityType,
+            string parentNodeLabel,
             DateTime fromDate,
             DateTime toDate,
             int timeframeId,
             IEnumerable<Candle> candles,
-            List<string> node,
+            IList<string> parentNode,
+            IList<BacktestModel> childNodes,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
             try
             {
-                var nodeIndicators = _extractorService.BuildIndicatorsFromNode(node);
+                var nodeIndicators = _extractorService.BuildIndicatorsFromNode(parentNode);
 
                 var candlesRange = (from candle in candles
                                     let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
@@ -235,11 +241,11 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 var backtest = new BacktestModel
                 {
-                    Label = nodeLabel,
+                    Label = parentNodeLabel,
                     FromDate = fromDate,
                     ToDate = toDate,
                     TimeframeId = timeframeId,
-                    Node = node.ToList(),
+                    Node = parentNode.ToList(),
 
                     BacktestOperations = new List<BacktestOperationModel>(),
                     TotalOpportunity = candlesRange.Count
@@ -267,6 +273,18 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                     if (ApproveCandle(nodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
                     {
+                        if (entityType == EntityTypeEnum.AssembledBuilder)
+                        {
+                            foreach (var childNode in childNodes)
+                            {
+                                var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
+                                if (ApproveCandle(childNodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
+                                {
+                                    break;
+                                }
+                            }
+                        }
+
                         backtest.TotalTrades++;
 
                         var isWinnerTrade = false;
@@ -324,7 +342,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 if (indicator.OutNBElement == 0)
                 {
-                    continue;
+                    return false;
                 }
 
                 var output = indicator.Output[indicator.OutNBElement - 1];
@@ -371,13 +389,13 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             return true;
         }
 
-        private bool ApplyWinningStrategyRulesIS(BacktestModel backtestIS, ConfigurationDTO configuration)
+        private bool ApplyWinningStrategyRulesIS(BacktestModel backtestIS, ProjectConfigurationDTO configuration)
         {
             return backtestIS.WinningTrades >= configuration.SBMinTransactionsIS
                 && backtestIS.PercentSuccess >= (double)configuration.SBMinPercentSuccessIS;
         }
 
-        private bool ApplyWinningStrategyRulesOS(BacktestModel backtestOS, ConfigurationDTO configuration)
+        private bool ApplyWinningStrategyRulesOS(BacktestModel backtestOS, ProjectConfigurationDTO configuration)
         {
             return backtestOS.WinningTrades >= configuration.SBMinTransactionsOS
                && backtestOS.PercentSuccess >= (double)configuration.SBMinPercentSuccessOS;
@@ -385,24 +403,46 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest Serialization
 
-        public static void SerializeBacktest(string projectName, BacktestModel backtest)
+        public static void SerializeBacktest(EntityTypeEnum entityType, string projectName, BacktestModel backtest)
         {
-            var directory = backtest.Label.ToLower() == "up"
-            ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-            : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+            var directory = string.Empty;
 
-            var filename = $"BACKTEST-{RegexHelper.GetValidFileName(backtest.NodeName(), "_")}.xml";
+            if (entityType == EntityTypeEnum.StrategyBuilder)
+            {
+                directory = backtest.Label.ToLower() == "up"
+                    ? projectName.ProjectStrategyBuilderNodesUPDirectory()
+                    : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+            }
+            else if (entityType == EntityTypeEnum.AssembledBuilder)
+            {
+                directory = backtest.Label.ToLower() == "up"
+                    ? projectName.ProjectAssembledBuilderNodesUPDirectory()
+                    : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+            }
+
+            var filename = $"BACKTEST-{RegexHelper.GetValidFileName(backtest.Name, "_")}-{backtest.TotalTrades}.xml";
 
             SerializerHelper.XMLSerializeObject(backtest, string.Format(@"{0}\{1}", directory, filename));
         }
 
-        public static void SerializeNode(string projectName, string nodeName, REPTreeNodeModel node)
+        public static void SerializeNode(EntityTypeEnum entityType, string projectName, string nodeName, REPTreeNodeModel node)
         {
-            var directory = node.Label.ToLower() == "up"
-            ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-            : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+            var directory = string.Empty;
 
-            var filename = $"NODE-{RegexHelper.GetValidFileName(nodeName, "_")}.xml";
+            if (entityType == EntityTypeEnum.StrategyBuilder)
+            {
+                directory = node.Label.ToLower() == "up"
+                    ? projectName.ProjectStrategyBuilderNodesUPDirectory()
+                    : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+            }
+            else if (entityType == EntityTypeEnum.AssembledBuilder)
+            {
+                directory = node.Label.ToLower() == "up"
+                    ? projectName.ProjectAssembledBuilderNodesUPDirectory()
+                    : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+            }
+
+            var filename = $"NODE-{RegexHelper.GetValidFileName(nodeName, "_")}-{node.TotalTradesIs}.xml";
 
             SerializerHelper.XMLSerializeObject(node, string.Format(@"{0}\{1}", directory, filename));
         }

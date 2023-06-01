@@ -30,7 +30,7 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<EntityServiceHostDTO, EntityServiceHostVM>().ReverseMap();
             CreateMap<EntityTypeDTO, EntityTypeVM>().ReverseMap();
             CreateMap<SettingDTO, SettingVM>().ReverseMap();
-            CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
+            CreateMap<TransferObject.Common.ConfigurationDTO, ConfigurationVM>().ReverseMap();
             CreateMap<ScheduleConfigurationDTO, ScheduleConfigurationVM>().ReverseMap();
 
             // Market Data
@@ -44,7 +44,7 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             // Project
 
             CreateMap<ProjectDTO, ProjectVM>().ReverseMap();
-            CreateMap<ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
+            CreateMap<TransferObject.Project.ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
             CreateMap<ProjectScheduleConfigurationDTO, ProjectScheduleConfigurationVM>().ReverseMap();
             CreateMap<ProjectConfigurationVM, ProjectConfigurationModel>().ReverseMap();
 
@@ -53,8 +53,8 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<CurrencyDTO, CurrencyVM>().ReverseMap();
 
             // Extractor & Strategy Builder
-            CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
-            CreateMap<ProjectConfigurationVM, ConfigurationDTO>().ReverseMap();
+            CreateMap<TransferObject.Common.ConfigurationDTO, ConfigurationVM>().ReverseMap();
+            CreateMap<ProjectConfigurationVM, TransferObject.Common.ConfigurationDTO>().ReverseMap();
 
             CreateMap<REPTreeOutputModel, REPTreeOutputVM>().ReverseMap();
             CreateMap<REPTreeNodeModel, REPTreeNodeVM>().ReverseMap();

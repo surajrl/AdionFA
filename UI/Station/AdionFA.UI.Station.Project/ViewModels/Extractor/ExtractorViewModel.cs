@@ -52,28 +52,29 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
+
+            ExtractionProcessList = new ObservableCollection<ExtractionProcessModel>();
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
-            try
+            if (item == HamburgerMenuItems.Extractor.Replace(" ", string.Empty))
             {
-                if (item == HamburgerMenuItems.Extractor.Replace(" ", string.Empty))
-                {
-                    PopulateViewModel();
-                }
+                PopulateViewModel();
             }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
+        });
 
-                Trace.TraceError(ex.Message);
+        public ICommand RefreshBtnCommand => new DelegateCommand(() =>
+        {
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory(), isBackup: false);
 
-                throw;
-            }
-        }, (s) => true);
+            PopulateViewModel();
+        }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
+        public ICommand ProcessBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
@@ -81,25 +82,36 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (!Validate(new ExtractorValidator()).IsValid)
                 {
-                    IsTransactionActive = false;
                     return;
                 }
 
                 // Process
 
-                if (_projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory()) &&
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory()) &&
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory()) &&
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory()))
+                if (_projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory(), isBackup: false) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory(), isBackup: false) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory(), isBackup: false) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory(), isBackup: false))
                 {
                     IsTransactionActive = true;
                     _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
+                    ExtractionProcessList.Clear();
+
+                    var templatePath = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
+                    _projectDirectoryService.GetFilesInPath(templatePath).ToList().ForEach(file =>
+                    {
+                        ExtractionProcessList.Add(new ExtractionProcessModel
+                        {
+                            TemplateName = file.Name,
+                            Path = file.FullName,
+                            Status = ExtractorStatusEnum.NoStarted.GetMetadata().Name,
+                        });
+                    });
+
                     var projectConfiguration = await _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
                     var projectHistoricalData = await _historicalDataService.GetHistoricalData(projectConfiguration.HistoricalDataId.Value, true);
 
-                    // Gets all the candles from the corresponding historical data
-                    IEnumerable<Candle> candles = projectHistoricalData.HistoricalDataCandles
+                    var candles = projectHistoricalData.HistoricalDataCandles
                     .Select(hdCandle => new Candle
                     {
                         Date = hdCandle.StartDate,
@@ -111,94 +123,96 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         Volume = hdCandle.Volume
                     })
                     .OrderBy(candle => candle.Date)
-                    .ThenBy(candle => candle.Time)
-                    .ToList();
+                    .ThenBy(candle => candle.Time).ToList();
 
-                    var taskPool = new List<Task>();
-                    foreach (var extractionProcess in ExtractionProcessList)
+                    await Task.Run(() =>
                     {
-                        taskPool.Add(Task.Run(() =>
-                        {
-                            try
+                        Parallel.ForEach(
+                            ExtractionProcessList,
+                            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 },
+                            extractionProcess =>
                             {
-                                // Beginning --------------------------
-                                var beginning = ExtractorStatusEnum.Beginning.GetMetadata();
-                                extractionProcess.Status = beginning.Name;
-                                extractionProcess.Message = beginning.Description;
-                                //-------------------------------------
-
-                                extractionProcess.Message = "Building Indicators";
-                                var indicators = _extractorService.BuildIndicatorsFromCSV(extractionProcess.Path);
-
-                                // Executing --------------------------
-                                var executing = ExtractorStatusEnum.Executing.GetMetadata();
-                                extractionProcess.Status = executing.Name;
-                                extractionProcess.Message = executing.Description;
-                                var extractions = _extractorService.DoExtraction(
-                                    StartDate.Value,
-                                    EndDate.Value,
-                                    indicators,
-                                    candles.ToList(),
-                                    projectConfiguration.TimeframeId,
-                                    projectConfiguration.ExtractorMinVariation);
-                                //-------------------------------------
-
-                                extractionProcess.Message = "Writing Extraction File";
-                                var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
-                                var nameSignature = extractionProcess.TemplateName.Replace(".csv", string.Empty);
-
-                                _extractorService.ExtractorWrite(
-                                    ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
-                                    extractions,
-                                    0,
-                                    0);
-
-                                extractionProcess.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
-
-                                if (!projectConfiguration.WithoutSchedule)
+                                try
                                 {
-                                    // America
-                                    extractionProcess.Message = "Writing Extraction File America";
-                                    _extractorService.ExtractorWrite(
-                                        ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
-                                        indicators,
-                                        projectConfiguration.FromTimeInSecondsAmerica.Hour, projectConfiguration.ToTimeInSecondsAmerica.Hour
-                                    );
+                                    // Beginning --------------------------
+                                    var beginning = ExtractorStatusEnum.Beginning.GetMetadata();
+                                    extractionProcess.Status = beginning.Name;
+                                    extractionProcess.Message = beginning.Description;
+                                    //-------------------------------------
 
-                                    // Europe
-                                    extractionProcess.Message = "Writing Extraction File Europe";
-                                    _extractorService.ExtractorWrite(
-                                        ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
-                                        indicators,
-                                        projectConfiguration.FromTimeInSecondsEurope.Hour, projectConfiguration.ToTimeInSecondsEurope.Hour
-                                    );
+                                    extractionProcess.Message = "Building Indicators";
+                                    var indicators = _extractorService.BuildIndicatorsFromCSV(extractionProcess.Path);
 
-                                    // Asia
-                                    extractionProcess.Message = "Writing Extraction File Asia";
-                                    _extractorService.ExtractorWrite(
-                                        ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
+                                    // Executing --------------------------
+                                    var executing = ExtractorStatusEnum.Executing.GetMetadata();
+                                    extractionProcess.Status = executing.Name;
+                                    extractionProcess.Message = executing.Description;
+                                    var extractions = _extractorService.DoExtraction(
+                                        StartDate.Value,
+                                        EndDate.Value,
                                         indicators,
-                                        projectConfiguration.FromTimeInSecondsAsia.Hour, projectConfiguration.ToTimeInSecondsAsia.Hour
-                                    );
+                                        candles.ToList(),
+                                        projectConfiguration.TimeframeId,
+                                        projectConfiguration.ExtractorMinVariation);
+                                    //-------------------------------------
+
+                                    extractionProcess.Message = "Writing Extraction File";
+                                    var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
+                                    var nameSignature = extractionProcess.TemplateName.Replace(".csv", string.Empty);
+
+                                    _extractorService.ExtractorWrite(
+                                        ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
+                                        extractions,
+                                        0,
+                                        0);
+
+                                    extractionProcess.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
+
+                                    if (!projectConfiguration.WithoutSchedule)
+                                    {
+                                        // America
+
+                                        extractionProcess.Message = "Writing Extraction File America";
+                                        _extractorService.ExtractorWrite(
+                                            ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
+                                            indicators,
+                                            projectConfiguration.FromTimeInSecondsAmerica.Hour, projectConfiguration.ToTimeInSecondsAmerica.Hour
+                                        );
+
+                                        // Europe
+
+                                        extractionProcess.Message = "Writing Extraction File Europe";
+                                        _extractorService.ExtractorWrite(
+                                            ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
+                                            indicators,
+                                            projectConfiguration.FromTimeInSecondsEurope.Hour, projectConfiguration.ToTimeInSecondsEurope.Hour
+                                        );
+
+                                        // Asia
+
+                                        extractionProcess.Message = "Writing Extraction File Asia";
+                                        _extractorService.ExtractorWrite(
+                                            ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
+                                            indicators,
+                                            projectConfiguration.FromTimeInSecondsAsia.Hour, projectConfiguration.ToTimeInSecondsAsia.Hour
+                                        );
+                                    }
+
+                                    var completed = ExtractorStatusEnum.Completed.GetMetadata();
+                                    extractionProcess.Status = completed.Name;
+                                    extractionProcess.Message = completed.Description;
                                 }
-
-                                var completed = ExtractorStatusEnum.Completed.GetMetadata();
-                                extractionProcess.Status = completed.Name;
-                                extractionProcess.Message = completed.Description;
-                            }
-                            catch (Exception ex)
-                            {
-                                extractionProcess.Message = ex.Message;
-                                extractionProcess.Status = ExtractorStatusEnum.Error.GetMetadata().Name;
-                            }
-                        }));
-                    }
-
-                    await Task.WhenAll(taskPool);
+                                catch (Exception ex)
+                                {
+                                    extractionProcess.Message = ex.Message;
+                                    extractionProcess.Status = ExtractorStatusEnum.Error.GetMetadata().Name;
+                                }
+                            });
+                    });
 
                     IsTransactionActive = false;
 
-                    var result = !ExtractionProcessList.Any(e => e.Status != ExtractorStatusEnum.Completed.GetMetadata().Name);
+                    var result = !ExtractionProcessList.Any(extractionProcess => extractionProcess.Status != ExtractorStatusEnum.Completed.GetMetadata().Name);
 
                     var msg = result
                     ? MessageResources.ExtractionCompleted
@@ -245,15 +259,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (!IsTransactionActive)
                 {
-                    ExtractionProcessList = new ObservableCollection<ExtractionProcessModel>();
+                    ExtractionProcessList.Clear();
 
-                    string templatePath = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
-                    _projectDirectoryService.GetFilesInPath(templatePath).ToList().ForEach(fi =>
+                    var templatePath = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
+                    _projectDirectoryService.GetFilesInPath(templatePath).ToList().ForEach(file =>
                     {
                         ExtractionProcessList.Add(new ExtractionProcessModel
                         {
-                            TemplateName = fi.Name,
-                            Path = fi.FullName,
+                            TemplateName = file.Name,
+                            Path = file.FullName,
                             Status = ExtractorStatusEnum.NoStarted.GetMetadata().Name,
                         });
                     });

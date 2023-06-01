@@ -83,20 +83,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
-            try
+            if (item == HamburgerMenuItems.MetaTrader.Replace(" ", string.Empty))
             {
-                if (item == HamburgerMenuItems.MetaTrader.Replace(" ", string.Empty))
-                {
-                    PopulateViewModel();
-                }
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-
-                Trace.TraceError(ex.Message);
-
-                throw;
+                PopulateViewModel();
             }
         });
 
@@ -137,8 +126,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         // Current candle with only the open price
                         _currentCandle = new Candle
                         {
-                            Date = nextItem.Date.AddSeconds((long)TimeSpan.Parse(nextItem.Time).TotalSeconds),
-                            Time = (long)TimeSpan.Parse(nextItem.Time).TotalSeconds,
+                            Date = nextItem.Date.AddSeconds((long)TimeSpan.Parse(nextItem.Time, CultureInfo.InvariantCulture).TotalSeconds),
+                            Time = (long)TimeSpan.Parse(nextItem.Time, CultureInfo.InvariantCulture).TotalSeconds,
                             Open = (double)nextItem.Open,
                             High = (double)nextItem.Open,
                             Low = (double)nextItem.Open,
@@ -192,7 +181,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             zmqModel.Id = MessagesFromCurrentPeriod;
                             zmqModel.TemporalityName = EnumUtil.GetTimeframeEnum(zmqModel.Temporality).GetMetadata().Name;
-                            zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss");
+                            zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                             zmqModel.PutType = (int)MessageZMQPutType.Input;
                             zmqModel.PutTypeName = MessageZMQPutType.Input.GetMetadata().Name;
 
@@ -249,7 +238,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             if (isTrade)
                             {
                                 // Open operation request -----------------------------------------------
-                                if (node.Label.ToLower(CultureInfo.InvariantCulture) == "up")
+                                if (node.Label.ToLowerInvariant() == "up")
                                 {
                                     requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
                                     Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");

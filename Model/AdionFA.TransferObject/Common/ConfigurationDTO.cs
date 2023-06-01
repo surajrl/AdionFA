@@ -7,6 +7,5 @@ namespace AdionFA.TransferObject.Common
     {
         public int ConfigurationId { get; set; }
         public IList<ScheduleConfigurationDTO> ScheduleConfigurations { get; set; }
-
     }
 }

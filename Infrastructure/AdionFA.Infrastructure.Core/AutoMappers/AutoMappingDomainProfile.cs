@@ -23,7 +23,7 @@ namespace AdionFA.Infrastructure.Core.AutoMappers
             CreateMap<EntityServiceHost, EntityServiceHostDTO>().ReverseMap();
             CreateMap<EntityType, EntityTypeDTO>().ReverseMap();
             CreateMap<Setting, SettingDTO>().ReverseMap();
-            CreateMap<Configuration, ConfigurationDTO>().ReverseMap();
+            CreateMap<Configuration, TransferObject.Common.ConfigurationDTO>().ReverseMap();
             CreateMap<ScheduleConfiguration, ScheduleConfigurationDTO>().ReverseMap();
 
             // Market
@@ -42,7 +42,7 @@ namespace AdionFA.Infrastructure.Core.AutoMappers
             // Project
 
             CreateMap<Project, ProjectDTO>().ReverseMap();
-            CreateMap<ProjectConfiguration, ProjectConfigurationDTO>().ReverseMap();
+            CreateMap<ProjectConfiguration, TransferObject.Project.ProjectConfigurationDTO>().ReverseMap();
             CreateMap<ProjectScheduleConfiguration, ProjectScheduleConfigurationDTO>().ReverseMap();
 
             // Reference Data

@@ -9,15 +9,11 @@ using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AutoMapper;
-using DynamicData;
 using Prism.Commands;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
@@ -43,7 +39,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleSavedNodes))
+            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleSavedNodes, StringComparison.Ordinal))
             {
                 SavedNodes.Clear();
 
@@ -60,10 +56,11 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeVM>(node =>
         {
             var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
-            var filepath = string.Format(@"{0}\{1}.xml", directory, RegexHelper.GetValidFileName(node.NodeName(), "_"));
+
+            var filename = $"NODE-{RegexHelper.GetValidFileName(node.Name, "_")}-{node.TotalTradesIs}.xml";
+            var filepath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", directory, filename);
 
             _projectDirectoryService.DeleteFile(filepath);
-
             SavedNodes.Remove(node);
         });
 

@@ -83,9 +83,9 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 ProjectConfigurationVM project = null;
                 await Task.Run(() =>
                 {
-                    ProjectConfigurationDTO dto = IoC.Get<IProjectAPI>().GetProjectConfiguration(projectId, includeGraph);
+                    TransferObject.Project.ProjectConfigurationDTO dto = IoC.Get<IProjectAPI>().GetProjectConfiguration(projectId, includeGraph);
 
-                    project = Mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(dto);
+                    project = Mapper.Map<TransferObject.Project.ProjectConfigurationDTO, ProjectConfigurationVM>(dto);
                 });
 
                 return project;
@@ -105,7 +105,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    ProjectConfigurationDTO config = Mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(configuration);
+                    TransferObject.Project.ProjectConfigurationDTO config = Mapper.Map<ProjectConfigurationVM, TransferObject.Project.ProjectConfigurationDTO>(configuration);
 
                     result = IoC.Get<IProjectAPI>().UpdateProjectConfiguration(config);
                 });
@@ -229,7 +229,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                     all = IoC.Get<ISharedAPI>().GetAllConfiguration(includeGraph);
                 });
 
-                return Mapper.Map<IList<ConfigurationDTO>, IList<ConfigurationVM>>(all);
+                return Mapper.Map<IList<ConfigurationDTO>, IList<ConfigurationVM>>((IList<ConfigurationDTO>)all);
             }
             catch (Exception ex)
             {
@@ -247,7 +247,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 {
                     var dto = IoC.Get<ISharedAPI>().GetConfiguration(configurationId, includeGraph);
 
-                    vm = Mapper.Map<ConfigurationDTO, ConfigurationVM>(dto);
+                    vm = Mapper.Map<TransferObject.Common.ConfigurationDTO, ConfigurationVM>(dto);
                 });
 
                 return vm;
@@ -263,14 +263,14 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
         {
             try
             {
-                ConfigurationDTO result = null;
+                TransferObject.Common.ConfigurationDTO result = null;
 
                 await Task.Run(() =>
                 {
                     result = IoC.Get<ISharedAPI>().GetConfiguration(configurationId, includeGraph);
                 });
 
-                var vm = Mapper.Map<ConfigurationDTO, ConfigurationVM>(result);
+                var vm = Mapper.Map<TransferObject.Common.ConfigurationDTO, ConfigurationVM>(result);
 
                 return vm;
             }
@@ -289,7 +289,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    ConfigurationDTO config = Mapper.Map<ConfigurationVM, ConfigurationDTO>(configuration);
+                    TransferObject.Common.ConfigurationDTO config = Mapper.Map<ConfigurationVM, TransferObject.Common.ConfigurationDTO>(configuration);
 
                     result = IoC.Get<ISharedAPI>().UpdateConfiguration(config);
                 });

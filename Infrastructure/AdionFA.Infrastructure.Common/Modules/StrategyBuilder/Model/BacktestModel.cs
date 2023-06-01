@@ -83,7 +83,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
                     int lastCount = 1;
                     if (last.Contains('.'))
                     {
-                        int.TryParse(last.Split(".")[1], out lastCount);
+                        lastCount = int.Parse(last.Split(".")[1]);
                     }
                     if (name == lastName)
                     {

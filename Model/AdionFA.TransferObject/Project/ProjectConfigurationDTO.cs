@@ -1,10 +1,10 @@
-﻿using AdionFA.TransferObject.Common;
+﻿using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.MarketData;
 using System.Collections.Generic;
 
 namespace AdionFA.TransferObject.Project
 {
-    public class ProjectConfigurationDTO : ConfigurationDTO
+    public class ProjectConfigurationDTO : ConfigurationBaseDTO
     {
         public int ProjectConfigurationId { get; set; }
 

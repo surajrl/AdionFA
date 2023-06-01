@@ -1,18 +1,17 @@
-﻿using Microsoft.Win32;
+﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+using AdionFA.Infrastructure.Common.Directories.Services;
+using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Enums;
+using AdionFA.UI.Station.Project.Model.Extractor;
+using AdionFA.UI.Station.Project.ViewModels;
+using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Services;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.UI.Station.Project.ViewModels;
-using AdionFA.UI.Station.Project.Model.Extractor;
-using AdionFA.UI.Station.Project.Enums;
-using AdionFA.Infrastructure.Common.Managements;
 
 namespace AdionFA.UI.Station.Project.Views
 {
@@ -39,7 +38,7 @@ namespace AdionFA.UI.Station.Project.Views
                 {
                     FileInfo fi = new FileInfo(filename);
                     directoryService.CopyCSVFileTo(fi, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
-                    ((ExtractorViewModel)DataContext).ExtractionProcessList.Add(new ExtractionProcessModel 
+                    ((ExtractorViewModel)DataContext).ExtractionProcessList.Add(new ExtractionProcessModel
                     {
                         TemplateName = fi.Name,
                         Status = ExtractorStatusEnum.NoStarted.GetMetadata().Name,
@@ -77,11 +76,6 @@ namespace AdionFA.UI.Station.Project.Views
                     ((ExtractorViewModel)DataContext).ExtractionProcessList.AddRange(fileModels);
                 }
             }
-        }
-
-        private void reloadTemplateBtn_Click(object sender, RoutedEventArgs e)
-        {
-            ((ExtractorViewModel)DataContext).PopulateViewModel();
         }
 
         private void openExtractorPathBtn_Click(object sender, RoutedEventArgs e)

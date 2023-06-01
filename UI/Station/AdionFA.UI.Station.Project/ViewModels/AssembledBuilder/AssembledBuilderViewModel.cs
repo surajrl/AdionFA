@@ -5,8 +5,10 @@ using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Services;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Services;
+using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
@@ -96,7 +98,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 // Historical Data
 
                 var projectHistoricalData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
-
                 var projectCandles = projectHistoricalData.HistoricalDataCandles.
                 Select(hdCandle => new Candle
                 {
@@ -110,107 +111,30 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Spread = hdCandle.Spread
                 })
                 .OrderBy(d => d.Date)
-                .ThenBy(d => d.Time).ToList();
+                .ThenBy(d => d.Time);
 
                 await Task.Factory.StartNew(() =>
                 {
-                    var configuration = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
+                    var projectConfiguration = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
 
                     // Extraction of UP and DOWN Nodes
 
                     Debug.WriteLine("Started Assembled Builder Extraction");
 
-                    _assembledBuilderService.CreateExtraction(ProcessArgs.ProjectName, AssembledBuilder, projectCandles, configuration);
+                    //_assembledBuilderService.CreateExtraction(ProcessArgs.ProjectName, AssembledBuilder, projectCandles, projectConfiguration);
 
                     Debug.WriteLine("Finished Assembled Builder Extraction");
 
                     // Strategy
 
-                    // UP Nodes
-
                     Debug.WriteLine("Started Assembled Builder UP Nodes");
-
-                    var directory = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("UP");
-                    var extractions = _projectDirectoryService.GetFilesInPath(directory);
-
-                    if (!extractions.Any())
-                    {
-                        IsTransactionActive = false;
-                        MessageHelper.ShowMessage(this,
-                            CommonResources.AssembledBuilder,
-                            "No UP extractions found in the Assembled Builder directory");
-
-                        return;
-                    }
-
-                    foreach (var extraction in extractions)
-                    {
-                        var wekaApi = new WekaApiClient();
-                        IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
-                            extraction.FullName,
-                            configuration.DepthWeka,
-                            configuration.TotalDecimalWeka,
-                            configuration.MinimalSeed,
-                            configuration.MaximumSeed,
-                            configuration.TotalInstanceWeka,
-                            (double)configuration.MaxRatioTree,
-                            (double)configuration.NTotalTree,
-                            true);
-
-                        if (!responseWeka.Any())
-                        {
-                            IsTransactionActive = false;
-                            MessageHelper.ShowMessage(this,
-                                CommonResources.AssembledBuilder,
-                                "No Weka trees found");
-
-                            return;
-                        }
-
-                        foreach (var wekaTree in responseWeka)
-                        {
-                            var validNodes = wekaTree.NodeOutput.Where(tree => tree.Winner).ToList();
-
-                            if (!validNodes.Any())
-                            {
-                                IsTransactionActive = false;
-                                MessageHelper.ShowMessage(this,
-                                    CommonResources.AssembledBuilder,
-                                    "No winning nodes found in Weka tree");
-
-                                return;
-                            }
-
-                            foreach (var node in validNodes)
-                            {
-                                var strategyBuilder = _assembledBuilderService.BuildBacktestOfNode(
-                                    node.Label,
-                                    node.Node,
-                                    AssembledBuilder.UPBacktests,
-                                    configuration,
-                                    projectCandles,
-                                    _manualResetEventSlim,
-                                    _cancellationTokenSource.Token);
-
-                                if (strategyBuilder.WinningStrategy)
-                                {
-                                    _assembledBuilderService.SerializeBacktest(ProcessArgs.ProjectName, strategyBuilder.IS);
-                                }
-                            }
-                        }
-                    }
-
+                    BacktestProcess("up", projectConfiguration, projectCandles);
                     Debug.WriteLine("Finished Assembled Builder UP Nodes");
 
-                    // DOWN Nodes
 
                     Debug.WriteLine("Started Assembled Builder DOWN Nodes");
-
-                    // ...
-
+                    BacktestProcess("down", projectConfiguration, projectCandles);
                     Debug.WriteLine("Finished Assembled Builder DOWN Nodes");
-
-                    // ...
 
                 }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
 
@@ -233,6 +157,79 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+
+        private void BacktestProcess(string label, ProjectConfigurationDTO projectConfiguration, IEnumerable<Candle> projectCandles)
+        {
+            var directory = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory(label.ToUpperInvariant());
+            var extractions = _projectDirectoryService.GetFilesInPath(directory);
+
+            if (!extractions.Any())
+            {
+                IsTransactionActive = false;
+                MessageHelper.ShowMessage(this,
+                    CommonResources.AssembledBuilder,
+                    $"No {label.ToUpperInvariant()} extractions found in the Assembled Builder directory");
+
+                return;
+            }
+
+            foreach (var extraction in extractions)
+            {
+                var wekaApi = new WekaApiClient();
+                IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
+                extraction.FullName,
+                projectConfiguration.DepthWeka,
+                projectConfiguration.TotalDecimalWeka,
+                projectConfiguration.MinimalSeed,
+                projectConfiguration.MaximumSeed,
+                projectConfiguration.TotalInstanceWeka,
+                (double)projectConfiguration.MaxRatioTree,
+                (double)projectConfiguration.NTotalTree,
+                true);
+
+                if (!responseWeka.Any())
+                {
+                    IsTransactionActive = false;
+                    MessageHelper.ShowMessage(this,
+                        CommonResources.AssembledBuilder,
+                        "No Weka trees found");
+
+                    return;
+                }
+
+                foreach (var wekaTree in responseWeka)
+                {
+                    var validNodes = wekaTree.NodeOutput.Where(tree => tree.Winner).ToList();
+
+                    if (!validNodes.Any())
+                    {
+                        IsTransactionActive = false;
+                        MessageHelper.ShowMessage(this,
+                            CommonResources.AssembledBuilder,
+                            $"No winning {label.ToUpperInvariant()} nodes found in Weka tree");
+
+                        return;
+                    }
+
+                    foreach (var node in validNodes)
+                    {
+                        var strategyBuilder = _assembledBuilderService.BuildBacktestOfNode(
+                            node.Label,
+                            node.Node,
+                            (label.ToLowerInvariant() == "up" ? AssembledBuilder.UPBacktests : AssembledBuilder.DOWNBacktests),
+                            projectConfiguration,
+                            projectCandles,
+                            _manualResetEventSlim,
+                            _cancellationTokenSource.Token);
+
+                        if (strategyBuilder.WinningStrategy)
+                        {
+                            StrategyBuilderService.SerializeBacktest(EntityTypeEnum.AssembledBuilder, ProcessArgs.ProjectName, strategyBuilder.IS);
+                        }
+                    }
+                }
+            }
+        }
 
         public DelegateCommand ReloadBtnCommand => new DelegateCommand(() =>
         {

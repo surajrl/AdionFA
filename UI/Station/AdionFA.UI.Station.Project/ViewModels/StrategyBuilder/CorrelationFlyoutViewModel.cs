@@ -1,23 +1,23 @@
-﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
-
-using Prism.Ioc;
-using Prism.Commands;
-
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using AdionFA.Infrastructure.Common.Managements;
-using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.IofC;
-using System.Linq;
+﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Helpers;
+using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Weka.Model;
-using AutoMapper;
+using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
+using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.EventAggregator;
+using AutoMapper;
+using Prism.Commands;
 using Prism.Events;
+using Prism.Ioc;
+using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
@@ -45,7 +45,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleCorrelation))
+            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleCorrelation, StringComparison.Ordinal))
             {
                 CorrelationNodes.Clear();
 
@@ -74,12 +74,15 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeVM>(node =>
         {
-            var directory = node.Label.ToLower() == "up" ?
+            var directory = node.Label.ToLower(CultureInfo.InvariantCulture) == "up" ?
             ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory() :
             ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory();
 
-            var filepathBacktest = string.Format(@"{0}\BACKTEST-{1}.xml", directory, RegexHelper.GetValidFileName(node.NodeName(), "_"));
-            var filepathNode = string.Format(@"{0}\NODE-{1}.xml", directory, RegexHelper.GetValidFileName(node.NodeName(), "_"));
+            var nodeFilename = $"NODE-{RegexHelper.GetValidFileName(node.Name, "_")}-{node.TotalTradesIs}.xml";
+            var backtestFilename = $"BACKTEST-{RegexHelper.GetValidFileName(node.Name, "_")}-{node.TotalTradesIs}.xml";
+
+            var filepathBacktest = string.Format(CultureInfo.InvariantCulture, @"{0}\BACKTEST-{1}.xml", directory, backtestFilename);
+            var filepathNode = string.Format(CultureInfo.InvariantCulture, @"{0}\NODE-{1}.xml", directory, nodeFilename);
 
             _projectDirectoryService.DeleteFile(filepathBacktest);
             _projectDirectoryService.DeleteFile(filepathNode);

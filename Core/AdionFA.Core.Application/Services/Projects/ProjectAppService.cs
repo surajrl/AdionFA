@@ -6,7 +6,6 @@ using AdionFA.Core.Domain.Contracts.Projects;
 using AdionFA.Core.Domain.Contracts.Repositories;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Base;
-using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.Project;
 using Ninject;
@@ -261,7 +260,7 @@ namespace AdionFA.Core.Application.Services.Projects
             }
         }
 
-        private ResponseDTO CurrencyPairAndCurrencyPeriodMustBeSameValidation(ConfigurationDTO c, int marketDataId)
+        private ResponseDTO CurrencyPairAndCurrencyPeriodMustBeSameValidation(ConfigurationBaseDTO c, int marketDataId)
         {
             var response = new ResponseDTO { IsSuccess = true };
 

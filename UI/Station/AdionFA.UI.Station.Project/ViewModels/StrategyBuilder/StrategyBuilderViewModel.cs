@@ -10,7 +10,7 @@ using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.TransferObject.Common;
+using AdionFA.TransferObject.Project;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
@@ -314,11 +314,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             _manualResetEvent.Wait();
                             _cancellationTokenSrc.Token.ThrowIfCancellationRequested();
 
-                            Debug.WriteLine($"[THREAD] {Environment.CurrentManagedThreadId}"
-                                + $"\t[EXTRACTION] {node.StrategyBuilderProcess.ExtractionName}"
-                                + $"\t[NODE] {node.Name}"
-                                + $"\t[MESSAGE] Thread Started");
-
                             lock (_lock)
                             {
                                 node.StrategyBuilderProcess.ExecutingBacktests++;
@@ -336,10 +331,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 + $"\t[NODE] {node.Name}"
                                 + $"\t[MESSAGE] Backtest Started");
 
-                            var strategyBuilder = _strategyBuilderService.BuildBacktest(
+                            var strategyBuilder = _strategyBuilderService.BuildBacktestOfNode(
                                 node.Label,
                                 node.Node.ToList(),
-                                _mapper.Map<ProjectConfigurationVM, ConfigurationDTO>(Configuration),
+                                _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration),
                                 projectCandles,
                                 _manualResetEvent,
                                 _cancellationTokenSrc.Token);
@@ -389,8 +384,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             if (node.WinningStrategy)
                             {
                                 // Serialization -------------------------------------------------------------------------
-                                StrategyBuilderService.SerializeBacktest(ProcessArgs.ProjectName, strategyBuilder.IS);
-                                StrategyBuilderService.SerializeNode(ProcessArgs.ProjectName, node.Name, _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node));
+                                StrategyBuilderService.SerializeBacktest(EntityTypeEnum.StrategyBuilder, ProcessArgs.ProjectName, strategyBuilder.IS);
+                                StrategyBuilderService.SerializeNode(EntityTypeEnum.StrategyBuilder, ProcessArgs.ProjectName, node.Name, _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node));
                                 // ---------------------------------------------------------------------------------------
 
                                 // Update Tree ---------------------------------------------------------------------------
@@ -425,11 +420,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 node.StrategyBuilderProcess.Status = completed.Name;
                                 node.StrategyBuilderProcess.Message = completed.Description;
                             }
-
-                            Debug.WriteLine($"[THREAD] {Environment.CurrentManagedThreadId}"
-                                + $"\t[EXTRACTION] {node.StrategyBuilderProcess.ExtractionName}"
-                                + $"\t[NODE] {node.Name}"
-                                + $"\t[MESSAGE] Thread Finished");
                         });
                 });
 
