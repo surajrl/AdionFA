@@ -11,93 +11,119 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:AdionFA.UI.Station.Project.Views"
              xmlns:model="clr-namespace:AdionFA.UI.Station.Project.Model.AssembledBuilder"
+             xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
              dialog:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
 
-    <UserControl.Resources>
-        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
-        <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
-    </UserControl.Resources>
-
-    <Grid Margin="10 0 0 0">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <!--#region Process Button-->
-        <Grid HorizontalAlignment="Right"
-              Margin="0 20 10 0">
-            <Button x:Name="ProcessBtn"
-                    Width="80"
+
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <!--#region Stop Button-->
+            <Button Margin="0, 0, 5, 0" Width="80"
                     Height="40"
-                    IsEnabled="{Binding CanExecute}"
-                    Command="{Binding ProcessBtnCommand}"
-                    HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal"
-                            Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <iconPacks:FontAwesome Kind="PlaySolid"
+                    Command="{Binding StopCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:FontAwesome Kind="PauseCircleSolid"
                                            Width="14" />
-                    <Label Content="Process"
+                    <Label Content="Stop"
                            FontSize="11" />
                 </StackPanel>
             </Button>
-            <metro:ProgressRing IsActive="True"
-                                Width="25"
-                                Height="25"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        </Grid>
-        <!--#endregion-->
+            <!--#endregion-->
+            <!--#region Cancel Button-->
+            <Button Width="80"
+                    Margin="5, 0, 5, 0"
+                    Height="40"
+                    Command="{Binding CancelCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:FontAwesome Kind="StopCircleSolid"
+                                           Width="14" />
+                    <Label Content="Cancel"
+                           FontSize="11" />
+                </StackPanel>
+            </Button>
+            <!--#endregion-->
+            <!--#region Continue Button-->
+            <Button Width="80"
+                    Margin="5, 0, 5, 0"
+                    Height="40"
+                    Command="{Binding ContinueCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:FontAwesome Kind="PlayCircleSolid"
+                                           Width="14" />
+                    <Label Content="Continue"
+                           FontSize="11" />
+                </StackPanel>
+            </Button>
+            <!--#endregion-->
+            <!--#region Process Button-->
+            <Grid>
+                <Button x:Name="ProcessBtn"
+                        Width="80"
+                        Margin="0, 0, 5, 0"
+                        Height="40"
+                        IsEnabled="{Binding CanExecute}"
+                        Command="{Binding ProcessCommand}">
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <iconPacks:FontAwesome Kind="PlaySolid"
+                                               Width="14" />
+                        <Label Content="Process"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+                <metro:ProgressRing IsActive="True"
+                                    Width="25"
+                                    Margin="0, 0, 5, 0"
+                                    Height="25"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+            <!--#endregion-->
+        </StackPanel>
 
         <!--#region Configuration-->
         <metro:MetroHeader Grid.Row="1"
-                           Margin="0 0 10 15"
                            Header="{x:Static commonResources:CommonResources.Configuration}">
-            <Grid>
-                <StackPanel Margin="10 0"
-                            Orientation="Horizontal">
-                    <!--#region Transaction Target-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}" />
-                            </TextBlock>
-                        </Label>
-                        <TextBox Text="{Binding Configuration.ABTransactionsTarget}"
-                                 IsReadOnly="True"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 Width="225" />
-                    </StackPanel>
-                    <!--#endregion-->
-
-                    <!--#region Minimum Assembly Percent-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.MinAssemblyPercent}" />
-                            </TextBlock>
-                        </Label>
-                        <TextBox Text="{Binding Configuration.ABMinImprovePercent}"
-                                 IsReadOnly="True"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 Width="225" />
-                    </StackPanel>
-                    <!--#endregion-->
+            <StackPanel Orientation="Horizontal"
+                        Margin="10">
+                <!--#region Transaction Target-->
+                <StackPanel>
+                    <TextBlock Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}" />
+                    <TextBox Text="{Binding ProjectConfiguration.ABTransactionsTarget}"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             IsEnabled="False"
+                             Width="225" />
                 </StackPanel>
-            </Grid>
+                <!--#endregion-->
+                <Separator Width="10"
+                           Background="Transparent" />
+                <!--#region Minimum Assembly Percent-->
+                <StackPanel>
+                    <TextBlock Text="{x:Static commonResources:CommonResources.MinAssemblyPercent}" />
+                    <TextBox Text="{Binding ProjectConfiguration.ABMinImprovePercent}"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             IsEnabled="False"
+                             Width="225" />
+                </StackPanel>
+                <!--#endregion-->
+            </StackPanel>
         </metro:MetroHeader>
         <!--#endregion-->
 
         <!--#region Assembled Builder Information-->
         <metro:MetroHeader Grid.Row="2"
-                           Margin="0 0 10 20"
                            Header="{x:Static commonResources:CommonResources.AssembledBuilderInformation}">
-            <Grid Margin="0 10 0 0">
+            <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -106,74 +132,210 @@
                 </Grid.ColumnDefinitions>
                 <!--#endregion-->
 
+                <!--#region Assembled Nodes-->
+                <StackPanel Orientation="Horizontal"
+                            Grid.ColumnSpan="2">
+                    <!--#region Assembled Nodes UP-->
+                    <Button x:Name="assembledNodesUP"
+                            Width="175"
+                            Margin="0, 0, 5, 0"
+                            Height="40">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="GraphOutline"
+                                                        VerticalAlignment="Center"
+                                                        Width="14" />
+                            <Label Content="Assembled Nodes UP"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger SourceName="assembledNodesUP"
+                                                    EventName="Click">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
+                                            <Binding Path="AssembledBuilder.ChildBacktestsUP" />
+                                            <Binding Path="AssembledBuilder.WinningParentNodesUP" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                    <!--#endregion-->
+
+                    <!--#region Assembled Nodes DOWN-->
+                    <Button x:Name="assembledNodesDOWN"
+                            Width="175"
+                            Margin="5, 0, 0, 0"
+                            Height="40">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="GraphOutline"
+                                                        VerticalAlignment="Center"
+                                                        Width="14" />
+                            <Label Content="Assembled Nodes DOWN"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger SourceName="assembledNodesDOWN"
+                                                    EventName="Click">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
+                                            <Binding Path="AssembledBuilder.ChildBacktestsDOWN" />
+                                            <Binding Path="AssembledBuilder.WinningParentNodesDOWN" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                    <!--#endregion-->
+                </StackPanel>
+                <!--#endregion-->
+
                 <!--#region Refresh Button-->
-                <Button x:Name="refreshBtn"
-                        Grid.Column="3"
-                        Width="80"
-                        Height="40"
-                        IsEnabled="{Binding CanExecute}">
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:PackIconFontAwesome Kind="RedoSolid"
-                                                       Width="14" />
-                        <Label Content="Refresh"
-                               FontSize="11" />
-                    </StackPanel>
-                    <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="refreshBtn"
-                                                EventName="Click">
-                            <behaviors:InvokeCommandAction Command="{Binding ReloadBtnCommand}" />
-                        </behaviors:EventTrigger>
-                    </behaviors:Interaction.Triggers>
-                </Button>
-                <metro:ProgressRing Grid.Column="3"
-                                    IsActive="True"
-                                    Width="25"
-                                    Height="25"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Grid Grid.Column="3"
+                      HorizontalAlignment="Right">
+                    <Button x:Name="refreshBtn"
+                            Width="80"
+                            Height="40"
+                            IsEnabled="{Binding CanExecute}">
+                        <StackPanel Orientation="Horizontal"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <iconPacks:PackIconFontAwesome Kind="RedoSolid"
+                                                           Width="14" />
+                            <Label Content="Refresh"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger SourceName="refreshBtn"
+                                                    EventName="Click">
+                                <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                    <metro:ProgressRing IsActive="True"
+                                        Width="25"
+                                        Height="25"
+                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
                 <!--#endregion-->
             </Grid>
         </metro:MetroHeader>
         <!--#endregion-->
 
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+        <!--#region Assembled Builder Process-->
+        <metro:MetroHeader Grid.Row="3"
+                           Header="Assembled Builder Process">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <!--#region UP Nodes-->
-            <TreeView Margin="10 5">
-                <TreeViewItem ItemsSource="{Binding AssembledBuilder.UPBacktests}">
-                    <TreeViewItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="GraphOutline"
-                                                        Width="14" />
-                            <TextBlock Text="{x:Static commonResources:CommonResources.UPNodeAssembled}"
-                                       VerticalAlignment="Center"
-                                       Margin="5 0" />
-                        </StackPanel>
-                    </TreeViewItem.Header>
-                </TreeViewItem>
-            </TreeView>
-            <!--#endregion-->
+                <!--#region Assembled Builder Process UP Nodes -->
+                <metro:MetroHeader Header="Assembled Nodes UP">
+                    <DataGrid AutoGenerateColumns="False"
+                              Margin="0, 0, 5, 0"
+                              IsReadOnly="True"
+                              ItemsSource="{Binding AssembledBuilderProcessUP}">
+                        <DataGrid.Columns>
+                            <!--#region Extraction-->
+                            <DataGridTemplateColumn Header="Extraction">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Label Content="{Binding ExtractionAssembledBuilderName}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                            <!--#region Tree Outputs-->
+                            <DataGridTemplateColumn Header="Status">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Message}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                            <!--#region Executing Backtests-->
+                            <DataGridTemplateColumn Header="Completed">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding CompletedBacktests}"
+                                                   HorizontalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                            <!--#region Total Backtests-->
+                            <DataGridTemplateColumn Header="Total">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding TotalBacktests}"
+                                                   HorizontalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </metro:MetroHeader>
+                <!--#endregion-->
 
-            <!--#region DOWN Nodes-->
-            <TreeView  Grid.Column="1"
-                       Margin="10 5">
-                <TreeViewItem ItemsSource="{Binding AssembledBuilder.DOWNBacktests}">
-                    <TreeViewItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="GraphOutline"
-                                                        Width="14" />
-                            <TextBlock Text="{x:Static commonResources:CommonResources.DOWNNodeAssembled}"
-                                       VerticalAlignment="Center"
-                                       Margin="5 0" />
-                        </StackPanel>
-                    </TreeViewItem.Header>
-                </TreeViewItem>
-            </TreeView>
-            <!--#endregion-->
-        </Grid>
+                <!--#region Assembled Builder Process DOWN Nodes -->
+                <metro:MetroHeader Grid.Column="1"
+                                   Header="Assembled Nodes DOWN">
+                    <DataGrid AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Margin="5, 0, 0, 0"
+                              ItemsSource="{Binding AssembledBuilderProcessDOWN}">
+                        <DataGrid.Columns>
+                            <!--#region Extraction-->
+                            <DataGridTemplateColumn Header="Extraction">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Label Content="{Binding ExtractionAssembledBuilderName}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                            <!--#region Tree Outputs-->
+                            <DataGridTemplateColumn Header="Status">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Message}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                            <!--#region Executing Backtests-->
+                            <DataGridTemplateColumn Header="Completed">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding CompletedBacktests}"
+                                                   HorizontalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                            <!--#region Total Backtests-->
+                            <DataGridTemplateColumn Header="Total">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding TotalBacktests}"
+                                                   HorizontalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--#endregion-->
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </metro:MetroHeader>
+            </Grid>
+        </metro:MetroHeader>
+        <!--#endregion-->
     </Grid>
 </UserControl>

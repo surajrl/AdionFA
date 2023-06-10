@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AutoMapper;
@@ -47,17 +46,17 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                 _projectDirectoryService.GetFilesInPath(path, "*.xml").ToList()
                 .ForEach(file =>
                 {
-                    var node = _mapper.Map<REPTreeNodeModel, REPTreeNodeVM>(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                    var node = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
                     SavedNodes.Add(node);
                 });
             }
         });
 
-        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeVM>(node =>
+        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeModel>(node =>
         {
             var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
 
-            var filename = $"NODE-{RegexHelper.GetValidFileName(node.Name, "_")}-{node.TotalTradesIs}.xml";
+            var filename = $"NODE-{RegexHelper.GetValidFileName(node.NodeName(), "_")}-{node.TotalTradesIs}.xml";
             var filepath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", directory, filename);
 
             _projectDirectoryService.DeleteFile(filepath);
@@ -66,9 +65,9 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         // View Bindings
 
-        private ObservableCollection<REPTreeNodeVM> _savedNodes;
+        private ObservableCollection<REPTreeNodeModel> _savedNodes;
 
-        public ObservableCollection<REPTreeNodeVM> SavedNodes
+        public ObservableCollection<REPTreeNodeModel> SavedNodes
         {
             get => _savedNodes;
             set => SetProperty(ref _savedNodes, value);

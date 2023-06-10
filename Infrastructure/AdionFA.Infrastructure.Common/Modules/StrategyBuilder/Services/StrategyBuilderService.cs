@@ -158,8 +158,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         // Backtest
 
         public StrategyBuilderModel BuildBacktestOfNode(
-            string nodeLabel,
-            IList<string> node,
+            REPTreeNodeModel node,
             ProjectConfigurationDTO projectConfiguration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
@@ -171,7 +170,6 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 strategyBuilder.OS = ExecuteBacktest(
                     EntityTypeEnum.StrategyBuilder,
-                    nodeLabel,
                     projectConfiguration.FromDateOS.Value,
                     projectConfiguration.ToDateOS.Value,
                     projectConfiguration.TimeframeId,
@@ -189,7 +187,6 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 strategyBuilder.IS = ExecuteBacktest(
                     EntityTypeEnum.StrategyBuilder,
-                    nodeLabel,
                     projectConfiguration.FromDateIS.Value,
                     projectConfiguration.ToDateIS.Value,
                     projectConfiguration.TimeframeId,
@@ -206,8 +203,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                 }
 
                 strategyBuilder.WinningStrategy =
-                    strategyBuilder.VariationPercent <= (double)projectConfiguration.SBMaxTransactionsVariation
-                    && (!projectConfiguration.IsProgressiveness || strategyBuilder.Progressiveness <= (double)projectConfiguration.Progressiveness);
+                    strategyBuilder.SuccessRateVariation <= (double)projectConfiguration.SBMaxSuccessRateVariation
+                    && (!projectConfiguration.IsProgressiveness || strategyBuilder.ProgressivenessVariation <= (double)projectConfiguration.MaxProgressivenessVariation);
 
                 return strategyBuilder;
             }
@@ -220,19 +217,28 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         public BacktestModel ExecuteBacktest(
             EntityTypeEnum entityType,
-            string parentNodeLabel,
             DateTime fromDate,
             DateTime toDate,
             int timeframeId,
             IEnumerable<Candle> candles,
-            IList<string> parentNode,
+            REPTreeNodeModel parentNode,
             IList<BacktestModel> childNodes,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
             try
             {
-                var nodeIndicators = _extractorService.BuildIndicatorsFromNode(parentNode);
+                string label;
+                if (entityType == EntityTypeEnum.AssembledBuilder)
+                {
+                    label = childNodes.First().Label;
+                }
+                else
+                {
+                    label = parentNode.Label;
+                }
+
+                var nodeIndicators = _extractorService.BuildIndicatorsFromNode(parentNode.Node);
 
                 var candlesRange = (from candle in candles
                                     let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
@@ -241,14 +247,14 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 var backtest = new BacktestModel
                 {
-                    Label = parentNodeLabel,
+                    Label = label,
                     FromDate = fromDate,
                     ToDate = toDate,
                     TimeframeId = timeframeId,
-                    Node = parentNode.ToList(),
+                    Node = parentNode.Node.ToList(),
 
                     BacktestOperations = new List<BacktestOperationModel>(),
-                    TotalOpportunity = candlesRange.Count
+                    TotalOpportunity = candlesRange.Count - 1
                 };
 
                 for (var candleIdx = 0; candleIdx < candlesRange.Count - 1; candleIdx++)
@@ -275,13 +281,21 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     {
                         if (entityType == EntityTypeEnum.AssembledBuilder)
                         {
+                            var childNodePass = false;
                             foreach (var childNode in childNodes)
                             {
                                 var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
                                 if (ApproveCandle(childNodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
                                 {
+                                    childNodePass = true;
                                     break;
                                 }
+                            }
+
+                            if (!childNodePass)
+                            {
+                                // Move to the next candle if none of the child nodes is a pass
+                                continue;
                             }
                         }
 
@@ -290,7 +304,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         var isWinnerTrade = false;
                         var spread = currentCandle.Spread * 0.00001;
 
-                        isWinnerTrade = backtest.Label.ToLower() == "up"
+                        isWinnerTrade = backtest.Label.ToLowerInvariant() == "up"
                             ? (currentCandle.Open + spread) < nextCandle.Open
                             : currentCandle.Open > (nextCandle.Open + spread);
 
@@ -392,13 +406,13 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         private bool ApplyWinningStrategyRulesIS(BacktestModel backtestIS, ProjectConfigurationDTO configuration)
         {
             return backtestIS.WinningTrades >= configuration.SBMinTransactionsIS
-                && backtestIS.PercentSuccess >= (double)configuration.SBMinPercentSuccessIS;
+                && backtestIS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentIS;
         }
 
         private bool ApplyWinningStrategyRulesOS(BacktestModel backtestOS, ProjectConfigurationDTO configuration)
         {
             return backtestOS.WinningTrades >= configuration.SBMinTransactionsOS
-               && backtestOS.PercentSuccess >= (double)configuration.SBMinPercentSuccessOS;
+               && backtestOS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentOS;
         }
 
         // Backtest Serialization

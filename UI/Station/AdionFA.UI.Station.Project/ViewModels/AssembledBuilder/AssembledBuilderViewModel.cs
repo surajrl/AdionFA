@@ -1,10 +1,12 @@
 ﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
 using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
 using AdionFA.Infrastructure.Common.Directories.Contracts;
+using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Services;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Services;
@@ -14,18 +16,23 @@ using AdionFA.TransferObject.Project;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
+using AdionFA.UI.Station.Project.Model.AssembledBuilder;
 using AdionFA.UI.Station.Project.Validators.AssembledBuilder;
 using AutoMapper;
+using MahApps.Metro.Controls.Dialogs;
+using Microsoft.CodeAnalysis;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,18 +46,22 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IAssembledBuilderService _assembledBuilderService;
+        private readonly IExtractorService _extractorService;
 
         private readonly IProjectServiceAgent _projectService;
         private readonly IMarketDataServiceAgent _historicalDataService;
         private readonly IEventAggregator _eventAggregator;
 
         private readonly ManualResetEventSlim _manualResetEventSlim;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource;
+        private readonly object _lock;
+        private bool _disposedValue;
 
         public AssembledBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
+            _extractorService = IoC.Get<IExtractorService>();
             _assembledBuilderService = IoC.Get<IAssembledBuilderService>();
 
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
@@ -67,9 +78,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }).CreateMapper();
 
             AssembledBuilder = new();
+            AssembledBuilderProcessUP = new();
+            AssembledBuilderProcessDOWN = new();
 
             _cancellationTokenSource = new();
             _manualResetEventSlim = new(true);
+            _lock = new();
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
@@ -80,7 +94,58 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
+        public ICommand StopCommand => new DelegateCommand(() =>
+        {
+            _manualResetEventSlim.Reset();
+
+            StopProcesses(AssembledBuilderProcessUP);
+            StopProcesses(AssembledBuilderProcessDOWN);
+
+            static void StopProcesses(IEnumerable<AssembledBuilderProcessModel> processes)
+            {
+                foreach (var process in processes)
+                {
+                    if (process.Message != AssembledBuilderStatus.BacktestCompleted.GetMetadata().Description
+                    && process.Message != AssembledBuilderStatus.NotStarted.GetMetadata().Description)
+                    {
+                        var stopped = AssembledBuilderStatus.Stopped.GetMetadata().Description;
+                        process.Message = $"{process.Message} - {stopped}";
+                    }
+                }
+            }
+
+            CanCancelOrContinue = true;
+        }, () => IsTransactionActive && !CanCancelOrContinue)
+            .ObservesProperty(() => IsTransactionActive)
+            .ObservesProperty(() => CanCancelOrContinue);
+
+        public ICommand CancelCommand => new DelegateCommand(() =>
+        {
+            _cancellationTokenSource.Cancel();
+            _manualResetEventSlim.Set();
+
+        }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
+
+        public ICommand ContinueCommand => new DelegateCommand(() =>
+        {
+            _manualResetEventSlim.Set();
+
+            ContinueProcesses(AssembledBuilderProcessUP);
+            ContinueProcesses(AssembledBuilderProcessDOWN);
+
+            static void ContinueProcesses(IEnumerable<AssembledBuilderProcessModel> processes)
+            {
+                var stopped = AssembledBuilderStatus.Stopped.GetMetadata().Description;
+                foreach (var process in processes)
+                {
+                    process.Message = process.Message.Replace($" - {stopped}", string.Empty);
+                }
+            }
+
+            CanCancelOrContinue = false;
+        }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
+
+        public ICommand ProcessCommand => new DelegateCommand(async () =>
         {
             try
             {
@@ -88,17 +153,43 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (!Validate(new AssembledBuilderValidator()).IsValid)
                 {
-                    IsTransactionActive = false;
+                    return;
+                }
+
+                var deletePrevious = await MessageHelper.ShowMessageInput(this,
+                    "Assembled Builder",
+                    "Do you want to delete all the previous extractions and assembled nodes?").ConfigureAwait(true);
+
+                if (deletePrevious == MessageDialogResult.Affirmative)
+                {
+                    // Delete assembled builder extractions
+                    var extractionDirectoryUP = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("up");
+                    var extractionDirectoryDOWN = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("down");
+                    _projectDirectoryService.DeleteAllFiles(extractionDirectoryUP, isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(extractionDirectoryDOWN, isBackup: false);
+
+                    // Delete assembled builder nodes
+                    var nodesDirectoryUP = ProcessArgs.ProjectName.ProjectAssembledBuilderNodesUPDirectory();
+                    var nodesDirectoryDOWN = ProcessArgs.ProjectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                    _projectDirectoryService.DeleteAllFiles(nodesDirectoryUP, ext: "*.xml", isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(nodesDirectoryDOWN, ext: "*.xml", isBackup: false);
+                }
+                else
+                {
                     return;
                 }
 
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
+                _cancellationTokenSource = new();
+
+                Refresh();
+
                 // Historical Data
 
-                var projectHistoricalData = await _historicalDataService.GetHistoricalData(Configuration.HistoricalDataId.Value, true);
-                var projectCandles = projectHistoricalData.HistoricalDataCandles.
+                var projectHistoricalData = await _historicalDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
+                var allProjectCandles = projectHistoricalData.HistoricalDataCandles.
                 Select(hdCandle => new Candle
                 {
                     Date = hdCandle.StartDate,
@@ -115,36 +206,46 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 await Task.Factory.StartNew(() =>
                 {
-                    var projectConfiguration = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration);
+                    // Extraction
 
-                    // Extraction of UP and DOWN Nodes
+                    ExtractionProcess("up", allProjectCandles);
+                    ExtractionProcess("down", allProjectCandles);
 
-                    Debug.WriteLine("Started Assembled Builder Extraction");
+                    // Backtest
 
-                    //_assembledBuilderService.CreateExtraction(ProcessArgs.ProjectName, AssembledBuilder, projectCandles, projectConfiguration);
-
-                    Debug.WriteLine("Finished Assembled Builder Extraction");
-
-                    // Strategy
-
-                    Debug.WriteLine("Started Assembled Builder UP Nodes");
-                    BacktestProcess("up", projectConfiguration, projectCandles);
-                    Debug.WriteLine("Finished Assembled Builder UP Nodes");
-
-
-                    Debug.WriteLine("Started Assembled Builder DOWN Nodes");
-                    BacktestProcess("down", projectConfiguration, projectCandles);
-                    Debug.WriteLine("Finished Assembled Builder DOWN Nodes");
-
-                }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
+                    BacktestProcess("up", allProjectCandles);
+                    BacktestProcess("down", allProjectCandles);
+                }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
 
                 IsTransactionActive = false;
 
                 // Result Message
 
+                var msgUP = AssembledBuilder.WinningParentNodesUP.Count > 0 ? $"{AssembledBuilder.WinningParentNodesUP.Count} UP Nodes Found!" : "No UP Nodes Found.";
+                var msgDOWN = AssembledBuilder.WinningParentNodesDOWN.Count > 0 ? $"{AssembledBuilder.WinningParentNodesDOWN.Count} DOWN Nodes Found!" : "No DOWN Nodes Found.";
+
                 MessageHelper.ShowMessage(this,
                     CommonResources.AssembledBuilder,
-                    MessageResources.AssembledBuilderCompleted);
+                    $"{MessageResources.AssembledBuilderCompleted}\n" +
+                    $"{msgUP}\n" +
+                    $"{msgDOWN}");
+            }
+            catch (OperationCanceledException)
+            {
+                CancelProcesses(AssembledBuilderProcessUP);
+                CancelProcesses(AssembledBuilderProcessDOWN);
+
+                static void CancelProcesses(IEnumerable<AssembledBuilderProcessModel> processes)
+                {
+                    foreach (var process in processes)
+                    {
+                        var canceled = AssembledBuilderStatus.Canceled.GetMetadata().Description;
+                        var stopped = AssembledBuilderStatus.Stopped.GetMetadata().Description;
+                        process.Message = process.Message.Replace(stopped, canceled);
+                    }
+                }
+
+                CanCancelOrContinue = false;
             }
             catch (Exception ex)
             {
@@ -155,93 +256,238 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
+
+                _cancellationTokenSource?.Dispose();
+                _cancellationTokenSource = null;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private void BacktestProcess(string label, ProjectConfigurationDTO projectConfiguration, IEnumerable<Candle> projectCandles)
+        // ONLY IMPLEMENTED WITHOUT SCHEDULE EXTRACTIONS !!
+        private void ExtractionProcess(string label, IEnumerable<Candle> projectCandles)
         {
-            var directory = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory(label.ToUpperInvariant());
-            var extractions = _projectDirectoryService.GetFilesInPath(directory);
+            IList<BacktestModel> backtests;
+            IList<AssembledBuilderProcessModel> assembledBuilderProcess;
 
-            if (!extractions.Any())
+            switch (label.ToLowerInvariant())
             {
-                IsTransactionActive = false;
-                MessageHelper.ShowMessage(this,
-                    CommonResources.AssembledBuilder,
-                    $"No {label.ToUpperInvariant()} extractions found in the Assembled Builder directory");
+                case "up":
+                    backtests = AssembledBuilder.ChildBacktestsUP;
+                    assembledBuilderProcess = AssembledBuilderProcessUP;
+                    break;
 
-                return;
-            }
+                case "down":
+                    backtests = AssembledBuilder.ChildBacktestsDOWN;
+                    assembledBuilderProcess = AssembledBuilderProcessDOWN;
+                    break;
 
-            foreach (var extraction in extractions)
-            {
-                var wekaApi = new WekaApiClient();
-                IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
-                extraction.FullName,
-                projectConfiguration.DepthWeka,
-                projectConfiguration.TotalDecimalWeka,
-                projectConfiguration.MinimalSeed,
-                projectConfiguration.MaximumSeed,
-                projectConfiguration.TotalInstanceWeka,
-                (double)projectConfiguration.MaxRatioTree,
-                (double)projectConfiguration.NTotalTree,
-                true);
-
-                if (!responseWeka.Any())
-                {
-                    IsTransactionActive = false;
-                    MessageHelper.ShowMessage(this,
-                        CommonResources.AssembledBuilder,
-                        "No Weka trees found");
-
+                default:
                     return;
-                }
+            }
 
-                foreach (var wekaTree in responseWeka)
+            var backtestOperations = backtests
+            .SelectMany(backtest => backtest.BacktestOperations
+            .OrderBy(backtestOperation => backtestOperation.Date)).ToList();
+
+            var dates = new List<DateTime>();
+            foreach (var backtestOperation in backtestOperations)
+            {
+                _manualResetEventSlim.Wait();
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                // Add the date if it has not been already added
+                if (dates.Find(date => date == backtestOperation.Date) == default)
                 {
-                    var validNodes = wekaTree.NodeOutput.Where(tree => tree.Winner).ToList();
-
-                    if (!validNodes.Any())
-                    {
-                        IsTransactionActive = false;
-                        MessageHelper.ShowMessage(this,
-                            CommonResources.AssembledBuilder,
-                            $"No winning {label.ToUpperInvariant()} nodes found in Weka tree");
-
-                        return;
-                    }
-
-                    foreach (var node in validNodes)
-                    {
-                        var strategyBuilder = _assembledBuilderService.BuildBacktestOfNode(
-                            node.Label,
-                            node.Node,
-                            (label.ToLowerInvariant() == "up" ? AssembledBuilder.UPBacktests : AssembledBuilder.DOWNBacktests),
-                            projectConfiguration,
-                            projectCandles,
-                            _manualResetEventSlim,
-                            _cancellationTokenSource.Token);
-
-                        if (strategyBuilder.WinningStrategy)
-                        {
-                            StrategyBuilderService.SerializeBacktest(EntityTypeEnum.AssembledBuilder, ProcessArgs.ProjectName, strategyBuilder.IS);
-                        }
-                    }
+                    dates.Add(backtestOperation.Date);
                 }
             }
+            var orderedDates = dates.OrderBy(date => date.Date);
+
+            var firstOperation = orderedDates.FirstOrDefault();
+            var lastOperation = orderedDates.LastOrDefault();
+
+            Parallel.ForEach(
+                assembledBuilderProcess,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Environment.ProcessorCount - 1,
+                    CancellationToken = _cancellationTokenSource.Token
+                },
+                process =>
+                {
+                    // Update assembled builder process
+                    process.Message = AssembledBuilderStatus.ExecutingExtraction.GetMetadata().Description;
+
+                    // Perfrom extraction
+                    var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
+                    var extractionResult = _extractorService.DoExtraction(
+                        firstOperation,
+                        lastOperation,
+                        indicators,
+                        projectCandles.ToList(),
+                        ProjectConfiguration.TimeframeId,
+                        ProjectConfiguration.ExtractorMinVariation);
+
+                    // Filter the extraction for only the candles with backtest operations
+                    var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
+                                  let backtestOperation = backtestOperations.Where(operation => operation.Date == il._il.Interval)
+                                  where backtestOperation.Any()
+                                  select new
+                                  {
+                                      idx = il._idx,
+                                      il = new IntervalLabel
+                                      {
+                                          Interval = il._il.Interval,
+                                          Label = backtestOperation.Any(operation => operation.IsWinner) ? "UP" : "DOWN"
+                                      },
+                                  }).ToList();
+
+                    foreach (var extraction in extractionResult)
+                    {
+                        extraction.IntervalLabels = filter.Select(a => a.il).ToArray();
+
+                        var outputExtraction = new List<double>();
+                        foreach (var idx in filter.Select(a => a.idx))
+                        {
+                            _manualResetEventSlim.Wait();
+                            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                            outputExtraction.Add(extraction.Output[idx]);
+                        }
+
+                        extraction.Output = outputExtraction.ToArray();
+                    }
+
+                    var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
+                    var nameSignature = process.ExtractionTemplateName.Replace(".csv", string.Empty);
+
+                    _extractorService.ExtractorWrite(
+                        ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv"),
+                        extractionResult,
+                        0,
+                        0);
+
+                    // Update assembled builder process
+                    process.ExtractionAssembledBuilderName = $"{nameSignature}.{timeSignature}.csv";
+                    process.ExtractionAssembledBuilderPath = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv");
+                    process.Message = AssembledBuilderStatus.ExtractionCompleted.GetMetadata().Description;
+                });
         }
 
-        public DelegateCommand ReloadBtnCommand => new DelegateCommand(() =>
+        private void BacktestProcess(string label, IEnumerable<Candle> projectCandles)
+        {
+            IList<BacktestModel> backtests;
+            IList<ParentNodeModel> winnginNodes;
+            IList<AssembledBuilderProcessModel> assembledBuilderProcess;
+            var allNodes = new List<REPTreeNodeModel>();
+
+            switch (label.ToLowerInvariant())
+            {
+                case "up":
+                    assembledBuilderProcess = AssembledBuilderProcessUP;
+                    backtests = AssembledBuilder.ChildBacktestsUP;
+                    winnginNodes = AssembledBuilder.WinningParentNodesUP;
+                    break;
+
+                case "down":
+                    assembledBuilderProcess = AssembledBuilderProcessDOWN;
+                    backtests = AssembledBuilder.ChildBacktestsDOWN;
+                    winnginNodes = AssembledBuilder.WinningParentNodesDOWN;
+                    break;
+
+                default:
+                    return;
+            }
+
+            foreach (var process in assembledBuilderProcess)
+            {
+                _manualResetEventSlim.Wait();
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                process.Message = AssembledBuilderStatus.ExecutingWeka.GetMetadata().Description;
+
+                var wekaApi = new WekaApiClient();
+                var wekaTree = wekaApi.GetREPTreeClassifier(
+                        process.ExtractionAssembledBuilderPath,
+                        ProjectConfiguration.DepthWeka,
+                        ProjectConfiguration.TotalDecimalWeka,
+                        ProjectConfiguration.MinimalSeed,
+                        ProjectConfiguration.MaximumSeed,
+                        ProjectConfiguration.TotalInstanceWeka,
+                        (double)ProjectConfiguration.MaxRatioTree,
+                        (double)ProjectConfiguration.NTotalTree,
+                        true).ToList();
+
+                process.TreeOutputs.AddRange(_mapper.Map<List<REPTreeOutputModel>, List<REPTreeOutputVM>>(wekaTree));
+
+                foreach (var tree in process.TreeOutputs)
+                {
+                    var validNodes = _mapper.Map<List<REPTreeNodeVM>, List<REPTreeNodeModel>>(tree.NodeOutput.Where(tree => tree.Winner && tree.Label.ToLowerInvariant() == "up").ToList());
+                    allNodes.AddRange(validNodes);
+                    process.Nodes = new ObservableCollection<REPTreeNodeModel>(validNodes);
+                }
+
+                process.Message = AssembledBuilderStatus.WekaCompleted.GetMetadata().Description;
+            }
+
+            Parallel.ForEach(
+                allNodes,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Environment.ProcessorCount - 1,
+                    CancellationToken = _cancellationTokenSource.Token
+                },
+                node =>
+                {
+                    var process = assembledBuilderProcess.Where(process => process.Nodes.Any(n => n == node)).FirstOrDefault();
+
+                    lock (_lock)
+                    {
+                        process.ExecutingBacktests++;
+                        process.Message = $"{AssembledBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                    }
+
+                    var strategyBuilder = _assembledBuilderService.BuildBacktestOfNode(
+                        node,
+                        backtests,
+                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                        projectCandles,
+                        _manualResetEventSlim,
+                        _cancellationTokenSource.Token);
+
+                    if (strategyBuilder.WinningStrategy)
+                    {
+                        StrategyBuilderService.SerializeBacktest(EntityTypeEnum.AssembledBuilder, ProcessArgs.ProjectName, strategyBuilder.IS);
+                        StrategyBuilderService.SerializeNode(EntityTypeEnum.AssembledBuilder, ProcessArgs.ProjectName, node.NodeName(), node);
+
+                        lock (_lock)
+                        {
+                            winnginNodes.Add(new(node) { ChildNodes = backtests });
+                        }
+                    }
+
+                    lock (_lock)
+                    {
+                        process.ExecutingBacktests--;
+                        process.CompletedBacktests++;
+                        if (process.CompletedBacktests == process.TotalBacktests)
+                        {
+                            process.Message = AssembledBuilderStatus.BacktestCompleted.GetMetadata().Description;
+                        }
+                    }
+                });
+        }
+
+        public ICommand RefreshCommand => new DelegateCommand(() =>
         {
             try
             {
+                Refresh();
                 PopulateViewModel();
             }
             catch (Exception ex)
             {
                 IsTransactionActive = false;
-
-                Trace.TraceError(ex.Message);
+                LogHelper.LogException<AssembledBuilderViewModel>(ex);
                 throw;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
@@ -251,14 +497,43 @@ namespace AdionFA.UI.Station.Project.ViewModels
             try
             {
                 var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
-                Configuration = project?.ProjectConfigurations.FirstOrDefault();
+                ProjectConfiguration = project?.ProjectConfigurations.FirstOrDefault();
 
-                if (!IsTransactionActive)
+                AssembledBuilder = _assembledBuilderService.LoadAssembledBuilderNodes(ProcessArgs.ProjectName);
+
+                var extractionTemplatesDirectory = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
+                var extractionTemplates = _projectDirectoryService.GetFilesInPath(extractionTemplatesDirectory);
+
+                if (!AssembledBuilderProcessUP.Any())
                 {
-                    AssembledBuilder.UPBacktests?.Clear();
-                    AssembledBuilder.DOWNBacktests?.Clear();
+                    foreach (var file in extractionTemplates)
+                    {
+                        AssembledBuilderProcessUP.Add(new AssembledBuilderProcessModel
+                        {
+                            ExtractionTemplatePath = file.FullName,
+                            ExtractionTemplateName = file.Name,
+                            ExtractionAssembledBuilderName = file.Name,
+                            TreeOutputs = new(),
+                            Nodes = new(),
+                            Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
+                        });
+                    }
+                }
 
-                    AssembledBuilder = _assembledBuilderService.LoadStrategyBuilderResult(ProcessArgs.ProjectName);
+                if (!AssembledBuilderProcessDOWN.Any())
+                {
+                    foreach (var file in extractionTemplates)
+                    {
+                        AssembledBuilderProcessDOWN.Add(new AssembledBuilderProcessModel
+                        {
+                            ExtractionTemplatePath = file.FullName,
+                            ExtractionTemplateName = file.Name,
+                            ExtractionAssembledBuilderName = file.Name,
+                            TreeOutputs = new(),
+                            Nodes = new(),
+                            Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
+                        });
+                    }
                 }
             }
             catch (Exception ex)
@@ -268,6 +543,43 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
+        private void Refresh()
+        {
+            // Load the nodes from the strategy builder
+
+            AssembledBuilder = _assembledBuilderService.LoadAssembledBuilderNodes(ProcessArgs.ProjectName);
+
+            // Load the extraction templates
+
+            AssembledBuilderProcessDOWN.Clear();
+            AssembledBuilderProcessUP.Clear();
+
+            var extractionTemplatesDirectory = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
+            var extractionTemplates = _projectDirectoryService.GetFilesInPath(extractionTemplatesDirectory);
+
+            foreach (var file in extractionTemplates)
+            {
+                AssembledBuilderProcessUP.Add(new AssembledBuilderProcessModel
+                {
+                    ExtractionTemplatePath = file.FullName,
+                    ExtractionTemplateName = file.Name,
+                    ExtractionAssembledBuilderName = file.Name,
+                    Nodes = new(),
+                    TreeOutputs = new(),
+                    Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
+                });
+
+                AssembledBuilderProcessDOWN.Add(new AssembledBuilderProcessModel
+                {
+                    ExtractionTemplatePath = file.FullName,
+                    ExtractionTemplateName = file.Name,
+                    ExtractionAssembledBuilderName = file.Name,
+                    Nodes = new(),
+                    TreeOutputs = new(),
+                    Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
+                });
+            }
+        }
 
         // View Bindings
 
@@ -285,11 +597,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ProjectConfigurationVM _configuration;
-        public ProjectConfigurationVM Configuration
+        private bool _canCancelOrContinue;
+        public bool CanCancelOrContinue
         {
-            get => _configuration;
-            set => SetProperty(ref _configuration, value);
+            get => _canCancelOrContinue;
+            set => SetProperty(ref _canCancelOrContinue, value);
+        }
+
+        private ProjectConfigurationVM _projectConfiguration;
+        public ProjectConfigurationVM ProjectConfiguration
+        {
+            get => _projectConfiguration;
+            set => SetProperty(ref _projectConfiguration, value);
         }
 
         private AssembledBuilderModel _assembledBuilder;
@@ -299,13 +618,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _assembledBuilder, value);
         }
 
-        // IDisposable Implementation
+        public ObservableCollection<AssembledBuilderProcessModel> AssembledBuilderProcessUP { get; set; }
+        public ObservableCollection<AssembledBuilderProcessModel> AssembledBuilderProcessDOWN { get; set; }
 
-        private bool disposedValue;
+        // IDisposable Implementation
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
@@ -314,7 +634,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

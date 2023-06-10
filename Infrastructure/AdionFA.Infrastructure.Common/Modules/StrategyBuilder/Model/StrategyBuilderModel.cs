@@ -9,7 +9,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
         public BacktestModel IS { get; set; }
         public BacktestModel OS { get; set; }
 
-        public double VariationPercent => IS != null && OS != null ? Math.Abs(IS.PercentSuccess - OS.PercentSuccess) : 0;
-        public double Progressiveness => IS != null && OS != null ? Math.Abs(IS.Progressiveness - OS.Progressiveness) : 0;
+        public double SuccessRateVariation => IS != null && OS != null ? Math.Abs(IS.SuccessRatePercent - OS.SuccessRatePercent) : 0;
+        public double ProgressivenessVariation => IS != null && OS != null ? Math.Abs(IS.Progressiveness - OS.Progressiveness) : 0;
     }
 }

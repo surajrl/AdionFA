@@ -1,7 +1,5 @@
 ﻿using AdionFA.Infrastructure.Common.Extractor.Model;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 
@@ -11,7 +9,8 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Contracts
 {
     public interface ITradeService
     {
-        bool IsTrade(REPTreeNodeModel node, IList<Candle> candleHistory, Candle currentCandle);
+        bool IsTrade(REPTreeNodeModel singleNode, IList<Candle> candleHistory, Candle currentCandle);
+        bool IsTrade(ParentNodeModel parentNode, IList<Candle> candleHistory, Candle currentCandle);
 
         ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType);
     }

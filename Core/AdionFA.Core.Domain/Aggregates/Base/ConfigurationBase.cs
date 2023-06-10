@@ -45,17 +45,17 @@ namespace AdionFA.Core.Domain.Aggregates.Base
         // Strategy Builder
 
         public int SBMinTransactionsIS { get; set; }
-        public decimal SBMinPercentSuccessIS { get; set; }
+        public decimal SBMinSuccessRatePercentIS { get; set; }
 
         public int SBMinTransactionsOS { get; set; }
-        public decimal SBMinPercentSuccessOS { get; set; }
+        public decimal SBMinSuccessRatePercentOS { get; set; }
 
-        public decimal SBMaxTransactionsVariation { get; set; }
+        public decimal SBMaxSuccessRateVariation { get; set; }
 
         public bool IsProgressiveness { get; set; }
-        public decimal Progressiveness { get; set; }
+        public decimal MaxProgressivenessVariation { get; set; }
 
-        public decimal SBMaxPercentCorrelation { get; set; }
+        public decimal SBMaxCorrelationPercent { get; set; }
 
         public int SBWinningStrategyUPTarget { get; set; }
         public int SBWinningStrategyDOWNTarget { get; set; }

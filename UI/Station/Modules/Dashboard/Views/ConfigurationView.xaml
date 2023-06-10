@@ -412,7 +412,7 @@
                                                  Value="{Binding Configuration.SBWinningStrategyDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region TransactionTarget-->
+                        <!--#region Transactions Target-->
                         <StackPanel Grid.Column="2"
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
@@ -426,22 +426,21 @@
                                                  Value="{Binding Configuration.SBTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region VariationTransaction-->
+                        <!--#region Success Rate Variation-->
                         <StackPanel Grid.Row="1"
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Variation}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                    <Run Text="Maximum Success Rate Variation" />
                                     <Run Text="*" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding Configuration.SBMaxTransactionsVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMaxSuccessRateVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region ActivateProgressiveness-->
+                        <!--#region Progressiveness-->
                         <StackPanel Grid.Row="1"
                                     Grid.Column="1"
                                     Margin="{StaticResource ColumnMargin}">
@@ -454,21 +453,20 @@
                                                 IsOn="{Binding Configuration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region Progressiveness-->
+                        <!--#region Maximum Progressiveness Variation-->
                         <StackPanel Grid.Column="2"
                                     Grid.Row="1"
                                     Margin="{StaticResource ColumnMargin}">
                             <Label IsEnabled="{Binding Configuration.IsProgressiveness}">
                                 <TextBlock>
-                                        <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" />
-                                        <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                        <Run Text="Maximum Progressiveness Variation" />
                                         <Run Text="{Binding ElementName=configurationView, Path=LabelRequiredProgressiveness}" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown IsEnabled="{Binding Configuration.IsProgressiveness}"
                                                  NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding Configuration.Progressiveness, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.MaxProgressivenessVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MaxPercentCorrelation-->
@@ -484,7 +482,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding Configuration.SBMaxPercentCorrelation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMaxCorrelationPercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinTransactionCountIS-->
@@ -509,16 +507,13 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="Minimum" />
-                                    <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.IS}" />
+                                    <Run Text="Minimum Sucess Rate Percent (IS)" />
                                     <Run Text="*" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding Configuration.SBMinPercentSuccessIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMinSuccessRatePercentIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinTransactionCountOS-->
@@ -543,16 +538,13 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                        <Run Text="Minimum" />
-                                        <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
-                                        <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                        <Run Text="{x:Static commonResources:CommonResources.OS}" />
+                                        <Run Text="Minimum Sucess Rate Percent (OS)" />
                                         <Run Text="*" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding Configuration.SBMinPercentSuccessOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding Configuration.SBMinSuccessRatePercentOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>

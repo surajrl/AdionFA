@@ -51,23 +51,23 @@ namespace AdionFA.UI.Station.Module.Dashboard.Validators
             RuleFor(m => m.SBMinTransactionsIS).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMinPercentSuccessIS).GreaterThan(0)
+            RuleFor(m => m.SBMinSuccessRatePercentIS).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
             RuleFor(m => m.SBMinTransactionsOS).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMinPercentSuccessOS).GreaterThan(0)
+            RuleFor(m => m.SBMinSuccessRatePercentOS).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMaxTransactionsVariation).GreaterThan(0)
+            RuleFor(m => m.SBMaxSuccessRateVariation).GreaterThan(0)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.Progressiveness).GreaterThan(0)
+            RuleFor(m => m.MaxProgressivenessVariation).GreaterThan(0)
                 .When(m => m.IsProgressiveness)
                 .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMaxPercentCorrelation).GreaterThan(0)
+            RuleFor(m => m.SBMaxCorrelationPercent).GreaterThan(0)
                .WithMessage(m => string.Format(ValidationResources.NumberGreaterThan, 0));
 
             RuleFor(m => m.SBWinningStrategyUPTarget).GreaterThan(0)

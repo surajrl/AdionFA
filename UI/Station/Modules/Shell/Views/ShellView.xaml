@@ -417,7 +417,7 @@
                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectGlobalConfig}" />
+                                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutConfiguration}" />
                                         </MultiBinding>
                                     </behaviors:InvokeCommandAction.CommandParameter>
                                 </behaviors:InvokeCommandAction>

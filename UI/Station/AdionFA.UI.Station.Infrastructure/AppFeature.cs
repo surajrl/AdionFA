@@ -23,30 +23,26 @@
 
         public const string FlyoutRegion = "FlyoutRegion";
 
-        // Flyout Names
+        // Station
 
         public const string FlyoutAppSetting = "FlyoutAppSetting";
-
         public const string FlyoutCreateProject = "FlyoutCreateProject";
-
-        public const string FlyoutProjectGlobalConfig = "FlyoutProjectGlobalConfig";
-
+        public const string FlyoutConfiguration = "FlyoutConfiguration";
         public const string FlyoutHistoricalData = "FlyoutHistoricalData";
         public const string FlyoutUploadHistoricalData = "FlyoutUploadHistoricalData";
         public const string FlyoutDownloadHistoricalData = "FlyoutDownloadHistoricalData";
 
-        public const string FlyoutUserProfile = "FlyoutUserProfile";
-
-        public const string FlyoutTrader = "FlyoutTraderName";
-
-        public const string FlyoutTools = "FlyoutToolsName";
+        // Project
 
         // Strategy Builder
 
         public const string FlyoutProjectModuleWekaTree = "FlyoutProjectModuleWekaTree";
         public const string FlyoutProjectModuleCorrelation = "FlyoutProjectModuleCorrelation";
         public const string FlyoutProjectModuleSavedNodes = "FlyoutProjectModuleSavedNodes";
-        public const string FlyoutProjectModuleAutoConfiguration = "FlyoutProjectModuleAutoConfiguration";
+
+        // Assembled Builder
+
+        public const string FlyoutProjectModuleAssembledNodes = "FlyoutProjectModuleAssembledNodes";
 
         // MetaTrader
 

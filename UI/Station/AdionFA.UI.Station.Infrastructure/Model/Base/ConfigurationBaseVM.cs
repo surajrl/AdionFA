@@ -142,11 +142,11 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
             set => SetProperty(ref _sbMinTransactionsIS, value);
         }
 
-        private decimal _sbMinPercentSuccessIS;
-        public decimal SBMinPercentSuccessIS
+        private decimal _sbMinSuccessRatePercentIS;
+        public decimal SBMinSuccessRatePercentIS
         {
-            get => _sbMinPercentSuccessIS;
-            set => SetProperty(ref _sbMinPercentSuccessIS, value);
+            get => _sbMinSuccessRatePercentIS;
+            set => SetProperty(ref _sbMinSuccessRatePercentIS, value);
         }
 
         private int _sbMinTransactionsOS;
@@ -156,18 +156,18 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
             set => SetProperty(ref _sbMinTransactionsOS, value);
         }
 
-        private decimal _sbMinPercentSuccessOS;
-        public decimal SBMinPercentSuccessOS
+        private decimal _sbMinSuccessRatePercentOS;
+        public decimal SBMinSuccessRatePercentOS
         {
-            get => _sbMinPercentSuccessOS;
-            set => SetProperty(ref _sbMinPercentSuccessOS, value);
+            get => _sbMinSuccessRatePercentOS;
+            set => SetProperty(ref _sbMinSuccessRatePercentOS, value);
         }
 
-        private decimal _sbMaxTransactionsVariation;
-        public decimal SBMaxTransactionsVariation
+        private decimal _sbMaxSuccessRateVariation;
+        public decimal SBMaxSuccessRateVariation
         {
-            get => _sbMaxTransactionsVariation;
-            set => SetProperty(ref _sbMaxTransactionsVariation, value);
+            get => _sbMaxSuccessRateVariation;
+            set => SetProperty(ref _sbMaxSuccessRateVariation, value);
         }
 
         private bool _isProgressiveness;
@@ -177,18 +177,18 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
             set => SetProperty(ref _isProgressiveness, value);
         }
 
-        private decimal _progressiveness;
-        public decimal Progressiveness
+        private decimal _maxProgressivenessVariation;
+        public decimal MaxProgressivenessVariation
         {
-            get => _progressiveness;
-            set => SetProperty(ref _progressiveness, value);
+            get => _maxProgressivenessVariation;
+            set => SetProperty(ref _maxProgressivenessVariation, value);
         }
 
-        private decimal _sbMaxPercentCorrelation;
-        public decimal SBMaxPercentCorrelation
+        private decimal _sbMaxCorrelationPercent;
+        public decimal SBMaxCorrelationPercent
         {
-            get => _sbMaxPercentCorrelation;
-            set => SetProperty(ref _sbMaxPercentCorrelation, value);
+            get => _sbMaxCorrelationPercent;
+            set => SetProperty(ref _sbMaxCorrelationPercent, value);
         }
 
         private int _sbWinningStrategyUPTarget;

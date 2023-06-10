@@ -196,7 +196,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.IS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding PercentSuccessIs, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding SuccessRatePercentIs, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="7" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
@@ -237,7 +237,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold" />
                                                     <Run Text="{x:Static commonResources:CommonResources.OS}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding PercentSuccessOs, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding SuccessRatePercentOs, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="7" Grid.Column="1" Margin="{StaticResource ColumnMargin}">
@@ -254,7 +254,7 @@
                                                 <TextBlock Grid.Row="9" Grid.Column="0" Margin="{StaticResource ColumnMargin}">
                                                     <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding VariationPercent , StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding SuccessRateVariation , StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <TextBlock Grid.Row="10" Grid.Column="1" Margin="{StaticResource ColumnMargin}">

@@ -1,5 +1,6 @@
 ﻿using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Project;
 using System;
@@ -17,8 +18,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
         // Backtest
 
         StrategyBuilderModel BuildBacktestOfNode(
-            string nodeLabel,
-            IList<string> node,
+            REPTreeNodeModel node,
             ProjectConfigurationDTO projectConfiguration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
@@ -26,12 +26,11 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 
         BacktestModel ExecuteBacktest(
             EntityTypeEnum entityType,
-            string parentNodeLabel,
             DateTime fromDate,
             DateTime toDate,
             int timeframeId,
             IEnumerable<Candle> candles,
-            IList<string> parentNode,
+            REPTreeNodeModel parentNode,
             IList<BacktestModel> childNodes,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);

@@ -62,7 +62,7 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             // Assembled Builder
 
             CreateMap<ProjectConfigurationVM, ConfigurationBaseDTO>().ReverseMap();
-            CreateMap<AssembledBuilderModel, AssembledBuilderVM>().ReverseMap();
+            CreateMap<AssembledBuilderModel, AssembledBuilderProcessModel>().ReverseMap();
         }
     }
 }

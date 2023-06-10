@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.EventAggregator;
@@ -57,7 +56,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                     if (file.Name.Contains("NODE"))
                     {
                         var correlationNodeUP = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
-                        CorrelationNodes.Add(_mapper.Map<REPTreeNodeModel, REPTreeNodeVM>(correlationNodeUP));
+                        CorrelationNodes.Add(correlationNodeUP);
                     }
                 });
 
@@ -66,20 +65,20 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                     if (file.Name.Contains("NODE"))
                     {
                         var correlationNodeDOWN = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
-                        CorrelationNodes.Add(_mapper.Map<REPTreeNodeModel, REPTreeNodeVM>(correlationNodeDOWN));
+                        CorrelationNodes.Add(correlationNodeDOWN);
                     }
                 });
             }
         });
 
-        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeVM>(node =>
+        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeModel>(node =>
         {
             var directory = node.Label.ToLower(CultureInfo.InvariantCulture) == "up" ?
             ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory() :
             ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory();
 
-            var nodeFilename = $"NODE-{RegexHelper.GetValidFileName(node.Name, "_")}-{node.TotalTradesIs}.xml";
-            var backtestFilename = $"BACKTEST-{RegexHelper.GetValidFileName(node.Name, "_")}-{node.TotalTradesIs}.xml";
+            var nodeFilename = $"NODE-{RegexHelper.GetValidFileName(node.NodeName(), "_")}-{node.TotalTradesIs}.xml";
+            var backtestFilename = $"BACKTEST-{RegexHelper.GetValidFileName(node.NodeName(), "_")}-{node.TotalTradesIs}.xml";
 
             var filepathBacktest = string.Format(CultureInfo.InvariantCulture, @"{0}\BACKTEST-{1}.xml", directory, backtestFilename);
             var filepathNode = string.Format(CultureInfo.InvariantCulture, @"{0}\NODE-{1}.xml", directory, nodeFilename);
@@ -94,9 +93,9 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         // View Bindings
 
-        private ObservableCollection<REPTreeNodeVM> _correlationNodes;
+        private ObservableCollection<REPTreeNodeModel> _correlationNodes;
 
-        public ObservableCollection<REPTreeNodeVM> CorrelationNodes
+        public ObservableCollection<REPTreeNodeModel> CorrelationNodes
         {
             get => _correlationNodes;
             set => SetProperty(ref _correlationNodes, value);

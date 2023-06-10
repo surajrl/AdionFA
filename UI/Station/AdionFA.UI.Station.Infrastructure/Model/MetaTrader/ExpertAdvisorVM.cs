@@ -1,9 +1,5 @@
-﻿using AdionFA.Core.Domain.Aggregates.MetaTrader;
-using AdionFA.TransferObject.Project;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
+﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
-using FluentValidation.Results;
 
 namespace AdionFA.UI.Station.Infrastructure.Model.MetaTrader
 {
@@ -34,11 +30,11 @@ namespace AdionFA.UI.Station.Infrastructure.Model.MetaTrader
             set => SetProperty(ref _responsePort, value);
         }
 
-        private string _pushPort;
-        public string PushPort
+        private string _publisherPort;
+        public string PublisherPort
         {
-            get => _pushPort;
-            set => SetProperty(ref _pushPort, value);
+            get => _publisherPort;
+            set => SetProperty(ref _publisherPort, value);
         }
 
         public ProjectVM Project { get; set; }

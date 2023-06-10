@@ -68,7 +68,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
 
                     while (csv.Read())
                     {
-                        string typeCsv = csv.GetField(0).Split(';')[0];
+                        var typeCsv = csv.GetField(0).Split(';')[0];
                         if (Enum.TryParse(typeCsv, out IndicatorEnum indicatorType))
                         {
                             switch (indicatorType)
@@ -191,9 +191,9 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             try
             {
                 var indicators = new List<IndicatorBase>();
-                foreach (string n in node)
+                foreach (var n in node)
                 {
-                    string f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
+                    var f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
 
                     MathOperatorEnum? optor = null;
                     string[] divisions = null;
@@ -229,9 +229,9 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     // Params Split
                     if (divisions.Length == 2)
                     {
-                        string[] indicatorParams = divisions[0].Split("_");
+                        var indicatorParams = divisions[0].Split("_");
 
-                        string indicatorName = indicatorParams[0].Replace(".", "_");
+                        var indicatorName = indicatorParams[0].Replace(".", "_");
 
                         if (Enum.TryParse(indicatorName, out IndicatorEnum indicatorType))
                         {
@@ -875,7 +875,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                         if (i.Output.Length > 0)
                         {
                             var zzz = 0;
-                            for (int jCounter = 0; jCounter < i.Output.Length; jCounter++)
+                            for (var jCounter = 0; jCounter < i.Output.Length; jCounter++)
                             {
                                 var dt = i.IntervalLabels[jCounter].Interval;
                                 if ((fromRegionTime == 0 || dt.Hour >= fromRegionTime) && (toRegionTime == 0 || dt.Hour <= toRegionTime))
@@ -897,7 +897,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     //Build csv
                     csv.WriteField("Id");
                     csv.WriteField("Fecha-Hora");
-                    for (int i = 0; i < headers.Length; i++)
+                    for (var i = 0; i < headers.Length; i++)
                     {
                         var h = headers[i];
                         var d = duplicates.FirstOrDefault(_d => _d.Key == h);
@@ -917,11 +917,11 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
                     (fromRegionTime == 0 || intervalLabel.Interval.Hour >= fromRegionTime)
                     && (toRegionTime == 0 || intervalLabel.Interval.Hour <= toRegionTime)).ToArray();
 
-                    for (int i = 0; i < rowCount; i++)
+                    for (var i = 0; i < rowCount; i++)
                     {
                         csv.WriteField(i);
                         csv.WriteField(intervals[i].Interval.ToString("yyyy.MM.dd HH:mm", CultureInfo.InvariantCulture));
-                        for (int j = 0; j < columnCount; j++)
+                        for (var j = 0; j < columnCount; j++)
                         {
                             if (!indexDuplicates.Contains(j))
                             {

@@ -516,14 +516,13 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Variation}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                    <Run Text="Maximum Success Rate Variation" />
                                     <Run Text="*" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectConfiguration.SBMaxTransactionsVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding ProjectConfiguration.SBMaxSuccessRateVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region ActivateProgressiveness-->
@@ -545,15 +544,14 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label IsEnabled="{Binding ProjectConfiguration.IsProgressiveness}">
                                 <TextBlock>
-                                        <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" />
-                                        <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                        <Run Text="Maximum Progressiveness Variation" />
                                         <Run Text="{Binding ElementName=projectConfigurationView, Path=LabelRequiredProgressiveness}" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown IsEnabled="{Binding ProjectConfiguration.IsProgressiveness}"
                                                  NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectConfiguration.Progressiveness, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding ProjectConfiguration.MaxProgressivenessVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MaxPercentCorrelation-->
@@ -569,7 +567,7 @@
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                 Value="{Binding ProjectConfiguration.SBMaxPercentCorrelation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding ProjectConfiguration.SBMaxCorrelationPercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinTransactionCountIS-->
@@ -594,16 +592,14 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="Minimum" />
-                                    <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.IS}" />
-                                    <Run Text="*" /></TextBlock>
+                                    <Run Text="Minimum Success Rate Percent (IS)" />
+                                    <Run Text="*" />
+                                </TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectConfiguration.SBMinPercentSuccessIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding ProjectConfiguration.SBMinSuccessRatePercentIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region MinTransactionCountOS-->
@@ -628,16 +624,14 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                        <Run Text="Minimum" />
-                                        <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
-                                        <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                        <Run Text="{x:Static commonResources:CommonResources.OS}" />
-                                        <Run Text="*" /></TextBlock>
+                                        <Run Text="Minimum Success Rate Percent (OS)" />
+                                        <Run Text="*" />
+                                </TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
-                                                 Value="{Binding ProjectConfiguration.SBMinPercentSuccessOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                 Value="{Binding ProjectConfiguration.SBMinSuccessRatePercentOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>

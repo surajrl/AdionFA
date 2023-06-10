@@ -13,7 +13,6 @@ using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.Enums;
@@ -161,7 +160,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             await Task.Factory.StartNew(() =>
             {
-                using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PushPort}");
+                using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PublisherPort}");
                 subscriber.Subscribe("");
 
                 try
@@ -230,24 +229,37 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                         foreach (var node in Nodes)
                         {
-                            var isTrade = _tradeService.IsTrade(
-                                    _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node),
+                            var isTrade = false;
+                            switch (node)
+                            {
+                                case ParentNodeModel n:
+                                    isTrade = _tradeService.IsTrade(
+                                    n,
                                     candles,
                                     _currentCandle);
+                                    break;
+
+                                case REPTreeNodeModel n:
+                                    isTrade = _tradeService.IsTrade(
+                                    n,
+                                    candles,
+                                    _currentCandle);
+                                    break;
+                            }
 
                             if (isTrade)
                             {
                                 // Open operation request -----------------------------------------------
-                                if (node.Label.ToLowerInvariant() == "up")
+                                //if (node.Label.ToLowerInvariant() == "up")
                                 {
                                     requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
                                     Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
                                 }
-                                else
-                                {
-                                    requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
-                                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
-                                }
+                                //else
+                                //{
+                                //requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
+                                //Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
+                                //}
                                 //-----------------------------------------------------------------------
 
                                 // Open operation response ----------------------------------------------
@@ -297,9 +309,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             MessageOutput?.Clear();
         }).ObservesCanExecute(() => MessageOutputAny);
 
-        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeVM>(node =>
+        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeModel>(node =>
         {
-            if (Nodes.Where(n => n.Name == node.Name).Any())
+            if (Nodes.Where(n => n.Equals(node)).Any())
             {
                 return;
             }
@@ -307,7 +319,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             Nodes.Add(node);
         });
 
-        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<REPTreeNodeVM>(node =>
+        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<REPTreeNodeModel>(node =>
         {
             Nodes.Remove(node);
         });
@@ -368,7 +380,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (Nodes == null)
                 {
-                    Nodes = new ObservableCollection<REPTreeNodeVM>();
+                    Nodes = new ObservableCollection<REPTreeNodeModel>();
                     Nodes.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
                     {
                         NodesAny = Nodes.Count > 0;
@@ -444,9 +456,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _nodesAny, value);
         }
 
-        private ObservableCollection<REPTreeNodeVM> _nodes;
+        private ObservableCollection<REPTreeNodeModel> _nodes;
 
-        public ObservableCollection<REPTreeNodeVM> Nodes
+        public ObservableCollection<REPTreeNodeModel> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);

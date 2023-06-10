@@ -361,11 +361,10 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Variation}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                    <Run Text="Maximum Success Rate Variation" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMaxTransactionsVariation}"
+                        <TextBox Text="{Binding Configuration.SBMaxSuccessRateVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -395,7 +394,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.Progressiveness}"
+                        <TextBox Text="{Binding Configuration.MaxProgressivenessVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -411,7 +410,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMaxPercentCorrelation}"
+                        <TextBox Text="{Binding Configuration.SBMaxCorrelationPercent}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -466,12 +465,10 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
-                                <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                <Run Text="{x:Static commonResources:CommonResources.IS}" />
+                                <Run Text="Minimum Success Rate Percent (IS)" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMinPercentSuccessIS}"
+                        <TextBox Text="{Binding Configuration.SBMinSuccessRatePercentIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -483,12 +480,10 @@
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.SuccessRate}" />
-                                <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                                <Run Text="{x:Static commonResources:CommonResources.OS}" />
+                                <Run Text="Minimum Success Rate Percent (OS)" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMinPercentSuccessOS}"
+                        <TextBox Text="{Binding Configuration.SBMinSuccessRatePercentOS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"

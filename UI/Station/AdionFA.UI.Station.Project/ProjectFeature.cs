@@ -7,5 +7,6 @@
         public const string Extractor = "Extractor";
         public const string StrategyBuilder = "Strategy Builder";
         public const string AssembledBuilder = "Assembled Builder";
+        public const string CrossingBuilder = "Crossing Builder";
     }
 }

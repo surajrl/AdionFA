@@ -35,7 +35,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         {
             if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleWekaTree, StringComparison.Ordinal))
             {
-                var projection = ((ObservableCollection<REPTreeNodeVM>)flyoutModel.Model)
+                var projection = ((ObservableCollection<REPTreeNodeVM>)flyoutModel.ModelOne)
                     .Where(m => m.Winner)
                     .OrderByDescending(n => n.Winner)
                     .ThenByDescending(n => n.WinningStrategy)

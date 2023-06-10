@@ -122,7 +122,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 IsTransactionActive = false;
 
-                string msg = (result?.IsSuccess ?? false)
+                var msg = (result?.IsSuccess ?? false)
                 ? MessageResources.EntitySaveSuccess
                 : result?.Message ?? MessageResources.EntityErrorTransaction;
 
@@ -180,13 +180,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             if (!HistoricalDataList.Any(md => md.Id == _projectConfiguration.HistoricalDataId))
             {
-                MessageHelper.ShowMessage(this, "Info", "The project is associated with outdated historical data, consider updating the Market Data field");
+                MessageHelper.ShowMessage(this,
+                    "Info",
+                    "The project is associated with outdated historical data, consider updating the Market Data field");
             }
         }
 
         public void PropertyValidator(ResponseVM response, bool showDialogWithErrors = false, bool showMessageInControl = false)
         {
-            string msg = (response?.IsSuccess ?? false) ? MessageResources.EntitySaveSuccess
+            var msg = (response?.IsSuccess ?? false) ? MessageResources.EntitySaveSuccess
                     : response?.Message ?? MessageResources.EntityErrorTransaction;
 
             switch (response.MessageResource)

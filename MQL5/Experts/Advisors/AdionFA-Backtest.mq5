@@ -65,6 +65,15 @@ void OnTick()
    OrderTypeEnum sell = Sell;
    CTrade trade;
    
+   if(PendingClose)
+     {
+       if(trade.PositionClose(PositionGetTicket(PositionsTotal()-1)))
+         {
+          CloseRequest = false;
+          PendingClose = false;
+         }
+     }
+   
    if(PendingBuy)
      {
        CJAVal responseJson;
@@ -77,7 +86,7 @@ void OnTick()
           ResponseSocket.send(responseJson.Serialize());
           CloseRequest = true;
           PendingBuy = false;
-         } 
+         }
      }
    
    if(PendingSell)
@@ -93,15 +102,6 @@ void OnTick()
           CloseRequest = true;
           PendingSell = false;
          } 
-     }
-     
-   if(PendingClose)
-     {
-       if(trade.PositionClose(PositionGetTicket(PositionsTotal()-1)))
-         {
-          CloseRequest = false;
-          PendingClose = false;
-         }
      }
      
    static datetime dtBarCurrent  = WRONG_VALUE;
@@ -165,51 +165,51 @@ void OnTick()
        printf("[PUBLISHER]\t[SEND] %s", jsonCompleteCandle.Serialize());
      
      
-   // Receive OPEN/CLOSE operation and process
-   ZmqMsg requestMsg;
-   if(ResponseSocket.recv(requestMsg))
-     {
-      CJAVal requestJson;
-      requestJson.Deserialize(requestMsg.getData());
+       // Receive OPEN/CLOSE operation and process
+       ZmqMsg requestMsg;
+       if(ResponseSocket.recv(requestMsg))
+         {
+          CJAVal requestJson;
+          requestJson.Deserialize(requestMsg.getData());
       
-      OrderTypeEnum orderType = (OrderTypeEnum)requestJson["OrderType"].ToInt();
+          OrderTypeEnum orderType = (OrderTypeEnum)requestJson["OrderType"].ToInt();
       
-      // BUY
-      if(orderType == Buy)
-        {
-         if(trade.Buy(PositionVolume))
-           {
-            CJAVal responseJson;
-            responseJson["OrderType"] = 0;
-            responseJson["Volume"] = PositionVolume;
+          // BUY
+          if(orderType == Buy)
+            {
+             if(trade.Buy(PositionVolume))
+               {
+                CJAVal responseJson;
+                responseJson["OrderType"] = 0;
+                responseJson["Volume"] = PositionVolume;
             
-            ResponseSocket.send(responseJson.Serialize());
-            CloseRequest = true;
-            return;
-           }
+                ResponseSocket.send(responseJson.Serialize());
+                CloseRequest = true;
+                return;
+               }
          
-         PendingBuy = true;
-         return;
-        }
+             PendingBuy = true;
+             return;
+            }
       
-      // SELL  
-      if(orderType == Sell)
-        {
-         if(trade.Sell(PositionVolume))
-           {
-            CJAVal responseJson;
-            responseJson["OrderType"] = 1;
-            responseJson["Volume"] = PositionVolume;
+          // SELL  
+          if(orderType == Sell)
+            {
+             if(trade.Sell(PositionVolume))
+               {
+                CJAVal responseJson;
+                responseJson["OrderType"] = 1;
+                responseJson["Volume"] = PositionVolume;
             
-            ResponseSocket.send(responseJson.Serialize());
-            CloseRequest = true;
-            return;
-           }
+                ResponseSocket.send(responseJson.Serialize());
+                CloseRequest = true;
+                return;
+               }
          
-         PendingSell = true;
-         return;
-        }
-     }
+             PendingSell = true;
+             return;
+            }
+       }
      }
   }
 //+------------------------------------------------------------------+

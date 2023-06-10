@@ -81,48 +81,48 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
             RuleFor(m => m.MaximumSeed).GreaterThan(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.MaxRatioTree).GreaterThan(0)
+            RuleFor(m => m.MaxRatioTree).GreaterThanOrEqualTo(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.NTotalTree).GreaterThan(0)
+            RuleFor(m => m.NTotalTree).GreaterThanOrEqualTo(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
             // Strategy Builder
 
-            RuleFor(m => m.SBMinTransactionsIS).GreaterThan(0)
+            RuleFor(m => m.SBMinTransactionsIS).GreaterThanOrEqualTo(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMinPercentSuccessIS).GreaterThan(0)
+            RuleFor(m => m.SBMinSuccessRatePercentIS).GreaterThanOrEqualTo(0).LessThanOrEqualTo(100)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMinTransactionsOS).GreaterThan(0)
+            RuleFor(m => m.SBMinTransactionsOS).GreaterThanOrEqualTo(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMinPercentSuccessOS).GreaterThan(0)
+            RuleFor(m => m.SBMinSuccessRatePercentOS).GreaterThanOrEqualTo(0).LessThanOrEqualTo(100)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMaxTransactionsVariation).GreaterThan(0)
+            RuleFor(m => m.SBMaxSuccessRateVariation).GreaterThanOrEqualTo(0).LessThanOrEqualTo(100)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.Progressiveness).GreaterThan(0)
+            RuleFor(m => m.MaxProgressivenessVariation).GreaterThanOrEqualTo(0).LessThanOrEqualTo(100)
                 .When(m => m.IsProgressiveness)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBMaxPercentCorrelation).GreaterThan(0)
+            RuleFor(m => m.SBMaxCorrelationPercent).GreaterThanOrEqualTo(0)
                .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBWinningStrategyUPTarget).GreaterThan(0)
+            RuleFor(m => m.SBWinningStrategyUPTarget).GreaterThanOrEqualTo(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.SBWinningStrategyDOWNTarget).GreaterThan(0)
+            RuleFor(m => m.SBWinningStrategyDOWNTarget).GreaterThanOrEqualTo(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
             // Assembled Builder
 
-            RuleFor(m => m.ABTransactionsTarget).GreaterThan(0)
+            RuleFor(m => m.ABTransactionsTarget).GreaterThanOrEqualTo(0)
                  .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            RuleFor(m => m.ABMinImprovePercent).GreaterThan(0)
+            RuleFor(m => m.ABMinImprovePercent).GreaterThanOrEqualTo(0).LessThanOrEqualTo(100)
                  .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
         }
     }

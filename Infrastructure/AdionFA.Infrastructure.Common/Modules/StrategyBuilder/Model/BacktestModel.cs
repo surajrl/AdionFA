@@ -20,17 +20,17 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
 
         // Backtest
 
+        public int TotalOpportunity { get; set; }
         public int TotalTrades { get; set; }
         public int WinningTrades { get; set; }
         public int LosingTrades { get; set; }
-        public int TotalOpportunity { get; set; }
 
-        private double? percentSuccess;
+        private double? _successRatePercent;
 
-        public double PercentSuccess
+        public double SuccessRatePercent
         {
-            get => percentSuccess ?? (TotalTrades > 0 && WinningTrades > 0 ? WinningTrades * 100 / TotalTrades : 0);
-            set => percentSuccess = value;
+            get => _successRatePercent ?? (TotalTrades > 0 && WinningTrades > 0 ? WinningTrades * 100 / TotalTrades : 0);
+            set => _successRatePercent = value;
         }
 
         private double? progressiveness;
@@ -80,7 +80,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
                 if (last != null)
                 {
                     var lastName = last.Split(".")[0];
-                    int lastCount = 1;
+                    var lastCount = 1;
                     if (last.Contains('.'))
                     {
                         lastCount = int.Parse(last.Split(".")[1]);

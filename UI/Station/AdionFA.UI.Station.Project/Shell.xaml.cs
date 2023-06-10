@@ -1,4 +1,5 @@
 ﻿using AdionFA.UI.Station.Infrastructure;
+using AdionFA.UI.Station.Project.AssembledBuilder;
 using AdionFA.UI.Station.Project.MetaTrader;
 using AdionFA.UI.Station.Project.StrategyBuilder;
 using AdionFA.UI.Station.Project.ViewModels;
@@ -9,7 +10,7 @@ using System.Windows;
 namespace AdionFA.UI.Station.Project
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Shell.xaml
     /// </summary>
     public partial class Shell : MetroWindow
     {
@@ -21,9 +22,16 @@ namespace AdionFA.UI.Station.Project
             if (regionManager != null)
             {
                 SetRegionManager(regionManager, flyoutsControlRegion, FlyoutRegions.FlyoutRegion);
+
+                // Strategy Builder
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(WekaTreeFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(SavedNodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(CorrelationFlyoutView));
+
+                // Assembled Builder
+                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(AssembledNodesFlyoutView));
+
+                // MetaTrader
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodeMetaTraderFlyoutView));
             }
         }

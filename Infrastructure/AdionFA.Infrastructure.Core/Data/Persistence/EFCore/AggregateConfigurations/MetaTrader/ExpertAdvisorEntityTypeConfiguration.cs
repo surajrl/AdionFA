@@ -11,7 +11,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence.EFCore.AggregateConfigura
         {
             builder.HasIndex(ea => ea.Name).IsUnique();
             builder.HasIndex(ea => ea.ResponsePort).IsUnique();
-            builder.HasIndex(ea => ea.PushPort).IsUnique();
+            builder.HasIndex(ea => ea.PublisherPort).IsUnique();
             builder.HasIndex(ea => ea.MagicNumber).IsUnique();
         }
     }

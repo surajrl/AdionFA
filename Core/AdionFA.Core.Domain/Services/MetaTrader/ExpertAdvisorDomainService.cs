@@ -26,7 +26,7 @@ namespace AdionFA.Core.Domain.Services.MetaTrader
             {
                 if (advisor != null)
                 {
-                    if (advisor.PushPort == advisor.ResponsePort) throw new PropertiesWithSameValueAdionException();
+                    if (advisor.PublisherPort == advisor.ResponsePort) throw new PropertiesWithSameValueAdionException();
 
                     _expertAdvisorRepository.Create(advisor);
                     eaId = advisor.ExpertAdvisorId;

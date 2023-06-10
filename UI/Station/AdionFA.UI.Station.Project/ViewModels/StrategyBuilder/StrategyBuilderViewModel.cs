@@ -150,10 +150,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
             {
-                if (strategyBuilderProcess.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name
-                || strategyBuilderProcess.Status != StrategyBuilderStatusEnum.NotStarted.GetMetadata().Name)
+                if (strategyBuilderProcess.Status != StrategyBuilderStatus.Completed.GetMetadata().Name
+                && strategyBuilderProcess.Status != StrategyBuilderStatus.NotStarted.GetMetadata().Name)
                 {
-                    strategyBuilderProcess.Status = StrategyBuilderStatusEnum.Stopped.GetMetadata().Name;
+                    strategyBuilderProcess.Status = StrategyBuilderStatus.Stopped.GetMetadata().Name;
                 }
             }
 
@@ -168,7 +168,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
             {
-                var canceled = StrategyBuilderStatusEnum.Canceled.GetMetadata();
+                var canceled = StrategyBuilderStatus.Canceled.GetMetadata();
                 strategyBuilderProcess.Status = canceled.Name;
             }
 
@@ -183,9 +183,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
             {
-                if (strategyBuilderProcess.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name)
+                if (strategyBuilderProcess.Status != StrategyBuilderStatus.Completed.GetMetadata().Name)
                 {
-                    strategyBuilderProcess.Status = StrategyBuilderStatusEnum.Executing.GetMetadata().Name;
+                    strategyBuilderProcess.Status = StrategyBuilderStatus.Executing.GetMetadata().Name;
                 }
             }
 
@@ -260,14 +260,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         _manualResetEvent.Wait();
                         _cancellationTokenSrc.Token.ThrowIfCancellationRequested();
 
-                        strategyBuilderProcess.Status = StrategyBuilderStatusEnum.Executing.GetMetadata().Name;
+                        strategyBuilderProcess.Status = StrategyBuilderStatus.Executing.GetMetadata().Name;
 
                         // Weka
 
                         strategyBuilderProcess.Message = "Executing Weka";
 
                         var wekaApi = new WekaApiClient();
-                        IList<REPTreeOutputModel> responseWeka = wekaApi.GetREPTreeClassifier(
+                        var responseWeka = wekaApi.GetREPTreeClassifier(
                             strategyBuilderProcess.Path,
                             Configuration.DepthWeka,
                             Configuration.TotalDecimalWeka,
@@ -332,8 +332,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 + $"\t[MESSAGE] Backtest Started");
 
                             var strategyBuilder = _strategyBuilderService.BuildBacktestOfNode(
-                                node.Label,
-                                node.Node.ToList(),
+                                _mapper.Map<REPTreeNodeVM, REPTreeNodeModel>(node),
                                 _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(Configuration),
                                 projectCandles,
                                 _manualResetEvent,
@@ -343,7 +342,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Debug.WriteLine($"[THREAD] {Environment.CurrentManagedThreadId}"
                                 + $"\t[EXTRACTION] {node.StrategyBuilderProcess.ExtractionName}"
                                 + $"\t[NODE] {node.Name}"
-                                + $"\t[MESSAGE] Backtest Finished in {timer.Elapsed:mm\\:ss\\.ffffff}");
+                                + $"\t[MESSAGE] Backtest Finished in {timer.Elapsed:hh\\:mm\\:ss\\.ffffff}");
                             // ---------------------------------------------------------------------------------------
 
                             // Update Node ---------------------------------------------------------------------------
@@ -361,7 +360,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 node.WinningTradesOs = strategyBuilder.OS.WinningTrades;
                                 node.LosingTradesOs = strategyBuilder.OS.LosingTrades;
 
-                                node.PercentSuccessOs = strategyBuilder.OS.PercentSuccess;
+                                node.SuccessRatePercentOs = strategyBuilder.OS.SuccessRatePercent;
                                 node.ProgressivenessOs = strategyBuilder.OS.Progressiveness;
                             }
 
@@ -376,7 +375,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 node.WinningTradesIs = strategyBuilder.IS.WinningTrades;
                                 node.LosingTradesIs = strategyBuilder.IS.LosingTrades;
 
-                                node.PercentSuccessIs = strategyBuilder.IS.PercentSuccess;
+                                node.SuccessRatePercentIs = strategyBuilder.IS.SuccessRatePercent;
                                 node.ProgressivenessIs = strategyBuilder.IS.Progressiveness;
                             }
                             // ---------------------------------------------------------------------------------------
@@ -416,7 +415,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             if (node.StrategyBuilderProcess.TotalStrategy == node.StrategyBuilderProcess.CompletedBacktests)
                             {
-                                var completed = StrategyBuilderStatusEnum.Completed.GetMetadata();
+                                var completed = StrategyBuilderStatus.Completed.GetMetadata();
                                 node.StrategyBuilderProcess.Status = completed.Name;
                                 node.StrategyBuilderProcess.Message = completed.Description;
                             }
@@ -430,7 +429,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     correlation = _strategyBuilderService.Correlation(
                         ProcessArgs.ProjectName,
-                        Configuration.SBMaxPercentCorrelation,
+                        Configuration.SBMaxCorrelationPercent,
                         EntityTypeEnum.StrategyBuilder);
                 });
 
@@ -461,7 +460,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Results Message
 
-                var result = !StrategyBuilderProcessList.Any(strategyBuilderProcess => strategyBuilderProcess.Status != StrategyBuilderStatusEnum.Completed.GetMetadata().Name);
+                var result = !StrategyBuilderProcessList.Any(strategyBuilderProcess => strategyBuilderProcess.Status != StrategyBuilderStatus.Completed.GetMetadata().Name);
                 var msg = result ? MessageResources.StrategyBuilderCompleted : MessageResources.EntityErrorTransaction;
 
                 if (result && !correlation.Success)
@@ -471,7 +470,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 MessageHelper.ShowMessage(this,
                     CommonResources.StrategyBuilder,
-                    $"{msg}\n\nTotal time taken {stopwatch.Elapsed:mm\\:ss\\.ffffff}");
+                    $"{msg}\n\nTotal time taken {stopwatch.Elapsed:hh\\:mm\\:ss\\.ffffff}");
             }
             catch (OperationCanceledException ex)
             {
@@ -479,7 +478,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
                 {
-                    var suspended = StrategyBuilderStatusEnum.Canceled.GetMetadata();
+                    var suspended = StrategyBuilderStatus.Canceled.GetMetadata();
                     strategyBuilderProcess.Status = suspended.Name;
                     strategyBuilderProcess.Message = suspended.Description;
                 }
@@ -490,7 +489,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach (var strategyBuilderProcess in StrategyBuilderProcessList)
                 {
-                    strategyBuilderProcess.Status = StrategyBuilderStatusEnum.Error.GetMetadata().Name;
+                    strategyBuilderProcess.Status = StrategyBuilderStatus.Error.GetMetadata().Name;
                 }
 
                 throw;
@@ -531,7 +530,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
-
                 throw;
             }
         }
@@ -567,7 +565,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     ExtractionName = file.Name,
                     RegionType = regionType,
                     RegionName = regionName,
-                    Status = StrategyBuilderStatusEnum.NotStarted.GetMetadata().Name,
+                    Status = StrategyBuilderStatus.NotStarted.GetMetadata().Name,
                     IsEnabled = false,
                     IsExpanded = false,
                     InstancesList = new ObservableCollection<REPTreeOutputVM>()
@@ -583,7 +581,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach (var tree in wekaTree)
                 {
-                    tree.Message = tree.HasWinningStrategy == null ? CommonResources.Pending : tree.HasWinningStrategy.Value ? CommonResources.Winner : CommonResources.Loser;
+                    tree.Message = tree.HasWinningStrategy == null
+                    ? CommonResources.Pending
+                    : tree.HasWinningStrategy.Value
+                    ? CommonResources.Winner
+                    : CommonResources.Loser;
+
                     tree.ValidNodes = tree.NodeOutput.Where(node => node.Winner).Count();
                 }
 

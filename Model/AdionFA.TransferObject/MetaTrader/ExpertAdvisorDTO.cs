@@ -11,7 +11,7 @@ namespace AdionFA.TransferObject.MetaTrader
         public string MagicNumber { get; set; }
         public string Host { get; set; }
         public string ResponsePort { get; set; }
-        public string PushPort { get; set; }
+        public string PublisherPort { get; set; }
 
         public ProjectDTO Project { get; set; }
         public int ProjectId { get; set; }

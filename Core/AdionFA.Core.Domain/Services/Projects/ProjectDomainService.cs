@@ -153,17 +153,17 @@ namespace AdionFA.Core.Domain.Services.Projects
                     // Strategy Builder
 
                     SBMinTransactionsIS = configuration.SBMinTransactionsIS,
-                    SBMinPercentSuccessIS = configuration.SBMinPercentSuccessIS,
+                    SBMinSuccessRatePercentIS = configuration.SBMinSuccessRatePercentIS,
 
                     SBMinTransactionsOS = configuration.SBMinTransactionsIS,
-                    SBMinPercentSuccessOS = configuration.SBMaxTransactionsVariation,
+                    SBMinSuccessRatePercentOS = configuration.SBMinSuccessRatePercentOS,
 
-                    SBMaxTransactionsVariation = configuration.SBMaxTransactionsVariation,
+                    SBMaxSuccessRateVariation = configuration.SBMaxSuccessRateVariation,
 
-                    Progressiveness = configuration.Progressiveness,
+                    MaxProgressivenessVariation = configuration.MaxProgressivenessVariation,
                     IsProgressiveness = configuration.IsProgressiveness,
 
-                    SBMaxPercentCorrelation = configuration.SBMaxPercentCorrelation,
+                    SBMaxCorrelationPercent = configuration.SBMaxCorrelationPercent,
 
                     SBWinningStrategyUPTarget = configuration.SBWinningStrategyUPTarget,
                     SBWinningStrategyDOWNTarget = configuration.SBWinningStrategyDOWNTarget,
@@ -367,17 +367,17 @@ namespace AdionFA.Core.Domain.Services.Projects
                     // Strategy Builder
 
                     SBMinTransactionsIS = configuration.SBMinTransactionsIS,
-                    SBMinPercentSuccessIS = configuration.SBMinPercentSuccessIS,
+                    SBMinSuccessRatePercentIS = configuration.SBMinSuccessRatePercentIS,
 
                     SBMinTransactionsOS = configuration.SBMinTransactionsIS,
-                    SBMinPercentSuccessOS = configuration.SBMaxTransactionsVariation,
+                    SBMinSuccessRatePercentOS = configuration.SBMinSuccessRatePercentOS,
 
-                    SBMaxTransactionsVariation = configuration.SBMaxTransactionsVariation,
+                    SBMaxSuccessRateVariation = configuration.SBMaxSuccessRateVariation,
 
-                    Progressiveness = configuration.Progressiveness,
+                    MaxProgressivenessVariation = configuration.MaxProgressivenessVariation,
                     IsProgressiveness = configuration.IsProgressiveness,
 
-                    SBMaxPercentCorrelation = configuration.SBMaxPercentCorrelation,
+                    SBMaxCorrelationPercent = configuration.SBMaxCorrelationPercent,
 
                     SBWinningStrategyUPTarget = configuration.SBWinningStrategyUPTarget,
                     SBWinningStrategyDOWNTarget = configuration.SBWinningStrategyDOWNTarget,

@@ -1,15 +1,13 @@
 ﻿using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-using AdionFA.Infrastructure.Common.IofC;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdionFA.Infrastructure.Common.Weka.Model;
 
 namespace AdionFA.Infrastructure.Common.MetaTrader.Services
 {
@@ -23,61 +21,104 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
         }
 
         public bool IsTrade(
-            REPTreeNodeModel node,
+            IList<string> node,
             IList<Candle> candleHistory,
             Candle currentCandle)
         {
-            var indicators = _extractorService.BuildIndicatorsFromNode(node.Node.ToList());
-
-            candleHistory.Add(currentCandle);
-
-            var extractorResult = _extractorService.CalculateNodeIndicators(
+            var nodeIndicators = _extractorService.BuildIndicatorsFromNode(node.ToList());
+            var nodeIndicatorsResult = _extractorService.CalculateNodeIndicators(
                 candleHistory.FirstOrDefault(),
                 currentCandle,
-                indicators,
+                nodeIndicators,
                 candleHistory.ToList());
 
-            if (extractorResult.Any())
+            if (!nodeIndicatorsResult.Any())
             {
-                var passed = 0;
+                return false;
+            }
 
-                foreach (var indicator in extractorResult)
+            // Check each indicator
+            for (var i = 0; i < nodeIndicatorsResult.Count; i++)
+            {
+                var indicator = nodeIndicatorsResult[i];
+
+                if (indicator.OutNBElement == 0)
                 {
-                    if (indicator.OutNBElement == 0)
-                    {
-                        continue;
-                    }
-
-                    var output = indicator.Output[indicator.OutNBElement - 1];
-
-                    switch (indicator.Operator)
-                    {
-                        case MathOperatorEnum.GreaterThanOrEqual:
-                            passed += output >= indicator.Value ? 1 : 0;
-                            break;
-
-                        case MathOperatorEnum.LessThanOrEqual:
-                            passed += output <= indicator.Value ? 1 : 0;
-                            break;
-
-                        case MathOperatorEnum.GreaterThan:
-                            passed += output > indicator.Value ? 1 : 0;
-                            break;
-
-                        case MathOperatorEnum.LessThan:
-                            passed += output < indicator.Value ? 1 : 0;
-                            break;
-
-                        case MathOperatorEnum.Equal:
-                            passed += output == indicator.Value ? 1 : 0;
-                            break;
-                    }
+                    return false;
                 }
 
-                return passed == extractorResult.ToList().Count;
+                var output = indicator.Output[indicator.OutNBElement - 1];
+
+                switch (indicator.Operator)
+                {
+                    case MathOperatorEnum.GreaterThanOrEqual:
+                        if (output >= indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.LessThanOrEqual:
+                        if (output <= indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.GreaterThan:
+                        if (output > indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.LessThan:
+                        if (output < indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+
+                    case MathOperatorEnum.Equal:
+                        if (output == indicator.Value)
+                        {
+                            break;
+                        }
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool IsTrade(
+            ParentNodeModel parentNode,
+            IList<Candle> candleHistory,
+            Candle currentCandle)
+        {
+            candleHistory.Add(currentCandle);
+            if (IsTrade(parentNode.Node, candleHistory, currentCandle))
+            {
+                // Try every child node until one is met
+                foreach (var childNode in parentNode.ChildNodes)
+                {
+                    if (IsTrade(childNode.Node, candleHistory, currentCandle))
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;
+        }
+
+        public bool IsTrade(
+            REPTreeNodeModel singleNode,
+            IList<Candle> candleHistory,
+            Candle currentCandle)
+        {
+            candleHistory.Add(currentCandle);
+            return IsTrade(singleNode.Node, candleHistory, currentCandle);
         }
 
         public ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType)

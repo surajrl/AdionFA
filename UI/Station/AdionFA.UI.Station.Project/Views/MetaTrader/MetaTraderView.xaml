@@ -13,7 +13,8 @@
              xmlns:local="clr-namespace:AdionFA.UI.Station.Project.Views"
              dialog:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450"
+             d:DesignWidth="800">
 
     <UserControl.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
@@ -32,7 +33,9 @@
         </Grid.ColumnDefinitions>
 
         <!--Expert Advisor-->
-        <metro:MetroHeader Margin="0 0 0 15" HorizontalAlignment="Left" Header="Expert Advisor">
+        <metro:MetroHeader Margin="0 0 0 15"
+                           HorizontalAlignment="Left"
+                           Header="Expert Advisor">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -46,37 +49,45 @@
                 </Grid.ColumnDefinitions>
 
                 <!--#region Response Port-->
-                <StackPanel Grid.Column="0" Margin="{StaticResource ColumnMargin}">
+                <StackPanel Grid.Column="0"
+                            Margin="{StaticResource ColumnMargin}">
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <TextBlock Text="Magic Number: " />
-                        <TextBox Text="{Binding ExpertAdvisor.MagicNumber, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                        <TextBox Text="{Binding ExpertAdvisor.MagicNumber, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="100" />
                     </StackPanel>
                 </StackPanel>
                 <!--#endregion-->
 
                 <!--#region Host-->
-                <StackPanel Grid.Column="1" Margin="{StaticResource ColumnMargin}">
+                <StackPanel Grid.Column="1"
+                            Margin="{StaticResource ColumnMargin}">
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <TextBlock Text="Host: " />
-                        <TextBox Text="{Binding ExpertAdvisor.Host, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                        <TextBox Text="{Binding ExpertAdvisor.Host, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="100" />
                     </StackPanel>
                 </StackPanel>
                 <!--#endregion-->
 
-                <!--#region Push Port-->
-                <StackPanel Grid.Column="2" Margin="{StaticResource ColumnMargin}">
+                <!--#region Publisher Port-->
+                <StackPanel Grid.Column="2"
+                            Margin="{StaticResource ColumnMargin}">
                     <StackPanel Margin="{StaticResource ControlMargin}">
-                        <TextBlock Text="Push Port: " />
-                        <TextBox Text="{Binding ExpertAdvisor.PushPort, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                        <TextBlock Text="Publisher Port: " />
+                        <TextBox Text="{Binding ExpertAdvisor.PublisherPort, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="100" />
                     </StackPanel>
                 </StackPanel>
                 <!--#endregion-->
 
                 <!--#region Response Port-->
-                <StackPanel Grid.Column="3" Margin="{StaticResource ColumnMargin}">
+                <StackPanel Grid.Column="3"
+                            Margin="{StaticResource ColumnMargin}">
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <TextBlock Text="Response Port: " />
-                        <TextBox Text="{Binding ExpertAdvisor.ResponsePort, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                        <TextBox Text="{Binding ExpertAdvisor.ResponsePort, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="100" />
                     </StackPanel>
                 </StackPanel>
                 <!--#endregion-->
@@ -86,7 +97,8 @@
                         Grid.Row="1"
                         Margin="10 0 0 0"
                         HorizontalAlignment="Left"
-                        Width="40" Height="25"
+                        Width="40"
+                        Height="25"
                         Command="{Binding SaveEACommand}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Save" />
@@ -98,32 +110,54 @@
         <!--#endregion-->
 
         <!--#region Buttons-->
-        <Grid HorizontalAlignment="Right" Margin="0 20 10 0">
+        <Grid HorizontalAlignment="Right"
+              Margin="0 20 10 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="StopProcessBtn" Width="110" Height="40" Margin="10 0 0 0"
-                    Command="{Binding StopProcessBtnCommand}" HorizontalAlignment="Right" IsEnabled="{Binding IsTransactionActive}">
+            <Button x:Name="StopProcessBtn"
+                    Width="110"
+                    Height="40"
+                    Margin="10 0 0 0"
+                    Command="{Binding StopProcessBtnCommand}"
+                    HorizontalAlignment="Right"
+                    IsEnabled="{Binding IsTransactionActive}">
                 <StackPanel Orientation="Horizontal">
-                    <iconPacks:FontAwesome Kind="StopCircleSolid" Width="14" />
-                    <Label Content="Stop Process" FontSize="11" />
+                    <iconPacks:FontAwesome Kind="StopCircleSolid"
+                                           Width="14" />
+                    <Label Content="Stop Process"
+                           FontSize="11" />
                 </StackPanel>
             </Button>
 
-            <Button Grid.Column="1" x:Name="ProcessBtn" Margin="10 0 0 0" Width="80" Height="40" IsEnabled="{Binding CanExecute}"
+            <Button Grid.Column="1"
+                    x:Name="ProcessBtn"
+                    Margin="10 0 0 0"
+                    Width="80"
+                    Height="40"
+                    IsEnabled="{Binding CanExecute}"
                     Command="{Binding ProcessBtnCommand}"
                     HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal" Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <iconPacks:FontAwesome Kind="PlaySolid" Width="14" />
-                    <Label Content="Process" FontSize="11" />
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <iconPacks:FontAwesome Kind="PlaySolid"
+                                           Width="14" />
+                    <Label Content="Process"
+                           FontSize="11" />
                 </StackPanel>
             </Button>
-            <metro:ProgressRing Grid.Column="1" IsActive="True" Width="25" Height="25" Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <metro:ProgressRing Grid.Column="1"
+                                IsActive="True"
+                                Width="25"
+                                Height="25"
+                                Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
         <!--#endregion-->
 
-        <metro:MetroHeader Grid.Row="1" Margin="0 10 10 10" Header="{x:Static commonResources:CommonResources.TestInMetaTrader}">
+        <metro:MetroHeader Grid.Row="1"
+                           Margin="0 10 10 10"
+                           Header="{x:Static commonResources:CommonResources.TestInMetaTrader}">
             <Grid Margin="0 10 0 0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -140,19 +174,30 @@
                             <Run Text="{x:Static commonResources:CommonResources.Timeframe}" />
                         </TextBlock>
                     </Label>
-                    <ComboBox x:Name="PeriodFilterCb" ItemsSource="{Binding Timeframes}" MinWidth="225"
-                            DisplayMemberPath="Name"
-                            SelectedValuePath="Id"
-                            SelectedValue="{Binding TimeframeId, Mode=TwoWay}">
+                    <ComboBox x:Name="PeriodFilterCb"
+                              ItemsSource="{Binding Timeframes}"
+                              MinWidth="225"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              SelectedValue="{Binding TimeframeId, Mode=TwoWay}">
                     </ComboBox>
                 </StackPanel>
-                <Button x:Name="nodesUnderTestBtn" Grid.Column="2" Width="160" Height="40" Margin="10 0 0 0" IsEnabled="{Binding NodesAny}">
+                <Button x:Name="nodesUnderTestBtn"
+                        Grid.Column="2"
+                        Width="160"
+                        Height="40"
+                        Margin="10 0 0 0"
+                        IsEnabled="{Binding NodesAny}">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="FileTreeOutline" Width="15" Height="24" />
-                        <Label Content="{x:Static commonResources:CommonResources.NodesUnderTest}" FontSize="11" />
+                        <iconPacks:PackIconMaterial Kind="FileTreeOutline"
+                                                    Width="15"
+                                                    Height="24" />
+                        <Label Content="{x:Static commonResources:CommonResources.NodesUnderTest}"
+                               FontSize="11" />
                     </StackPanel>
                     <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="nodesUnderTestBtn" EventName="Click">
+                        <behaviors:EventTrigger SourceName="nodesUnderTestBtn"
+                                                EventName="Click">
                             <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                 <behaviors:InvokeCommandAction.CommandParameter>
                                     <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -177,27 +222,41 @@
             <StackPanel>
                 <UniformGrid Rows="1">
                     <TextBlock>
-                        <Run Text="{x:Static commonResources:CommonResources.MessagesFromCurrentPeriod}" FontWeight="SemiBold" />
-                        <Run Text=":" FontWeight="SemiBold" />
+                        <Run Text="{x:Static commonResources:CommonResources.MessagesFromCurrentPeriod}"
+                             FontWeight="SemiBold" />
+                        <Run Text=":"
+                             FontWeight="SemiBold" />
                         <Run Text="{Binding MessagesFromCurrentPeriod}" />
                     </TextBlock>
                 </UniformGrid>
             </StackPanel>
             <!--#endregion-->
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 15 0">
-                <Button x:Name="CleanMessageInputBtn" Command="{Binding CleanMessageInputCommand}">
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0 0 15 0">
+                <Button x:Name="CleanMessageInputBtn"
+                        Command="{Binding CleanMessageInputCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline" Width="20" Height="15" />
+                        <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
+                                                    Width="20"
+                                                    Height="15" />
                         <TextBlock Text="Clean" />
                     </StackPanel>
                 </Button>
             </StackPanel>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 10 0">
-                <Button x:Name="CleanMessageOutputBtn" Command="{Binding CleanMessageOutputCommand}">
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0 0 10 0">
+                <Button x:Name="CleanMessageOutputBtn"
+                        Command="{Binding CleanMessageOutputCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline" Width="20" Height="15" />
+                        <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
+                                                    Width="20"
+                                                    Height="15" />
                         <TextBlock Text="Clean" />
                     </StackPanel>
                 </Button>
@@ -211,7 +270,8 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid Grid.ColumnSpan="2">
-                <Grid Name="dummygrid" Visibility="Hidden">
+                <Grid Name="dummygrid"
+                      Visibility="Hidden">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.4*"></ColumnDefinition>
                         <ColumnDefinition Width="1.2*"></ColumnDefinition>
@@ -222,69 +282,96 @@
                         <ColumnDefinition Width="0.8*"></ColumnDefinition>
                         <ColumnDefinition Width="0.8*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Name="dummywidth0"></Border>
-                    <Border Grid.Column="1" Name="dummywidth1"></Border>
-                    <Border Grid.Column="2" Name="dummywidth2"></Border>
-                    <Border Grid.Column="3" Name="dummywidth3"></Border>
-                    <Border Grid.Column="4" Name="dummywidth4"></Border>
-                    <Border Grid.Column="5" Name="dummywidth5"></Border>
-                    <Border Grid.Column="6" Name="dummywidth6"></Border>
-                    <Border Grid.Column="7" Name="dummywidth7"></Border>
+                    <Border Grid.Column="0"
+                            Name="dummywidth0"></Border>
+                    <Border Grid.Column="1"
+                            Name="dummywidth1"></Border>
+                    <Border Grid.Column="2"
+                            Name="dummywidth2"></Border>
+                    <Border Grid.Column="3"
+                            Name="dummywidth3"></Border>
+                    <Border Grid.Column="4"
+                            Name="dummywidth4"></Border>
+                    <Border Grid.Column="5"
+                            Name="dummywidth5"></Border>
+                    <Border Grid.Column="6"
+                            Name="dummywidth6"></Border>
+                    <Border Grid.Column="7"
+                            Name="dummywidth7"></Border>
                 </Grid>
-                <metro:MetroHeader Margin="0 0 15 10" Header="{x:Static commonResources:CommonResources.MessageInput}">
+                <metro:MetroHeader Margin="0 0 15 10"
+                                   Header="{x:Static commonResources:CommonResources.MessageInput}">
                     <ListView Margin="2"
                               ItemsSource="{Binding MessageInput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="{Binding ElementName=dummywidth0, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Id}" Header="{x:Static commonResources:CommonResources.ID}" />
+                                                DisplayMemberBinding="{Binding Id}"
+                                                Header="{x:Static commonResources:CommonResources.ID}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding DateFormat}" Header="{x:Static commonResources:CommonResources.Date}" />
+                                                DisplayMemberBinding="{Binding DateFormat}"
+                                                Header="{x:Static commonResources:CommonResources.Date}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth2, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Open, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Open}" />
+                                                DisplayMemberBinding="{Binding Open, StringFormat=N5}"
+                                                Header="{x:Static commonResources:CommonResources.Open}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth3, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding High, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.High}" />
+                                                DisplayMemberBinding="{Binding High, StringFormat=N5}"
+                                                Header="{x:Static commonResources:CommonResources.High}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth4, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Low, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Low}" />
+                                                DisplayMemberBinding="{Binding Low, StringFormat=N5}"
+                                                Header="{x:Static commonResources:CommonResources.Low}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth5, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Close, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Close}" />
+                                                DisplayMemberBinding="{Binding Close, StringFormat=N5}"
+                                                Header="{x:Static commonResources:CommonResources.Close}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth6, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Volume}" Header="{x:Static commonResources:CommonResources.Volume}" />
+                                                DisplayMemberBinding="{Binding Volume}"
+                                                Header="{x:Static commonResources:CommonResources.Volume}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth7, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Spread}" Header="{x:Static commonResources:CommonResources.Spread}" />
+                                                DisplayMemberBinding="{Binding Spread}"
+                                                Header="{x:Static commonResources:CommonResources.Spread}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
                 </metro:MetroHeader>
             </Grid>
             <Grid Grid.Column="3">
-                <Grid Name="dummygrid1" Visibility="Hidden">
+                <Grid Name="dummygrid1"
+                      Visibility="Hidden">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.4*"></ColumnDefinition>
                         <ColumnDefinition Width="1.2*"></ColumnDefinition>
                         <ColumnDefinition Width="0.8*"></ColumnDefinition>
                         <ColumnDefinition Width="0.8*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Name="dummywidth10"></Border>
-                    <Border Grid.Column="1" Name="dummywidth11"></Border>
-                    <Border Grid.Column="2" Name="dummywidth12"></Border>
-                    <Border Grid.Column="3" Name="dummywidth13"></Border>
+                    <Border Grid.Column="0"
+                            Name="dummywidth10"></Border>
+                    <Border Grid.Column="1"
+                            Name="dummywidth11"></Border>
+                    <Border Grid.Column="2"
+                            Name="dummywidth12"></Border>
+                    <Border Grid.Column="3"
+                            Name="dummywidth13"></Border>
                 </Grid>
-                <metro:MetroHeader Margin="5 0 10 10" Header="{x:Static commonResources:CommonResources.MessageOutput}">
+                <metro:MetroHeader Margin="5 0 10 10"
+                                   Header="{x:Static commonResources:CommonResources.MessageOutput}">
                     <ListView Margin="2"
-                                ItemsSource="{Binding MessageOutput}"
-                                Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
+                              ItemsSource="{Binding MessageOutput}"
+                              Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="{Binding ElementName=dummywidth10, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Id}" Header="{x:Static commonResources:CommonResources.ID}" />
+                                                DisplayMemberBinding="{Binding Id}"
+                                                Header="{x:Static commonResources:CommonResources.ID}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth11, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding DateFormat}" Header="{x:Static commonResources:CommonResources.Date}" />
+                                                DisplayMemberBinding="{Binding DateFormat}"
+                                                Header="{x:Static commonResources:CommonResources.Date}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth12, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding PositionTypeName}" Header="{x:Static commonResources:CommonResources.PositionType}" />
+                                                DisplayMemberBinding="{Binding PositionTypeName}"
+                                                Header="{x:Static commonResources:CommonResources.PositionType}" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth13, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Volume, StringFormat=N5}" Header="{x:Static commonResources:CommonResources.Volume}" />
+                                                DisplayMemberBinding="{Binding Volume, StringFormat=N5}"
+                                                Header="{x:Static commonResources:CommonResources.Volume}" />
                             </GridView>
                         </ListView.View>
                     </ListView>

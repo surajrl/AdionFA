@@ -255,17 +255,17 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 // Strategy Builder
 
                 SBMinTransactionsIS = 300,
-                SBMinPercentSuccessIS = 55,
+                SBMinSuccessRatePercentIS = 55,
 
                 SBMinTransactionsOS = 100,
-                SBMinPercentSuccessOS = 55,
+                SBMinSuccessRatePercentOS = 55,
 
-                SBMaxTransactionsVariation = 4,
+                SBMaxSuccessRateVariation = 4,
 
-                Progressiveness = 2,
+                MaxProgressivenessVariation = 2,
                 IsProgressiveness = false,
 
-                SBMaxPercentCorrelation = 2,
+                SBMaxCorrelationPercent = 2,
 
                 SBWinningStrategyDOWNTarget = 6,
                 SBWinningStrategyUPTarget = 6,

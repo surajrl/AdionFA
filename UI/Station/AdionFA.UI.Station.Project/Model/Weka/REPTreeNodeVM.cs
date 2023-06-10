@@ -122,7 +122,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         public double TotalOpportunityIs { get; set; }
-        public double PercentSuccessIs { get; set; }
+        public double SuccessRatePercentIs { get; set; }
         public double ProgressivenessIs { get; set; }
 
         // OS
@@ -152,7 +152,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
         }
 
         public double TotalOpportunityOs { get; set; }
-        public double PercentSuccessOs { get; set; }
+        public double SuccessRatePercentOs { get; set; }
         public double ProgressivenessOs { get; set; }
 
         // Correlation
@@ -167,7 +167,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
 
         // Results
 
-        public double VariationPercent => Math.Abs(PercentSuccessIs - PercentSuccessOs);
+        public double SuccessRateVariation => Math.Abs(SuccessRatePercentIs - SuccessRatePercentOs);
         public double Progressiveness => Math.Abs(ProgressivenessIs - ProgressivenessOs);
         public bool WinningStrategy { get; set; }
 
@@ -212,7 +212,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Weka
                 if (last != null)
                 {
                     var lastName = last.Split(".")[0];
-                    int lastCount = 1;
+                    var lastCount = 1;
                     if (last.Contains('.'))
                     {
                         lastCount = int.Parse(last.Split(".")[1], CultureInfo.InvariantCulture);

@@ -13,7 +13,7 @@ namespace AdionFA.UI.Station.Project.Validators.MetaTrader
             RuleFor(model => model.ExpertAdvisor.Host).NotEmpty()
                 .WithMessage("Host is required");
 
-            RuleFor(model => model.ExpertAdvisor.PushPort).NotEmpty()
+            RuleFor(model => model.ExpertAdvisor.PublisherPort).NotEmpty()
                 .WithMessage("Push Port is required");
 
             RuleFor(model => model.ExpertAdvisor.ResponsePort).NotEmpty()
