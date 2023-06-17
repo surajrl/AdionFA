@@ -25,12 +25,10 @@
     </metro:Flyout.Resources>
 
     <Grid>
-        <Expander Margin="0"
-                  Header="{x:Static commonResources:CommonResources.Tree}"
+        <Expander Header="Nodes"
                   IsExpanded="True">
             <DataGrid IsReadOnly="True"
                       AutoGenerateColumns="False"
-                      RowHeaderWidth="0"
                       ItemsSource="{Binding Nodes}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
@@ -72,7 +70,7 @@
                     <DataGridTemplateColumn Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-
+                                <!--#region Node Expander-->
                                 <Expander Style="{x:Null}">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
@@ -173,7 +171,7 @@
                                             </Grid>
                                         </StackPanel>
 
-                                        <!--#region Node IS and OS Details-->
+                                        <!--#region IS and OS Details-->
                                         <StackPanel Grid.Column="2">
                                             <Grid>
                                                 <Grid.RowDefinitions>

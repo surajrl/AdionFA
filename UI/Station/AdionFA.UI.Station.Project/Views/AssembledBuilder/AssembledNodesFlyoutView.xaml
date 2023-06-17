@@ -25,82 +25,266 @@
     </metro:Flyout.Resources>
 
     <Grid>
-        <!--#region General Expander-->
         <Expander Header="Nodes"
                   IsExpanded="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <!--#region Child Nodes-->
                 <DataGrid IsReadOnly="True"
                           AutoGenerateColumns="False"
-                          ItemsSource="{Binding AssembledNodes}">
-
+                          ItemsSource="{Binding ChildNodes}">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                          Color="White" />
                     </DataGrid.Resources>
-
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness"
+                                    Value="0" />
+                            <Setter Property="FocusVisualStyle"
+                                    Value="{x:Null}" />
+                            <Setter Property="Foreground"
+                                    Value="Black" />
+                        </Style>
+                    </DataGrid.CellStyle>
                     <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow" />
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="BorderThickness"
+                                    Value="0" />
+                            <Setter Property="FocusVisualStyle"
+                                    Value="{x:Null}" />
+                            <Setter Property="Foreground"
+                                    Value="Black" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected"
+                                         Value="True">
+                                    <Setter Property="BorderBrush"
+                                            Value="Gray" />
+                                    <Setter Property="BorderThickness"
+                                            Value="0" />
+                                    <Setter Property="Foreground"
+                                            Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
                     </DataGrid.RowStyle>
-
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Child Nodes"
                                                 Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <!--#region Child Node Expander-->
+                                    <!--#region Node Expander-->
                                     <Expander Style="{x:Null}">
-                                        <Grid Margin="10">
+                                        <Expander.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                <Run Text="{Binding Label}"
+                                                     FontWeight="SemiBold" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Expander.Header>
+
+                                        <Grid>
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <!--#region Node Output-->
-                                            <ListView ItemsSource="{Binding Node}" />
-                                            <!--#endregion-->
+                                            <!--#region Node-->
+                                            <StackPanel>
+                                                <ListView ItemsSource="{Binding Node}"
+                                                          Padding="20 1" />
+                                                <Separator Margin="10" />
 
-                                            <!--#region Node Details-->
-                                            <StackPanel Grid.Column="1">
-                                                <StackPanel.Resources>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Margin"
-                                                                Value="0, 0, 0, 5" />
-                                                    </Style>
-                                                </StackPanel.Resources>
-                                                <TextBlock>
-                                                    <Run Text="Total Opportunities (IS): " />
-                                                    <Run Text="{Binding TotalOpportunity, Mode=OneWay}" />
+                                                <!--#region Total UP-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.TotalUP}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding TotalUP, StringFormat=N2}" />
                                                 </TextBlock>
-                                                <TextBlock>
-                                                    <Run Text="Total Trades (IS): " />
-                                                    <Run Text="{Binding TotalTrades, Mode=OneWay}" />
+                                                <!--#endregion-->
+                                                <!--#region Total DOWN-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding TotalDOWN, StringFormat=N2}" />
                                                 </TextBlock>
-                                                <TextBlock>
-                                                    <Run Text="Winning Trades (IS): " />
-                                                    <Run Text="{Binding WinningTrades}" />
+                                                <!--#endregion-->
+                                                <!--#region NTotals-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.NTotals}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding Total, StringFormat=N2}" />
                                                 </TextBlock>
-                                                <TextBlock>
-                                                    <Run Text="Losing Trades (IS): " />
-                                                    <Run Text="{Binding LosingTrades}" />
+                                                <!--#endregion-->
+
+                                                <Separator Margin="10" />
+
+                                                <!--#region Ratio UP-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.RatioUP}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding RatioUP, StringFormat=N2}" />
                                                 </TextBlock>
-                                                <TextBlock>
-                                                    <Run Text="Succes Rate Percent (IS): " />
-                                                    <Run Text="{Binding SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
-                                                    <Run Text="%" />
+                                                <!--#endregion-->
+                                                <!--#region Ratio DOWN-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding RatioDOWN, StringFormat=N2}" />
                                                 </TextBlock>
-                                                <TextBlock>
-                                                    <Run Text="Progressiveness (IS): " />
-                                                    <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}" />
-                                                    <Run Text="%" />
+                                                <!--#endregion-->
+                                                <!--#region Ratio Max-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.RatioMax}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding RatioMax, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
                                             </StackPanel>
                                             <!--#endregion-->
+
+                                            <!--#region Tree Details-->
+                                            <StackPanel Grid.Column="1">
+
+                                                <!--#region IS and OS Details-->
+                                                <!--#region Total Opportunities IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Opportunities (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.TotalOpportunity, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Total Trades IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Trades (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.TotalTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Winning Trades IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Winning Trades (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.WinningTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Losing Trades IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Losing Trades (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.LosingTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Success Rate Percent IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Success Rate (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Progressiveness IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Progressiveness (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+
+                                                <Separator Margin="10" />
+
+                                                <!--#region Total Opportunities OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Opportunities (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.TotalOpportunity, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Total Trades OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Trades (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.TotalTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Winning Trades OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Winning Trades (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.WinningTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Losing Trades OS-->
+                                                <TextBlock  Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Losing Trades (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.LosingTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Success Rate Percent OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Success Rate (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Progressiveness OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Progressiveness (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+
+                                                <Separator Margin="10" />
+
+                                                <!--#region Succes Rate Variation Percent-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Success Rate Variation"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding SuccessRateVariation, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Progressiveness-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Progressiveness Variation"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding ProgressivenessVariation, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                            </StackPanel>
                                         </Grid>
                                     </Expander>
                                 </DataTemplate>
@@ -113,158 +297,254 @@
                           IsReadOnly="True"
                           AutoGenerateColumns="False"
                           ItemsSource="{Binding AssembledNodes}">
-
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                          Color="White" />
                     </DataGrid.Resources>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness"
+                                    Value="0" />
+                            <Setter Property="FocusVisualStyle"
+                                    Value="{x:Null}" />
+                            <Setter Property="Foreground"
+                                    Value="Black" />
+                        </Style>
+                    </DataGrid.CellStyle>
                     <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow" />
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="BorderThickness"
+                                    Value="0" />
+                            <Setter Property="FocusVisualStyle"
+                                    Value="{x:Null}" />
+                            <Setter Property="Foreground"
+                                    Value="Black" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected"
+                                         Value="True">
+                                    <Setter Property="BorderBrush"
+                                            Value="Gray" />
+                                    <Setter Property="BorderThickness"
+                                            Value="0" />
+                                    <Setter Property="Foreground"
+                                            Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Parent Nodes"
                                                 Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+                                    <!--#region Node Expander-->
                                     <Expander Style="{x:Null}">
-                                        <Grid Margin="10">
+                                        <Expander.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                <Run Text="{Binding Label}"
+                                                     FontWeight="SemiBold" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Expander.Header>
+
+                                        <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
 
-                                            <!--#region Node Output-->
-                                            <ListView ItemsSource="{Binding ParentNode.Node}" />
+                                            <!--#region Node-->
+                                            <StackPanel>
+                                                <ListView ItemsSource="{Binding Node}"
+                                                          Padding="20 1" />
+                                                <Separator Margin="10" />
+
+                                                <!--#region Total UP-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.TotalUP}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding TotalUP, StringFormat=N2}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Total DOWN-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding TotalDOWN, StringFormat=N2}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region NTotals-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.NTotals}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding Total, StringFormat=N2}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+
+                                                <Separator Margin="10" />
+
+                                                <!--#region Ratio UP-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.RatioUP}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding RatioUP, StringFormat=N2}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Ratio DOWN-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding RatioDOWN, StringFormat=N2}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Ratio Max-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="{x:Static commonResources:CommonResources.RatioMax}"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding RatioMax, StringFormat=N2}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                            </StackPanel>
                                             <!--#endregion-->
 
-                                            <!--#region Node Details-->
-                                            <Grid Grid.Column="1">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="*" />
-                                                </Grid.ColumnDefinitions>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="*" />
-                                                </Grid.RowDefinitions>
+                                            <!--#region Tree Details-->
+                                            <StackPanel Grid.Column="1">
 
-                                                <StackPanel>
-                                                    <StackPanel.Resources>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Margin"
-                                                                    Value="0, 0, 0, 5" />
-                                                        </Style>
-                                                    </StackPanel.Resources>
-                                                    <!--#region IS-->
-                                                    <TextBlock>
-                                                        <Run Text="Total Opportunity (IS): " />
-                                                        <Run Text="{Binding ParentNode.TotalOpportunityIs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Total Trades (IS): " />
-                                                        <Run Text="{Binding ParentNode.TotalTradesIs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Winning Trades (IS): " />
-                                                        <Run Text="{Binding ParentNode.WinningTradesIs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Losing Trades (IS): " />
-                                                        <Run Text="{Binding ParentNode.LosingTradesIs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Success Rate Percent (IS): " />
-                                                        <Run Text="{Binding ParentNode.SuccessRatePercentIs, StringFormat=N2}" />
-                                                        <Run Text="%" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Progressiveness (IS): " />
-                                                        <Run Text="{Binding ParentNode.ProgressivenessIs, StringFormat=N2}" />
-                                                        <Run Text="%" />
-                                                    </TextBlock>
-                                                </StackPanel>
+                                                <!--#region IS and OS Details-->
+                                                <!--#region Total Opportunities IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Opportunities (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.TotalOpportunity, Mode=OneWay}" />
+                                                </TextBlock>
                                                 <!--#endregion-->
-                                                <!--#region OS-->
-                                                <StackPanel Grid.Column="1">
-                                                    <StackPanel.Resources>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Margin"
-                                                                    Value="0, 0, 0, 5" />
-                                                        </Style>
-                                                    </StackPanel.Resources>
-                                                    <TextBlock>
-                                                        <Run Text="Total Opportunity (OS): " />
-                                                        <Run Text=":" />
-                                                        <Run Text="{Binding ParentNode.TotalOpportunityOs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Total Trades (OS): " />
-                                                        <Run Text="{Binding ParentNode.TotalTradesOs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Winning Trades (OS): " />
-                                                        <Run Text="{Binding ParentNode.WinningTradesOs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="LosingTrades (OS): " />
-                                                        <Run Text="{Binding ParentNode.LosingTradesOs}" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Success Rate Percent (OS): " />
-                                                        <Run Text="{Binding ParentNode.SuccessRatePercentOs, StringFormat=N2}" />
-                                                        <Run Text="%" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Progressiveness (OS): " />
-                                                        <Run Text="{Binding ParentNode.ProgressivenessOs, StringFormat=N2}" />
-                                                        <Run Text="%" />
-                                                    </TextBlock>
-                                                    <!--#endregion-->
-                                                </StackPanel>
+                                                <!--#region Total Trades IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Trades (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.TotalTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Winning Trades IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Winning Trades (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.WinningTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Losing Trades IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Losing Trades (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.LosingTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Success Rate Percent IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Success Rate (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Progressiveness IS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Progressiveness (IS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestIS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
                                                 <!--#endregion-->
 
-                                                <!--#region Result-->
-                                                <StackPanel Grid.ColumnSpan="2"
-                                                            Grid.Row="1">
-                                                    <Separator HorizontalAlignment="Stretch" />
-                                                    <TextBlock>
-                                                        <Run Text="Success Rate Variation: "
-                                                             FontWeight="SemiBold" />
-                                                        <Run Text="{Binding ParentNode.SuccessRateVariation, StringFormat=N2}" />
-                                                        <Run Text="%" />
-                                                    </TextBlock>
-                                                    <TextBlock>
-                                                        <Run Text="Progressiveness: "
-                                                             FontWeight="SemiBold" />
-                                                        <Run Text="{Binding ParentNode.Progressiveness, StringFormat=N2}" />
-                                                        <Run Text="%" />
-                                                    </TextBlock>
-                                                </StackPanel>
-                                            </Grid>
+                                                <Separator Margin="10" />
 
-                                            <!--#region Remove From MetaTrader Button-->
-                                            <Button x:Name="addToMetaTrader"
-                                                    HorizontalAlignment="Left"
-                                                    Grid.Row="1"
-                                                    Width="150">
-                                                <Button.Content>
-                                                    <TextBlock Text="Add to MetaTrader" />
-                                                </Button.Content>
-                                                <behaviors:Interaction.Triggers>
-                                                    <behaviors:EventTrigger SourceName="addToMetaTrader"
-                                                                            EventName="Click">
-                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.AddNodeToMetaTrader}">
-                                                            <behaviors:InvokeCommandAction.CommandParameter>
-                                                                <Binding Path="." />
-                                                            </behaviors:InvokeCommandAction.CommandParameter>
-                                                        </behaviors:InvokeCommandAction>
-                                                    </behaviors:EventTrigger>
-                                                </behaviors:Interaction.Triggers>
-                                            </Button>
+                                                <!--#region Total Opportunities OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Opportunities (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.TotalOpportunity, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Total Trades OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Total Trades (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.TotalTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Winning Trades OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Winning Trades (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.WinningTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Losing Trades OS-->
+                                                <TextBlock  Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Losing Trades (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.LosingTrades}" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Success Rate Percent OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Success Rate (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Progressiveness OS-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Progressiveness (OS)"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding BacktestOS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+
+                                                <Separator Margin="10" />
+
+                                                <!--#region Succes Rate Variation Percent-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Success Rate Variation"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding SuccessRateVariation, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+
+                                                <!--#region Progressiveness-->
+                                                <TextBlock Margin="{StaticResource ColumnMargin}">
+                                                    <Run Text="Progressiveness Variation"
+                                                         FontWeight="SemiBold" />
+                                                    <Run Text=":" />
+                                                    <Run Text="{Binding ProgressivenessVariation, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <!--#endregion-->
+                                            </StackPanel>
                                         </Grid>
                                     </Expander>
                                 </DataTemplate>

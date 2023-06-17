@@ -316,14 +316,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                             }
 
-                            // Backtest ------------------------------------------------------------------------------
                             _strategyBuilderService.BuildBacktestOfNode(
                                 node,
                                 _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
                                 allProjectCandles,
                                 _manualResetEventSlim,
                                 _cancellationTokenSource.Token);
-                            // ---------------------------------------------------------------------------------------
 
                             if (node.WinningStrategy)
                             {
@@ -336,7 +334,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 process.CompletedBacktests++;
                                 process.ProgressCounter++;
 
-                                if (process.CompletedBacktests == process.TotalBacktests)
+                                if (process.CompletedBacktests == process.BacktestNodes.Count)
                                 {
                                     process.Message = StrategyBuilderStatus.BacktestCompleted.GetMetadata().Description;
                                 }

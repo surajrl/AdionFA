@@ -33,12 +33,10 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             {
                 SavedNodes.Clear();
 
-                var path = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
-                _projectDirectoryService.GetFilesInPath(path, "*.xml").ToList()
+                _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory(), "*.xml").ToList()
                 .ForEach(file =>
                 {
-                    var node = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
-                    SavedNodes.Add(node);
+                    SavedNodes.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
                 });
             }
         });
@@ -46,12 +44,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         // View Bindings
 
-        private ObservableCollection<REPTreeNodeModel> _savedNodes;
-
-        public ObservableCollection<REPTreeNodeModel> SavedNodes
-        {
-            get => _savedNodes;
-            set => SetProperty(ref _savedNodes, value);
-        }
+        public ObservableCollection<REPTreeNodeModel> SavedNodes { get; set; }
     }
 }

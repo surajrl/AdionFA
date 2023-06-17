@@ -428,7 +428,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     .Select(node =>
                     {
                         node.Node = node.Node.OrderByDescending(node => node).ToList();
-                        node.Label = label.ToLowerInvariant();
+                        node.Label = label.ToUpperInvariant();
                         return node;
                     }).ToList();
 
@@ -477,7 +477,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         process.CompletedBacktests++;
                         process.ProgressCounter++;
 
-                        if (process.CompletedBacktests == process.TotalBacktests)
+                        if (process.CompletedBacktests == process.BacktestNodes.Count)
                         {
                             process.Message = AssembledBuilderStatus.BacktestCompleted.GetMetadata().Description;
                         }

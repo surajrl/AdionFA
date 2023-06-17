@@ -11,7 +11,8 @@ namespace AdionFA.UI.Station.Infrastructure.Services
     public class FlyoutModel
     {
         public string Name { get; set; }
-        public object Model { get; set; }
+        public object ModelOne { get; set; }
+        public object ModelTwo { get; set; }
     }
 
     public class FlyoutService : IFlyoutService

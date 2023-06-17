@@ -11,10 +11,8 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Contracts
     {
         AssembledBuilderModel LoadAssembledBuilder(string projectName);
 
-        // Backtest
-
         void BuildBacktestOfNode(
-            AssembledBuilderModel strategyBuilder,
+            AssembledBuilderModel assmebledBuilder,
             REPTreeNodeModel parentNode,
             IList<REPTreeNodeModel> childNodes,
             ProjectConfigurationDTO projectConfiguration,

@@ -3,7 +3,7 @@
 namespace AdionFA.UI.Station.Project.Views
 {
     /// <summary>
-    /// Interaction logic for MacroTransformation.xaml
+    /// Interaction logic for StrategyBuilderView.xaml
     /// </summary>
     public partial class StrategyBuilderView : UserControl
     {

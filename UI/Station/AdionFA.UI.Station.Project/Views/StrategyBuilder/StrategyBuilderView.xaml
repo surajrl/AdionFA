@@ -74,18 +74,13 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="10 0 0 0">
-        <!--#region Row & Col Definition-->
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <!--#endregion-->
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Right">
@@ -103,7 +98,6 @@
                 </Button>
             </Grid>
             <!--#endregion-->
-
             <!--#region Cancel Button-->
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
@@ -118,7 +112,6 @@
                 </Button>
             </Grid>
             <!--#endregion-->
-
             <!--#region Continue Button-->
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
@@ -133,9 +126,8 @@
                 </Button>
             </Grid>
             <!--#endregion-->
-
             <!--#region Process Button-->
-            <Grid  Margin="0 20 10 0">
+            <Grid Margin="0 20 0 0">
                 <Button Width="80"
                         Height="40"
                         IsEnabled="{Binding CanExecute}"
@@ -156,9 +148,9 @@
             <!--#endregion-->
         </StackPanel>
 
-        <!--#region Project Configuration Expander-->
+        <!--#region Configuration-->
         <Expander Grid.Row="1"
-                  Margin="0 3 10 0"
+                  Margin="0 10 0 10"
                   Style="{DynamicResource ControlExpanderStyle}"
                   Header="{x:Static commonResources:CommonResources.Configuration}"
                   IsExpanded="False">
@@ -175,12 +167,9 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="10 0 0 0"
+                <StackPanel Margin="10 0 0 0"
                             Orientation="Horizontal">
-
-                    <!--#region Total Instanc eWeka-->
+                    <!--#region Total Instance Weka-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
@@ -195,7 +184,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region N Total Tree-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -211,8 +199,7 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
-                    <!--#region Dept hWeka-->
+                    <!--#region Depth Weka-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
                             <TextBlock>
@@ -227,7 +214,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Max Ratio Tree-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -244,12 +230,9 @@
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
-
                 <StackPanel Grid.Row="1"
-                            Grid.Column="0"
                             Margin="10 0 0 0"
                             Orientation="Horizontal">
-
                     <!--#region Maximum Seed-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -266,7 +249,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Minimal Seed-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -283,7 +265,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Total Decimal Weka-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -302,7 +283,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="2"
-                            Grid.Column="0"
                             Margin="10 0 0 0"
                             Orientation="Horizontal">
 
@@ -320,7 +300,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Winning Strategy Total DOWN-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -335,7 +314,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Transaction Target-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -353,9 +331,9 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="3"
-                            Grid.Column="0"
                             Margin="10 0 0 0"
                             Orientation="Horizontal">
+                    
                     <!--#region Variation Transaction-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -370,7 +348,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Is Progressiveness-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -384,7 +361,6 @@
                                             IsOn="{Binding ProjectConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Progressiveness-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -400,7 +376,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Max Percent Correlation-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -419,7 +394,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="4"
-                            Grid.Column="0"
                             Margin="10 0 0 0"
                             Orientation="Horizontal">
 
@@ -457,7 +431,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="5"
-                            Grid.Column="0"
                             Margin="10 0 0 0"
                             Orientation="Horizontal">
                     <!--#region Min Percent Success IS-->
@@ -474,7 +447,6 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region MinPercentSuccessOS-->
                     <StackPanel Margin="{StaticResource ControlMargin}">
                         <Label>
@@ -494,44 +466,20 @@
         </Expander>
         <!--#endregion-->
 
-        <!--#region Strategy Builder Information-->
+        <!--#region Strategy Builder-->
         <metro:MetroHeader Grid.Row="2"
-                           Margin="0 10 10 10"
-                           Header="{x:Static commonResources:CommonResources.StrategyBuilderInformation}">
-            <Grid Margin="0 10 0 0">
+                           Header="Strategy Builder">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Margin="{StaticResource ColumnMargin}"
-                            VerticalAlignment="Center">
-                    <!--#region Correlation UP-->
-                    <TextBlock>
-                        <Run Text="Correlation Nodes UP :"
-                             FontWeight="SemiBold" />
-                        <Run Text="{Binding StrategyBuilder.CorrelationNodesUP.Count, Mode=OneWay}" />
-                    </TextBlock>
-                    <!--#endregion-->
-                    <!--#region Correlation DOWN-->
-                    <TextBlock>
-                        <Run Text="Correlation Nodes DOWN :"
-                             FontWeight="SemiBold" />
-                        <Run Text="{Binding StrategyBuilder.CorrelationNodesDOWN.Count, Mode=OneWay}" />
-                    </TextBlock>
-                    <!--#endregion-->
-                </StackPanel>
-
                 <!--#region Maximum Parallelism Configuration-->
-                <StackPanel Grid.Column="1"
-                            HorizontalAlignment="Center"
+                <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Margin="{StaticResource ControlMargin}"
                             Width="125"
@@ -542,99 +490,99 @@
                 </StackPanel>
                 <!--#endregion-->
 
-                <!--#region Saved Nodes Button-->
-                <Button x:Name="savedNodesBtn"
-                        Grid.Column="2"
-                        Width="120"
-                        Height="40"
-                        Margin="10 0 0 0">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconFontAwesome Kind="DatabaseSolid"
-                                                       Width="14" />
-                        <Label Content="Saved Nodes"
-                               FontSize="11" />
-                    </StackPanel>
-                    <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="savedNodesBtn"
-                                                EventName="Click">
-                            <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                <behaviors:InvokeCommandAction.CommandParameter>
-                                    <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSavedNodes}" />
-                                    </MultiBinding>
-                                </behaviors:InvokeCommandAction.CommandParameter>
-                            </behaviors:InvokeCommandAction>
-                        </behaviors:EventTrigger>
-                    </behaviors:Interaction.Triggers>
-                </Button>
-                <!--#endregion-->
-
-                <!--#region Correlation Nodes Button-->
-                <Button x:Name="correlationNodesBtn"
-                        Grid.Column="4"
-                        Width="160"
-                        Height="40"
-                        Margin="10 0 0 0">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands"
-                                                       Width="14" />
-                        <Label Content="Correlation Nodes"
-                               FontSize="11" />
-                    </StackPanel>
-                    <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="correlationNodesBtn"
-                                                EventName="Click">
-                            <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                <behaviors:InvokeCommandAction.CommandParameter>
-                                    <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}" />
-                                    </MultiBinding>
-                                </behaviors:InvokeCommandAction.CommandParameter>
-                            </behaviors:InvokeCommandAction>
-                        </behaviors:EventTrigger>
-                    </behaviors:Interaction.Triggers>
-                </Button>
-                <!--#endregion-->
-
-                <!--#region Refresh Button-->
-                <Button x:Name="refreshStrategyBuilderBtn"
-                        Grid.Column="5"
-                        Width="80"
-                        Height="40"
-                        Margin="10 0 0 0"
-                        IsEnabled="{Binding CanExecute}">
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:PackIconFontAwesome Kind="RedoSolid"
-                                                       Width="14" />
-                        <Label Content="Refresh"
-                               FontSize="11" />
-                    </StackPanel>
-                    <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="refreshStrategyBuilderBtn"
-                                                EventName="Click">
-                            <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
-                        </behaviors:EventTrigger>
-                    </behaviors:Interaction.Triggers>
-                </Button>
-                <metro:ProgressRing Grid.Column="5"
-                                    IsActive="True"
-                                    Width="25"
-                                    Height="25"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <!--#endregion-->
+                <!--#region Buttons-->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <!--#region Saved Nodes Button-->
+                    <Grid Margin="0 20 10 0">
+                        <Button x:Name="savedNodesBtn"
+                                Width="120"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconFontAwesome Kind="DatabaseSolid"
+                                                               Width="14" />
+                                <Label Content="Saved Nodes"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="savedNodesBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSavedNodes}" />
+                                            </MultiBinding>
+                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                    </behaviors:InvokeCommandAction>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                    <!--#region Correlation Nodes Button-->
+                    <Grid Margin="0 20 10 0">
+                        <Button x:Name="correlationNodesBtn"
+                                Width="160"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands"
+                                                               Width="14" />
+                                <Label Content="Correlation Nodes"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="correlationNodesBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}" />
+                                                <Binding Path="StrategyBuilder" />
+                                            </MultiBinding>
+                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                    </behaviors:InvokeCommandAction>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                    <!--#region Refresh Button-->
+                    <Grid Margin="0 20 0 0">
+                        <Button x:Name="refreshBtn"
+                                Width="80"
+                                Height="40"
+                                IsEnabled="{Binding CanExecute}">
+                            <StackPanel Orientation="Horizontal"
+                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                <iconPacks:PackIconFontAwesome Kind="RedoSolid"
+                                                               Width="14" />
+                                <Label Content="Refresh"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="refreshBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                        <metro:ProgressRing IsActive="True"
+                                            Width="25"
+                                            Height="25"
+                                            Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </StackPanel>
             </Grid>
         </metro:MetroHeader>
         <!--#endregion-->
 
         <!--#region Strategy Builder Process-->
         <DataGrid Grid.Row="3"
-                  Grid.Column="1"
-                  Margin="10 5"
+                  Margin="0, 10, 0, 0"
                   IsReadOnly="True"
                   AutoGenerateColumns="False"
-                  ItemsSource="{Binding StrategyBuilderProcesses}"
-                  RowHeaderWidth="0">
+                  ItemsSource="{Binding StrategyBuilderProcesses}">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                  Color="White" />
@@ -670,19 +618,20 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
+            <!--#region Extraction-->
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{x:Static commonResources:CommonResources.ExtractionName}">
+                <DataGridTemplateColumn Header="Extraction">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="0 3 10 0">
-                                <Label Content="{Binding ExtractionName}" />
-                            </StackPanel>
+                            <Label Margin="5"
+                                   Content="{Binding ExtractionName}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
+                <!--#endregion-->
+                <!--#region Tree Outputs-->
                 <DataGridTemplateColumn Header="Tree Outputs"
-                                        Width="1*">
+                                        Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Expander Style="{StaticResource ControlExpanderStyle}"
@@ -696,9 +645,8 @@
 
                                         <TextBlock Margin="5"
                                                    Text="{Binding Message}" />
-
                                         <TextBlock Grid.Column="1"
-                                                   Margin="20 5"
+                                                   Margin="5"
                                                    HorizontalAlignment="Right">
                                             <Run Text="Completed - " />
                                             <Run Text="{Binding CompletedBacktests}"

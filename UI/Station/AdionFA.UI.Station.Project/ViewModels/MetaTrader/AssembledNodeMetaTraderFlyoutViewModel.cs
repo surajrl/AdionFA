@@ -19,7 +19,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
         {
             if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAssembledNodeMetaTrader, StringComparison.Ordinal))
             {
-                AssembledNode = (AssembledNodeModel)flyoutModel.Model;
+                AssembledNode = (AssembledNodeModel)flyoutModel.ModelOne;
             }
         });
 

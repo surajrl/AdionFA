@@ -23,7 +23,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
         {
             if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleNodeMetaTrader, StringComparison.Ordinal))
             {
-                switch (flyoutModel.Model)
+                switch (flyoutModel.ModelOne)
                 {
                     case ObservableCollection<REPTreeNodeModel> oc:
                         foreach (var node in oc)

@@ -1,56 +1,38 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Infrastructure.Common.Managements;
+﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Project.EventAggregator;
+using AdionFA.UI.Station.Infrastructure.Services;
+using DynamicData;
 using Prism.Commands;
-using Prism.Events;
-using Prism.Ioc;
+using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
     public class CorrelationFlyoutViewModel : ViewModelBase
     {
-        private readonly IProjectDirectoryService _projectDirectoryService;
-        private readonly IEventAggregator _eventAggregator;
-
         public CorrelationFlyoutViewModel(IApplicationCommands applicationCommands)
         {
-            _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
-
-            _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
+            applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
             CorrelationNodes = new();
         }
 
-        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeModel>(node =>
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyout =>
         {
-            var directory = node.Label.ToLower(CultureInfo.InvariantCulture) == "up"
-            ? ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory()
-            : ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory();
-
-            var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
-            _projectDirectoryService.DeleteFile(string.Format(CultureInfo.InvariantCulture, @"{0}\{1}", directory, filename));
-
-            CorrelationNodes.Remove(node);
-
-            _eventAggregator.GetEvent<CorrelationNodeDeletedEvent>().Publish(true);
+            if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleCorrelation, StringComparison.Ordinal))
+            {
+                CorrelationNodes.Clear();
+                CorrelationNodes.Add(((StrategyBuilderModel)flyout.ModelOne).CorrelationNodesDOWN);
+                CorrelationNodes.Add(((StrategyBuilderModel)flyout.ModelOne).CorrelationNodesUP);
+            }
         });
+
 
         // View Bindings
 
-        private ObservableCollection<REPTreeNodeModel> _correlationNodes;
-
-        public ObservableCollection<REPTreeNodeModel> CorrelationNodes
-        {
-            get => _correlationNodes;
-            set => SetProperty(ref _correlationNodes, value);
-        }
+        public ObservableCollection<REPTreeNodeModel> CorrelationNodes { get; set; }
     }
 }
