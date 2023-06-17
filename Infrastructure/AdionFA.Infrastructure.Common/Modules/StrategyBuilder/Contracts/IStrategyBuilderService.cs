@@ -11,27 +11,31 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 {
     public interface IStrategyBuilderService
     {
-        // Strategy
+        // Correlation
 
-        CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType);
+        void Correlation(
+            string projectName,
+            StrategyBuilderModel strategyBuilder,
+            decimal correlation);
 
         // Backtest
 
-        StrategyBuilderModel BuildBacktestOfNode(
+        void BuildBacktestOfNode(
             REPTreeNodeModel node,
             ProjectConfigurationDTO projectConfiguration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
 
-        BacktestModel ExecuteBacktest(
+        void ExecuteBacktest(
+            BacktestModel backtest,
             EntityTypeEnum entityType,
             DateTime fromDate,
             DateTime toDate,
             int timeframeId,
             IEnumerable<Candle> candles,
             REPTreeNodeModel parentNode,
-            IList<BacktestModel> childNodes,
+            IList<REPTreeNodeModel> childNodes,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
     }

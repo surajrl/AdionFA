@@ -35,7 +35,7 @@ namespace AdionFA.UI.Station.Project.Views
 
         private void ProgressivenessToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            var toggleSwitch = sender as ToggleSwitch;
             if (toggleSwitch != null)
             {
                 LabelRequiredProgressiveness =
@@ -46,7 +46,7 @@ namespace AdionFA.UI.Station.Project.Views
 
         private void AdjustConfigToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            var toggleSwitch = sender as ToggleSwitch;
             if (toggleSwitch != null)
             {
                 EnableProgressiveness = IsEnableProgressiveness();

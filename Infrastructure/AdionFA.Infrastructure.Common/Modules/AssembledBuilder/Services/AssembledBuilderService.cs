@@ -7,7 +7,6 @@ using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Project;
@@ -20,8 +19,6 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 {
     public class AssembledBuilderService : IAssembledBuilderService
     {
-        // Services
-
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IStrategyBuilderService _strategyBuilderService;
 
@@ -31,61 +28,73 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
             _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
         }
 
-        public AssembledBuilderModel LoadAssembledBuilderNodes(string projectName)
+        public AssembledBuilderModel LoadAssembledBuilder(string projectName)
         {
             try
             {
                 var assembledBuilder = new AssembledBuilderModel();
 
-                // Load Strategy Builder UP Backtests
+                LoadStrategyBuilderCorrelationNodes("up");
+                LoadStrategyBuilderCorrelationNodes("down");
 
-                var upDirectorySB = projectName.ProjectStrategyBuilderNodesUPDirectory();
-                _projectDirectoryService.GetFilesInPath(upDirectorySB, "*.xml").ToList().ForEach(file =>
-                {
-                    if (file.Name.Contains("BACKTEST"))
-                    {
-                        var backtest = SerializerHelper.XMLDeSerializeObject<BacktestModel>(file.FullName);
-                        assembledBuilder.ChildBacktestsUP.Add(backtest);
-                    }
-                });
-
-                // Load Strategy Builder DOWN Backtests
-
-                var downDirectorySB = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-                _projectDirectoryService.GetFilesInPath(downDirectorySB, "*.xml").ToList().ForEach(file =>
-                {
-                    if (file.Name.Contains("BACKTEST"))
-                    {
-                        var backtest = SerializerHelper.XMLDeSerializeObject<BacktestModel>(file.FullName);
-                        assembledBuilder.ChildBacktestsDOWN.Add(backtest);
-                    }
-                });
-
-                // Load Assembled Builder UP Nodes
-
-                var upDirectoryAB = projectName.ProjectAssembledBuilderNodesUPDirectory();
-                _projectDirectoryService.GetFilesInPath(upDirectoryAB, "*.xml").ToList().ForEach(file =>
-                {
-                    if (file.Name.Contains("NODE"))
-                    {
-                        var node = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
-                        assembledBuilder.WinningParentNodesUP.Add(new(node));
-                    }
-                });
-
-                // Load Assembled Builder DOWN Nodes
-
-                var downDirectoryAB = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
-                _projectDirectoryService.GetFilesInPath(downDirectoryAB, "*.xml").ToList().ForEach(file =>
-                {
-                    if (file.Name.Contains("NODE"))
-                    {
-                        var node = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
-                        assembledBuilder.WinningParentNodesDOWN.Add(new(node));
-                    }
-                });
+                LoadAssembledNodes("up");
+                LoadAssembledNodes("down");
 
                 return assembledBuilder;
+
+                void LoadStrategyBuilderCorrelationNodes(string label)
+                {
+                    string directorySB;
+                    IList<REPTreeNodeModel> nodes;
+
+                    switch (label.ToLowerInvariant())
+                    {
+                        case "up":
+                            directorySB = projectName.ProjectStrategyBuilderNodesUPDirectory();
+                            nodes = assembledBuilder.ChildNodesUP;
+                            break;
+
+                        case "down":
+                            directorySB = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                            nodes = assembledBuilder.ChildNodesDOWN;
+                            break;
+
+                        default:
+                            return;
+                    }
+
+                    _projectDirectoryService.GetFilesInPath(directorySB, "*.xml").ToList().ForEach(file =>
+                    {
+                        nodes.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                    });
+                }
+
+                void LoadAssembledNodes(string label)
+                {
+                    var directoryAB = string.Empty;
+                    var assembledNodes = new List<AssembledNodeModel>();
+
+                    switch (label.ToLowerInvariant())
+                    {
+                        case "up":
+                            directoryAB = projectName.ProjectAssembledBuilderNodesUPDirectory();
+                            assembledNodes = assembledBuilder.AssembledNodesUP;
+                            break;
+
+                        case "down":
+                            directoryAB = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                            assembledNodes = assembledBuilder.AssembledNodesDOWN;
+                            break;
+
+                        default:
+                            return;
+                    }
+
+                    _projectDirectoryService.GetFilesInPath(directoryAB, "*.xml").ToList().ForEach(file =>
+                    {
+                        assembledNodes.Add(SerializerHelper.XMLDeSerializeObject<AssembledNodeModel>(file.FullName));
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -93,17 +102,20 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                 throw;
             }
         }
-        public StrategyBuilderModel BuildBacktestOfNode(
+
+        public void BuildBacktestOfNode(
+            AssembledBuilderModel assembledBuilder,
             REPTreeNodeModel parentNode,
-            IList<BacktestModel> childNodes,
+            IList<REPTreeNodeModel> childNodes,
             ProjectConfigurationDTO configuration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
-            var strategyBuilder = new StrategyBuilderModel();
+            // IS Backtest
 
-            strategyBuilder.IS = _strategyBuilderService.ExecuteBacktest(
+            _strategyBuilderService.ExecuteBacktest(
+                parentNode.BacktestIS,
                 EntityTypeEnum.AssembledBuilder,
                 configuration.FromDateIS.Value,
                 configuration.ToDateIS.Value,
@@ -114,28 +126,23 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                 manualResetEvent,
                 cancellationToken);
 
-            // Update the node with backtest information of IS
-            parentNode.WinningTradesIs = strategyBuilder.IS.WinningTrades;
-            parentNode.LosingTradesIs = strategyBuilder.IS.LosingTrades;
-            parentNode.TotalTradesIs = strategyBuilder.IS.TotalTrades;
-            parentNode.SuccessRatePercentIs = strategyBuilder.IS.SuccessRatePercent;
-            parentNode.TotalOpportunityIs = strategyBuilder.IS.TotalOpportunity;
-            parentNode.ProgressivenessIs = strategyBuilder.IS.Progressiveness;
-
-            var meanPercentSuccessIS = childNodes
-                .Select(backtest => backtest.SuccessRatePercent)
+            var meanSuccessRatePercentIS = childNodes
+                .Select(node => node.BacktestIS.SuccessRatePercent)
                 .Sum() / childNodes.Count;
 
-            var winningStrategyIS =
-                (strategyBuilder.IS.SuccessRatePercent - meanPercentSuccessIS) >= (double)configuration.ABMinImprovePercent
-                && strategyBuilder.IS.TotalTrades >= configuration.ABTransactionsTarget;
+            parentNode.WinningStrategy =
+                (parentNode.BacktestIS.SuccessRatePercent - meanSuccessRatePercentIS) >= (double)configuration.ABMinImprovePercent
+                && parentNode.BacktestIS.TotalTrades >= configuration.ABTransactionsTarget;
 
-            if (!winningStrategyIS)
+            if (!parentNode.WinningStrategy)
             {
-                return strategyBuilder;
+                return;
             }
 
-            strategyBuilder.OS = _strategyBuilderService.ExecuteBacktest(
+            // OS Backtest
+
+            _strategyBuilderService.ExecuteBacktest(
+                parentNode.BacktestOS,
                 EntityTypeEnum.AssembledBuilder,
                 configuration.FromDateOS.Value,
                 configuration.ToDateOS.Value,
@@ -146,22 +153,31 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                 manualResetEvent,
                 cancellationToken);
 
-            // Update the node with backtest information of OS
-            parentNode.WinningTradesOs = strategyBuilder.OS.WinningTrades;
-            parentNode.LosingTradesOs = strategyBuilder.OS.LosingTrades;
-            parentNode.TotalTradesOs = strategyBuilder.OS.TotalTrades;
-            parentNode.SuccessRatePercentOs = strategyBuilder.OS.SuccessRatePercent;
-            parentNode.TotalOpportunityOs = strategyBuilder.OS.TotalOpportunity;
-            parentNode.ProgressivenessOs = strategyBuilder.OS.Progressiveness;
+            parentNode.WinningStrategy =
+                parentNode.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
+                && (!configuration.IsProgressiveness || parentNode.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
 
-            parentNode.SuccessRateVariation = Math.Abs(parentNode.SuccessRatePercentIs - parentNode.SuccessRatePercentOs);
-            parentNode.Progressiveness = Math.Abs(parentNode.ProgressivenessIs - parentNode.ProgressivenessOs);
+            if (parentNode.WinningStrategy)
+            {
+                switch (parentNode.Label)
+                {
+                    case "up":
+                        assembledBuilder.AssembledNodesUP.Add(new()
+                        {
+                            ParentNode = parentNode,
+                            ChildNodes = childNodes.ToList(),
+                        });
+                        break;
 
-            strategyBuilder.WinningStrategy =
-                        strategyBuilder.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
-                        && (!configuration.IsProgressiveness || strategyBuilder.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
-
-            return strategyBuilder;
+                    case "down":
+                        assembledBuilder.AssembledNodesDOWN.Add(new()
+                        {
+                            ParentNode = parentNode,
+                            ChildNodes = childNodes.ToList(),
+                        });
+                        break;
+                }
+            }
         }
     }
 }

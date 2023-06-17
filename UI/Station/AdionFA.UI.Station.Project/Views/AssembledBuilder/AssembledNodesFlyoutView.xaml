@@ -19,6 +19,11 @@
               Header="Assembled Nodes"
               IsModal="True">
 
+    <metro:Flyout.Resources>
+        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+    </metro:Flyout.Resources>
+
     <Grid>
         <!--#region General Expander-->
         <Expander Header="Nodes"
@@ -32,7 +37,7 @@
                 <!--#region Child Nodes-->
                 <DataGrid IsReadOnly="True"
                           AutoGenerateColumns="False"
-                          ItemsSource="{Binding Backtests}">
+                          ItemsSource="{Binding AssembledNodes}">
 
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
@@ -48,18 +53,19 @@
                                                 Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <!--#region Single Child Node Expander-->
+                                    <!--#region Child Node Expander-->
                                     <Expander Style="{x:Null}">
                                         <Grid Margin="10">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
                                             <!--#region Node Output-->
                                             <ListView ItemsSource="{Binding Node}" />
                                             <!--#endregion-->
 
+                                            <!--#region Node Details-->
                                             <StackPanel Grid.Column="1">
                                                 <StackPanel.Resources>
                                                     <Style TargetType="TextBlock">
@@ -67,56 +73,34 @@
                                                                 Value="0, 0, 0, 5" />
                                                     </Style>
                                                 </StackPanel.Resources>
-                                                <!--#region Total Opportunity-->
                                                 <TextBlock>
-                                                <Run Text="Total Opportunities" />
-                                                <Run Text=":" />
-                                                <Run Text="{Binding TotalOpportunity, Mode=OneWay}" />
+                                                    <Run Text="Total Opportunities (IS): " />
+                                                    <Run Text="{Binding TotalOpportunity, Mode=OneWay}" />
                                                 </TextBlock>
-                                                <!--#endregion-->
-
-                                                <!--#region Total Trades-->
                                                 <TextBlock>
-                                                    <Run Text="Total Trades" />
-                                                    <Run Text=":" />
+                                                    <Run Text="Total Trades (IS): " />
                                                     <Run Text="{Binding TotalTrades, Mode=OneWay}" />
                                                 </TextBlock>
-                                                <!--#endregion-->
-
-                                                <!--#region Winning Trades-->
                                                 <TextBlock>
-                                                        <Run Text="Winning Trades" />
-                                                        <Run Text=":" />
-                                                        <Run Text="{Binding WinningTrades}" />
+                                                    <Run Text="Winning Trades (IS): " />
+                                                    <Run Text="{Binding WinningTrades}" />
                                                 </TextBlock>
-                                                <!--#endregion-->
-
-                                                <!--#region Losing Trades-->
                                                 <TextBlock>
-                                                    <Run Text="Losing Trades" />
-                                                    <Run Text=":" />
+                                                    <Run Text="Losing Trades (IS): " />
                                                     <Run Text="{Binding LosingTrades}" />
                                                 </TextBlock>
-                                                <!--#endregion-->
-
-                                                <!--#region Percent Success-->
                                                 <TextBlock>
-                                                    <Run Text="Succes Rate Percent" />
-                                                    <Run Text=":" />
+                                                    <Run Text="Succes Rate Percent (IS): " />
                                                     <Run Text="{Binding SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
-                                                <!--#endregion-->
-
-                                                <!--#region Progressiveness -->
                                                 <TextBlock>
-                                                    <Run Text="Progressiveness" />
-                                                    <Run Text=":" />
+                                                    <Run Text="Progressiveness (IS): " />
                                                     <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
-                                                <!--#endregion-->
                                             </StackPanel>
+                                            <!--#endregion-->
                                         </Grid>
                                     </Expander>
                                 </DataTemplate>
@@ -128,7 +112,8 @@
                 <DataGrid Grid.Column="1"
                           IsReadOnly="True"
                           AutoGenerateColumns="False"
-                          ItemsSource="{Binding WinningNodes}">
+                          ItemsSource="{Binding AssembledNodes}">
+
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                          Color="White" />
@@ -153,9 +138,10 @@
                                             </Grid.RowDefinitions>
 
                                             <!--#region Node Output-->
-                                            <ListView ItemsSource="{Binding Node}" />
+                                            <ListView ItemsSource="{Binding ParentNode.Node}" />
                                             <!--#endregion-->
 
+                                            <!--#region Node Details-->
                                             <Grid Grid.Column="1">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
@@ -175,34 +161,33 @@
                                                     </StackPanel.Resources>
                                                     <!--#region IS-->
                                                     <TextBlock>
-                                                    <Run Text="Total Opportunity (IS): " />
-                                                    <Run Text="{Binding TotalOpportunityIs}" />
+                                                        <Run Text="Total Opportunity (IS): " />
+                                                        <Run Text="{Binding ParentNode.TotalOpportunityIs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Total Trades (IS): " />
-                                                    <Run Text="{Binding TotalTradesIs}" />
+                                                        <Run Text="Total Trades (IS): " />
+                                                        <Run Text="{Binding ParentNode.TotalTradesIs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                <Run Text="Winning Trades (IS): " />
-                                                <Run Text="{Binding WinningTradesIs}" />
+                                                        <Run Text="Winning Trades (IS): " />
+                                                        <Run Text="{Binding ParentNode.WinningTradesIs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Losing Trades (IS): " />
-                                                    <Run Text="{Binding LosingTradesIs}" />
+                                                        <Run Text="Losing Trades (IS): " />
+                                                        <Run Text="{Binding ParentNode.LosingTradesIs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Success Rate Percent (IS): " />
-                                                    <Run Text="{Binding SuccessRatePercentIs, StringFormat=N2}" />
-                                                    <Run Text="%" />
+                                                        <Run Text="Success Rate Percent (IS): " />
+                                                        <Run Text="{Binding ParentNode.SuccessRatePercentIs, StringFormat=N2}" />
+                                                        <Run Text="%" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Progressiveness (IS): " />
-                                                    <Run Text="{Binding ProgressivenessIs, StringFormat=N2}" />
-                                                    <Run Text="%" />
+                                                        <Run Text="Progressiveness (IS): " />
+                                                        <Run Text="{Binding ParentNode.ProgressivenessIs, StringFormat=N2}" />
+                                                        <Run Text="%" />
                                                     </TextBlock>
                                                 </StackPanel>
                                                 <!--#endregion-->
-
                                                 <!--#region OS-->
                                                 <StackPanel Grid.Column="1">
                                                     <StackPanel.Resources>
@@ -212,31 +197,31 @@
                                                         </Style>
                                                     </StackPanel.Resources>
                                                     <TextBlock>
-                                                    <Run Text="Total Opportunity (OS): " />
-                                                    <Run Text=":" />
-                                                    <Run Text="{Binding TotalOpportunityOs}" />
+                                                        <Run Text="Total Opportunity (OS): " />
+                                                        <Run Text=":" />
+                                                        <Run Text="{Binding ParentNode.TotalOpportunityOs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Total Trades (OS): " />
-                                                    <Run Text="{Binding TotalTradesOs}" />
+                                                        <Run Text="Total Trades (OS): " />
+                                                        <Run Text="{Binding ParentNode.TotalTradesOs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                <Run Text="Winning Trades (OS): " />
-                                                <Run Text="{Binding WinningTradesOs}" />
+                                                        <Run Text="Winning Trades (OS): " />
+                                                        <Run Text="{Binding ParentNode.WinningTradesOs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="LosingTrades (OS): " />
-                                                    <Run Text="{Binding LosingTradesOs}" />
+                                                        <Run Text="LosingTrades (OS): " />
+                                                        <Run Text="{Binding ParentNode.LosingTradesOs}" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Success Rate Percent (OS): " />
-                                                    <Run Text="{Binding SuccessRatePercentOs, StringFormat=N2}" />
-                                                    <Run Text="%" />
+                                                        <Run Text="Success Rate Percent (OS): " />
+                                                        <Run Text="{Binding ParentNode.SuccessRatePercentOs, StringFormat=N2}" />
+                                                        <Run Text="%" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Progressiveness (OS): " />
-                                                    <Run Text="{Binding ProgressivenessOs, StringFormat=N2}" />
-                                                    <Run Text="%" />
+                                                        <Run Text="Progressiveness (OS): " />
+                                                        <Run Text="{Binding ParentNode.ProgressivenessOs, StringFormat=N2}" />
+                                                        <Run Text="%" />
                                                     </TextBlock>
                                                     <!--#endregion-->
                                                 </StackPanel>
@@ -247,29 +232,30 @@
                                                             Grid.Row="1">
                                                     <Separator HorizontalAlignment="Stretch" />
                                                     <TextBlock>
-                                                    <Run Text="Success Rate Variation: " FontWeight="SemiBold"/>
-                                                    <Run Text="{Binding SuccessRateVariation, StringFormat=N2}" />
-                                                    <Run Text="%" />
+                                                        <Run Text="Success Rate Variation: "
+                                                             FontWeight="SemiBold" />
+                                                        <Run Text="{Binding ParentNode.SuccessRateVariation, StringFormat=N2}" />
+                                                        <Run Text="%" />
                                                     </TextBlock>
                                                     <TextBlock>
-                                                    <Run Text="Progressiveness: "
-                                                         FontWeight="SemiBold" />
-                                                    <Run Text="{Binding Progressiveness, StringFormat=N2}" />
-                                                    <Run Text="%" />
+                                                        <Run Text="Progressiveness: "
+                                                             FontWeight="SemiBold" />
+                                                        <Run Text="{Binding ParentNode.Progressiveness, StringFormat=N2}" />
+                                                        <Run Text="%" />
                                                     </TextBlock>
                                                 </StackPanel>
                                             </Grid>
 
-                                            <!--#region Test In MetaTrader Button-->
-                                            <Button x:Name="testInMetaTraderBtn"
+                                            <!--#region Remove From MetaTrader Button-->
+                                            <Button x:Name="addToMetaTrader"
                                                     HorizontalAlignment="Left"
                                                     Grid.Row="1"
                                                     Width="150">
                                                 <Button.Content>
-                                                    <TextBlock Text="Test in MetaTrader" />
+                                                    <TextBlock Text="Add to MetaTrader" />
                                                 </Button.Content>
                                                 <behaviors:Interaction.Triggers>
-                                                    <behaviors:EventTrigger SourceName="testInMetaTraderBtn"
+                                                    <behaviors:EventTrigger SourceName="addToMetaTrader"
                                                                             EventName="Click">
                                                         <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.AddNodeToMetaTrader}">
                                                             <behaviors:InvokeCommandAction.CommandParameter>
@@ -285,8 +271,8 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
+                    <!--#endregion-->
                 </DataGrid>
-                <!--#endregion-->
             </Grid>
         </Expander>
         <!--#endregion-->

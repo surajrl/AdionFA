@@ -4,31 +4,31 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum AssembledBuilderStatus
     {
-        [Metadata(nameKey: "Not Started", descriptionKey: "Assembled Builder Not Started")]
+        [Metadata(descriptionKey: "Assembled Builder Not Started")]
         NotStarted = 0,
 
-        [Metadata(nameKey: "Executing Extraction", descriptionKey: "Executing Extraction")]
+        [Metadata(descriptionKey: "Executing Extraction")]
         ExecutingExtraction,
 
-        [Metadata(nameKey: "Extraction Completed", descriptionKey: "Extraction Completed")]
+        [Metadata(descriptionKey: "Extraction Completed")]
         ExtractionCompleted,
 
-        [Metadata(nameKey: "Executing Weka", descriptionKey: "Executing Weka Tree")]
+        [Metadata(descriptionKey: "Executing Weka")]
         ExecutingWeka,
 
-        [Metadata(nameKey: "Weka Completed", descriptionKey: "Weka Tree Completed")]
+        [Metadata(descriptionKey: "Weka Completed")]
         WekaCompleted,
 
-        [Metadata(nameKey: "Executing Backtest", descriptionKey: "Executing Backtest")]
+        [Metadata(descriptionKey: "Executing Backtest")]
         ExecutingBacktest,
 
-        [Metadata(nameKey: "Backtest Completed", descriptionKey: "Backtest Completed")]
+        [Metadata(descriptionKey: "Backtest Completed")]
         BacktestCompleted,
 
-        [Metadata(nameKey: "Stopped", descriptionKey: "Stopped")]
+        [Metadata(descriptionKey: "Stopped")]
         Stopped,
 
-        [Metadata(nameKey: "Canceled", descriptionKey: "Canceled")]
+        [Metadata(descriptionKey: "Canceled")]
         Canceled,
 
     }

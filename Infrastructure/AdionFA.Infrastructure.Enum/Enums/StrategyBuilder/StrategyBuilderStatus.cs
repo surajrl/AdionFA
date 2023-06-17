@@ -4,22 +4,31 @@ namespace AdionFA.Infrastructure.Enums
 {
     public enum StrategyBuilderStatus
     {
-        [Metadata(nameKey: "Not Started", descriptionKey: "")]
+        [Metadata(descriptionKey: "Strategy Builder Not Started")]
         NotStarted = 0,
 
-        [Metadata(nameKey: "Executing", descriptionKey: "Strategy Builder Executing")]
-        Executing,
+        [Metadata(descriptionKey: "Executing Weka")]
+        ExecutingWeka,
 
-        [Metadata(nameKey: "Completed", descriptionKey: "Strategy Builder Completed")]
+        [Metadata(descriptionKey: "Weka Completed")]
+        WekaCompleted,
+
+        [Metadata(descriptionKey: "Executing Backtest")]
+        ExecutingBacktest,
+
+        [Metadata(descriptionKey: "Backtest Completed")]
+        BacktestCompleted,
+
+        [Metadata(descriptionKey: "Executing Correlation Analysis")]
+        ExecutingCorrelation,
+
+        [Metadata(descriptionKey: "Strategy Builder Completed")]
         Completed,
 
-        [Metadata(nameKey: "Stopped", descriptionKey: "Strategy Builder Stopped")]
+        [Metadata(descriptionKey: "Stopped")]
         Stopped,
 
-        [Metadata(nameKey: "Canceled", descriptionKey: "Strategy Builder Canceled")]
+        [Metadata(descriptionKey: "Canceled")]
         Canceled,
-
-        [Metadata(nameKey: "Error")]
-        Error,
     }
 }

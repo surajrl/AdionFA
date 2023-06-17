@@ -228,5 +228,19 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
             get => _abMinImprovePercent;
             set => SetProperty(ref _abMinImprovePercent, value);
         }
+
+        private decimal _abWekaMaxRatioTree;
+        public decimal ABWekaMaxRatioTree
+        {
+            get => _abWekaMaxRatioTree;
+            set => SetProperty(ref _abWekaMaxRatioTree, value);
+        }
+
+        private decimal _abWekaNTotalTree;
+        public decimal ABWekaNTotalTree
+        {
+            get => _abWekaNTotalTree;
+            set => SetProperty(ref _abWekaNTotalTree, value);
+        }
     }
 }

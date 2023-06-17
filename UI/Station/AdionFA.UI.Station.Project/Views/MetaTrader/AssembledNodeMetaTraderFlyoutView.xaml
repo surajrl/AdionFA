@@ -1,0 +1,279 @@
+﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.MetaTrader.AssembledNodeMetaTraderFlyoutView"
+              xmlns:prism="http://prismlibrary.com/"
+              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+              xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
+              xmlns:commonResources="clr-namespace:AdionFA.Infrastructure.I18n.Resources;assembly=AdionFA.Infrastructure.I18n"
+              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:local="clr-namespace:AdionFA.UI.Station.Project.MetaTrader"
+              mc:Ignorable="d"
+              prism:ViewModelLocator.AutoWireViewModel="True"
+              Position="Right"
+              Theme="Adapt"
+              Width="1200"
+              CloseButtonIsCancel="True"
+              Header="Assembled Nodes Under Test"
+              IsModal="True">
+
+    <metro:Flyout.Resources>
+        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+    </metro:Flyout.Resources>
+
+    <Grid>
+        <!--#region General Expander-->
+        <Expander Header="Nodes"
+                  IsExpanded="True">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.5*" />
+                </Grid.ColumnDefinitions>
+
+                <!--#region Child Nodes-->
+                <DataGrid IsReadOnly="True"
+                          AutoGenerateColumns="False"
+                          ItemsSource="{Binding ChildNodes}">
+
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="White" />
+                    </DataGrid.Resources>
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" />
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Child Nodes"
+                                                Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <!--#region Child Node Expander-->
+                                    <Expander Style="{x:Null}">
+                                        <Grid Margin="10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--#region Node Output-->
+                                            <ListView ItemsSource="{Binding Node}" />
+                                            <!--#endregion-->
+
+                                            <!--#region Node Details-->
+                                            <StackPanel Grid.Column="1">
+                                                <StackPanel.Resources>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Margin"
+                                                                Value="0, 0, 0, 5" />
+                                                    </Style>
+                                                </StackPanel.Resources>
+                                                <TextBlock>
+                                                    <Run Text="Total Opportunities (IS): " />
+                                                    <Run Text="{Binding TotalOpportunity, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <TextBlock>
+                                                    <Run Text="Total Trades (IS): " />
+                                                    <Run Text="{Binding TotalTrades, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <TextBlock>
+                                                    <Run Text="Winning Trades (IS): " />
+                                                    <Run Text="{Binding WinningTrades}" />
+                                                </TextBlock>
+                                                <TextBlock>
+                                                    <Run Text="Losing Trades (IS): " />
+                                                    <Run Text="{Binding LosingTrades}" />
+                                                </TextBlock>
+                                                <TextBlock>
+                                                    <Run Text="Succes Rate Percent (IS): " />
+                                                    <Run Text="{Binding SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                                <TextBlock>
+                                                    <Run Text="Progressiveness (IS): " />
+                                                    <Run Text="{Binding Progressiveness, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="%" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <!--#endregion-->
+                                        </Grid>
+                                    </Expander>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <!--#region Parent Nodes-->
+                <DataGrid Grid.Column="1"
+                          IsReadOnly="True"
+                          AutoGenerateColumns="False"
+                          ItemsSource="{Binding ParentNode}">
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="White" />
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" />
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Parent Nodes"
+                                                Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Expander Style="{x:Null}">
+                                        <Grid Margin="10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+
+                                            <!--#region Node Output-->
+                                            <ListView ItemsSource="{Binding Node}" />
+                                            <!--#endregion-->
+
+                                            <!--#region Node Details-->
+                                            <Grid Grid.Column="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="*" />
+                                                </Grid.RowDefinitions>
+
+                                                <StackPanel>
+                                                    <StackPanel.Resources>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Margin"
+                                                                    Value="0, 0, 0, 5" />
+                                                        </Style>
+                                                    </StackPanel.Resources>
+                                                    <!--#region IS-->
+                                                    <TextBlock>
+                                                        <Run Text="Total Opportunity (IS): " />
+                                                        <Run Text="{Binding TotalOpportunityIs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Total Trades (IS): " />
+                                                        <Run Text="{Binding TotalTradesIs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Winning Trades (IS): " />
+                                                        <Run Text="{Binding WinningTradesIs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Losing Trades (IS): " />
+                                                        <Run Text="{Binding LosingTradesIs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Success Rate Percent (IS): " />
+                                                        <Run Text="{Binding SuccessRatePercentIs, StringFormat=N2}" />
+                                                        <Run Text="%" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Progressiveness (IS): " />
+                                                        <Run Text="{Binding ProgressivenessIs, StringFormat=N2}" />
+                                                        <Run Text="%" />
+                                                    </TextBlock>
+                                                </StackPanel>
+                                                <!--#endregion-->
+                                                <!--#region OS-->
+                                                <StackPanel Grid.Column="1">
+                                                    <StackPanel.Resources>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Margin"
+                                                                    Value="0, 0, 0, 5" />
+                                                        </Style>
+                                                    </StackPanel.Resources>
+                                                    <TextBlock>
+                                                        <Run Text="Total Opportunity (OS): " />
+                                                        <Run Text=":" />
+                                                        <Run Text="{Binding TotalOpportunityOs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Total Trades (OS): " />
+                                                        <Run Text="{Binding TotalTradesOs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Winning Trades (OS): " />
+                                                        <Run Text="{Binding WinningTradesOs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="LosingTrades (OS): " />
+                                                        <Run Text="{Binding LosingTradesOs}" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Success Rate Percent (OS): " />
+                                                        <Run Text="{Binding SuccessRatePercentOs, StringFormat=N2}" />
+                                                        <Run Text="%" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Progressiveness (OS): " />
+                                                        <Run Text="{Binding ProgressivenessOs, StringFormat=N2}" />
+                                                        <Run Text="%" />
+                                                    </TextBlock>
+                                                    <!--#endregion-->
+                                                </StackPanel>
+                                                <!--#endregion-->
+
+                                                <!--#region Result-->
+                                                <StackPanel Grid.ColumnSpan="2"
+                                                            Grid.Row="1">
+                                                    <Separator HorizontalAlignment="Stretch" />
+                                                    <TextBlock>
+                                                        <Run Text="Success Rate Variation: "
+                                                             FontWeight="SemiBold" />
+                                                        <Run Text="{Binding SuccessRateVariation, StringFormat=N2}" />
+                                                        <Run Text="%" />
+                                                    </TextBlock>
+                                                    <TextBlock>
+                                                        <Run Text="Progressiveness: "
+                                                             FontWeight="SemiBold" />
+                                                        <Run Text="{Binding Progressiveness, StringFormat=N2}" />
+                                                        <Run Text="%" />
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!--#region Remove From MetaTrader Button-->
+                                            <Button x:Name="removeFromMetaTraderBtn"
+                                                    HorizontalAlignment="Left"
+                                                    Grid.Row="1"
+                                                    Width="150">
+                                                <Button.Content>
+                                                    <TextBlock Text="Remove from MetaTrader" />
+                                                </Button.Content>
+                                                <behaviors:Interaction.Triggers>
+                                                    <behaviors:EventTrigger SourceName="removeFromMetaTraderBtn"
+                                                                            EventName="Click">
+                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.RemoveNodeFromMetaTrader}">
+                                                            <behaviors:InvokeCommandAction.CommandParameter>
+                                                                <Binding Path="." />
+                                                            </behaviors:InvokeCommandAction.CommandParameter>
+                                                        </behaviors:InvokeCommandAction>
+                                                    </behaviors:EventTrigger>
+                                                </behaviors:Interaction.Triggers>
+                                            </Button>
+                                        </Grid>
+                                    </Expander>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <!--#endregion-->
+            </Grid>
+        </Expander>
+        <!--#endregion-->
+    </Grid>
+</metro:Flyout>

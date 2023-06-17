@@ -47,5 +47,6 @@
         // MetaTrader
 
         public const string FlyoutProjectModuleNodeMetaTrader = "FlyoutProjectModuleNodeMetaTrader";
+        public const string FlyoutProjectModuleAssembledNodeMetaTrader = "FlyoutProjectModuleAssembledNodeMetaTrader";
     }
 }

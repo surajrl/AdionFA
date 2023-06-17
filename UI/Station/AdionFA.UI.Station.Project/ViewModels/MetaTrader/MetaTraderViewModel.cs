@@ -1,5 +1,4 @@
-﻿using AdionFA.Infrastructure.Common.Extractor.Contracts;
-using AdionFA.Infrastructure.Common.Extractor.Model;
+﻿using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
@@ -13,14 +12,12 @@ using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.Enums;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.MetaTrader;
 using AdionFA.UI.Station.Project.Validators.MetaTrader;
-using AutoMapper;
 using DynamicData;
 using NetMQ;
 using NetMQ.Sockets;
@@ -40,11 +37,8 @@ using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels
 {
-    public class MetaTraderViewModel : MenuItemViewModel
+    public class MetaTraderViewModel : MenuItemViewModel, IDisposable
     {
-        private readonly IMapper _mapper;
-
-        private readonly IExtractorService _extractorService;
         private readonly ITradeService _tradeService;
 
         private readonly IProjectServiceAgent _projectService;
@@ -53,29 +47,24 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IEventAggregator _eventAggregator;
 
         private ProjectVM _project;
-        private CancellationTokenSource _cancellationTokenSrc;
+        private CancellationTokenSource _cancellationTokenSource;
         private bool _firstCompleteCandleReceived;
         private Candle _currentCandle;
+        private bool _disposedValue;
 
         public MetaTraderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
-            _extractorService = IoC.Get<IExtractorService>();
             _tradeService = IoC.Get<ITradeService>();
 
             _serviceAgent = ContainerLocator.Current.Resolve<IServiceAgent>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
             ContainerLocator.Current.Resolve<IApplicationCommands>().AddNodeToMetaTrader.RegisterCommand(AddNodeToMetaTrader);
             ContainerLocator.Current.Resolve<IApplicationCommands>().RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTrader);
 
-            _mapper = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
-            }).CreateMapper();
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             PopulateViewModel();
         }
@@ -90,7 +79,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public DelegateCommand StopProcessBtnCommand => new DelegateCommand(() =>
         {
-            _cancellationTokenSrc.Cancel();
+            _cancellationTokenSource.Cancel();
         }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
@@ -100,7 +89,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                _cancellationTokenSrc = new CancellationTokenSource();
+                _cancellationTokenSource = new CancellationTokenSource();
 
                 _firstCompleteCandleReceived = false;
 
@@ -150,7 +139,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             finally
             {
-                _cancellationTokenSrc.Dispose();
+                _cancellationTokenSource.Dispose();
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
@@ -165,11 +154,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 try
                 {
-                    _cancellationTokenSrc ??= new CancellationTokenSource();
+                    _cancellationTokenSource ??= new CancellationTokenSource();
 
                     while (true)
                     {
-                        _cancellationTokenSrc.Token.ThrowIfCancellationRequested();
+                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                         var ts = TimeSpan.FromMilliseconds(1000);
 
@@ -193,7 +182,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Trace.TraceError(ex.Message);
                     Debug.WriteLine($"SubscriberSocket:{ex.Message}");
 
-                    _cancellationTokenSrc.Cancel();
+                    _cancellationTokenSource.Cancel();
                 }
             });
         }
@@ -206,9 +195,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 try
                 {
-                    _cancellationTokenSrc ??= new CancellationTokenSource();
+                    _cancellationTokenSource ??= new CancellationTokenSource();
 
-                    _cancellationTokenSrc.Token.ThrowIfCancellationRequested();
+                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                     if (Nodes.Any())
                     {
@@ -230,36 +219,24 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         foreach (var node in Nodes)
                         {
                             var isTrade = false;
-                            switch (node)
-                            {
-                                case ParentNodeModel n:
-                                    isTrade = _tradeService.IsTrade(
-                                    n,
-                                    candles,
-                                    _currentCandle);
-                                    break;
-
-                                case REPTreeNodeModel n:
-                                    isTrade = _tradeService.IsTrade(
-                                    n,
-                                    candles,
-                                    _currentCandle);
-                                    break;
-                            }
+                            isTrade = _tradeService.IsTrade(
+                            node,
+                            candles,
+                            _currentCandle);
 
                             if (isTrade)
                             {
                                 // Open operation request -----------------------------------------------
-                                //if (node.Label.ToLowerInvariant() == "up")
+                                if (node.Label.ToLowerInvariant() == "up")
                                 {
                                     requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
                                     Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
                                 }
-                                //else
-                                //{
-                                //requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
-                                //Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
-                                //}
+                                else
+                                {
+                                    requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
+                                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
+                                }
                                 //-----------------------------------------------------------------------
 
                                 // Open operation response ----------------------------------------------
@@ -293,7 +270,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Trace.TraceError(ex.Message);
                     Debug.WriteLine($"RequestSocket:{ex.Message}");
 
-                    _cancellationTokenSrc.Cancel();
+                    _cancellationTokenSource.Cancel();
                 }
             });
         }
@@ -309,19 +286,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             MessageOutput?.Clear();
         }).ObservesCanExecute(() => MessageOutputAny);
 
-        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeModel>(node =>
+        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeModel>(baseNode =>
         {
-            if (Nodes.Where(n => n.Equals(node)).Any())
-            {
-                return;
-            }
-
-            Nodes.Add(node);
         });
 
         public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<REPTreeNodeModel>(node =>
         {
-            Nodes.Remove(node);
         });
 
         public ICommand SaveEACommand => new DelegateCommand(async () =>
@@ -417,7 +387,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         // Bindable Model
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -425,7 +394,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _canExecute = true;
-
         public bool CanExecute
         {
             get => _canExecute;
@@ -433,7 +401,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ProjectConfigurationVM _configuration;
-
         public ProjectConfigurationVM Configuration
         {
             get => _configuration;
@@ -441,7 +408,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int _messagesFromCurrentPeriod;
-
         public int MessagesFromCurrentPeriod
         {
             get => _messagesFromCurrentPeriod;
@@ -449,7 +415,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _nodesAny;
-
         public bool NodesAny
         {
             get => _nodesAny;
@@ -457,15 +422,20 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<REPTreeNodeModel> _nodes;
-
         public ObservableCollection<REPTreeNodeModel> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);
         }
 
-        private bool _messageInputAny;
+        private AssembledNodeModel _assembledNode;
+        public AssembledNodeModel AssembledNode
+        {
+            get => _assembledNode;
+            set => SetProperty(ref _assembledNode, value);
+        }
 
+        private bool _messageInputAny;
         public bool MessageInputAny
         {
             get => _messageInputAny;
@@ -473,7 +443,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<ZmqMsgModel> _messageInput;
-
         public ObservableCollection<ZmqMsgModel> MessageInput
         {
             get => _messageInput;
@@ -481,7 +450,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private bool _messageOutputAny;
-
         public bool MessageOutputAny
         {
             get => _messageOutputAny;
@@ -489,7 +457,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private ObservableCollection<ZmqMsgModel> _messageOutput;
-
         public ObservableCollection<ZmqMsgModel> MessageOutput
         {
             get => _messageOutput;
@@ -497,7 +464,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }
 
         private int? _timeframeId;
-
         public int? TimeframeId
         {
             get => _timeframeId;
@@ -507,11 +473,41 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public ObservableCollection<Metadata> Timeframes { get; } = new ObservableCollection<Metadata>();
 
         private ExpertAdvisorVM _expertAdvisor;
-
         public ExpertAdvisorVM ExpertAdvisor
         {
             get => _expertAdvisor;
             set => SetProperty(ref _expertAdvisor, value);
+        }
+
+        // IDisposable Implementation
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                _disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~MetaTraderViewModel()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

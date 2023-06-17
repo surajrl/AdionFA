@@ -32,7 +32,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
         private ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutCreateProject))
+            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutCreateProject))
             {
                 PopulateViewModel();
             }

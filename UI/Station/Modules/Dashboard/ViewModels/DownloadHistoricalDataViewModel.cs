@@ -51,7 +51,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutDownloadHistoricalData))
+            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutDownloadHistoricalData))
             {
                 OnRefreshAsync();
 

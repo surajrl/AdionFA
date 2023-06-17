@@ -1,8 +1,6 @@
 ﻿using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
 {
@@ -10,12 +8,7 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
     {
         // Extraction
 
-        private string _extractionTemplatePath;
-        public string ExtractionTemplatePath
-        {
-            get => _extractionTemplatePath;
-            set => SetProperty(ref _extractionTemplatePath, value);
-        }
+        public string ExtractionTemplatePath { get; set; }
 
         private string _extractionTemplateName;
         public string ExtractionTemplateName
@@ -24,12 +17,7 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
             set => SetProperty(ref _extractionTemplateName, value);
         }
 
-        private string _extractionAssembledBuilderPath;
-        public string ExtractionAssembledBuilderPath
-        {
-            get => _extractionAssembledBuilderPath;
-            set => SetProperty(ref _extractionAssembledBuilderPath, value);
-        }
+        public string ExtractionAssembledBuilderPath { get; set; }
 
         private string _extractionAssembledBuilderName;
         public string ExtractionAssembledBuilderName
@@ -39,6 +27,15 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
         }
 
         // Backtests
+
+
+        private int _totalBacktest;
+        public int TotalBacktests
+        {
+            get => _totalBacktest;
+            set => SetProperty(ref _totalBacktest, value);
+        }
+
 
         private int _executingBacktest;
         public int ExecutingBacktests
@@ -54,21 +51,16 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
             set => SetProperty(ref _completedBacktests, value);
         }
 
-        private int _totalBacktest;
-        public int TotalBacktests
+        private REPTreeOutputModel _tree;
+        public REPTreeOutputModel Tree
         {
-            get => _totalBacktest;
-            set => SetProperty(ref _totalBacktest, value);
+            get => _tree;
+            set => SetProperty(ref _tree, value);
         }
+
+        public ObservableCollection<REPTreeNodeModel> BacktestNodes { get; set; }
 
         // Process Status 
-
-        private string _status;
-        public string Status
-        {
-            get => _status;
-            set => SetProperty(ref _status, value);
-        }
 
         private string _message;
         public string Message
@@ -77,19 +69,11 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
             set => SetProperty(ref _message, value);
         }
 
-        public ObservableCollection<REPTreeOutputVM> TreeOutputs { get; set; }
-
-        private ObservableCollection<REPTreeNodeModel> _nodes;
-        public ObservableCollection<REPTreeNodeModel> Nodes
+        private int _progressCounter;
+        public int ProgressCounter
         {
-            get => _nodes;
-            set
-            {
-                if (SetProperty(ref _nodes, value))
-                {
-                    TotalBacktests = _nodes.Where(node => node.Label.ToLowerInvariant() == "up" && node.Winner).Count();
-                }
-            }
+            get => _progressCounter;
+            set => SetProperty(ref _progressCounter, value);
         }
     }
 }

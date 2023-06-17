@@ -1,9 +1,11 @@
 ﻿using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Station.Infrastructure.Services;
 using Prism.Commands;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
@@ -12,25 +14,41 @@ namespace AdionFA.UI.Station.Project.ViewModels.MetaTrader
     {
         public NodeMetaTraderFlyoutViewModel(IApplicationCommands applicationCommands)
         {
-            applicationCommands.AddNodeToMetaTrader.RegisterCommand(AddNodeToMetaTrader);
-            applicationCommands.RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTrader);
+            applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
             Nodes = new();
         }
 
-        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeModel>(node =>
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if (Nodes.Where(n => n.Equals(node)).Any())
+            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleNodeMetaTrader, StringComparison.Ordinal))
             {
-                return;
+                switch (flyoutModel.Model)
+                {
+                    case ObservableCollection<REPTreeNodeModel> oc:
+                        foreach (var node in oc)
+                        {
+                            if (node is REPTreeNodeModel)
+                            {
+                                Nodes.Add(node);
+                            }
+                        }
+                        break;
+
+                    case List<REPTreeNodeModel> list:
+                        foreach (var node in list)
+                        {
+                            if (node is REPTreeNodeModel)
+                            {
+                                Nodes.Add(node);
+                            }
+                        }
+                        break;
+
+                    default:
+                        return;
+                }
             }
-
-            Nodes.Add(node);
-        });
-
-        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<REPTreeNodeModel>(node =>
-        {
-            Nodes.Remove(node);
         });
 
         // View Bindings

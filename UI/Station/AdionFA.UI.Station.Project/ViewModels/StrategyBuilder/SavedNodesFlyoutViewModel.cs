@@ -6,12 +6,9 @@ using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Project.AutoMapper;
-using AutoMapper;
 using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 
@@ -20,7 +17,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
     public class SavedNodesFlyoutViewModel : ViewModelBase
     {
         private readonly IProjectDirectoryService _projectDirectoryService;
-        private readonly IMapper _mapper;
 
         public SavedNodesFlyoutViewModel(IApplicationCommands applicationCommands)
         {
@@ -28,17 +24,12 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            _mapper = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
-            }).CreateMapper();
-
             SavedNodes = new();
         }
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleSavedNodes, StringComparison.Ordinal))
+            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleSavedNodes, StringComparison.Ordinal))
             {
                 SavedNodes.Clear();
 
@@ -52,16 +43,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             }
         });
 
-        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeModel>(node =>
-        {
-            var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
-
-            var filename = $"NODE-{RegexHelper.GetValidFileName(node.NodeName(), "_")}-{node.TotalTradesIs}.xml";
-            var filepath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", directory, filename);
-
-            _projectDirectoryService.DeleteFile(filepath);
-            SavedNodes.Remove(node);
-        });
 
         // View Bindings
 

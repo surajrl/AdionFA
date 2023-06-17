@@ -10,7 +10,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Contracts
     public interface ITradeService
     {
         bool IsTrade(REPTreeNodeModel singleNode, IList<Candle> candleHistory, Candle currentCandle);
-        bool IsTrade(ParentNodeModel parentNode, IList<Candle> candleHistory, Candle currentCandle);
+        bool IsTrade(AssembledNodeModel parentNode, IList<Candle> candleHistory, Candle currentCandle);
 
         ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType);
     }

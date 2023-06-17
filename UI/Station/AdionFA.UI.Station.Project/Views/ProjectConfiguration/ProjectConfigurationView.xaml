@@ -22,7 +22,7 @@
         <Thickness x:Key="ControlMargin">0 5 0 15</Thickness>
     </UserControl.Resources>
 
-    <Grid Margin="10 0 0 0">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -37,10 +37,11 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            
+
+            <!--#region Restore Button-->
             <Button Width="80"
                     Height="40"
-                    Margin="10 0 0 0"
+                    Margin="{StaticResource ColumnMargin}"
                     HorizontalAlignment="Right"
                     IsEnabled="{Binding CanExecute}"
                     Command="{Binding RestoreConfigurationBtnCommand}">
@@ -56,11 +57,13 @@
                                 Width="25"
                                 Height="25"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <!--#endregion-->
+            <!--#region Save Button-->
             <Button Grid.Column="1"
                     Width="80"
+                    Margin="{StaticResource ColumnMargin}"
                     Height="40"
                     HorizontalAlignment="Right"
-                    Margin="10 0 0 0"
                     IsEnabled="{Binding CanExecute}"
                     Command="{Binding SaveBtnCommand}">
                 <StackPanel Orientation="Horizontal"
@@ -77,7 +80,7 @@
                                 Height="25"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
-        
+
         <ScrollViewer Grid.Row="1"
                       Padding="0 0 15 0">
             <StackPanel Orientation="Vertical">
@@ -483,13 +486,13 @@
                                                  Value="{Binding ProjectConfiguration.SBWinningStrategyUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region Winning Strategy UP Target-->
+                        <!--#region Winning Strategy DOWN Target-->
                         <StackPanel Grid.Column="1"
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="Winning Strategy DOWN Target" />
-                                    <Run Text="*" /></TextBlock>
+                                    <Run Text="Winning Strategy DOWN Target *" />
+                                </TextBlock>
                             </Label>
                             <metro:NumericUpDown Minimum="0"
                                                  NumericInputMode="Numbers"
@@ -497,7 +500,7 @@
                                                  Value="{Binding ProjectConfiguration.SBWinningStrategyDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region TransactionTarget-->
+                        <!--#region Transactions Target-->
                         <StackPanel Grid.Column="2"
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
@@ -511,13 +514,13 @@
                                                  Value="{Binding ProjectConfiguration.SBTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region VariationTransaction-->
+                        <!--#region Maximum Success Rate Variation-->
                         <StackPanel Grid.Row="1"
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="Maximum Success Rate Variation" />
-                                    <Run Text="*" /></TextBlock>
+                                    <Run Text="Maximum Success Rate Variation *" />
+                                </TextBlock>
                             </Label>
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
@@ -525,7 +528,7 @@
                                                  Value="{Binding ProjectConfiguration.SBMaxSuccessRateVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region ActivateProgressiveness-->
+                        <!--#region Progressiveness-->
                         <StackPanel Grid.Row="1"
                                     Grid.Column="1"
                                     Margin="{StaticResource ColumnMargin}">
@@ -637,8 +640,7 @@
                     </Grid>
                 </metro:MetroHeader>
                 <!--Assembled Builder-->
-                <metro:MetroHeader Header="{x:Static commonResources:CommonResources.AssembledBuilder}"
-                                   Margin="0 0 0 15">
+                <metro:MetroHeader Header="{x:Static commonResources:CommonResources.AssembledBuilder}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -648,28 +650,38 @@
                         </Grid.ColumnDefinitions>
                         <!--#region Transactions Target (IS)-->
                         <StackPanel Margin="{StaticResource ColumnMargin}">
-                            <Label>
-                                <TextBlock>
-                                    <Run Text="Transactions Target (IS)" />
-                                    <Run Text="*" /></TextBlock>
-                            </Label>
+                            <Label Content="Transactions Target (IS) *" />
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
                                                  Value="{Binding ProjectConfiguration.ABTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
+                        <!--#endregion-->
                         <!--#region Minimum Success Rate Improvement Percent-->
-                        <StackPanel Grid.Column="1"
-                                    Margin="{StaticResource ColumnMargin}">
-                            <Label>
-                                <TextBlock>
-                                    <Run Text="Minimum Success Rate Improvement Percent" />
-                                    <Run Text="*" /></TextBlock>
-                            </Label>
+                        <StackPanel Margin="{StaticResource ColumnMargin}" Grid.Column="1">
+                            <Label Content="Minimum Success Rate Improvement Percent *" />
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
                                                  Value="{Binding ProjectConfiguration.ABMinImprovePercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region AB Weka N Total Tree-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}" Grid.Column="2">
+                            <Label Content="Weka N Total Tree" />
+                            <metro:NumericUpDown NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectConfiguration.ABWekaNTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region AB Weka Max Ratio-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}" Grid.Column="3">
+                            <Label Content="Weka Max Ratio" />
+                            <metro:NumericUpDown NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Minimum="0"
+                                                 Value="{Binding ProjectConfiguration.ABWekaMaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
                     </Grid>

@@ -13,21 +13,21 @@
             <!--Converters-->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <converter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-            <converter:NumberToBooleanConverter x:Key="NumberToBooleanConverter"/>
+            <converter:IntToBooleanConverter x:Key="IntToBooleanConverter"/>
             <converter:CommandParameterFlyoutConverter x:Key="CommandParameterFlyoutConverter"/>
-            
+            <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
+
             <converter:CompositeConverter x:Key="InverseBooleanToVisibilityConverter">
                 <converter:InverseBooleanConverter/>
                 <BooleanToVisibilityConverter/>
             </converter:CompositeConverter>
 
             <converter:CompositeConverter x:Key="LabelDataEmptyVisibilityConverter">
-                <converter:NumberToBooleanConverter/>
+                <converter:IntToBooleanConverter/>
                 <converter:InverseBooleanConverter/>
                 <BooleanToVisibilityConverter/>
             </converter:CompositeConverter>
 
-            <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </prism:PrismApplication>

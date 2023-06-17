@@ -39,10 +39,10 @@ namespace AdionFA.TransferObject.Base
 
         // Strategy Builder
 
-        public int SBMinTransactionsIS { get; set; }
+        public int SBMinTransactionsIS { get; set; } // TODO: Change property name to SBMinWinningTradesIS for clarity
         public decimal SBMinSuccessRatePercentIS { get; set; }
 
-        public int SBMinTransactionsOS { get; set; }
+        public int SBMinTransactionsOS { get; set; } // TODO: Change property name to SBMinWinningTradesOS for clarity
         public decimal SBMinSuccessRatePercentOS { get; set; }
 
         public decimal SBMaxSuccessRateVariation { get; set; }
@@ -60,5 +60,7 @@ namespace AdionFA.TransferObject.Base
 
         public int ABTransactionsTarget { get; set; }
         public decimal ABMinImprovePercent { get; set; }
+        public decimal ABWekaMaxRatioTree { get; set; }
+        public decimal ABWekaNTotalTree { get; set; }
     }
 }

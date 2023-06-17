@@ -17,6 +17,10 @@
              d:DesignHeight="450"
              d:DesignWidth="800">
 
+    <UserControl.Resources>
+        <Thickness x:Key="ColumnMargin">5 10 5 10</Thickness>
+    </UserControl.Resources>
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -25,9 +29,11 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+        <StackPanel HorizontalAlignment="Right"
+                    Orientation="Horizontal">
             <!--#region Stop Button-->
-            <Button Margin="0, 0, 5, 0" Width="80"
+            <Button Margin="{StaticResource ColumnMargin}"
+                    Width="80"
                     Height="40"
                     Command="{Binding StopCommand}">
                 <StackPanel Orientation="Horizontal">
@@ -40,8 +46,8 @@
             <!--#endregion-->
             <!--#region Cancel Button-->
             <Button Width="80"
-                    Margin="5, 0, 5, 0"
                     Height="40"
+                    Margin="{StaticResource ColumnMargin}"
                     Command="{Binding CancelCommand}">
                 <StackPanel Orientation="Horizontal">
                     <iconPacks:FontAwesome Kind="StopCircleSolid"
@@ -53,7 +59,7 @@
             <!--#endregion-->
             <!--#region Continue Button-->
             <Button Width="80"
-                    Margin="5, 0, 5, 0"
+                    Margin="{StaticResource ColumnMargin}"
                     Height="40"
                     Command="{Binding ContinueCommand}">
                 <StackPanel Orientation="Horizontal">
@@ -68,7 +74,7 @@
             <Grid>
                 <Button x:Name="ProcessBtn"
                         Width="80"
-                        Margin="0, 0, 5, 0"
+                        Margin="{StaticResource ColumnMargin}"
                         Height="40"
                         IsEnabled="{Binding CanExecute}"
                         Command="{Binding ProcessCommand}">
@@ -82,7 +88,7 @@
                 </Button>
                 <metro:ProgressRing IsActive="True"
                                     Width="25"
-                                    Margin="0, 0, 5, 0"
+                                    Margin="{StaticResource ColumnMargin}"
                                     Height="25"
                                     Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
@@ -92,10 +98,9 @@
         <!--#region Configuration-->
         <metro:MetroHeader Grid.Row="1"
                            Header="{x:Static commonResources:CommonResources.Configuration}">
-            <StackPanel Orientation="Horizontal"
-                        Margin="10">
+            <StackPanel Orientation="Horizontal">
                 <!--#region Transaction Target-->
-                <StackPanel>
+                <StackPanel Margin="{StaticResource ColumnMargin}">
                     <TextBlock Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}" />
                     <TextBox Text="{Binding ProjectConfiguration.ABTransactionsTarget}"
                              IsReadOnly="True"
@@ -104,12 +109,32 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <Separator Width="10"
-                           Background="Transparent" />
                 <!--#region Minimum Assembly Percent-->
-                <StackPanel>
+                <StackPanel Margin="{StaticResource ColumnMargin}">
                     <TextBlock Text="{x:Static commonResources:CommonResources.MinAssemblyPercent}" />
                     <TextBox Text="{Binding ProjectConfiguration.ABMinImprovePercent}"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             IsEnabled="False"
+                             Width="225" />
+                </StackPanel>
+                <!--#endregion-->
+                <!--#region Weka N Total Tree-->
+                <StackPanel Margin="{StaticResource ColumnMargin}">
+                    <TextBlock Text="Weka N Total Tree" />
+                    <TextBox Text="{Binding ProjectConfiguration.ABWekaNTotalTree}"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             IsEnabled="False"
+                             Width="225" />
+                </StackPanel>
+                <!--#endregion-->
+                <Separator Width="10"
+                           Background="Transparent" />
+                <!--#region Weka Max Ratio-->
+                <StackPanel Margin="{StaticResource ColumnMargin}">
+                    <TextBlock Text="Weka Max Ratio" />
+                    <TextBox Text="{Binding ProjectConfiguration.ABWekaMaxRatioTree}"
                              IsReadOnly="True"
                              Focusable="False"
                              IsEnabled="False"
@@ -123,7 +148,7 @@
         <!--#region Assembled Builder Information-->
         <metro:MetroHeader Grid.Row="2"
                            Header="{x:Static commonResources:CommonResources.AssembledBuilderInformation}">
-            <Grid Margin="10">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -138,7 +163,7 @@
                     <!--#region Assembled Nodes UP-->
                     <Button x:Name="assembledNodesUP"
                             Width="175"
-                            Margin="0, 0, 5, 0"
+                            Margin="{StaticResource ColumnMargin}"
                             Height="40">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="GraphOutline"
@@ -154,8 +179,7 @@
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                             <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
-                                            <Binding Path="AssembledBuilder.ChildBacktestsUP" />
-                                            <Binding Path="AssembledBuilder.WinningParentNodesUP" />
+                                            <Binding Path="AssembledBuilder.AssembledNodesUP" />
                                         </MultiBinding>
                                     </behaviors:InvokeCommandAction.CommandParameter>
                                 </behaviors:InvokeCommandAction>
@@ -167,7 +191,7 @@
                     <!--#region Assembled Nodes DOWN-->
                     <Button x:Name="assembledNodesDOWN"
                             Width="175"
-                            Margin="5, 0, 0, 0"
+                            Margin="{StaticResource ColumnMargin}"
                             Height="40">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="GraphOutline"
@@ -183,8 +207,7 @@
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                             <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
-                                            <Binding Path="AssembledBuilder.ChildBacktestsDOWN" />
-                                            <Binding Path="AssembledBuilder.WinningParentNodesDOWN" />
+                                            <Binding Path="AssembledBuilder.AssembledNodesDOWN" />
                                         </MultiBinding>
                                     </behaviors:InvokeCommandAction.CommandParameter>
                                 </behaviors:InvokeCommandAction>
@@ -229,7 +252,7 @@
         <!--#region Assembled Builder Process-->
         <metro:MetroHeader Grid.Row="3"
                            Header="Assembled Builder Process">
-            <Grid Margin="10">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -238,7 +261,7 @@
                 <!--#region Assembled Builder Process UP Nodes -->
                 <metro:MetroHeader Header="Assembled Nodes UP">
                     <DataGrid AutoGenerateColumns="False"
-                              Margin="0, 0, 5, 0"
+                              Margin="{StaticResource ColumnMargin}"
                               IsReadOnly="True"
                               ItemsSource="{Binding AssembledBuilderProcessUP}">
                         <DataGrid.Columns>
@@ -290,7 +313,7 @@
                                    Header="Assembled Nodes DOWN">
                     <DataGrid AutoGenerateColumns="False"
                               IsReadOnly="True"
-                              Margin="5, 0, 0, 0"
+                              Margin="{StaticResource ColumnMargin}"
                               ItemsSource="{Binding AssembledBuilderProcessDOWN}">
                         <DataGrid.Columns>
                             <!--#region Extraction-->

@@ -81,11 +81,6 @@ namespace AdionFA.UI.Station.Project
                 e.Handled = true;
                 MessageBox.Show(e.Exception.Message);
             };
-
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler((object sender, UnhandledExceptionEventArgs e) =>
-            {
-                MessageBox.Show(e.ExceptionObject.ToString());
-            });
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

@@ -1,5 +1,4 @@
-﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-using AdionFA.Infrastructure.Common.Weka.Model;
+﻿using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Services;
@@ -17,38 +16,28 @@ namespace AdionFA.UI.Station.Project.ViewModels.AssembledBuilder
         {
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
-            Backtests = new ObservableCollection<BacktestModel>();
-            WinningNodes = new ObservableCollection<ParentNodeModel>();
+            AssembledNodes = new ObservableCollection<AssembledNodeModel>();
         }
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAssembledNodes, StringComparison.Ordinal))
+            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAssembledNodes, StringComparison.Ordinal))
             {
-                Backtests = new((List<BacktestModel>)flyoutModel.ModelOne);
-                WinningNodes = new((List<ParentNodeModel>)flyoutModel.ModelTwo);
-
-                foreach (var node in WinningNodes)
+                if (flyoutModel.Model != null)
                 {
-                    node.ChildNodes = Backtests;
+                    AssembledNodes = new((List<AssembledNodeModel>)flyoutModel.Model);
+
                 }
             }
         });
 
         // View Bindings
 
-        private ObservableCollection<BacktestModel> _backtests;
-        public ObservableCollection<BacktestModel> Backtests
+        private ObservableCollection<AssembledNodeModel> _assembledNodes;
+        public ObservableCollection<AssembledNodeModel> AssembledNodes
         {
-            get => _backtests;
-            set => SetProperty(ref _backtests, value);
-        }
-
-        private ObservableCollection<ParentNodeModel> _winningNodes;
-        public ObservableCollection<ParentNodeModel> WinningNodes
-        {
-            get => _winningNodes;
-            set => SetProperty(ref _winningNodes, value);
+            get => _assembledNodes;
+            set => SetProperty(ref _assembledNodes, value);
         }
     }
 }

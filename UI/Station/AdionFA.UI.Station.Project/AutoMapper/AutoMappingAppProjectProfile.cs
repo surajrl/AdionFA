@@ -1,5 +1,4 @@
 ﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
-using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.MarketData;
@@ -10,7 +9,6 @@ using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Infrastructure.Model.ReferenceData;
-using AdionFA.UI.Station.Infrastructure.Model.Weka;
 using AdionFA.UI.Station.Project.Model.AssembledBuilder;
 using AdionFA.UI.Station.Project.Model.Configuration;
 using AutoMapper;
@@ -30,7 +28,7 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<EntityServiceHostDTO, EntityServiceHostVM>().ReverseMap();
             CreateMap<EntityTypeDTO, EntityTypeVM>().ReverseMap();
             CreateMap<SettingDTO, SettingVM>().ReverseMap();
-            CreateMap<TransferObject.Common.ConfigurationDTO, ConfigurationVM>().ReverseMap();
+            CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
             CreateMap<ScheduleConfigurationDTO, ScheduleConfigurationVM>().ReverseMap();
 
             // Market Data
@@ -44,7 +42,7 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             // Project
 
             CreateMap<ProjectDTO, ProjectVM>().ReverseMap();
-            CreateMap<TransferObject.Project.ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
+            CreateMap<ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
             CreateMap<ProjectScheduleConfigurationDTO, ProjectScheduleConfigurationVM>().ReverseMap();
             CreateMap<ProjectConfigurationVM, ProjectConfigurationModel>().ReverseMap();
 
@@ -53,11 +51,9 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<CurrencyDTO, CurrencyVM>().ReverseMap();
 
             // Extractor & Strategy Builder
-            CreateMap<TransferObject.Common.ConfigurationDTO, ConfigurationVM>().ReverseMap();
-            CreateMap<ProjectConfigurationVM, TransferObject.Common.ConfigurationDTO>().ReverseMap();
 
-            CreateMap<REPTreeOutputModel, REPTreeOutputVM>().ReverseMap();
-            CreateMap<REPTreeNodeModel, REPTreeNodeVM>().ReverseMap();
+            CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
+            CreateMap<ProjectConfigurationVM, ConfigurationDTO>().ReverseMap();
 
             // Assembled Builder
 

@@ -1,6 +1,5 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Project.Features;
 using MahApps.Metro.IconPacks;
 using System.Collections.ObjectModel;
@@ -24,7 +23,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             IsTransactionActive = false;
             ProjectName = "Loading...";
-            ProjectVM project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
+            var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
             if (project != null)
             {
                 ProjectName = project.ProjectName;

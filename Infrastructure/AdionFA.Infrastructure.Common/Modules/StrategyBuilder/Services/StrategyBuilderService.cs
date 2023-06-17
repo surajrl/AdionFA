@@ -19,6 +19,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 {
     public class StrategyBuilderService : IStrategyBuilderService
     {
+        // Services
+
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IExtractorService _extractorService;
 
@@ -30,86 +32,67 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Correlation
 
-        public CorrelationModel Correlation(string projectName, decimal correlation, EntityTypeEnum entityType)
+        public void Correlation(
+            string projectName,
+            StrategyBuilderModel strategyBuilder,
+            decimal correlation)
         {
             try
             {
-                var correlationDetail = new CorrelationModel();
+                string directory;
+                IList<BacktestModel> backtests;
+                IList<REPTreeNodeModel> nodes;
 
-                // Output Directory
+                FindCorrelation("up");
+                FindCorrelation("down");
 
-                var directoryUP = projectName.ProjectStrategyBuilderNodesUPDirectory();
-                var directoryDOWN = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-
-                switch (entityType)
+                void FindCorrelation(string label)
                 {
-                    case EntityTypeEnum.AssembledBuilder:
-                        directoryUP = projectName.ProjectAssembledBuilderNodesUPDirectory();
-                        directoryDOWN = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
-                        break;
+                    switch (label.ToLowerInvariant())
+                    {
+                        case "up":
+                            directory = projectName.ProjectStrategyBuilderNodesUPDirectory();
+                            backtests = strategyBuilder.CorrelationNodesUP.Select(node => node.BacktestIS).ToList();
+                            nodes = strategyBuilder.CorrelationNodesUP;
+                            break;
+
+                        case "down":
+                            directory = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                            backtests = strategyBuilder.CorrelationNodesDOWN.Select(node => node.BacktestIS).ToList();
+                            nodes = strategyBuilder.CorrelationNodesDOWN;
+                            break;
+
+                        default:
+                            return;
+                    }
+
+                    _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
+                    {
+                        var node = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
+
+                        // Algorithm to find correlation
+                        var indexOf = IndexOfCorrelation(backtests, node.BacktestIS, correlation);
+
+                        node.BacktestIS.CorrelationPass = indexOf != null;
+                        if (node.BacktestIS.CorrelationPass)
+                        {
+                            nodes.Add(node);
+
+                            if (indexOf >= 0)
+                            {
+                                backtests.Insert(indexOf.Value, node.BacktestIS);
+                            }
+                            if (indexOf == -1)
+                            {
+                                backtests.Add(node.BacktestIS);
+                            }
+                        }
+                        else
+                        {
+                            _projectDirectoryService.DeleteFile(file.FullName);
+                        }
+                    });
                 }
-
-                // UP IS Nodes
-
-                _projectDirectoryService.GetFilesInPath(directoryUP, "*.xml").ToList().ForEach(file =>
-                {
-                    if (file.Name.Contains("BACKTEST"))
-                    {
-                        var backtestIS = DeserializeBacktest(file.FullName);
-                        var indexOf = IndexOfCorrelation(correlationDetail.ISBacktestUP, backtestIS, correlation);
-
-                        backtestIS.CorrelationPass = indexOf != null;
-
-                        if (backtestIS.CorrelationPass)
-                        {
-                            if ((indexOf ?? -1) >= 0)
-                            {
-                                correlationDetail.ISBacktestUP.Insert(indexOf.Value, backtestIS);
-                            }
-                            if ((indexOf ?? 0) == -1)
-                            {
-                                correlationDetail.ISBacktestUP.Add(backtestIS);
-                            }
-                        }
-                        else
-                        {
-                            _projectDirectoryService.DeleteFile(file.FullName);                              // Delete the file with the backtest
-                            _projectDirectoryService.DeleteFile(file.FullName.Replace("BACKTEST", "NODE"));  // Delete the file with the node
-                        }
-                    }
-                });
-
-                // DOWN IS Nodes
-
-                _projectDirectoryService.GetFilesInPath(directoryDOWN, "*.xml").ToList().ForEach(file =>
-                {
-                    if (file.Name.Contains("BACKTEST"))
-                    {
-                        var backtestIS = DeserializeBacktest(file.FullName);
-                        var indexOf = IndexOfCorrelation(correlationDetail.ISBacktestDOWN, backtestIS, correlation);
-
-                        backtestIS.CorrelationPass = indexOf != null;
-
-                        if (backtestIS.CorrelationPass)
-                        {
-                            if ((indexOf ?? -1) >= 0)
-                            {
-                                correlationDetail.ISBacktestDOWN.Insert(indexOf.Value, backtestIS);
-                            }
-                            if ((indexOf ?? 0) == -1)
-                            {
-                                correlationDetail.ISBacktestDOWN.Add(backtestIS);
-                            }
-                        }
-                        else
-                        {
-                            _projectDirectoryService.DeleteFile(file.FullName);                              // Delete the file with the backtest
-                            _projectDirectoryService.DeleteFile(file.FullName.Replace("BACKTEST", "NODE"));  // Delete the file with the node
-                        }
-                    }
-                });
-
-                return correlationDetail;
             }
             catch (Exception ex)
             {
@@ -120,7 +103,9 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         private static int? IndexOfCorrelation(IList<BacktestModel> backtests, BacktestModel btModel, decimal correlation)
         {
-            int? indexOf = !backtests.Any() ? -1 : null;
+            int? indexOf = !backtests.Any()
+                ? -1
+                : null;
 
             foreach (var backtest in backtests)
             {
@@ -143,7 +128,9 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 if ((percentBtItem + percentBtModel) / 2 <= correlation)
                 {
-                    indexOf = percentBtItem > percentBtModel ? backtests.IndexOf(backtest) : -1;
+                    indexOf = percentBtItem > percentBtModel
+                        ? backtests.IndexOf(backtest)
+                        : -1;
                 }
 
                 if (indexOf > -1)
@@ -157,7 +144,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest
 
-        public StrategyBuilderModel BuildBacktestOfNode(
+        public void BuildBacktestOfNode(
             REPTreeNodeModel node,
             ProjectConfigurationDTO projectConfiguration,
             IEnumerable<Candle> candles,
@@ -166,9 +153,10 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         {
             try
             {
-                var strategyBuilder = new StrategyBuilderModel();
+                // OS Backtest
 
-                strategyBuilder.OS = ExecuteBacktest(
+                ExecuteBacktest(
+                    node.BacktestOS,
                     EntityTypeEnum.StrategyBuilder,
                     projectConfiguration.FromDateOS.Value,
                     projectConfiguration.ToDateOS.Value,
@@ -179,13 +167,19 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     manualResetEvent,
                     cancellationToken);
 
-                if (!ApplyWinningStrategyRulesOS(strategyBuilder.OS, projectConfiguration))
+                node.WinningStrategy =
+                    node.BacktestOS.WinningTrades >= projectConfiguration.SBMinTransactionsOS
+                    && node.BacktestOS.SuccessRatePercent >= (double)projectConfiguration.SBMinSuccessRatePercentOS;
+
+                if (!node.WinningStrategy)
                 {
-                    strategyBuilder.WinningStrategy = false;
-                    return strategyBuilder;
+                    return;
                 }
 
-                strategyBuilder.IS = ExecuteBacktest(
+                // IS Backtest
+
+                ExecuteBacktest(
+                    node.BacktestIS,
                     EntityTypeEnum.StrategyBuilder,
                     projectConfiguration.FromDateIS.Value,
                     projectConfiguration.ToDateIS.Value,
@@ -196,17 +190,18 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     manualResetEvent,
                     cancellationToken);
 
-                if (!ApplyWinningStrategyRulesIS(strategyBuilder.IS, projectConfiguration))
+                node.WinningStrategy =
+                     node.BacktestIS.WinningTrades >= projectConfiguration.SBMinTransactionsIS
+                     && node.BacktestIS.SuccessRatePercent >= (double)projectConfiguration.SBMinSuccessRatePercentIS;
+
+                if (!node.WinningStrategy)
                 {
-                    strategyBuilder.WinningStrategy = false;
-                    return strategyBuilder;
+                    return;
                 }
 
-                strategyBuilder.WinningStrategy =
-                    strategyBuilder.SuccessRateVariation <= (double)projectConfiguration.SBMaxSuccessRateVariation
-                    && (!projectConfiguration.IsProgressiveness || strategyBuilder.ProgressivenessVariation <= (double)projectConfiguration.MaxProgressivenessVariation);
-
-                return strategyBuilder;
+                node.WinningStrategy =
+                    node.SuccessRateVariation <= (double)projectConfiguration.SBMaxSuccessRateVariation
+                    && (!projectConfiguration.IsProgressiveness || node.ProgressivenessVariation <= (double)projectConfiguration.MaxProgressivenessVariation);
             }
             catch (Exception ex)
             {
@@ -215,122 +210,99 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        public BacktestModel ExecuteBacktest(
+        public void ExecuteBacktest(
+            BacktestModel backtest,
             EntityTypeEnum entityType,
             DateTime fromDate,
             DateTime toDate,
             int timeframeId,
             IEnumerable<Candle> candles,
             REPTreeNodeModel parentNode,
-            IList<BacktestModel> childNodes,
+            IList<REPTreeNodeModel> childNodes,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
-            try
+            var nodeIndicators = _extractorService.BuildIndicatorsFromNode(parentNode.Node);
+
+            var candlesRange = (from candle in candles
+                                let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
+                                where dt >= fromDate && dt <= toDate
+                                select candle).ToList();
+
+
+            backtest.FromDate = fromDate;
+            backtest.ToDate = toDate;
+            backtest.TimeframeId = timeframeId;
+
+            backtest.BacktestOperations = new List<BacktestOperationModel>();
+            backtest.TotalOpportunity = candlesRange.Count - 1;
+
+            for (var candleIdx = 0; candleIdx < candlesRange.Count - 1; candleIdx++)
             {
-                string label;
-                if (entityType == EntityTypeEnum.AssembledBuilder)
+                manualResetEvent.Wait();
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var firstCandle = candlesRange[0];
+                var nextCandle = candlesRange[candleIdx + 1];
+                var currentCandle = new Candle
                 {
-                    label = childNodes.First().Label;
-                }
-                else
-                {
-                    label = parentNode.Label;
-                }
+                    Date = candlesRange[candleIdx].Date,
+                    Time = candlesRange[candleIdx].Time,
 
-                var nodeIndicators = _extractorService.BuildIndicatorsFromNode(parentNode.Node);
+                    Open = candlesRange[candleIdx].Open,
+                    High = candlesRange[candleIdx].Open,
+                    Low = candlesRange[candleIdx].Open,
+                    Close = candlesRange[candleIdx].Open,
 
-                var candlesRange = (from candle in candles
-                                    let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
-                                    where dt >= fromDate && dt <= toDate
-                                    select candle).ToList();
-
-                var backtest = new BacktestModel
-                {
-                    Label = label,
-                    FromDate = fromDate,
-                    ToDate = toDate,
-                    TimeframeId = timeframeId,
-                    Node = parentNode.Node.ToList(),
-
-                    BacktestOperations = new List<BacktestOperationModel>(),
-                    TotalOpportunity = candlesRange.Count - 1
+                    Spread = candlesRange[candleIdx].Spread
                 };
 
-                for (var candleIdx = 0; candleIdx < candlesRange.Count - 1; candleIdx++)
+                if (ApproveCandle(nodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
                 {
-                    manualResetEvent.Wait();
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var firstCandle = candlesRange[0];
-                    var nextCandle = candlesRange[candleIdx + 1];
-                    var currentCandle = new Candle
+                    if (entityType == EntityTypeEnum.AssembledBuilder)
                     {
-                        Date = candlesRange[candleIdx].Date,
-                        Time = candlesRange[candleIdx].Time,
-
-                        Open = candlesRange[candleIdx].Open,
-                        High = candlesRange[candleIdx].Open,
-                        Low = candlesRange[candleIdx].Open,
-                        Close = candlesRange[candleIdx].Open,
-
-                        Spread = candlesRange[candleIdx].Spread
-                    };
-
-                    if (ApproveCandle(nodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
-                    {
-                        if (entityType == EntityTypeEnum.AssembledBuilder)
+                        var childNodePass = false;
+                        foreach (var childNode in childNodes)
                         {
-                            var childNodePass = false;
-                            foreach (var childNode in childNodes)
+                            var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
+                            if (ApproveCandle(childNodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
                             {
-                                var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
-                                if (ApproveCandle(childNodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
-                                {
-                                    childNodePass = true;
-                                    break;
-                                }
-                            }
-
-                            if (!childNodePass)
-                            {
-                                // Move to the next candle if none of the child nodes is a pass
-                                continue;
+                                childNodePass = true;
+                                break;
                             }
                         }
 
-                        backtest.TotalTrades++;
-
-                        var isWinnerTrade = false;
-                        var spread = currentCandle.Spread * 0.00001;
-
-                        isWinnerTrade = backtest.Label.ToLowerInvariant() == "up"
-                            ? (currentCandle.Open + spread) < nextCandle.Open
-                            : currentCandle.Open > (nextCandle.Open + spread);
-
-                        if (isWinnerTrade)
+                        if (!childNodePass)
                         {
-                            backtest.WinningTrades++;
+                            // Move to the next candle if none of the child nodes is a pass
+                            continue;
                         }
-                        else
-                        {
-                            backtest.LosingTrades++;
-                        }
-
-                        backtest.BacktestOperations.Add(new BacktestOperationModel
-                        {
-                            Date = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time),
-                            IsWinner = isWinnerTrade
-                        });
                     }
-                }
 
-                return backtest;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogException<Exception>(ex);
-                throw;
+                    backtest.TotalTrades++;
+
+                    var isWinnerTrade = false;
+                    var spread = currentCandle.Spread * 0.00001;
+
+                    isWinnerTrade = parentNode.Label.ToLowerInvariant() == "up"
+                        ? (currentCandle.Open + spread) < nextCandle.Open
+                        : currentCandle.Open > (nextCandle.Open + spread);
+
+                    if (isWinnerTrade)
+                    {
+                        backtest.WinningTrades++;
+                    }
+                    else
+                    {
+                        backtest.LosingTrades++;
+                    }
+
+                    backtest.BacktestOperations.Add(new BacktestOperationModel
+                    {
+                        Date = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time),
+                        IsWinner = isWinnerTrade
+                    });
+                }
             }
         }
 
@@ -403,67 +375,33 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             return true;
         }
 
-        private bool ApplyWinningStrategyRulesIS(BacktestModel backtestIS, ProjectConfigurationDTO configuration)
+        // Serialization
+
+        public static void SerializeNode(EntityTypeEnum entityType, string projectName, REPTreeNodeModel node)
         {
-            return backtestIS.WinningTrades >= configuration.SBMinTransactionsIS
-                && backtestIS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentIS;
-        }
+            string directory;
 
-        private bool ApplyWinningStrategyRulesOS(BacktestModel backtestOS, ProjectConfigurationDTO configuration)
-        {
-            return backtestOS.WinningTrades >= configuration.SBMinTransactionsOS
-               && backtestOS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentOS;
-        }
-
-        // Backtest Serialization
-
-        public static void SerializeBacktest(EntityTypeEnum entityType, string projectName, BacktestModel backtest)
-        {
-            var directory = string.Empty;
-
-            if (entityType == EntityTypeEnum.StrategyBuilder)
+            switch (entityType)
             {
-                directory = backtest.Label.ToLower() == "up"
-                    ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-                    : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-            }
-            else if (entityType == EntityTypeEnum.AssembledBuilder)
-            {
-                directory = backtest.Label.ToLower() == "up"
-                    ? projectName.ProjectAssembledBuilderNodesUPDirectory()
-                    : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                case EntityTypeEnum.StrategyBuilder:
+                    directory = node.Label.ToLower() == "up"
+                        ? projectName.ProjectStrategyBuilderNodesUPDirectory()
+                        : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                    break;
+
+                case EntityTypeEnum.AssembledBuilder:
+                    directory = node.Label.ToLower() == "up"
+                        ? projectName.ProjectAssembledBuilderNodesUPDirectory()
+                        : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                    break;
+
+                default:
+                    return;
             }
 
-            var filename = $"BACKTEST-{RegexHelper.GetValidFileName(backtest.Name, "_")}-{backtest.TotalTrades}.xml";
-
-            SerializerHelper.XMLSerializeObject(backtest, string.Format(@"{0}\{1}", directory, filename));
-        }
-
-        public static void SerializeNode(EntityTypeEnum entityType, string projectName, string nodeName, REPTreeNodeModel node)
-        {
-            var directory = string.Empty;
-
-            if (entityType == EntityTypeEnum.StrategyBuilder)
-            {
-                directory = node.Label.ToLower() == "up"
-                    ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-                    : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-            }
-            else if (entityType == EntityTypeEnum.AssembledBuilder)
-            {
-                directory = node.Label.ToLower() == "up"
-                    ? projectName.ProjectAssembledBuilderNodesUPDirectory()
-                    : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
-            }
-
-            var filename = $"NODE-{RegexHelper.GetValidFileName(nodeName, "_")}-{node.TotalTradesIs}.xml";
+            var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
 
             SerializerHelper.XMLSerializeObject(node, string.Format(@"{0}\{1}", directory, filename));
-        }
-
-        public static BacktestModel DeserializeBacktest(string path)
-        {
-            return SerializerHelper.XMLDeSerializeObject<BacktestModel>(path);
         }
     }
 }

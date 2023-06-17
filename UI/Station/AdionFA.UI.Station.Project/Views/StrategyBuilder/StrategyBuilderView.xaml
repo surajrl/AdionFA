@@ -156,9 +156,8 @@
             <!--#endregion-->
         </StackPanel>
 
-        <!--#region Configuration Expander-->
-        <Expander x:Name="StrategyBuilderInformationExpander"
-                  Grid.Row="1"
+        <!--#region Project Configuration Expander-->
+        <Expander Grid.Row="1"
                   Margin="0 3 10 0"
                   Style="{DynamicResource ControlExpanderStyle}"
                   Header="{x:Static commonResources:CommonResources.Configuration}"
@@ -189,7 +188,7 @@
                                     <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.TotalInstanceWeka}"
+                        <TextBox Text="{Binding ProjectConfiguration.TotalInstanceWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -205,7 +204,7 @@
                                     <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.NTotalTree}"
+                        <TextBox Text="{Binding ProjectConfiguration.NTotalTree}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -221,7 +220,7 @@
                                     <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.DepthWeka}"
+                        <TextBox Text="{Binding ProjectConfiguration.DepthWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -237,7 +236,7 @@
                                     <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MaxRatioTree}"
+                        <TextBox Text="{Binding ProjectConfiguration.MaxRatioTree}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -260,7 +259,7 @@
                                     <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MaximumSeed}"
+                        <TextBox Text="{Binding ProjectConfiguration.MaximumSeed}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -277,7 +276,7 @@
                                     <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MinimalSeed}"
+                        <TextBox Text="{Binding ProjectConfiguration.MinimalSeed}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -293,7 +292,7 @@
                                     <Run Text="" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.TotalDecimalWeka}"
+                        <TextBox Text="{Binding ProjectConfiguration.TotalDecimalWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -314,7 +313,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalUP}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBWinningStrategyUPTarget}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyUPTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -329,7 +328,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalDOWN}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBWinningStrategyDOWNTarget}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyDOWNTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -344,7 +343,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBTransactionsTarget}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBTransactionsTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -364,7 +363,7 @@
                                     <Run Text="Maximum Success Rate Variation" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMaxSuccessRateVariation}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBMaxSuccessRateVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -382,7 +381,7 @@
                         </Label>
                         <metro:ToggleSwitch Margin="0 -3"
                                             IsEnabled="False"
-                                            IsOn="{Binding Configuration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            IsOn="{Binding ProjectConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <!--#endregion-->
 
@@ -394,7 +393,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.MaxProgressivenessVariation}"
+                        <TextBox Text="{Binding ProjectConfiguration.MaxProgressivenessVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -410,7 +409,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.Percent}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMaxCorrelationPercent}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -432,7 +431,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.IS}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMinTransactionsIS}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -448,7 +447,7 @@
                                     <Run Text="{x:Static commonResources:CommonResources.OS}" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMinTransactionsOS}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsOS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -468,7 +467,7 @@
                                 <Run Text="Minimum Success Rate Percent (IS)" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMinSuccessRatePercentIS}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -483,7 +482,7 @@
                                 <Run Text="Minimum Success Rate Percent (OS)" />
                             </TextBlock>
                         </Label>
-                        <TextBox Text="{Binding Configuration.SBMinSuccessRatePercentOS}"
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentOS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -512,64 +511,22 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <!--#region Nodes Found-->
-                        <TextBlock Grid.Row="0"
-                                   Grid.Column="0"
-                                   Margin="0 5 10 5">
-                            <Run Text="Nodes Found"
-                                 FontWeight="SemiBold" />
-                            <Run Text=":" />
-                        </TextBlock>
-                        <TextBlock Grid.Row="0"
-                                   Grid.Column="1"
-                                   Margin="0 5 10 5">
-                            <Run Text="{Binding AllNodes.Count, Mode=OneWay}" />
-                        </TextBlock>
-                        <!--#endregion-->
-
-                        <!--#region Correlation UP-->
-                        <TextBlock Grid.Row="1"
-                                   Grid.Column="0"
-                                   Margin="0 5 10 5">
-                            <Run Text="{x:Static commonResources:CommonResources.CorrelationUP}"
-                                 FontWeight="SemiBold" />
-                            <Run Text=":" />
-                        </TextBlock>
-                        <TextBlock Grid.Row="1"
-                                   Grid.Column="1"
-                                   Margin="0 5 10 5">
-                            <Run Text="{Binding TotalCorrelationUP}" />
-                        </TextBlock>
-                        <!--#endregion-->
-
-                        <!--#region Correlation DOWN-->
-                        <TextBlock Grid.Row="2"
-                                   Grid.Column="0"
-                                   Margin="0 5 10 5">
-                            <Run Text="{x:Static commonResources:CommonResources.CorrelationDOWN}"
-                                 FontWeight="SemiBold" />
-                            <Run Text=":" />
-                        </TextBlock>
-                        <TextBlock Grid.Row="2"
-                                   Grid.Column="1"
-                                   Margin="0 5 10 5">
-                            <Run Text="{Binding TotalCorrelationDOWN}" />
-                        </TextBlock>
-                        <!--#endregion-->
-                    </Grid>
+                <StackPanel Margin="{StaticResource ColumnMargin}"
+                            VerticalAlignment="Center">
+                    <!--#region Correlation UP-->
+                    <TextBlock>
+                        <Run Text="Correlation Nodes UP :"
+                             FontWeight="SemiBold" />
+                        <Run Text="{Binding StrategyBuilder.CorrelationNodesUP.Count, Mode=OneWay}" />
+                    </TextBlock>
+                    <!--#endregion-->
+                    <!--#region Correlation DOWN-->
+                    <TextBlock>
+                        <Run Text="Correlation Nodes DOWN :"
+                             FontWeight="SemiBold" />
+                        <Run Text="{Binding StrategyBuilder.CorrelationNodesDOWN.Count, Mode=OneWay}" />
+                    </TextBlock>
+                    <!--#endregion-->
                 </StackPanel>
 
                 <!--#region Maximum Parallelism Configuration-->
@@ -676,7 +633,7 @@
                   Margin="10 5"
                   IsReadOnly="True"
                   AutoGenerateColumns="False"
-                  ItemsSource="{Binding StrategyBuilderProcessList}"
+                  ItemsSource="{Binding StrategyBuilderProcesses}"
                   RowHeaderWidth="0">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
@@ -729,166 +686,78 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Expander Style="{StaticResource ControlExpanderStyle}"
-                                      IsExpanded="{Binding IsExpanded}"
-                                      IsEnabled="{Binding IsEnabled}">
+                                      IsEnabled="{Binding BacktestNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
                                 <Expander.Header>
-                                    <Grid Name="headergrid"
-                                          Margin="0 0 1 0">
-                                        <Grid.Resources>
-                                            <Style TargetType="{x:Type Grid}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding HasWinningStrategy}"
-                                                                 Value="true">
-                                                        <Setter Property="Background"
-                                                                Value="LightBlue" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding HasWinningStrategy}"
-                                                                 Value="false">
-                                                        <Setter Property="Foreground"
-                                                                Value="Gray" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Grid.Resources>
-
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*" />
-                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0"
-                                                   Margin="5">
-                                            <Run Text="{Binding Status}" />
-                                        </TextBlock>
+                                        <TextBlock Margin="5"
+                                                   Text="{Binding Message}" />
 
                                         <TextBlock Grid.Column="1"
-                                                   Margin="5">
-                                            <Run Text="{Binding Message}" />
-                                        </TextBlock>
-
-                                        <TextBlock Grid.Column="2"
                                                    Margin="20 5"
                                                    HorizontalAlignment="Right">
-                                            <Run Text="Completed" />
-                                            <Run Text=" - " />
+                                            <Run Text="Completed - " />
                                             <Run Text="{Binding CompletedBacktests}"
                                                  FontWeight="SemiBold" />
                                             <Run Text="/" />
-                                            <Run Text="{Binding TotalStrategy}"
+                                            <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
                                                  FontWeight="SemiBold" />
                                         </TextBlock>
                                     </Grid>
                                 </Expander.Header>
-                                <StackPanel>
-                                    <Grid Name="dummygrid"
-                                          Visibility="Hidden">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="0.2*"></ColumnDefinition>
-                                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                                            <ColumnDefinition Width="2*"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="0"
-                                                Name="dummywidth0"></Border>
-                                        <Border Grid.Column="1"
-                                                Name="dummywidth1"></Border>
-                                        <Border Grid.Column="2"
-                                                Name="dummywidth2"></Border>
-                                        <Border Grid.Column="3"
-                                                Name="dummywidth3"></Border>
-                                    </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
 
-                                    <ListView Margin="10"
-                                              ItemsSource="{Binding InstancesList}"
-                                              MaxHeight="300">
-                                        <ListView.Resources>
-                                            <Style TargetType="{x:Type ListViewItem}"
-                                                   BasedOn="{StaticResource MahApps.Styles.ListViewItem}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding HasWinningStrategy}"
-                                                                 Value="true">
-                                                        <Setter Property="Background"
-                                                                Value="LightBlue" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ListView.Resources>
-
-                                        <ListView.View>
-                                            <GridView>
-                                                <GridViewColumn Width="{Binding ElementName=dummywidth0, Path=ActualWidth}">
-                                                    <GridViewColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <StackPanel Margin="5 2">
-                                                                <Button x:Name="viewInstanceDetailBtn">
-                                                                    <Button.Content>
-                                                                        <iconPacks:PackIconMaterial Kind="FileTreeOutline"
-                                                                                                    Width="12"
-                                                                                                    Height="12" />
-                                                                    </Button.Content>
-                                                                    <behaviors:Interaction.Triggers>
-                                                                        <behaviors:EventTrigger SourceName="viewInstanceDetailBtn"
-                                                                                                EventName="Click">
-                                                                            <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                                                                <behaviors:InvokeCommandAction.CommandParameter>
-                                                                                    <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                                        <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}" />
-                                                                                        <Binding Path="NodeOutput" />
-                                                                                    </MultiBinding>
-                                                                                </behaviors:InvokeCommandAction.CommandParameter>
-                                                                            </behaviors:InvokeCommandAction>
-                                                                        </behaviors:EventTrigger>
-                                                                    </behaviors:Interaction.Triggers>
-                                                                </Button>
-                                                            </StackPanel>
-                                                        </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
-                                                </GridViewColumn>
-
-                                                <GridViewColumn Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
-                                                                Header="{x:Static commonResources:CommonResources.Seed}"
-                                                                DisplayMemberBinding="{Binding Seed}" />
-
-                                                <GridViewColumn Width="{Binding ElementName=dummywidth2, Path=ActualWidth}"
-                                                                Header="Nodes"
-                                                                DisplayMemberBinding="{Binding ValidNodes}" />
-
-                                                <GridViewColumn Width="{Binding ElementName=dummywidth3, Path=ActualWidth}"
-                                                                Header="Backtests">
-                                                    <GridViewColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <Grid>
-                                                                <metro:MetroProgressBar Height="20"
-                                                                                        Margin="0 2 25 0"
-                                                                                        VerticalAlignment="Center"
-                                                                                        Background="Transparent"
-                                                                                        Foreground="CadetBlue"
-                                                                                        Minimum="0"
-                                                                                        Maximum="{Binding ValidNodes}"
-                                                                                        Value="{Binding CounterProgressBar}" />
-                                                                <TextBlock Grid.Column="2"
-                                                                           Margin="20 5"
-                                                                           HorizontalAlignment="Center">
+                                    <Button x:Name="viewNodeDetailBtn"
+                                            Margin="{StaticResource ColumnMargin}">
+                                        <Button.Content>
+                                            <iconPacks:PackIconMaterial Kind="FileTreeOutline"
+                                                                        Width="12"
+                                                                        Height="12" />
+                                        </Button.Content>
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger SourceName="viewNodeDetailBtn"
+                                                                    EventName="Click">
+                                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}" />
+                                                            <Binding Path="Tree.NodeOutput" />
+                                                        </MultiBinding>
+                                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                                </behaviors:InvokeCommandAction>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+                                    <Grid Grid.Column="1"
+                                          Margin="{StaticResource ColumnMargin}">
+                                        <metro:MetroProgressBar Height="20"
+                                                                VerticalAlignment="Center"
+                                                                Background="Transparent"
+                                                                Foreground="CadetBlue"
+                                                                Minimum="0"
+                                                                Maximum="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                                Value="{Binding ProgressCounter}" />
+                                        <TextBlock Grid.Column="2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
                                                                     <Run Text="Completed" />
                                                                     <Run Text=" - " />
-                                                                    <Run Text="{Binding CounterProgressBar}"
+                                                                    <Run Text="{Binding ProgressCounter}"
                                                                          FontWeight="SemiBold" />
                                                                     <Run Text="/" />
-                                                                    <Run Text="{Binding ValidNodes}"
+                                                                    <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
                                                                          FontWeight="SemiBold" />
-                                                                </TextBlock>
-                                                            </Grid>
-                                                        </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
-                                                </GridViewColumn>
-                                            </GridView>
-                                        </ListView.View>
-                                    </ListView>
-                                </StackPanel>
+                                        </TextBlock>
+                                    </Grid>
+                                </Grid>
                             </Expander>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -901,7 +770,7 @@
                     VerticalAlignment="Center"
                     Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Label Content="Strategy Builder Process is Empty"
-                   Visibility="{Binding StrategyBuilderProcessList.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
+                   Visibility="{Binding StrategyBuilderProcesses.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
         </StackPanel>
         <!--#endregion-->
     </Grid>

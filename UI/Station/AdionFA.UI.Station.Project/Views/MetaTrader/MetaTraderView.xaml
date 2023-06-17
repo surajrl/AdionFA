@@ -21,7 +21,7 @@
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
     </UserControl.Resources>
 
-    <Grid Margin="10 0 0 0">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -182,32 +182,63 @@
                               SelectedValue="{Binding TimeframeId, Mode=TwoWay}">
                     </ComboBox>
                 </StackPanel>
-                <Button x:Name="nodesUnderTestBtn"
-                        Grid.Column="2"
-                        Width="160"
-                        Height="40"
-                        Margin="10 0 0 0"
-                        IsEnabled="{Binding NodesAny}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="FileTreeOutline"
-                                                    Width="15"
-                                                    Height="24" />
-                        <Label Content="{x:Static commonResources:CommonResources.NodesUnderTest}"
-                               FontSize="11" />
-                    </StackPanel>
-                    <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger SourceName="nodesUnderTestBtn"
-                                                EventName="Click">
-                            <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                <behaviors:InvokeCommandAction.CommandParameter>
-                                    <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                        <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodeMetaTrader}" />
-                                    </MultiBinding>
-                                </behaviors:InvokeCommandAction.CommandParameter>
-                            </behaviors:InvokeCommandAction>
-                        </behaviors:EventTrigger>
-                    </behaviors:Interaction.Triggers>
-                </Button>
+                <!--#region Single Node-->
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal">
+                    <Button x:Name="assembledNodesBtn"
+                            Margin="{StaticResource ColumnMargin}"
+                            Width="125"
+                            Height="40"
+                            IsEnabled="{Binding NodesAny}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="GraphOutline"
+                                                        VerticalAlignment="Center"
+                                                        Width="15" />
+                            <Label Content="Assembled Nodes"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger SourceName="assembledNodesBtn"
+                                                    EventName="Click">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
+                                            <Binding Path="Nodes"/>
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                    <Button x:Name="nodesBtn"
+                            Width="80"
+                            Margin="{StaticResource ColumnMargin}"
+                            Height="40"
+                            IsEnabled="{Binding NodesAny}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="FileTreeOutline"
+                                                        VerticalAlignment="Center"
+                                                        Width="15"/>
+                            <Label Content="Node"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger SourceName="nodesBtn"
+                                                    EventName="Click">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodeMetaTrader}" />
+                                            <Binding Path="Nodes" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                    <!--#endregion-->
+                </StackPanel>
             </Grid>
         </metro:MetroHeader>
 

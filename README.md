@@ -19,6 +19,7 @@ Strategy builder
 
 Instances -> Number of trees created per extractor
 NTotals ->
+MaxRatioTree -> Difference between UP and DOWN (percent)
 
 ## Strategy Builder Configuration
 

@@ -10,9 +10,8 @@ namespace AdionFA.UI.Station.Infrastructure.Services
 {
     public class FlyoutModel
     {
-        public string FlyoutName { get; set; }
-        public object ModelOne { get; set; }
-        public object ModelTwo { get; set; }
+        public string Name { get; set; }
+        public object Model { get; set; }
     }
 
     public class FlyoutService : IFlyoutService
@@ -34,9 +33,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services
 
             if (region != null)
             {
-                var flyout = region.Views.Where(v => v is IFlyoutView && ((IFlyoutView)v).FlyoutName.Equals(flyoutModel.FlyoutName)).FirstOrDefault() as Flyout;
-
-                if (flyout != null)
+                if (region.Views.FirstOrDefault(v => v is IFlyoutView && ((IFlyoutView)v).FlyoutName.Equals(flyoutModel.Name)) is Flyout flyout)
                 {
                     flyout.IsOpen = !flyout.IsOpen;
                 }

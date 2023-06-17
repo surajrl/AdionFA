@@ -65,5 +65,7 @@ namespace AdionFA.Core.Domain.Aggregates.Base
 
         public int ABTransactionsTarget { get; set; }
         public decimal ABMinImprovePercent { get; set; }
+        public decimal ABWekaMaxRatioTree { get; set; }
+        public decimal ABWekaNTotalTree { get; set; }
     }
 }

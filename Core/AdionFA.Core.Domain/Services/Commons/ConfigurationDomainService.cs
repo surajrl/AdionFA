@@ -51,7 +51,7 @@ namespace AdionFA.Core.Domain.Services.Commons
                 Expression<Func<Configuration, bool>> predicate =
                     gc => gc.ConfigurationId == configurationId || (gc.EndDate ?? DateTime.MinValue) == DateTime.MinValue;
 
-                Configuration configuration = includeGraph
+                var configuration = includeGraph
                     ? _configurationRepository.FirstOrDefault(predicate,
                     gc => gc.Symbol,
                     gc => gc.Timeframe,
@@ -73,9 +73,10 @@ namespace AdionFA.Core.Domain.Services.Commons
             {
                 var dt = DateTime.UtcNow;
 
-                //Close Temporal Record
+                // Close temporal record
                 _configurationRepository.CloseTemporalRecord();
 
+                // Create
                 _configurationRepository.Create(configuration);
 
                 return configuration.ConfigurationId;
@@ -126,11 +127,9 @@ namespace AdionFA.Core.Domain.Services.Commons
             try
             {
                 // Close temporal record
-
                 _scheduleConfigurationRepository.CloseTemporalRecord();
 
                 // Create
-
                 _scheduleConfigurationRepository.Create(scheduleConfiguration);
 
                 return scheduleConfiguration.ConfigurationId;

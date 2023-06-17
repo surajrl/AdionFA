@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -47,9 +46,9 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
             // Entity Configuration
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
 
-            List<Type> types = assembly.GetTypes().Where(
+            var types = assembly.GetTypes().Where(
                 t => !t.IsInterface &&
                      typeof(IAdionFAETC).IsAssignableFrom(t)).ToList();
 
@@ -61,7 +60,7 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 m.MakeGenericMethod(genericType).Invoke(modelBuilder, new object[] { entityConfiguration });
             });
 
-            MethodInfo m = typeof(EnumExtension).GetMethod("GetMetadata");
+            var m = typeof(EnumExtension).GetMethod("GetMetadata");
 
             var userId = "0000";
             var username = "admin";
@@ -275,6 +274,8 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
 
                 ABTransactionsTarget = 600,
                 ABMinImprovePercent = 5,
+                ABWekaMaxRatioTree = (decimal)2,
+                ABWekaNTotalTree = 500,
 
                 // Time Sensitive Base
 

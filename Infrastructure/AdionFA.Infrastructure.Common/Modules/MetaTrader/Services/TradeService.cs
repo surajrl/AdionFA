@@ -92,17 +92,17 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
         }
 
         public bool IsTrade(
-            ParentNodeModel parentNode,
+            AssembledNodeModel assembledNode,
             IList<Candle> candleHistory,
             Candle currentCandle)
         {
             candleHistory.Add(currentCandle);
-            if (IsTrade(parentNode.Node, candleHistory, currentCandle))
+            if (IsTrade(assembledNode.ParentNode.Node, candleHistory, currentCandle))
             {
                 // Try every child node until one is met
-                foreach (var childNode in parentNode.ChildNodes)
+                foreach (var childNode in assembledNode.ChildNodes)
                 {
-                    if (IsTrade(childNode.Node, candleHistory, currentCandle))
+                    if (IsTrade(childNode, candleHistory, currentCandle))
                     {
                         return true;
                     }

@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.UI.Station.Module.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.Core.API", "Core\AdionFA.Core.Api\AdionFA.Core.API.csproj", "{F8443ED9-4948-4A60-B54B-C0A8DCC148FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.Core.API.Contract", "Core\AdionFA.Core.Api.Contract\AdionFA.Core.API.Contract.csproj", "{8BF05ECB-2EF5-4457-AC74-41E2066DE370}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.Core.API.Contracts", "Core\AdionFA.Core.Api.Contract\AdionFA.Core.API.Contracts.csproj", "{8BF05ECB-2EF5-4457-AC74-41E2066DE370}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdionFA.Core.Application", "Core\AdionFA.Core.Application\AdionFA.Core.Application.csproj", "{749F19DB-AAD6-491B-90EF-1AEA86C896E2}"
 EndProject

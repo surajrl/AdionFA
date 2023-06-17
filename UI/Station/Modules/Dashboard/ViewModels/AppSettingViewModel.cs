@@ -63,7 +63,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
         public void ShowFlyout(FlyoutModel flyoutModel)
         {
-            if ((flyoutModel?.FlyoutName ?? string.Empty).Equals(FlyoutRegions.FlyoutAppSetting))
+            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutAppSetting))
             {
                 PopulateViewModel();
             }
