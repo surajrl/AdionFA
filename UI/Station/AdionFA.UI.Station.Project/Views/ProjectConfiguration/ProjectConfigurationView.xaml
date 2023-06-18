@@ -563,8 +563,7 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                            <Run Text="{x:Static commonResources:CommonResources.Correlation}" />
-                                            <Run Text="{x:Static commonResources:CommonResources.Percent}" />
+                                            <Run Text="Correlation %" />
                                             <Run Text="*" /></TextBlock>
                             </Label>
                             <metro:NumericUpDown Minimum="0"
@@ -595,7 +594,7 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                    <Run Text="Minimum Success Rate Percent (IS)" />
+                                    <Run Text="Minimum Success Rate % (IS)" />
                                     <Run Text="*" />
                                 </TextBlock>
                             </Label>
@@ -627,7 +626,7 @@
                                     Margin="{StaticResource ColumnMargin}">
                             <Label>
                                 <TextBlock>
-                                        <Run Text="Minimum Success Rate Percent (OS)" />
+                                        <Run Text="Minimum Success Rate % (OS)" />
                                         <Run Text="*" />
                                 </TextBlock>
                             </Label>
@@ -666,9 +665,9 @@
                                                  Value="{Binding ProjectConfiguration.ABMinImprovePercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
                         <!--#endregion-->
-                        <!--#region AB Weka N Total Tree-->
+                        <!--#region AB Weka NTotals-->
                         <StackPanel Margin="{StaticResource ColumnMargin}" Grid.Column="2">
-                            <Label Content="Weka Total Trees" />
+                            <Label Content="Weka NTotals" />
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"
@@ -677,7 +676,7 @@
                         <!--#endregion-->
                         <!--#region AB Weka Max Ratio-->
                         <StackPanel Margin="{StaticResource ColumnMargin}" Grid.Column="3">
-                            <Label Content="Weka Max Ratio" />
+                            <Label Content="Weka Maximum Ratio" />
                             <metro:NumericUpDown NumericInputMode="Decimal"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"

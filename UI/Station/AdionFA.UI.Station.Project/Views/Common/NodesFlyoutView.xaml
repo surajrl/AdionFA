@@ -268,7 +268,8 @@
                                                 <TextBlock Grid.Row="2"
                                                            Grid.Column="1"
                                                            Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="Winning Trades (OS)" />
+                                                    <Run Text="Winning Trades (OS)"
+                                                         FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding BacktestOS.WinningTrades}" />
                                                 </TextBlock>
@@ -359,17 +360,36 @@
                                                 </behaviors:Interaction.Triggers>
                                             </Button>
                                             <!--#endregion-->
-                                            <!--#region Test In MetaTrader Button-->
-                                            <Button x:Name="testInMetaTraderBtn"
+                                            <!--#region Add to MetaTrader Button-->
+                                            <Button x:Name="addToMetaTraderBtn"
                                                     Width="150"
                                                     Margin="{StaticResource ControlMargin}">
                                                 <Button.Content>
-                                                    <TextBlock Text="{x:Static commonResources:CommonResources.TestInMetaTrader}" />
+                                                    <TextBlock Text="Add To MetaTrader" />
                                                 </Button.Content>
                                                 <behaviors:Interaction.Triggers>
-                                                    <behaviors:EventTrigger SourceName="testInMetaTraderBtn"
+                                                    <behaviors:EventTrigger SourceName="addToMetaTraderBtn"
                                                                             EventName="Click">
                                                         <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.AddNodeToMetaTrader}">
+                                                            <behaviors:InvokeCommandAction.CommandParameter>
+                                                                <Binding Path="." />
+                                                            </behaviors:InvokeCommandAction.CommandParameter>
+                                                        </behaviors:InvokeCommandAction>
+                                                    </behaviors:EventTrigger>
+                                                </behaviors:Interaction.Triggers>
+                                            </Button>
+                                            <!--#endregion-->
+                                            <!--#region Remove from MetaTrader Button-->
+                                            <Button x:Name="removeFromMetaTraderBtn"
+                                                    Width="150"
+                                                    Margin="{StaticResource ControlMargin}">
+                                                <Button.Content>
+                                                    <TextBlock Text="Remove From MetaTrader" />
+                                                </Button.Content>
+                                                <behaviors:Interaction.Triggers>
+                                                    <behaviors:EventTrigger SourceName="removeFromMetaTraderBtn"
+                                                                            EventName="Click">
+                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.RemoveNodeFromMetaTrader}">
                                                             <behaviors:InvokeCommandAction.CommandParameter>
                                                                 <Binding Path="." />
                                                             </behaviors:InvokeCommandAction.CommandParameter>

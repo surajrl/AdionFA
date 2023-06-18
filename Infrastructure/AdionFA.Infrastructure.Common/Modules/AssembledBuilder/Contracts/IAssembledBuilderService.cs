@@ -12,6 +12,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Contracts
         AssembledBuilderModel LoadAssembledBuilder(string projectName);
 
         void BuildBacktestOfNode(
+            string projectName,
             AssembledBuilderModel assmebledBuilder,
             REPTreeNodeModel parentNode,
             IList<REPTreeNodeModel> childNodes,

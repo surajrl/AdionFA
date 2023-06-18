@@ -68,7 +68,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
-            _eventAggregator.GetEvent<CorrelationNodeDeletedEvent>().Subscribe(p => UpdateTotalCorrelationNodes());
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
@@ -338,6 +337,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 {
                                     process.Message = StrategyBuilderStatus.BacktestCompleted.GetMetadata().Description;
                                 }
+                                else
+                                {
+                                    process.Message = $"{AssembledBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                                }
                             }
                         });
                 });
@@ -508,18 +511,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _projectConfiguration, value);
         }
 
-        private StrategyBuilderModel _strategyBuilder;
-        public StrategyBuilderModel StrategyBuilder
-        {
-            get => _strategyBuilder;
-            set => SetProperty(ref _strategyBuilder, value);
-        }
-
         private int _maxParallelism;
         public int MaxParallelism
         {
             get => _maxParallelism;
             set => SetProperty(ref _maxParallelism, value);
+        }
+
+        private StrategyBuilderModel _strategyBuilder;
+        public StrategyBuilderModel StrategyBuilder
+        {
+            get => _strategyBuilder;
+            set => SetProperty(ref _strategyBuilder, value);
         }
 
         private ObservableCollection<StrategyBuilderProcessModel> _strategyBuilderProcesses;

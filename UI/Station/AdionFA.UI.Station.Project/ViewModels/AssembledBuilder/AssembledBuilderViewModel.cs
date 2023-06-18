@@ -29,6 +29,7 @@ using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -79,6 +80,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             AssembledBuilder = new();
             AssembledBuilderProcessUP = new();
             AssembledBuilderProcessDOWN = new();
+            MaxParallelism = Environment.ProcessorCount - 1;
 
             _cancellationTokenSource = new();
             _manualResetEventSlim = new(true);
@@ -205,30 +207,47 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 await Task.Factory.StartNew(() =>
                 {
                     // Extraction
+                    var backtestNodes = new List<REPTreeNodeModel>();
 
-                    ExtractionProcess("up", allProjectCandles);
-                    ExtractionProcess("down", allProjectCandles);
+                    if (AssembledBuilder.ChildNodesUP.Count > 0 && AssembledBuilder.ChildNodesDOWN.Count > 0)
+                    {
+                        ExtractionProcess("up", allProjectCandles);
+                        ExtractionProcess("down", allProjectCandles);
 
-                    // Backtest
+                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessUP, "up"));
+                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessDOWN, "down"));
+                    }
+                    else if (AssembledBuilder.ChildNodesUP.Count > 0)
+                    {
+                        ExtractionProcess("up", allProjectCandles);
+                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessUP, "up"));
+                    }
+                    else if (AssembledBuilder.ChildNodesDOWN.Count > 0)
+                    {
+                        ExtractionProcess("down", allProjectCandles);
+                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessDOWN, "down"));
+                    }
+                    else
+                    {
+                        return;
+                    }
 
-                    BacktestProcess("up", allProjectCandles);
-                    BacktestProcess("down", allProjectCandles);
+                    BacktestProcess(backtestNodes, allProjectCandles);
                 }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
 
                 // Correlation ...
 
-                // Save in .xml resultin assembled nodes ...
-
+                // ASSEMBLED BUILDER NOT BEING ADDED THE WINNING ASSMEBLED NODES IN ASSMEBLED BUILDER SERVICE
                 IsTransactionActive = false;
 
                 // Result Message
 
-                var msgUP = AssembledBuilder.AssembledNodesUP.Count > 0 ? $"{AssembledBuilder.AssembledNodesUP.Count} UP Nodes Found!" : "No UP Nodes Found.";
-                var msgDOWN = AssembledBuilder.AssembledNodesDOWN.Count > 0 ? $"{AssembledBuilder.AssembledNodesDOWN.Count} DOWN Nodes Found!" : "No DOWN Nodes Found.";
+                var msgUP = AssembledBuilder.AssembledNodesUP.Count > 0 ? $"{AssembledBuilder.AssembledNodesUP.Count} UP nodes found." : "No UP nodes found.";
+                var msgDOWN = AssembledBuilder.AssembledNodesDOWN.Count > 0 ? $"{AssembledBuilder.AssembledNodesDOWN.Count} DOWN nodes found." : "No DOWN nodes found.";
 
                 MessageHelper.ShowMessage(this,
                     CommonResources.AssembledBuilder,
-                    $"{MessageResources.AssembledBuilderCompleted}\n" +
+                    $"{MessageResources.AssembledBuilderCompleted}.\n\n" +
                     $"{msgUP}\n" +
                     $"{msgDOWN}");
             }
@@ -311,7 +330,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 assembledBuilderProcess,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = Environment.ProcessorCount - 1,
+                    MaxDegreeOfParallelism = MaxParallelism,
                     CancellationToken = _cancellationTokenSource.Token
                 },
                 process =>
@@ -375,30 +394,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 });
         }
 
-        private void BacktestProcess(string label, IEnumerable<Candle> projectCandles)
+        private List<REPTreeNodeModel> GetBacktestNodes(IEnumerable<AssembledBuilderProcessModel> assembledBuilderProcess, string label)
         {
             var allBacktestNodes = new List<REPTreeNodeModel>();
-
-            var childNodes = new List<REPTreeNodeModel>();
-            var assembledBuilderProcess = new Collection<AssembledBuilderProcessModel>();
-
-            switch (label.ToLowerInvariant())
-            {
-                case "up":
-                    assembledBuilderProcess = AssembledBuilderProcessUP;
-                    childNodes = AssembledBuilder.ChildNodesUP;
-                    break;
-
-                case "down":
-                    assembledBuilderProcess = AssembledBuilderProcessDOWN;
-                    childNodes = AssembledBuilder.ChildNodesDOWN;
-                    break;
-
-                default:
-                    return;
-            }
-
-            // Get all the nodes that will be backtested
 
             foreach (var process in assembledBuilderProcess)
             {
@@ -418,7 +416,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         ProjectConfiguration.MaximumSeed,
                         ProjectConfiguration.TotalInstanceWeka,
                         (double)ProjectConfiguration.ABWekaMaxRatioTree,
-                        (double)ProjectConfiguration.ABWekaNTotalTree);
+                        (double)ProjectConfiguration.ABWekaNTotalTree,
+                        true);
 
                 process.Tree = responseWeka[0];
 
@@ -442,11 +441,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 process.Message = AssembledBuilderStatus.WekaCompleted.GetMetadata().Description;
             }
 
+            return allBacktestNodes;
+        }
+
+        private void BacktestProcess(List<REPTreeNodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
+        {
+            var backtestNodesPartition = Partitioner.Create(backtestNodes, EnumerablePartitionerOptions.NoBuffering);
+
             Parallel.ForEach(
-                allBacktestNodes,
+                backtestNodesPartition,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = Environment.ProcessorCount - 1,
+                    MaxDegreeOfParallelism = MaxParallelism,
                     CancellationToken = _cancellationTokenSource.Token
                 },
                 node =>
@@ -454,7 +460,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     _manualResetEventSlim.Wait();
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    var process = assembledBuilderProcess.Where(process => process.BacktestNodes.Any(processNode => processNode == node)).FirstOrDefault();
+                    var childNodes = node.Label.ToLowerInvariant() == "up"
+                    ? AssembledBuilder.ChildNodesUP
+                    : AssembledBuilder.ChildNodesDOWN;
+
+                    var process = node.Label.ToLowerInvariant() == "up"
+                    ? AssembledBuilderProcessUP.Where(process => process.BacktestNodes.Any(processNode => processNode == node)).FirstOrDefault()
+                    : AssembledBuilderProcessDOWN.Where(process => process.BacktestNodes.Any(processNode => processNode == node)).FirstOrDefault();
 
                     lock (_lock)
                     {
@@ -463,6 +475,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     }
 
                     _assembledBuilderService.BuildBacktestOfNode(
+                        ProcessArgs.ProjectName,
                         AssembledBuilder,
                         node,
                         childNodes,
@@ -480,6 +493,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         if (process.CompletedBacktests == process.BacktestNodes.Count)
                         {
                             process.Message = AssembledBuilderStatus.BacktestCompleted.GetMetadata().Description;
+                        }
+                        else
+                        {
+                            process.Message = $"{AssembledBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                         }
                     }
                 });
@@ -618,11 +635,44 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _projectConfiguration, value);
         }
 
+        private int _maxParallelism;
+        public int MaxParallelism
+        {
+            get => _maxParallelism;
+            set => SetProperty(ref _maxParallelism, value);
+        }
+
         private AssembledBuilderModel _assembledBuilder;
         public AssembledBuilderModel AssembledBuilder
         {
             get => _assembledBuilder;
-            set => SetProperty(ref _assembledBuilder, value);
+            set
+            {
+                if (SetProperty(ref _assembledBuilder, value))
+                {
+                    MeanSuccessRatePercentUP = _assembledBuilder.ChildNodesUP
+                        .Select(node => node.BacktestIS.SuccessRatePercent)
+                        .Sum() / _assembledBuilder.ChildNodesUP.Count;
+
+                    MeanSuccessRatePercentDOWN = _assembledBuilder.ChildNodesDOWN
+                        .Select(node => node.BacktestIS.SuccessRatePercent)
+                        .Sum() / _assembledBuilder.ChildNodesDOWN.Count;
+                }
+            }
+        }
+
+        private double _meanSuccessRatePercentUP;
+        public double MeanSuccessRatePercentUP
+        {
+            get => _meanSuccessRatePercentUP;
+            set => SetProperty(ref _meanSuccessRatePercentUP, value);
+        }
+
+        private double _meanSuccessRatePercentDOWN;
+        public double MeanSuccessRatePercentDOWN
+        {
+            get => _meanSuccessRatePercentDOWN;
+            set => SetProperty(ref _meanSuccessRatePercentDOWN, value);
         }
 
         public ObservableCollection<AssembledBuilderProcessModel> AssembledBuilderProcessUP { get; set; }

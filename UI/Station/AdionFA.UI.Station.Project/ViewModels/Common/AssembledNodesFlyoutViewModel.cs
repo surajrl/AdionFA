@@ -16,6 +16,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
         public AssembledNodesFlyoutViewModel(IApplicationCommands applicationCommands)
         {
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
+            applicationCommands.RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTraderCommand);
 
             AssembledNodes = new();
             ChildNodes = new();
@@ -26,24 +27,45 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
             if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAssembledNodes, StringComparison.Ordinal))
             {
                 AssembledNodes.Clear();
-                if (flyout.ModelOne is ObservableCollection<AssembledNodeModel> assembledNodeCollection)
+                ChildNodes.Clear();
+
+                switch (flyout.ModelOne)
                 {
-                    AssembledNodes.Add(assembledNodeCollection);
-                }
-                else
-                {
-                    AssembledNodes.Add((List<AssembledNodeModel>)flyout.ModelOne);
+                    case ObservableCollection<AssembledNodeModel> collection:
+                        AssembledNodes.Add(collection);
+                        break;
+
+                    case List<AssembledNodeModel> list:
+                        AssembledNodes.Add(list);
+                        break;
+
+                    case AssembledNodeModel assembledNode:
+                        AssembledNodes.Add(assembledNode);
+                        break;
                 }
 
-                ChildNodes.Clear();
-                if (flyout.ModelTwo is ObservableCollection<REPTreeNodeModel> nodeCollection)
+                switch (flyout.ModelTwo)
                 {
-                    ChildNodes.Add(nodeCollection);
+                    case ObservableCollection<REPTreeNodeModel> collection:
+                        ChildNodes.Add(collection);
+                        break;
+
+                    case List<REPTreeNodeModel> list:
+                        ChildNodes.Add(list);
+                        break;
+
+                    case REPTreeNodeModel node:
+                        ChildNodes.Add(node);
+                        break;
                 }
-                else
-                {
-                    ChildNodes.Add((List<REPTreeNodeModel>)flyout.ModelTwo);
-                }
+            }
+        });
+
+        public ICommand RemoveNodeFromMetaTraderCommand => new DelegateCommand<object>(item =>
+        {
+            if (item is AssembledNodeModel assembledNode)
+            {
+                AssembledNodes.Remove(assembledNode);
             }
         });
 

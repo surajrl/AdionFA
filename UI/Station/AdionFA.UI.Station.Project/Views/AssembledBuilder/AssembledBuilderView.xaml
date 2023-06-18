@@ -58,7 +58,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="Body_Content_DataGrid_Centering"
                TargetType="{x:Type DataGridCell}">
             <Setter Property="Template">
@@ -142,7 +141,6 @@
                 </Button>
                 <metro:ProgressRing IsActive="True"
                                     Width="25"
-                                    Margin="{StaticResource ColumnMargin}"
                                     Height="25"
                                     Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
@@ -158,7 +156,7 @@
             <StackPanel Orientation="Horizontal">
                 <!--#region Transaction Target-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <TextBlock Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}" />
+                    <Label Content="Transactions Target (IS)" />
                     <TextBox Text="{Binding ProjectConfiguration.ABTransactionsTarget}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -168,7 +166,7 @@
                 <!--#endregion-->
                 <!--#region Minimum Assembly Percent-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <TextBlock Text="{x:Static commonResources:CommonResources.MinAssemblyPercent}" />
+                    <Label Content="Minimum Success Rate Improvement %" />
                     <TextBox Text="{Binding ProjectConfiguration.ABMinImprovePercent}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -178,7 +176,7 @@
                 <!--#endregion-->
                 <!--#region Weka Total Trees-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <TextBlock Text="Weka Total Trees" />
+                    <Label Content="Weka NTotals" />
                     <TextBox Text="{Binding ProjectConfiguration.ABWekaNTotalTree}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -190,7 +188,7 @@
                            Background="Transparent" />
                 <!--#region Weka Max Ratio-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <TextBlock Text="Weka Max Ratio" />
+                    <Label Content="Weka Maximum Ratio" />
                     <TextBox Text="{Binding ProjectConfiguration.ABWekaMaxRatioTree}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -202,7 +200,7 @@
                            Background="Transparent" />
                 <!--#region Correlation-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <TextBlock Text="Maximum Correlation" />
+                    <Label Content="Maximum Correlation" />
                     <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -222,16 +220,17 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--#endregion-->
 
-                <!--#region Assembled Nodes-->
+                <!--#region Assembled Nodes Buttons-->
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left">
                     <!--#region Assembled Nodes UP-->
-                    <Grid Margin="0 20 10 0">
+                    <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assembledNodesUP"
                                 Width="175"
                                 Height="40">
@@ -260,7 +259,7 @@
                     </Grid>
                     <!--#endregion-->
                     <!--#region Assembled Nodes DOWN-->
-                    <Grid Margin="0 20 0 0">
+                    <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assembledNodesDOWN"
                                 Width="175"
                                 Height="40">
@@ -290,33 +289,65 @@
                     <!--#endregion-->
                 </StackPanel>
 
+                <!--#region Maximum Parallelism Configuration-->
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="{StaticResource ColumnMargin}"
+                            Orientation="Horizontal">
+                    <Label Content="Maximum Parallelism" />
+                    <TextBox Text="{Binding MaxParallelism}"
+                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
+                </StackPanel>
+                <!--#endregion-->
+
+                <!--#region Mean Success Rate Percent-->
+                <StackPanel Grid.Column="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="{StaticResource ColumnMargin}">
+                    <TextBlock>
+                        <Run Text="Mean Success Rate UP (IS):" />
+                        <Run Text="{Binding MeanSuccessRatePercentUP, StringFormat=N2}"/>
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Mean Success Rate DOWN (IS):" />
+                        <Run Text="{Binding MeanSuccessRatePercentDOWN, StringFormat=N2}" />
+                    </TextBlock>
+                </StackPanel>
+                <!--#endregion-->
+
                 <!--#region Refresh Button-->
-                <Grid Margin="0 20 0 0"
-                      Grid.Column="1"
-                      HorizontalAlignment="Right">
-                    <Button x:Name="refreshBtn"
-                            Width="80"
-                            Height="40"
-                            IsEnabled="{Binding CanExecute}">
-                        <StackPanel Orientation="Horizontal"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                            <iconPacks:PackIconFontAwesome Kind="RedoSolid"
-                                                           Width="14" />
-                            <Label Content="Refresh"
-                                   FontSize="11" />
-                        </StackPanel>
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="refreshBtn"
-                                                    EventName="Click">
-                                <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
-                    </Button>
-                    <metro:ProgressRing IsActive="True"
-                                        Width="25"
-                                        Height="25"
-                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                </Grid>
+                <StackPanel Grid.Column="3"
+                            Margin="{StaticResource ColumnMargin}"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <Grid>
+                        <Button x:Name="refreshBtn"
+                                Width="80"
+                                Height="40"
+                                IsEnabled="{Binding CanExecute}">
+                            <StackPanel Orientation="Horizontal"
+                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                <iconPacks:PackIconFontAwesome Kind="RedoSolid"
+                                                               VerticalAlignment="Center"
+                                                               Width="14" />
+                                <Label Content="Refresh"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="refreshBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                        <metro:ProgressRing IsActive="True"
+                                            Width="25"
+                                            Height="25"
+                                            Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </StackPanel>
             </Grid>
         </metro:MetroHeader>
         <!--#endregion-->

@@ -99,6 +99,7 @@
                                             <StackPanel>
                                                 <ListView ItemsSource="{Binding Node}"
                                                           Padding="20 1" />
+
                                                 <Separator Margin="10" />
 
                                                 <!--#region Total UP-->
@@ -342,7 +343,7 @@
                                         <Expander.Header>
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                <Run Text="{Binding Label}"
+                                                <Run Text="{Binding ParentNode.Label}"
                                                      FontWeight="SemiBold" />
                                                 </TextBlock>
                                             </StackPanel>
@@ -357,7 +358,7 @@
 
                                             <!--#region Node-->
                                             <StackPanel>
-                                                <ListView ItemsSource="{Binding Node}"
+                                                <ListView ItemsSource="{Binding ParentNode.Node}"
                                                           Padding="20 1" />
                                                 <Separator Margin="10" />
 
@@ -366,7 +367,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalUP}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding TotalUP, StringFormat=N2}" />
+                                                    <Run Text="{Binding ParentNode.TotalUP, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Total DOWN-->
@@ -374,7 +375,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding TotalDOWN, StringFormat=N2}" />
+                                                    <Run Text="{Binding ParentNode.TotalDOWN, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region NTotals-->
@@ -382,7 +383,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.NTotals}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding Total, StringFormat=N2}" />
+                                                    <Run Text="{Binding ParentNode.Total, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
 
@@ -393,7 +394,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioUP}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding RatioUP, StringFormat=N2}" />
+                                                    <Run Text="{Binding ParentNode.RatioUP, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Ratio DOWN-->
@@ -401,7 +402,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding RatioDOWN, StringFormat=N2}" />
+                                                    <Run Text="{Binding ParentNode.RatioDOWN, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Ratio Max-->
@@ -409,8 +410,71 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioMax}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding RatioMax, StringFormat=N2}" />
+                                                    <Run Text="{Binding ParentNode.RatioMax, StringFormat=N2}" />
                                                 </TextBlock>
+                                                <!--#endregion-->
+                                                <!--#region Buttons-->
+                                                <StackPanel Grid.ColumnSpan="3"
+                                                            HorizontalAlignment="Left">
+                                                    <!--#region Save Node Button-->
+                                                    <Button x:Name="saveNodeBtn"
+                                                            Width="150"
+                                                            IsEnabled="False"
+                                                            Margin="{StaticResource ControlMargin}">
+                                                        <Button.Content>
+                                                            <TextBlock Text="Save Node" />
+                                                        </Button.Content>
+                                                        <behaviors:Interaction.Triggers>
+                                                            <behaviors:EventTrigger SourceName="saveNodeBtn"
+                                                                                    EventName="Click">
+                                                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.SaveNodeCommand}">
+                                                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                                                        <Binding Path="." />
+                                                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                                                </behaviors:InvokeCommandAction>
+                                                            </behaviors:EventTrigger>
+                                                        </behaviors:Interaction.Triggers>
+                                                    </Button>
+                                                    <!--#endregion-->
+                                                    <!--#region Add to MetaTrader Button-->
+                                                    <Button x:Name="addToMetaTraderBtn"
+                                                            Width="150"
+                                                            Margin="{StaticResource ControlMargin}">
+                                                        <Button.Content>
+                                                            <TextBlock Text="Add To MetaTrader" />
+                                                        </Button.Content>
+                                                        <behaviors:Interaction.Triggers>
+                                                            <behaviors:EventTrigger SourceName="addToMetaTraderBtn"
+                                                                                    EventName="Click">
+                                                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.AddNodeToMetaTrader}">
+                                                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                                                        <Binding Path="." />
+                                                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                                                </behaviors:InvokeCommandAction>
+                                                            </behaviors:EventTrigger>
+                                                        </behaviors:Interaction.Triggers>
+                                                    </Button>
+                                                    <!--#endregion-->
+                                                    <!--#region Remove from MetaTrader Button-->
+                                                    <Button x:Name="removeFromMetaTraderBtn"
+                                                            Width="150"
+                                                            Margin="{StaticResource ControlMargin}">
+                                                        <Button.Content>
+                                                            <TextBlock Text="Remove From MetaTrader" />
+                                                        </Button.Content>
+                                                        <behaviors:Interaction.Triggers>
+                                                            <behaviors:EventTrigger SourceName="removeFromMetaTraderBtn"
+                                                                                    EventName="Click">
+                                                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.RemoveNodeFromMetaTrader}">
+                                                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                                                        <Binding Path="." />
+                                                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                                                </behaviors:InvokeCommandAction>
+                                                            </behaviors:EventTrigger>
+                                                        </behaviors:Interaction.Triggers>
+                                                    </Button>
+                                                    <!--#endregion-->
+                                                </StackPanel>
                                                 <!--#endregion-->
                                             </StackPanel>
                                             <!--#endregion-->
@@ -424,7 +488,7 @@
                                                     <Run Text="Total Opportunities (IS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestIS.TotalOpportunity, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.BacktestIS.TotalOpportunity, Mode=OneWay}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Total Trades IS-->
@@ -432,7 +496,7 @@
                                                     <Run Text="Total Trades (IS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestIS.TotalTrades}" />
+                                                    <Run Text="{Binding ParentNode.BacktestIS.TotalTrades}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Winning Trades IS-->
@@ -440,7 +504,7 @@
                                                     <Run Text="Winning Trades (IS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestIS.WinningTrades}" />
+                                                    <Run Text="{Binding ParentNode.BacktestIS.WinningTrades}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Losing Trades IS-->
@@ -448,7 +512,7 @@
                                                     <Run Text="Losing Trades (IS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestIS.LosingTrades}" />
+                                                    <Run Text="{Binding ParentNode.BacktestIS.LosingTrades}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Success Rate Percent IS-->
@@ -456,7 +520,7 @@
                                                     <Run Text="Success Rate (IS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestIS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.BacktestIS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <!--#endregion-->
@@ -465,7 +529,7 @@
                                                     <Run Text="Progressiveness (IS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestIS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.BacktestIS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <!--#endregion-->
@@ -477,7 +541,7 @@
                                                     <Run Text="Total Opportunities (OS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestOS.TotalOpportunity, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.BacktestOS.TotalOpportunity, Mode=OneWay}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Total Trades OS-->
@@ -485,7 +549,7 @@
                                                     <Run Text="Total Trades (OS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestOS.TotalTrades}" />
+                                                    <Run Text="{Binding ParentNode.BacktestOS.TotalTrades}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Winning Trades OS-->
@@ -493,7 +557,7 @@
                                                     <Run Text="Winning Trades (OS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestOS.WinningTrades}" />
+                                                    <Run Text="{Binding ParentNode.BacktestOS.WinningTrades}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Losing Trades OS-->
@@ -501,7 +565,7 @@
                                                     <Run Text="Losing Trades (OS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestOS.LosingTrades}" />
+                                                    <Run Text="{Binding ParentNode.BacktestOS.LosingTrades}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Success Rate Percent OS-->
@@ -509,7 +573,7 @@
                                                     <Run Text="Success Rate (OS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestOS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.BacktestOS.SuccessRatePercent, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <!--#endregion-->
@@ -518,7 +582,7 @@
                                                     <Run Text="Progressiveness (OS)"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding BacktestOS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.BacktestOS.Progressiveness, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <!--#endregion-->
@@ -530,7 +594,7 @@
                                                     <Run Text="Success Rate Variation"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding SuccessRateVariation, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.SuccessRateVariation, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <!--#endregion-->
@@ -540,11 +604,12 @@
                                                     <Run Text="Progressiveness Variation"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding ProgressivenessVariation, StringFormat=N2, Mode=OneWay}" />
+                                                    <Run Text="{Binding ParentNode.ProgressivenessVariation, StringFormat=N2, Mode=OneWay}" />
                                                     <Run Text="%" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                             </StackPanel>
+
                                         </Grid>
                                     </Expander>
                                 </DataTemplate>

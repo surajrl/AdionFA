@@ -9,6 +9,7 @@ using AdionFA.UI.Station.Infrastructure.Services;
 using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 
@@ -23,13 +24,14 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
+            applicationCommands.DeleteNodeCommand.RegisterCommand(DeleteNodeCommand);
 
             SavedNodes = new();
         }
 
-        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyout =>
         {
-            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleSavedNodes, StringComparison.Ordinal))
+            if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleSavedNodes, StringComparison.Ordinal))
             {
                 SavedNodes.Clear();
 
@@ -41,9 +43,21 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
             }
         });
 
+        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeModel>(node =>
+        {
+            var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
+            var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
+            var path = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}", directory, filename);
+
+            _projectDirectoryService.DeleteFile(path);
+
+            SavedNodes.Remove(node);
+        });
+
 
         // View Bindings
 
+        public ObservableCollection<AssembledNodeModel> SavedAssembledNodes { get; set; }
         public ObservableCollection<REPTreeNodeModel> SavedNodes { get; set; }
     }
 }

@@ -19,7 +19,6 @@
     <UserControl.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
-
         <Style TargetType="Button"
                x:Key="DisableBorderRarioBtn">
             <Setter Property="Padding"
@@ -59,7 +58,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="Body_Content_DataGrid_Centering"
                TargetType="{x:Type DataGridCell}">
             <Setter Property="Template">
@@ -167,16 +165,10 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Margin="10 0 0 0"
-                            Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
                     <!--#region Total Instance Weka-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Instances}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="{x:Static commonResources:CommonResources.Instances}" />
                         <TextBox Text="{Binding ProjectConfiguration.TotalInstanceWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -185,13 +177,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region N Total Tree-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.NTotals}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="{x:Static commonResources:CommonResources.NTotals}" />
                         <TextBox Text="{Binding ProjectConfiguration.NTotalTree}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -200,13 +187,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Depth Weka-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Depth}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="{x:Static commonResources:CommonResources.Depth}" />
                         <TextBox Text="{Binding ProjectConfiguration.DepthWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -215,13 +197,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Max Ratio Tree-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Ratio}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Ratio" />
                         <TextBox Text="{Binding ProjectConfiguration.MaxRatioTree}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -230,18 +207,12 @@
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
+
                 <StackPanel Grid.Row="1"
-                            Margin="10 0 0 0"
                             Orientation="Horizontal">
                     <!--#region Maximum Seed-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Maximum}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Seed}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Seed" />
                         <TextBox Text="{Binding ProjectConfiguration.MaximumSeed}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -250,14 +221,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Minimal Seed-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Minimal}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Seed}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimal Seed" />
                         <TextBox Text="{Binding ProjectConfiguration.MinimalSeed}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -266,13 +231,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Total Decimal Weka-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Decimals}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Decimals" />
                         <TextBox Text="{Binding ProjectConfiguration.TotalDecimalWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -283,16 +243,10 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="2"
-                            Margin="10 0 0 0"
                             Orientation="Horizontal">
-
                     <!--#region Winning Strategy Total UP-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalUP}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Winning Strategy UP Target" />
                         <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyUPTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -301,12 +255,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Winning Strategy Total DOWN-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.WinningStrategyTotalDOWN}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Winning Strategy DOWN Target" />
                         <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyDOWNTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -315,12 +265,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Transaction Target-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.NumberTargetTransactions}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Transactions Target" />
                         <TextBox Text="{Binding ProjectConfiguration.SBTransactionsTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -331,16 +277,10 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="3"
-                            Margin="10 0 0 0"
                             Orientation="Horizontal">
-                    
                     <!--#region Variation Transaction-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="Maximum Success Rate Variation" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Success Rate Variation" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMaxSuccessRateVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -349,26 +289,15 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Is Progressiveness-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.ActivateProgressiveness}" />
-                                <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Activate Progressiveness" />
                         <metro:ToggleSwitch Margin="0 -3"
                                             IsEnabled="False"
                                             IsOn="{Binding ProjectConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
-                    <!--#endregion-->
                     <!--#region Progressiveness-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Progressiveness}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Progressiveness %" />
                         <TextBox Text="{Binding ProjectConfiguration.MaxProgressivenessVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -377,13 +306,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region Max Percent Correlation-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Correlation}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.Percent}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Correlation %" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -394,17 +318,10 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="4"
-                            Margin="10 0 0 0"
                             Orientation="Horizontal">
-
                     <!--#region Min Transaction Count IS-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Transactions}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.IS}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Transactions (OS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -412,15 +329,9 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-
                     <!--#region Min Transaction Count OS-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Transactions}" />
-                                    <Run Text="{x:Static commonResources:CommonResources.OS}" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Transactions (OS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsOS}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -431,15 +342,10 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="5"
-                            Margin="10 0 0 0"
                             Orientation="Horizontal">
                     <!--#region Min Percent Success IS-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                <Run Text="Minimum Success Rate Percent (IS)" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate Percent (IS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -448,12 +354,8 @@
                     </StackPanel>
                     <!--#endregion-->
                     <!--#region MinPercentSuccessOS-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                <Run Text="Minimum Success Rate Percent (OS)" />
-                            </TextBlock>
-                        </Label>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate Percent (OS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentOS}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -476,31 +378,22 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!--#region Maximum Parallelism Configuration-->
-                <StackPanel HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="{StaticResource ControlMargin}"
-                            Width="125"
-                            Orientation="Vertical">
-                    <TextBlock Text="Maximum Parallelism" />
-                    <TextBox Text="{Binding MaxParallelism}"
-                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
-                </StackPanel>
-                <!--#endregion-->
+                
 
-                <!--#region Buttons-->
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right">
-                    <!--#region Saved Nodes Button-->
-                    <Grid Margin="0 20 10 0">
+                <!--#region Saved Nodes & Correlation Nodes Buttons-->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left">
+                    <!--#region Saved Nodes-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="savedNodesBtn"
                                 Width="120"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconFontAwesome Kind="DatabaseSolid"
+                                                               VerticalAlignment="Center"
                                                                Width="14" />
                                 <Label Content="Saved Nodes"
                                        FontSize="11" />
@@ -521,12 +414,13 @@
                     </Grid>
                     <!--#endregion-->
                     <!--#region Correlation Nodes Button-->
-                    <Grid Margin="0 20 10 0">
+                    <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="correlationNodesBtn"
                                 Width="160"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands"
+                                                               VerticalAlignment="Center"
                                                                Width="14" />
                                 <Label Content="Correlation Nodes"
                                        FontSize="11" />
@@ -537,7 +431,7 @@
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelationNodes}" />
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
                                                 <Binding Path="StrategyBuilder" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
@@ -547,8 +441,26 @@
                         </Button>
                     </Grid>
                     <!--#endregion-->
-                    <!--#region Refresh Button-->
-                    <Grid Margin="0 20 0 0">
+                </StackPanel>
+
+                <!--#region Maximum Parallelism Configuration-->
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="{StaticResource ColumnMargin}"
+                            Orientation="Horizontal">
+                    <Label Content="Maximum Parallelism" />
+                    <TextBox Text="{Binding MaxParallelism}"
+                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
+                </StackPanel>
+                <!--#endregion-->
+                
+                <!--#region Refresh Button-->
+                <StackPanel Grid.Column="2"
+                            Margin="{StaticResource ColumnMargin}"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <Grid>
                         <Button x:Name="refreshBtn"
                                 Width="80"
                                 Height="40"
@@ -556,6 +468,7 @@
                             <StackPanel Orientation="Horizontal"
                                         Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                                 <iconPacks:PackIconFontAwesome Kind="RedoSolid"
+                                                               VerticalAlignment="Center"
                                                                Width="14" />
                                 <Label Content="Refresh"
                                        FontSize="11" />
@@ -573,6 +486,7 @@
                                             Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
                 </StackPanel>
+                <!--#endregion-->
             </Grid>
         </metro:MetroHeader>
         <!--#endregion-->

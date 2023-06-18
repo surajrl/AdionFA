@@ -298,27 +298,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
             MessageOutput.Clear();
         }, () => MessageOutput.Count > 0).ObservesProperty(() => MessageOutput);
 
-        public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(node =>
+        public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (node is REPTreeNodeModel singleNode)
+            if (item is REPTreeNodeModel singleNode)
             {
                 Node = singleNode;
             }
 
-            if (node is AssembledNodeModel assembledNode)
+            if (item is AssembledNodeModel assembledNode)
             {
                 AssembledNode = assembledNode;
             }
         });
 
-        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(node =>
+        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (node is REPTreeNodeModel singleNode)
+            if (item is REPTreeNodeModel singleNode)
             {
                 Node = null;
             }
 
-            if (node is AssembledNodeModel assembledNode)
+            if (item is AssembledNodeModel assembledNode)
             {
                 AssembledNode = null;
             }

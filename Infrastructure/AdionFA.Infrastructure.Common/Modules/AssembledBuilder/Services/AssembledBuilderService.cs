@@ -104,6 +104,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
         }
 
         public void BuildBacktestOfNode(
+            string projectName,
             AssembledBuilderModel assembledBuilder,
             REPTreeNodeModel parentNode,
             IList<REPTreeNodeModel> childNodes,
@@ -159,25 +160,37 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
             if (parentNode.WinningStrategy)
             {
+                var assembledNode = new AssembledNodeModel
+                {
+                    ParentNode = parentNode,
+                    ChildNodes = childNodes.ToList(),
+                };
+
                 switch (parentNode.Label)
                 {
                     case "up":
-                        assembledBuilder.AssembledNodesUP.Add(new()
-                        {
-                            ParentNode = parentNode,
-                            ChildNodes = childNodes.ToList(),
-                        });
+                        assembledBuilder.AssembledNodesUP.Add(assembledNode);
                         break;
 
                     case "down":
-                        assembledBuilder.AssembledNodesDOWN.Add(new()
-                        {
-                            ParentNode = parentNode,
-                            ChildNodes = childNodes.ToList(),
-                        });
+                        assembledBuilder.AssembledNodesDOWN.Add(assembledNode);
                         break;
                 }
+
+                SerializeAssembledNode(projectName, assembledNode);
             }
+        }
+
+        // Serialization
+
+        public static void SerializeAssembledNode(string projectName, AssembledNodeModel assembledNode)
+        {
+            var directory = assembledNode.ParentNode.Label.ToLower() == "up"
+                ? projectName.ProjectAssembledBuilderNodesUPDirectory()
+                : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+
+            var filename = RegexHelper.GetValidFileName(assembledNode.ParentNode.Name, "_") + ".xml";
+            SerializerHelper.XMLSerializeObject(assembledNode, string.Format(@"{0}\{1}", directory, filename));
         }
     }
 }

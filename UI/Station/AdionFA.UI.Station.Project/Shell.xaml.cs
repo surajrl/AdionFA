@@ -24,7 +24,6 @@ namespace AdionFA.UI.Station.Project
 
                 // Strategy Builder
 
-                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(CorrelationNodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(SavedNodesFlyoutView));
 
                 // Common
