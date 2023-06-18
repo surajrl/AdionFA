@@ -19,13 +19,6 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
 
         // Backtests
 
-        private int _totalBacktests;
-        public int TotalBacktests
-        {
-            get => _totalBacktests;
-            set => SetProperty(ref _totalBacktests, value);
-        }
-
         private int _executingBacktests;
         public int ExecutingBacktests
         {

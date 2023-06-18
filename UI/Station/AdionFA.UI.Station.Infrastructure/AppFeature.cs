@@ -36,17 +36,12 @@
 
         // Strategy Builder
 
-        public const string FlyoutProjectModuleWekaTree = "FlyoutProjectModuleWekaTree";
-        public const string FlyoutProjectModuleCorrelation = "FlyoutProjectModuleCorrelation";
+        public const string FlyoutProjectModuleCorrelationNodes = "FlyoutProjectModuleCorrelationNodes";
         public const string FlyoutProjectModuleSavedNodes = "FlyoutProjectModuleSavedNodes";
 
-        // Assembled Builder
+        // Common
 
+        public const string FlyoutProjectModuleNodes = "FlyoutProjectModuleNodes";
         public const string FlyoutProjectModuleAssembledNodes = "FlyoutProjectModuleAssembledNodes";
-
-        // MetaTrader
-
-        public const string FlyoutProjectModuleNodeMetaTrader = "FlyoutProjectModuleNodeMetaTrader";
-        public const string FlyoutProjectModuleAssembledNodeMetaTrader = "FlyoutProjectModuleAssembledNodeMetaTrader";
     }
 }

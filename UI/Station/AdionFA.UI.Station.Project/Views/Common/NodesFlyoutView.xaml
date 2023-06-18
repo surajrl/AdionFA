@@ -1,4 +1,4 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.StrategyBuilder.WekaTreeFlyoutView"
+﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.StrategyBuilder.NodesFlyoutView"
               xmlns:prism="http://prismlibrary.com/"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
               xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -16,7 +16,7 @@
               Theme="Adapt"
               Width="1200"
               CloseButtonIsCancel="True"
-              Header="Weka Tree"
+              Header="Nodes"
               IsModal="True">
 
     <metro:Flyout.Resources>

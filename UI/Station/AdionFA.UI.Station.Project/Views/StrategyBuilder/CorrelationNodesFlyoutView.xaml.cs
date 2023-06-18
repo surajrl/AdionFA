@@ -6,16 +6,16 @@ using MahApps.Metro.Controls;
 namespace AdionFA.UI.Station.Project.StrategyBuilder
 {
     /// <summary>
-    /// Interaction logic for WekaTreeFlyoutView.xaml
+    /// Interaction logic for CorrelationNodesFlyoutView.xaml
     /// </summary>
-    public partial class WekaTreeFlyoutView : Flyout, IFlyoutView
+    public partial class CorrelationNodesFlyoutView : Flyout, IFlyoutView
     {
-        public WekaTreeFlyoutView(WekaTreeFlyoutViewModel vm)
+        public CorrelationNodesFlyoutView(CorrelationNodesFlyoutViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;
         }
 
-        public string FlyoutName => FlyoutRegions.FlyoutProjectModuleWekaTree;
+        public string FlyoutName => FlyoutRegions.FlyoutProjectModuleCorrelationNodes;
     }
 }

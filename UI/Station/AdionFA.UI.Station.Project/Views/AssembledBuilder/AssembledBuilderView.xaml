@@ -176,9 +176,9 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <!--#region Weka N Total Tree-->
+                <!--#region Weka Total Trees-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <TextBlock Text="Weka N Total Tree" />
+                    <TextBlock Text="Weka Total Trees" />
                     <TextBox Text="{Binding ProjectConfiguration.ABWekaNTotalTree}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -428,8 +428,8 @@
                                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                         <behaviors:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}" />
-                                                                <Binding Path="Tree.NodeOutput" />
+                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                                                <Binding Path="BacktestNodes" />
                                                             </MultiBinding>
                                                         </behaviors:InvokeCommandAction.CommandParameter>
                                                     </behaviors:InvokeCommandAction>
@@ -567,7 +567,7 @@
                                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                         <behaviors:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}" />
+                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
                                                                 <Binding Path="Tree.NodeOutput" />
                                                             </MultiBinding>
                                                         </behaviors:InvokeCommandAction.CommandParameter>

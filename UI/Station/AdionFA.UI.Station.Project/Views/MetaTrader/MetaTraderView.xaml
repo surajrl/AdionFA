@@ -93,8 +93,7 @@
                 <!--#endregion-->
 
                 <!--#region Save-->
-                <Button Grid.Column="0"
-                        Grid.Row="1"
+                <Button Grid.Row="1"
                         Margin="10 0 0 0"
                         HorizontalAlignment="Left"
                         Width="40"
@@ -182,14 +181,13 @@
                               SelectedValue="{Binding TimeframeId, Mode=TwoWay}">
                     </ComboBox>
                 </StackPanel>
-                <!--#region Single Node-->
                 <StackPanel Grid.Column="2"
                             Orientation="Horizontal">
+                    <!--#region Assembled Node-->
                     <Button x:Name="assembledNodesBtn"
                             Margin="{StaticResource ColumnMargin}"
                             Width="125"
-                            Height="40"
-                            IsEnabled="{Binding NodesAny}">
+                            Height="40">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="GraphOutline"
                                                         VerticalAlignment="Center"
@@ -203,34 +201,35 @@
                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
-                                            <Binding Path="Nodes"/>
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
+                                            <Binding Path="AssembledNode.ParentNode" />
+                                            <Binding Path="AssembledNode.ChildNodes" />
                                         </MultiBinding>
                                     </behaviors:InvokeCommandAction.CommandParameter>
                                 </behaviors:InvokeCommandAction>
                             </behaviors:EventTrigger>
                         </behaviors:Interaction.Triggers>
                     </Button>
-                    <Button x:Name="nodesBtn"
+                    <!--#region Single Node-->
+                    <Button x:Name="nodeBtn"
                             Width="80"
                             Margin="{StaticResource ColumnMargin}"
-                            Height="40"
-                            IsEnabled="{Binding NodesAny}">
+                            Height="40">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="FileTreeOutline"
                                                         VerticalAlignment="Center"
-                                                        Width="15"/>
+                                                        Width="15" />
                             <Label Content="Node"
                                    FontSize="11" />
                         </StackPanel>
                         <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="nodesBtn"
+                            <behaviors:EventTrigger SourceName="nodeBtn"
                                                     EventName="Click">
                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodeMetaTrader}" />
-                                            <Binding Path="Nodes" />
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                            <Binding Path="Node" />
                                         </MultiBinding>
                                     </behaviors:InvokeCommandAction.CommandParameter>
                                 </behaviors:InvokeCommandAction>
@@ -257,7 +256,7 @@
                              FontWeight="SemiBold" />
                         <Run Text=":"
                              FontWeight="SemiBold" />
-                        <Run Text="{Binding MessagesFromCurrentPeriod}" />
+                        <Run Text="{Binding MessageInput.Count, Mode=OneWay}" />
                     </TextBlock>
                 </UniformGrid>
             </StackPanel>

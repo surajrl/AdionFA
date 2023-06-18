@@ -21,6 +21,47 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
         }
 
         public bool IsTrade(
+            AssembledNodeModel assembledNode,
+            IList<Candle> candleHistory,
+            Candle currentCandle)
+        {
+            candleHistory.Add(currentCandle);
+            if (IsTrade(assembledNode.ParentNode.Node, candleHistory, currentCandle))
+            {
+                // Try every child node until one is met
+                foreach (var childNode in assembledNode.ChildNodes)
+                {
+                    if (IsTrade(childNode, candleHistory, currentCandle))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsTrade(
+            REPTreeNodeModel singleNode,
+            IList<Candle> candleHistory,
+            Candle currentCandle)
+        {
+            candleHistory.Add(currentCandle);
+            return IsTrade(singleNode.Node, candleHistory, currentCandle);
+        }
+
+        public ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType)
+        {
+            var request = new ZmqMsgRequestModel
+            {
+                UUID = Guid.NewGuid().ToString(),
+                OrderType = orderType,
+            };
+
+            return request;
+        }
+
+        private bool IsTrade(
             IList<string> node,
             IList<Candle> candleHistory,
             Candle currentCandle)
@@ -89,47 +130,6 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
             }
 
             return true;
-        }
-
-        public bool IsTrade(
-            AssembledNodeModel assembledNode,
-            IList<Candle> candleHistory,
-            Candle currentCandle)
-        {
-            candleHistory.Add(currentCandle);
-            if (IsTrade(assembledNode.ParentNode.Node, candleHistory, currentCandle))
-            {
-                // Try every child node until one is met
-                foreach (var childNode in assembledNode.ChildNodes)
-                {
-                    if (IsTrade(childNode, candleHistory, currentCandle))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public bool IsTrade(
-            REPTreeNodeModel singleNode,
-            IList<Candle> candleHistory,
-            Candle currentCandle)
-        {
-            candleHistory.Add(currentCandle);
-            return IsTrade(singleNode.Node, candleHistory, currentCandle);
-        }
-
-        public ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType)
-        {
-            var request = new ZmqMsgRequestModel
-            {
-                UUID = Guid.NewGuid().ToString(),
-                OrderType = orderType,
-            };
-
-            return request;
         }
     }
 }

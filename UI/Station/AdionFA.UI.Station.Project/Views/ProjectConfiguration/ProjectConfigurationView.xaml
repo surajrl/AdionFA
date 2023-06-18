@@ -668,7 +668,7 @@
                         <!--#endregion-->
                         <!--#region AB Weka N Total Tree-->
                         <StackPanel Margin="{StaticResource ColumnMargin}" Grid.Column="2">
-                            <Label Content="Weka N Total Tree" />
+                            <Label Content="Weka Total Trees" />
                             <metro:NumericUpDown NumericInputMode="Numbers"
                                                  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                  Minimum="0"

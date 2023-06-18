@@ -537,7 +537,7 @@
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelation}" />
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleCorrelationNodes}" />
                                                 <Binding Path="StrategyBuilder" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
@@ -639,7 +639,7 @@
                                 <Expander.Header>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
@@ -676,8 +676,8 @@
                                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                     <behaviors:InvokeCommandAction.CommandParameter>
                                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleWekaTree}" />
-                                                            <Binding Path="Tree.NodeOutput" />
+                                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                                            <Binding Path="BacktestNodes" />
                                                         </MultiBinding>
                                                     </behaviors:InvokeCommandAction.CommandParameter>
                                                 </behaviors:InvokeCommandAction>

@@ -1,68 +1,77 @@
 ﻿<metro:MetroWindow x:Class="AdionFA.UI.Station.Project.Shell"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:prism="http://prismlibrary.com/"
-        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:projectcommands="clr-namespace:AdionFA.UI.Station.Project.Commands"
-        xmlns:local="clr-namespace:AdionFA.UI.Station.Project"
-        xmlns:vmodel="clr-namespace:AdionFA.UI.Station.Project.ViewModels"
-        xmlns:views="clr-namespace:AdionFA.UI.Station.Project.Views"
-        prism:ViewModelLocator.AutoWireViewModel="True"
-        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Financial Automat Project" WindowState="Maximized" Icon="Resources\Assets\logo.jpg">
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:prism="http://prismlibrary.com/"
+                   xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+                   xmlns:projectcommands="clr-namespace:AdionFA.UI.Station.Project.Commands"
+                   xmlns:local="clr-namespace:AdionFA.UI.Station.Project"
+                   xmlns:vmodel="clr-namespace:AdionFA.UI.Station.Project.ViewModels"
+                   xmlns:views="clr-namespace:AdionFA.UI.Station.Project.Views"
+                   prism:ViewModelLocator.AutoWireViewModel="True"
+                   mc:Ignorable="d"
+                   WindowStartupLocation="CenterScreen"
+                   Title="Financial Automat Project"
+                   WindowState="Maximized"
+                   Icon="Resources\Assets\logo.jpg">
 
     <!-- Flyouts -->
     <metro:MetroWindow.Flyouts>
-        <metro:FlyoutsControl x:Name="flyoutsControlRegion"/>
+        <metro:FlyoutsControl x:Name="flyoutsControlRegion" />
     </metro:MetroWindow.Flyouts>
 
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type vmodel:MenuItemViewModel}">
+            <DataTemplate x:Key="MenuItemTemplate"
+                          DataType="{x:Type vmodel:MenuItemViewModel}">
                 <Grid x:Name="RootGrid"
                       Height="48"
                       Background="Transparent">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:HamburgerMenu}}, Path=CompactPaneLength}"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:HamburgerMenu}}, Path=CompactPaneLength}" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <ContentControl Grid.Column="0" IsEnabled="False"
+                    <ContentControl Grid.Column="0"
+                                    IsEnabled="False"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Content="{Binding Icon}"
-                                    Focusable="False"/>
-                    <TextBlock Grid.Column="1" IsEnabled="False"
+                                    Focusable="False" />
+                    <TextBlock Grid.Column="1"
+                               IsEnabled="False"
                                VerticalAlignment="Center"
                                FontSize="16"
-                               Text="{Binding Label}"/>
+                               Text="{Binding Label}" />
                 </Grid>
                 <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:HamburgerMenu}}, Path=IsPaneOpen}" Value="False">
-                        <Setter TargetName="RootGrid" Property="ToolTip" Value="{Binding ToolTip, Mode=OneWay}"/>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:HamburgerMenu}}, Path=IsPaneOpen}"
+                                 Value="False">
+                        <Setter TargetName="RootGrid"
+                                Property="ToolTip"
+                                Value="{Binding ToolTip, Mode=OneWay}" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vmodel:ExtractorViewModel}">
-                <views:ExtractorView DataContext="{Binding}"/>
+                <views:ExtractorView DataContext="{Binding}" />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vmodel:StrategyBuilderViewModel}">
-                <views:StrategyBuilderView DataContext="{Binding}"/>
+                <views:StrategyBuilderView DataContext="{Binding}" />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vmodel:AssembledBuilderViewModel}">
-                <views:AssembledBuilderView DataContext="{Binding}"/>
+                <views:AssembledBuilderView DataContext="{Binding}" />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vmodel:MetaTraderViewModel}">
-                <views:MetaTraderView DataContext="{Binding}"/>
+                <views:MetaTraderView DataContext="{Binding}" />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vmodel:ProjectConfigurationViewModel}">
-                <views:ProjectConfigurationView DataContext="{Binding}"/>
+                <views:ProjectConfigurationView DataContext="{Binding}" />
             </DataTemplate>
         </Grid.Resources>
 
@@ -83,11 +92,12 @@
             <!--  Header  -->
             <metro:HamburgerMenu.HamburgerMenuHeaderTemplate>
                 <DataTemplate>
-                    <TextBlock HorizontalAlignment="Left" Margin="20 0 0 0"
-                   VerticalAlignment="Center"
-                   FontSize="16"
-                   Foreground="White"
-                   Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:HamburgerMenu}}, Path=DataContext.ProjectName}"/>
+                    <TextBlock HorizontalAlignment="Left"
+                               Margin="20 0 0 0"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Foreground="White"
+                               Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:HamburgerMenu}}, Path=DataContext.ProjectName}" />
                 </DataTemplate>
             </metro:HamburgerMenu.HamburgerMenuHeaderTemplate>
 
@@ -96,11 +106,11 @@
                     <Binding FallbackValue="{x:Null}"
                              Mode="OneWay"
                              Path="SelectedItem"
-                             RelativeSource="{RelativeSource Self}"/>
+                             RelativeSource="{RelativeSource Self}" />
                     <Binding FallbackValue="{x:Null}"
                              Mode="OneWay"
                              Path="SelectedOptionsItem"
-                             RelativeSource="{RelativeSource Self}"/>
+                             RelativeSource="{RelativeSource Self}" />
                 </MultiBinding>
             </metro:HamburgerMenu.Content>
         </metro:HamburgerMenu>

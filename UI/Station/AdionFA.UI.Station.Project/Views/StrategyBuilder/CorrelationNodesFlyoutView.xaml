@@ -1,4 +1,4 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.StrategyBuilder.CorrelationFlyoutView"
+﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.StrategyBuilder.CorrelationNodesFlyoutView"
               xmlns:prism="http://prismlibrary.com/"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
               xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"

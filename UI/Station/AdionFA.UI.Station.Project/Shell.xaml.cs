@@ -1,6 +1,5 @@
 ﻿using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Project.AssembledBuilder;
-using AdionFA.UI.Station.Project.MetaTrader;
 using AdionFA.UI.Station.Project.StrategyBuilder;
 using AdionFA.UI.Station.Project.ViewModels;
 using MahApps.Metro.Controls;
@@ -24,15 +23,14 @@ namespace AdionFA.UI.Station.Project
                 SetRegionManager(regionManager, flyoutsControlRegion, FlyoutRegions.FlyoutRegion);
 
                 // Strategy Builder
-                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(WekaTreeFlyoutView));
+
+                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(CorrelationNodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(SavedNodesFlyoutView));
-                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(CorrelationFlyoutView));
 
-                // Assembled Builder
+                // Common
+
+                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(AssembledNodesFlyoutView));
-
-                // MetaTrader
-                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodeMetaTraderFlyoutView));
             }
         }
 

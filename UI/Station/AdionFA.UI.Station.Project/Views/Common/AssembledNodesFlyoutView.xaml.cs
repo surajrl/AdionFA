@@ -1,6 +1,6 @@
 ﻿using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Contracts;
-using AdionFA.UI.Station.Project.ViewModels.AssembledBuilder;
+using AdionFA.UI.Station.Project.ViewModels.Common;
 using MahApps.Metro.Controls;
 
 namespace AdionFA.UI.Station.Project.AssembledBuilder

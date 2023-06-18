@@ -11,9 +11,9 @@ using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 {
-    public class CorrelationFlyoutViewModel : ViewModelBase
+    public class CorrelationNodesFlyoutViewModel : ViewModelBase
     {
-        public CorrelationFlyoutViewModel(IApplicationCommands applicationCommands)
+        public CorrelationNodesFlyoutViewModel(IApplicationCommands applicationCommands)
         {
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
 
@@ -22,7 +22,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyout =>
         {
-            if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleCorrelation, StringComparison.Ordinal))
+            if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleCorrelationNodes, StringComparison.Ordinal))
             {
                 CorrelationNodes.Clear();
                 CorrelationNodes.Add(((StrategyBuilderModel)flyout.ModelOne).CorrelationNodesDOWN);

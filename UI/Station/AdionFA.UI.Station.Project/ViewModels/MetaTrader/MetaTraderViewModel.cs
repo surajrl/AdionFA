@@ -27,7 +27,6 @@ using Prism.Events;
 using Prism.Ioc;
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -65,6 +64,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             ContainerLocator.Current.Resolve<IApplicationCommands>().RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTrader);
 
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
+
+            MessageInput = new();
+            MessageOutput = new();
 
             PopulateViewModel();
         }
@@ -167,7 +169,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             var zmqModel = JsonConvert.DeserializeObject<ZmqMsgModel>(message);
                             Debug.WriteLine("SubscriberSocket-Receive:" + message);
 
-                            zmqModel.Id = MessagesFromCurrentPeriod;
+                            zmqModel.Id = MessageInput.Count;
                             zmqModel.TemporalityName = EnumUtil.GetTimeframeEnum(zmqModel.Temporality).GetMetadata().Name;
                             zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                             zmqModel.PutType = (int)MessageZMQPutType.Input;
@@ -199,7 +201,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    if (Nodes.Any())
+                    if (Node != null || AssembledNode != null)
                     {
                         // Perform algorithm --------------------------------------------------
                         var messageInputCopy = MessageInput.ToList(); // Copy in case it gets modified
@@ -216,52 +218,63 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         })
                         .OrderBy(m => m.Date).ToList();
 
-                        foreach (var node in Nodes)
+                        var isTrade = false;
+                        var label = string.Empty;
+
+                        if (Node != null)
                         {
-                            var isTrade = false;
                             isTrade = _tradeService.IsTrade(
-                            node,
-                            candles,
-                            _currentCandle);
+                                Node,
+                                candles,
+                                _currentCandle);
 
-                            if (isTrade)
+                            label = Node.Label;
+                        }
+                        else if (AssembledNode != null)
+                        {
+                            isTrade = _tradeService.IsTrade(
+                                AssembledNode,
+                                candles,
+                                _currentCandle);
+
+                            label = AssembledNode.ParentNode.Label;
+                        }
+
+                        if (isTrade)
+                        {
+                            // Open operation request -----------------------------------------------
+                            if (label.ToLowerInvariant() == "up")
                             {
-                                // Open operation request -----------------------------------------------
-                                if (node.Label.ToLowerInvariant() == "up")
-                                {
-                                    requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
-                                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
-                                }
-                                else
-                                {
-                                    requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
-                                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
-                                }
-                                //-----------------------------------------------------------------------
-
-                                // Open operation response ----------------------------------------------
-                                var openOperationRep = requester.ReceiveFrameString();
-                                Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
-
-                                var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
-
-                                var model = new ZmqMsgModel
-                                {
-                                    Id = MessageOutput.Count + 1,
-                                    Date = _currentCandle.Date,
-                                    DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
-                                    PutType = (int)MessageZMQPutType.Output,
-                                    PutTypeName = MessageZMQPutType.Output.GetMetadata().Name,
-                                    PositionType = (int)response.OrderType,
-                                    PositionTypeName = response.OrderType.GetMetadata().Name,
-                                    Volume = decimal.Parse(response.Volume, CultureInfo.InvariantCulture)
-                                };
-
-                                progress.Report(model);
-                                //-----------------------------------------------------------------------
-
-                                break;
+                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
+                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
                             }
+                            else
+                            {
+                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
+                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
+                            }
+                            //-----------------------------------------------------------------------
+
+                            // Open operation response ----------------------------------------------
+                            var openOperationRep = requester.ReceiveFrameString();
+                            Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
+
+                            var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
+
+                            var model = new ZmqMsgModel
+                            {
+                                Id = MessageOutput.Count + 1,
+                                Date = _currentCandle.Date,
+                                DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                                PutType = (int)MessageZMQPutType.Output,
+                                PutTypeName = MessageZMQPutType.Output.GetMetadata().Name,
+                                PositionType = (int)response.OrderType,
+                                PositionTypeName = response.OrderType.GetMetadata().Name,
+                                Volume = decimal.Parse(response.Volume, CultureInfo.InvariantCulture)
+                            };
+
+                            progress.Report(model);
+                            //-----------------------------------------------------------------------
                         }
                     }
                 }
@@ -277,21 +290,38 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand CleanMessageInputCommand => new DelegateCommand(() =>
         {
-            MessageInput?.Clear();
-            MessagesFromCurrentPeriod = 0;
-        }).ObservesCanExecute(() => MessageInputAny);
+            MessageInput.Clear();
+        }, () => MessageInput.Count > 0).ObservesProperty(() => MessageInput);
 
         public ICommand CleanMessageOutputCommand => new DelegateCommand(() =>
         {
-            MessageOutput?.Clear();
-        }).ObservesCanExecute(() => MessageOutputAny);
+            MessageOutput.Clear();
+        }, () => MessageOutput.Count > 0).ObservesProperty(() => MessageOutput);
 
-        public ICommand AddNodeToMetaTrader => new DelegateCommand<REPTreeNodeModel>(baseNode =>
+        public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(node =>
         {
+            if (node is REPTreeNodeModel singleNode)
+            {
+                Node = singleNode;
+            }
+
+            if (node is AssembledNodeModel assembledNode)
+            {
+                AssembledNode = assembledNode;
+            }
         });
 
-        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<REPTreeNodeModel>(node =>
+        public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(node =>
         {
+            if (node is REPTreeNodeModel singleNode)
+            {
+                Node = null;
+            }
+
+            if (node is AssembledNodeModel assembledNode)
+            {
+                AssembledNode = null;
+            }
         });
 
         public ICommand SaveEACommand => new DelegateCommand(async () =>
@@ -347,34 +377,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     TimeframeId = Configuration?.TimeframeId ?? (int)TimeframeEnum.H1;
                 }
-
-                if (Nodes == null)
-                {
-                    Nodes = new ObservableCollection<REPTreeNodeModel>();
-                    Nodes.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
-                    {
-                        NodesAny = Nodes.Count > 0;
-                    };
-                }
-
-                if (MessageInput == null)
-                {
-                    MessageInput = new ObservableCollection<ZmqMsgModel>();
-                    MessageInput.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
-                    {
-                        MessagesFromCurrentPeriod++;
-                        MessageInputAny = MessageInput.Count > 0;
-                    };
-                }
-
-                if (MessageOutput == null)
-                {
-                    MessageOutput = new ObservableCollection<ZmqMsgModel>();
-                    MessageOutput.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) =>
-                    {
-                        MessageOutputAny = MessageOutput.Count > 0;
-                    };
-                }
             }
             catch (Exception ex)
             {
@@ -407,25 +409,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _configuration, value);
         }
 
-        private int _messagesFromCurrentPeriod;
-        public int MessagesFromCurrentPeriod
+        private REPTreeNodeModel _node;
+        public REPTreeNodeModel Node
         {
-            get => _messagesFromCurrentPeriod;
-            set => SetProperty(ref _messagesFromCurrentPeriod, value);
-        }
-
-        private bool _nodesAny;
-        public bool NodesAny
-        {
-            get => _nodesAny;
-            set => SetProperty(ref _nodesAny, value);
-        }
-
-        private ObservableCollection<REPTreeNodeModel> _nodes;
-        public ObservableCollection<REPTreeNodeModel> Nodes
-        {
-            get => _nodes;
-            set => SetProperty(ref _nodes, value);
+            get => _node;
+            set => SetProperty(ref _node, value);
         }
 
         private AssembledNodeModel _assembledNode;
@@ -435,25 +423,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _assembledNode, value);
         }
 
-        private bool _messageInputAny;
-        public bool MessageInputAny
-        {
-            get => _messageInputAny;
-            set => SetProperty(ref _messageInputAny, value);
-        }
-
         private ObservableCollection<ZmqMsgModel> _messageInput;
         public ObservableCollection<ZmqMsgModel> MessageInput
         {
             get => _messageInput;
             set => SetProperty(ref _messageInput, value);
-        }
-
-        private bool _messageOutputAny;
-        public bool MessageOutputAny
-        {
-            get => _messageOutputAny;
-            set => SetProperty(ref _messageOutputAny, value);
         }
 
         private ObservableCollection<ZmqMsgModel> _messageOutput;

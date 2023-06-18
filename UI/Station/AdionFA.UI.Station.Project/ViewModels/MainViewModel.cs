@@ -128,13 +128,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _projectName, value);
         }
 
-        private string _projectStepName;
-        public string ProjectNameStep
-        {
-            get => _projectStepName;
-            set => SetProperty(ref _projectStepName, value);
-        }
-
         private bool _isTransactionActive;
         public bool IsTransactionActive
         {
