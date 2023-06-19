@@ -29,6 +29,7 @@ using Prism.Events;
 using Prism.Ioc;
 using ReactiveUI;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -295,8 +296,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     // Perform backtest of all the nodes
 
+                    var backtestNodesPartition = Partitioner.Create(allBacktestNodes, EnumerablePartitionerOptions.NoBuffering);
+
                     Parallel.ForEach(
-                        allBacktestNodes,
+                        backtestNodesPartition,
                         new ParallelOptions
                         {
                             MaxDegreeOfParallelism = MaxParallelism,

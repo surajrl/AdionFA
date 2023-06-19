@@ -184,8 +184,6 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <Separator Width="10"
-                           Background="Transparent" />
                 <!--#region Weka Max Ratio-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Label Content="Weka Maximum Ratio" />
@@ -196,8 +194,6 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <Separator Width="10"
-                           Background="Transparent" />
                 <!--#region Correlation-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Label Content="Maximum Correlation" />
@@ -216,9 +212,6 @@
         <metro:MetroHeader Grid.Row="2"
                            Header="Assembled Builder">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -308,7 +301,7 @@
                             Margin="{StaticResource ColumnMargin}">
                     <TextBlock>
                         <Run Text="Mean Success Rate UP (IS):" />
-                        <Run Text="{Binding MeanSuccessRatePercentUP, StringFormat=N2}"/>
+                        <Run Text="{Binding MeanSuccessRatePercentUP, StringFormat=N2}" />
                     </TextBlock>
                     <TextBlock>
                         <Run Text="Mean Success Rate DOWN (IS):" />
@@ -322,31 +315,29 @@
                             Margin="{StaticResource ColumnMargin}"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Grid>
-                        <Button x:Name="refreshBtn"
-                                Width="80"
-                                Height="40"
-                                IsEnabled="{Binding CanExecute}">
-                            <StackPanel Orientation="Horizontal"
-                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                                <iconPacks:PackIconFontAwesome Kind="RedoSolid"
-                                                               VerticalAlignment="Center"
-                                                               Width="14" />
-                                <Label Content="Refresh"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="refreshBtn"
-                                                        EventName="Click">
-                                    <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                        <metro:ProgressRing IsActive="True"
-                                            Width="25"
-                                            Height="25"
-                                            Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </Grid>
+                    <Button x:Name="refreshBtn"
+                            Width="80"
+                            Height="40"
+                            IsEnabled="{Binding CanExecute}">
+                        <StackPanel Orientation="Horizontal"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <iconPacks:PackIconFontAwesome Kind="RedoSolid"
+                                                           VerticalAlignment="Center"
+                                                           Width="14" />
+                            <Label Content="Refresh"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger SourceName="refreshBtn"
+                                                    EventName="Click">
+                                <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                    <metro:ProgressRing IsActive="True"
+                                        Width="25"
+                                        Height="25"
+                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
             </Grid>
         </metro:MetroHeader>

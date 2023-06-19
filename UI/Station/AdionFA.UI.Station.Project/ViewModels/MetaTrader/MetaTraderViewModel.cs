@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.Enums.Model;
 using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
@@ -18,7 +17,6 @@ using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.MetaTrader;
 using AdionFA.UI.Station.Project.Validators.MetaTrader;
-using DynamicData;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
@@ -79,12 +77,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public DelegateCommand StopProcessBtnCommand => new DelegateCommand(() =>
+        public DelegateCommand StopCommand => new DelegateCommand(() =>
         {
             _cancellationTokenSource.Cancel();
         }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public DelegateCommand ProcessBtnCommand => new DelegateCommand(async () =>
+        public DelegateCommand ProcessCommand => new DelegateCommand(async () =>
         {
             try
             {
@@ -221,7 +219,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         var isTrade = false;
                         var label = string.Empty;
 
-                        if (Node != null)
+                        if (TestNode)
                         {
                             isTrade = _tradeService.IsTrade(
                                 Node,
@@ -230,7 +228,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             label = Node.Label;
                         }
-                        else if (AssembledNode != null)
+                        else if (TestAssembledNode)
                         {
                             isTrade = _tradeService.IsTrade(
                                 AssembledNode,
@@ -288,15 +286,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        public ICommand CleanMessageInputCommand => new DelegateCommand(() =>
-        {
-            MessageInput.Clear();
-        }, () => MessageInput.Count > 0).ObservesProperty(() => MessageInput);
+        public ICommand CleanMessageInputCommand => new DelegateCommand(MessageInput.Clear);
 
-        public ICommand CleanMessageOutputCommand => new DelegateCommand(() =>
-        {
-            MessageOutput.Clear();
-        }, () => MessageOutput.Count > 0).ObservesProperty(() => MessageOutput);
+        public ICommand CleanMessageOutputCommand => new DelegateCommand(MessageOutput.Clear);
 
         public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(item =>
         {
@@ -364,19 +356,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(_project.ProjectId);
                 ExpertAdvisor ??= new();
-
-                if (!Timeframes.Any())
-                {
-                    Timeframes.AddRange(EnumUtil.ToEnumerable<TimeframeEnum>()
-                        .Where(c => c.Id != (int)TimeframeEnum.W1 && c.Id != (int)TimeframeEnum.MN1)
-                        .Select(c => new Metadata
-                        {
-                            Id = c.Id,
-                            Name = c.Name
-                        }).ToList());
-
-                    TimeframeId = Configuration?.TimeframeId ?? (int)TimeframeEnum.H1;
-                }
             }
             catch (Exception ex)
             {
@@ -409,6 +388,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _configuration, value);
         }
 
+        private ExpertAdvisorVM _expertAdvisor;
+        public ExpertAdvisorVM ExpertAdvisor
+        {
+            get => _expertAdvisor;
+            set => SetProperty(ref _expertAdvisor, value);
+        }
+
+        private bool _testAssembledNode;
+        public bool TestAssembledNode
+        {
+            get => _testAssembledNode;
+            set => SetProperty(ref _testAssembledNode, value);
+        }
+
+        private bool _testNode;
+        public bool TestNode
+        {
+            get => _testNode;
+            set => SetProperty(ref _testNode, value);
+        }
+
         private REPTreeNodeModel _node;
         public REPTreeNodeModel Node
         {
@@ -435,22 +435,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             get => _messageOutput;
             set => SetProperty(ref _messageOutput, value);
-        }
-
-        private int? _timeframeId;
-        public int? TimeframeId
-        {
-            get => _timeframeId;
-            set => SetProperty(ref _timeframeId, value);
-        }
-
-        public ObservableCollection<Metadata> Timeframes { get; } = new ObservableCollection<Metadata>();
-
-        private ExpertAdvisorVM _expertAdvisor;
-        public ExpertAdvisorVM ExpertAdvisor
-        {
-            get => _expertAdvisor;
-            set => SetProperty(ref _expertAdvisor, value);
         }
 
         // IDisposable Implementation

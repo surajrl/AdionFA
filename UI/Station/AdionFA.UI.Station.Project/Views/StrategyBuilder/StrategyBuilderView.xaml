@@ -19,6 +19,7 @@
     <UserControl.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+        
         <Style TargetType="Button"
                x:Key="DisableBorderRarioBtn">
             <Setter Property="Padding"
@@ -372,16 +373,11 @@
         <metro:MetroHeader Grid.Row="2"
                            Header="Strategy Builder">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                
 
                 <!--#region Saved Nodes & Correlation Nodes Buttons-->
                 <StackPanel Orientation="Horizontal"

@@ -237,7 +237,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Correlation ...
 
-                // ASSEMBLED BUILDER NOT BEING ADDED THE WINNING ASSMEBLED NODES IN ASSMEBLED BUILDER SERVICE
                 IsTransactionActive = false;
 
                 // Result Message

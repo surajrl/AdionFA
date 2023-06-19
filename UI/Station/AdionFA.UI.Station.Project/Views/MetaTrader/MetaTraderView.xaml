@@ -19,6 +19,58 @@
     <UserControl.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+
+        <Style TargetType="Button"
+               x:Key="DisableBorderRarioBtn">
+            <Setter Property="Padding"
+                    Value="5,0,5,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="0,2,2,0"
+                                BorderBrush="{StaticResource MahApps.Brushes.Button.Border}"
+                                BorderThickness="0,1,1,1">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush EndPoint="0.5,1"
+                                                             StartPoint="0.5,0">
+                                            <GradientStop Color="#FF5BB75B"
+                                                          Offset="0" />
+                                            <GradientStop Color="#FF398239"
+                                                          Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Cursor"
+                                        Value="Hand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="Body_Content_DataGrid_Centering"
+               TargetType="{x:Type DataGridCell}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid Margin="10">
@@ -28,272 +80,244 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <!--#region Stop Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80"
+                        Height="40"
+                        Command="{Binding StopCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="PauseCircleSolid"
+                                               Width="14" />
+                        <Label Content="Stop"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <!--#endregion-->
+            <!--#region Process Button-->
+            <Grid Margin="0 20 0 0">
+                <Button Width="80"
+                        Height="40"
+                        IsEnabled="{Binding CanExecute}"
+                        Command="{Binding ProcessCommand}">
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <iconPacks:FontAwesome Kind="PlaySolid"
+                                               Width="14" />
+                        <Label Content="Process"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+                <metro:ProgressRing IsActive="True"
+                                    Width="25"
+                                    Height="25"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+            <!--#endregion-->
+        </StackPanel>
 
         <!--Expert Advisor-->
-        <metro:MetroHeader Margin="0 0 0 15"
-                           HorizontalAlignment="Left"
-                           Header="Expert Advisor">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
+        <Expander Grid.Row="1"
+                  Margin="0 10 0 10"
+                  Style="{DynamicResource ControlExpanderStyle}"
+                  Header="Expert Advisor"
+                  IsExpanded="False">
+            <StackPanel Orientation="Horizontal">
                 <!--#region Response Port-->
-                <StackPanel Grid.Column="0"
-                            Margin="{StaticResource ColumnMargin}">
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <TextBlock Text="Magic Number: " />
-                        <TextBox Text="{Binding ExpertAdvisor.MagicNumber, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="100" />
-                    </StackPanel>
+                <StackPanel Margin="{StaticResource ColumnMargin}">
+                    <Label Content="Magic Number: " />
+                    <TextBox Text="{Binding ExpertAdvisor.MagicNumber, UpdateSourceTrigger=PropertyChanged}"
+                             Width="100" />
                 </StackPanel>
                 <!--#endregion-->
-
                 <!--#region Host-->
-                <StackPanel Grid.Column="1"
-                            Margin="{StaticResource ColumnMargin}">
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <TextBlock Text="Host: " />
-                        <TextBox Text="{Binding ExpertAdvisor.Host, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="100" />
-                    </StackPanel>
+                <StackPanel Margin="{StaticResource ColumnMargin}">
+                    <Label Content="Host: " />
+                    <TextBox Text="{Binding ExpertAdvisor.Host, UpdateSourceTrigger=PropertyChanged}"
+                             Width="100" />
                 </StackPanel>
                 <!--#endregion-->
-
                 <!--#region Publisher Port-->
-                <StackPanel Grid.Column="2"
-                            Margin="{StaticResource ColumnMargin}">
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <TextBlock Text="Publisher Port: " />
-                        <TextBox Text="{Binding ExpertAdvisor.PublisherPort, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="100" />
-                    </StackPanel>
+                <StackPanel Margin="{StaticResource ColumnMargin}">
+                    <Label Content="Publisher Port: " />
+                    <TextBox Text="{Binding ExpertAdvisor.PublisherPort, UpdateSourceTrigger=PropertyChanged}"
+                             Width="100" />
                 </StackPanel>
                 <!--#endregion-->
-
                 <!--#region Response Port-->
-                <StackPanel Grid.Column="3"
-                            Margin="{StaticResource ColumnMargin}">
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <TextBlock Text="Response Port: " />
-                        <TextBox Text="{Binding ExpertAdvisor.ResponsePort, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="100" />
-                    </StackPanel>
+                <StackPanel Margin="{StaticResource ColumnMargin}">
+                    <Label Content="Response Port: " />
+                    <TextBox Text="{Binding ExpertAdvisor.ResponsePort, UpdateSourceTrigger=PropertyChanged}"
+                             Width="100" />
                 </StackPanel>
                 <!--#endregion-->
 
                 <!--#region Save-->
-                <Button Grid.Row="1"
-                        Margin="10 0 0 0"
-                        HorizontalAlignment="Left"
-                        Width="40"
-                        Height="25"
+                <Button Width="80"
+                        Height="40"
+                        VerticalAlignment="Bottom"
+                        Margin="{StaticResource ColumnMargin}"
                         Command="{Binding SaveEACommand}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Save" />
+                        <iconPacks:PackIconMaterial Kind="ContentSave"
+                                                    VerticalAlignment="Center"
+                                                    Width="14" />
+                        <Label Content="Save"
+                               FontSize="11" />
                     </StackPanel>
                 </Button>
-                <!--#endregion-->
-            </Grid>
-        </metro:MetroHeader>
+            </StackPanel>
+            <!--#endregion-->
+        </Expander>
         <!--#endregion-->
 
-        <!--#region Buttons-->
-        <Grid HorizontalAlignment="Right"
-              Margin="0 20 10 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Button x:Name="StopProcessBtn"
-                    Width="110"
-                    Height="40"
-                    Margin="10 0 0 0"
-                    Command="{Binding StopProcessBtnCommand}"
-                    HorizontalAlignment="Right"
-                    IsEnabled="{Binding IsTransactionActive}">
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:FontAwesome Kind="StopCircleSolid"
-                                           Width="14" />
-                    <Label Content="Stop Process"
-                           FontSize="11" />
-                </StackPanel>
-            </Button>
-
-            <Button Grid.Column="1"
-                    x:Name="ProcessBtn"
-                    Margin="10 0 0 0"
-                    Width="80"
-                    Height="40"
-                    IsEnabled="{Binding CanExecute}"
-                    Command="{Binding ProcessBtnCommand}"
-                    HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal"
-                            Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <iconPacks:FontAwesome Kind="PlaySolid"
-                                           Width="14" />
-                    <Label Content="Process"
-                           FontSize="11" />
-                </StackPanel>
-            </Button>
-            <metro:ProgressRing Grid.Column="1"
-                                IsActive="True"
-                                Width="25"
-                                Height="25"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        </Grid>
-        <!--#endregion-->
-
-        <metro:MetroHeader Grid.Row="1"
-                           Margin="0 10 10 10"
-                           Header="{x:Static commonResources:CommonResources.TestInMetaTrader}">
-            <Grid Margin="0 10 0 0">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+        <metro:MetroHeader Grid.Row="2"
+                           Header="MetaTrader">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Margin="{StaticResource ControlMargin}">
-                    <Label>
-                        <TextBlock>
-                            <Run Text="{x:Static commonResources:CommonResources.Timeframe}" />
-                        </TextBlock>
-                    </Label>
-                    <ComboBox x:Name="PeriodFilterCb"
-                              ItemsSource="{Binding Timeframes}"
-                              MinWidth="225"
-                              DisplayMemberPath="Name"
-                              SelectedValuePath="Id"
-                              SelectedValue="{Binding TimeframeId, Mode=TwoWay}">
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel Grid.Column="2"
-                            Orientation="Horizontal">
-                    <!--#region Assembled Node-->
-                    <Button x:Name="assembledNodesBtn"
-                            Margin="{StaticResource ColumnMargin}"
-                            Width="125"
-                            Height="40">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="GraphOutline"
-                                                        VerticalAlignment="Center"
-                                                        Width="15" />
-                            <Label Content="Assembled Nodes"
-                                   FontSize="11" />
-                        </StackPanel>
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="assembledNodesBtn"
-                                                    EventName="Click">
-                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                    <behaviors:InvokeCommandAction.CommandParameter>
-                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
-                                            <Binding Path="AssembledNode.ParentNode" />
-                                            <Binding Path="AssembledNode.ChildNodes" />
-                                        </MultiBinding>
-                                    </behaviors:InvokeCommandAction.CommandParameter>
-                                </behaviors:InvokeCommandAction>
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
-                    </Button>
-                    <!--#region Single Node-->
-                    <Button x:Name="nodeBtn"
-                            Width="80"
-                            Margin="{StaticResource ColumnMargin}"
-                            Height="40">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="FileTreeOutline"
-                                                        VerticalAlignment="Center"
-                                                        Width="15" />
-                            <Label Content="Node"
-                                   FontSize="11" />
-                        </StackPanel>
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="nodeBtn"
-                                                    EventName="Click">
-                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                    <behaviors:InvokeCommandAction.CommandParameter>
-                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                            <Binding Path="Node" />
-                                        </MultiBinding>
-                                    </behaviors:InvokeCommandAction.CommandParameter>
-                                </behaviors:InvokeCommandAction>
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
-                    </Button>
-                    <!--#endregion-->
-                </StackPanel>
-            </Grid>
-        </metro:MetroHeader>
 
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-            <!--#region MessagesFromCurrentPeriod-->
-            <StackPanel>
-                <UniformGrid Rows="1">
-                    <TextBlock>
-                        <Run Text="{x:Static commonResources:CommonResources.MessagesFromCurrentPeriod}"
+                <!--#region Messages From Current Period-->
+                <TextBlock HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Margin="{StaticResource ColumnMargin}">
+                        <Run Text="Input Messages"
                              FontWeight="SemiBold" />
                         <Run Text=":"
                              FontWeight="SemiBold" />
                         <Run Text="{Binding MessageInput.Count, Mode=OneWay}" />
-                    </TextBlock>
-                </UniformGrid>
-            </StackPanel>
-            <!--#endregion-->
+                </TextBlock>
+                <!--#endregion-->
 
-            <StackPanel Grid.Column="1"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0 0 15 0">
-                <Button x:Name="CleanMessageInputBtn"
-                        Command="{Binding CleanMessageInputCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
-                                                    Width="20"
-                                                    Height="15" />
-                        <TextBlock Text="Clean" />
+                <!--#region Clean Buttons-->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal">
+                    <!--#region Clean Input-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button Command="{Binding CleanMessageInputCommand}"
+                                IsEnabled="{Binding MessageInput.Count, Mode=OneWay, Converter={StaticResource IntToBooleanConverter}}"
+                                Width="100"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
+                                                            VerticalAlignment="Center"
+                                                            Width="14" />
+                                <Label Content="Clean Input"
+                                       FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                    <!--#region Clean Output-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button Command="{Binding CleanMessageOutputCommand}"
+                                IsEnabled="{Binding MessageOutput.Count, Mode=OneWay, Converter={StaticResource IntToBooleanConverter}}"
+                                Width="100"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
+                                                            VerticalAlignment="Center"
+                                                            Width="14" />
+                                <Label Content="Clean Output"
+                                       FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                </StackPanel>
+                <!--#endregion-->
+
+                <!--#region Toggle Switch-->
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal">
+                    <StackPanel>
+                        <Label Content="Test Assembled Node" />
+                        <metro:ToggleSwitch Toggled="TestAssembledNodeToggleSwitch_Toggled"
+                                            IsOn="{Binding TestAssembledNode, Mode=TwoWay}" />
                     </StackPanel>
-                </Button>
-            </StackPanel>
-
-            <StackPanel Grid.Column="2"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0 0 10 0">
-                <Button x:Name="CleanMessageOutputBtn"
-                        Command="{Binding CleanMessageOutputCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
-                                                    Width="20"
-                                                    Height="15" />
-                        <TextBlock Text="Clean" />
+                    <StackPanel>
+                        <Label Content="Test Node" />
+                        <metro:ToggleSwitch Toggled="TestNodeToggleSwitch_Toggled"
+                                            IsOn="{Binding TestNode, Mode=TwoWay}" />
                     </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
+                </StackPanel>
+                <!--#endregion-->
 
-        <Grid Grid.Row="3">
+                <!--#region Buttons-->
+                <StackPanel Grid.Column="3"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <!--#region Assembled Node-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button x:Name="assembledNodesBtn"
+                                Width="125"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="GraphOutline"
+                                                            VerticalAlignment="Center"
+                                                            Width="15" />
+                                <Label Content="Assembled Node"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="assembledNodesBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
+                                                <Binding Path="AssembledNode" />
+                                                <Binding Path="AssembledNode.ChildNodes" />
+                                            </MultiBinding>
+                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                    </behaviors:InvokeCommandAction>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                    </Grid>
+                    <!--#region Single Node-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button x:Name="nodeBtn"
+                                Width="80"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="FileTreeOutline"
+                                                            VerticalAlignment="Center"
+                                                            Width="15" />
+                                <Label Content="Node"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="nodeBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                                <Binding Path="Node" />
+                                            </MultiBinding>
+                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                    </behaviors:InvokeCommandAction>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                        <!--#endregion-->
+                    </Grid>
+                </StackPanel>
+                <!--#endregion-->
+
+            </Grid>
+        </metro:MetroHeader>
+
+        <Grid Grid.Row="3"
+              Margin="0, 10, 0, 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -329,10 +353,10 @@
                     <Border Grid.Column="7"
                             Name="dummywidth7"></Border>
                 </Grid>
-                <metro:MetroHeader Margin="0 0 15 10"
+                <!--#region Message Input-->
+                <metro:MetroHeader Margin="0, 0, 10, 0"
                                    Header="{x:Static commonResources:CommonResources.MessageInput}">
-                    <ListView Margin="2"
-                              ItemsSource="{Binding MessageInput}"
+                    <ListView ItemsSource="{Binding MessageInput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>
@@ -383,10 +407,10 @@
                     <Border Grid.Column="3"
                             Name="dummywidth13"></Border>
                 </Grid>
-                <metro:MetroHeader Margin="5 0 10 10"
+                <!--#region Message Output-->
+                <metro:MetroHeader Margin="10 0 0 0"
                                    Header="{x:Static commonResources:CommonResources.MessageOutput}">
-                    <ListView Margin="2"
-                              ItemsSource="{Binding MessageOutput}"
+                    <ListView ItemsSource="{Binding MessageOutput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>

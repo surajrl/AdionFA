@@ -166,7 +166,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                     ChildNodes = childNodes.ToList(),
                 };
 
-                switch (parentNode.Label)
+                switch (parentNode.Label.ToLowerInvariant())
                 {
                     case "up":
                         assembledBuilder.AssembledNodesUP.Add(assembledNode);

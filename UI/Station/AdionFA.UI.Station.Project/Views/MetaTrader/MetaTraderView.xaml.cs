@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using AdionFA.UI.Station.Project.ViewModels;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace AdionFA.UI.Station.Project.Views
 {
@@ -10,6 +12,26 @@ namespace AdionFA.UI.Station.Project.Views
         public MetaTraderView()
         {
             InitializeComponent();
+        }
+
+        private void TestAssembledNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!((MetaTraderViewModel)DataContext).TestNode)
+            {
+                return;
+            }
+
+            ((MetaTraderViewModel)DataContext).TestNode = !((MetaTraderViewModel)DataContext).TestAssembledNode;
+        }
+
+        private void TestNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!((MetaTraderViewModel)DataContext).TestAssembledNode)
+            {
+                return;
+            }
+
+            ((MetaTraderViewModel)DataContext).TestAssembledNode = !((MetaTraderViewModel)DataContext).TestNode;
         }
     }
 }
