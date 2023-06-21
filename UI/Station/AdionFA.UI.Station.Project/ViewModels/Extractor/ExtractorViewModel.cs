@@ -47,8 +47,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
             _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
-
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
+
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);

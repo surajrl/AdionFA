@@ -517,37 +517,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     var extractionTemplatesDirectory = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
                     var extractionTemplates = _projectDirectoryService.GetFilesInPath(extractionTemplatesDirectory);
-
-                    if (!AssembledBuilderProcessUP.Any())
+                    foreach (var file in extractionTemplates)
                     {
-                        foreach (var file in extractionTemplates)
+                        AssembledBuilderProcessUP.Add(new AssembledBuilderProcessModel
                         {
-                            AssembledBuilderProcessUP.Add(new AssembledBuilderProcessModel
-                            {
-                                ExtractionTemplatePath = file.FullName,
-                                ExtractionTemplateName = file.Name,
-                                ExtractionAssembledBuilderName = file.Name,
-                                Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
-                                Tree = new(),
-                                BacktestNodes = new(),
-                            });
-                        }
-                    }
+                            ExtractionTemplatePath = file.FullName,
+                            ExtractionTemplateName = file.Name,
+                            ExtractionAssembledBuilderName = file.Name,
+                            Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
+                            Tree = new(),
+                            BacktestNodes = new(),
+                        });
 
-                    if (!AssembledBuilderProcessDOWN.Any())
-                    {
-                        foreach (var file in extractionTemplates)
+                        AssembledBuilderProcessDOWN.Add(new AssembledBuilderProcessModel
                         {
-                            AssembledBuilderProcessDOWN.Add(new AssembledBuilderProcessModel
-                            {
-                                ExtractionTemplatePath = file.FullName,
-                                ExtractionTemplateName = file.Name,
-                                ExtractionAssembledBuilderName = file.Name,
-                                Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
-                                Tree = new(),
-                                BacktestNodes = new(),
-                            });
-                        }
+                            ExtractionTemplatePath = file.FullName,
+                            ExtractionTemplateName = file.Name,
+                            ExtractionAssembledBuilderName = file.Name,
+                            Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
+                            Tree = new(),
+                            BacktestNodes = new(),
+                        });
                     }
                 }
             }
