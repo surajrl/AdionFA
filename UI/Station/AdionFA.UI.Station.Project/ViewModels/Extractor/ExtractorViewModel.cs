@@ -35,7 +35,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IAppProjectService _appProjectService;
 
         private readonly IProjectServiceAgent _projectService;
-        private readonly IMarketDataServiceAgent _historicalDataService;
+        private readonly IMarketDataServiceAgent _marketDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -46,7 +46,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
+            _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
@@ -109,7 +109,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     });
 
                     var projectConfiguration = await _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
-                    var projectHistoricalData = await _historicalDataService.GetHistoricalData(projectConfiguration.HistoricalDataId.Value, true);
+                    var projectHistoricalData = await _marketDataService.GetHistoricalData(projectConfiguration.HistoricalDataId.Value, true);
 
                     var candles = projectHistoricalData.HistoricalDataCandles
                     .Select(hdCandle => new Candle
@@ -244,10 +244,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var projectConfigurationVM = project?.ProjectConfigurations.FirstOrDefault();
                 Symbol = ((CurrencyPairEnum)projectConfigurationVM?.SymbolId).GetMetadata()?.Name;
 
-                var symbolVM = await _historicalDataService.GetSymbol(projectConfigurationVM.SymbolId).ConfigureAwait(true);
+                var symbolVM = await _marketDataService.GetSymbol(projectConfigurationVM.SymbolId).ConfigureAwait(true);
                 Symbol = symbolVM.Name;
 
-                var timeframeVM = await _historicalDataService.GetTimeframe(projectConfigurationVM.TimeframeId).ConfigureAwait(true);
+                var timeframeVM = await _marketDataService.GetTimeframe(projectConfigurationVM.TimeframeId).ConfigureAwait(true);
                 Timeframe = timeframeVM.Name;
 
                 Variation = projectConfigurationVM?.ExtractorMinVariation ?? 0;
@@ -255,7 +255,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 StartDate = projectConfigurationVM.FromDateIS;
                 EndDate = projectConfigurationVM.ToDateIS;
 
-                HistoricalData = await _historicalDataService.GetHistoricalData(historicalDataId: projectConfigurationVM?.HistoricalDataId ?? 0).ConfigureAwait(true);
+                HistoricalData = await _marketDataService.GetHistoricalData(historicalDataId: projectConfigurationVM?.HistoricalDataId ?? 0).ConfigureAwait(true);
 
                 if (!IsTransactionActive)
                 {
@@ -284,7 +284,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private List<string> CanExecuteValidate(bool showDialogWithErrors = false)
         {
-            List<string> errors = Array.Empty<string>().ToList();
+            var errors = Array.Empty<string>().ToList();
 
             // Validation Rules
 

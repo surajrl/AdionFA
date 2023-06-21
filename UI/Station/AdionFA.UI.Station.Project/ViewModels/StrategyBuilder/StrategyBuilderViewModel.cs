@@ -1,4 +1,5 @@
 ﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
@@ -45,6 +46,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IMapper _mapper;
 
         private readonly IProjectDirectoryService _projectDirectoryService;
+        private readonly IExtractorService _extractorService;
         private readonly IStrategyBuilderService _strategyBuilderService;
 
         private readonly IProjectServiceAgent _projectService;
@@ -62,6 +64,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             : base(mainViewModel)
         {
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
+            _extractorService = IoC.Get<IExtractorService>();
             _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
 
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
@@ -81,9 +84,21 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _manualResetEventSlim = new(true);
             _cancellationTokenSource = new();
 
+
             StrategyBuilderProcesses = new();
-            StrategyBuilder = new();
             MaxParallelism = Environment.ProcessorCount - 1;
+
+            // Load XML files containing Correlation Nodes
+            StrategyBuilder = new();
+
+            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
+            {
+                StrategyBuilder.CorrelationNodesUP.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+            });
+            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml").ToList().ForEach(file =>
+            {
+                StrategyBuilder.CorrelationNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+            });
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
@@ -93,61 +108,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 PopulateViewModel();
             }
         });
-
-        public ICommand RefreshCommand => new DelegateCommand(async () => await RefreshAsync().ConfigureAwait(true), () => !IsTransactionActive)
-            .ObservesProperty(() => IsTransactionActive);
-
-        private async Task<bool> RefreshAsync()
-        {
-            try
-            {
-                var upCorrelationDirectory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory();
-                var downCorrelationDirectory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory();
-
-                if (!_projectDirectoryService.GetFilesInPath(upCorrelationDirectory, "*.xml").Any()
-                    && !_projectDirectoryService.GetFilesInPath(downCorrelationDirectory, "*.xml").Any())
-                {
-                    StrategyBuilder.CorrelationNodesUP.Clear();
-                    StrategyBuilder.CorrelationNodesDOWN.Clear();
-
-                    StrategyBuilderProcesses.Clear();
-
-                    PopulateViewModel();
-
-                    return true;
-                }
-
-                var answer = await MessageHelper.ShowMessageInput(this,
-                    "Strategy Builder",
-                    "Do you want to delete all the correlation nodes?").ConfigureAwait(true);
-
-                if (answer == MessageDialogResult.Affirmative)
-                {
-                    _projectDirectoryService.DeleteAllFiles(upCorrelationDirectory, "*.xml", isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(downCorrelationDirectory, "*.xml", isBackup: false);
-
-                    StrategyBuilder.CorrelationNodesUP.Clear();
-                    StrategyBuilder.CorrelationNodesDOWN.Clear();
-
-                    StrategyBuilderProcesses.Clear();
-
-                    PopulateViewModel();
-
-                    return true;
-                }
-
-                PopulateViewModel();
-
-                return false;
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-
-                Trace.TraceError(ex.Message);
-                throw;
-            }
-        }
 
         public ICommand StopCommand => new DelegateCommand(() =>
         {
@@ -192,9 +152,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-
                 var validator = Validate(new StrategyBuilderValidator());
                 if (!validator.IsValid)
                 {
@@ -205,24 +162,28 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     return;
                 }
 
-                if (!await RefreshAsync().ConfigureAwait(true))
+                var deleteAll = await MessageHelper.ShowMessageInput(this,
+                    "Strategy Builder",
+                    "Starting a new process will delete all the Correlation Nodes and Assembled Nodes.\n"
+                    + "Do you want to continue?").ConfigureAwait(true);
+
+                if (deleteAll == MessageDialogResult.Affirmative)
+                {
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+
+                    StrategyBuilder.CorrelationNodesUP.Clear();
+                    StrategyBuilder.CorrelationNodesDOWN.Clear();
+                }
+                else
                 {
                     return;
                 }
 
                 IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                if (ProjectConfiguration.WithoutSchedule)
-                {
-                    PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory());
-                }
-                else
-                {
-                    PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory());
-                    PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory());
-                    PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory());
-                }
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
+                _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(false);
 
                 _cancellationTokenSource = new();
 
@@ -248,105 +209,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 .OrderBy(candle => candle.Date)
                 .ThenBy(candle => candle.Time).ToList();
 
-                await Task.Run(() =>
+                await Task.Factory.StartNew(() =>
                 {
-                    var allBacktestNodes = new List<REPTreeNodeModel>();
-
-                    // Get all the nodes that will be backtested
-
-                    foreach (var process in StrategyBuilderProcesses)
-                    {
-                        _manualResetEventSlim.Wait();
-                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                        // Weka
-
-                        process.Message = StrategyBuilderStatus.ExecutingWeka.GetMetadata().Description;
-
-                        var wekaApi = new WekaApiClient();
-                        var responseWeka = wekaApi.GetREPTreeClassifier(
-                            process.ExtractionPath,
-                            ProjectConfiguration.DepthWeka,
-                            ProjectConfiguration.TotalDecimalWeka,
-                            ProjectConfiguration.MinimalSeed,
-                            ProjectConfiguration.MaximumSeed,
-                            ProjectConfiguration.TotalInstanceWeka,
-                            (double)ProjectConfiguration.MaxRatioTree,
-                            (double)ProjectConfiguration.NTotalTree);
-
-                        process.Tree = responseWeka[0];
-
-                        var nodes = process.Tree.NodeOutput.Where(node => node.Winner)
-                        .Select(node =>
-                        {
-                            node.Node = node.Node.OrderByDescending(node => node).ToList();
-                            return node;
-                        })
-                        .ToList();
-
-                        allBacktestNodes.AddRange(nodes);
-                        process.BacktestNodes.Clear();
-                        process.BacktestNodes.AddRange(nodes);
-
-                        _manualResetEventSlim.Wait();
-                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                        process.Message = AssembledBuilderStatus.WekaCompleted.GetMetadata().Description;
-                    }
-
-                    // Perform backtest of all the nodes
-
-                    var backtestNodesPartition = Partitioner.Create(allBacktestNodes, EnumerablePartitionerOptions.NoBuffering);
-
-                    Parallel.ForEach(
-                        backtestNodesPartition,
-                        new ParallelOptions
-                        {
-                            MaxDegreeOfParallelism = MaxParallelism,
-                            CancellationToken = _cancellationTokenSource.Token,
-                        },
-                        node =>
-                        {
-                            _manualResetEventSlim.Wait();
-                            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                            var process = StrategyBuilderProcesses.Where(process => process.BacktestNodes.Any(processNode => processNode == node)).FirstOrDefault();
-
-                            lock (_lock)
-                            {
-                                process.ExecutingBacktests++;
-                                process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
-                            }
-
-                            _strategyBuilderService.BuildBacktestOfNode(
-                                node,
-                                _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
-                                allProjectCandles,
-                                _manualResetEventSlim,
-                                _cancellationTokenSource.Token);
-
-                            if (node.WinningStrategy)
-                            {
-                                StrategyBuilderService.SerializeNode(EntityTypeEnum.StrategyBuilder, ProcessArgs.ProjectName, node);
-                            }
-
-                            lock (_lock)
-                            {
-                                process.ExecutingBacktests--;
-                                process.CompletedBacktests++;
-                                process.ProgressCounter++;
-
-                                if (process.CompletedBacktests == process.BacktestNodes.Count)
-                                {
-                                    process.Message = StrategyBuilderStatus.BacktestCompleted.GetMetadata().Description;
-                                }
-                                else
-                                {
-                                    process.Message = $"{AssembledBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
-                                }
-                            }
-                        });
-                });
+                    BacktestProcess(GetBacktestNodes(), allProjectCandles);
+                }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
 
                 // Correlation Analysis
 
@@ -368,17 +234,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     process.Message = StrategyBuilderStatus.Completed.GetMetadata().Description;
                 }
 
+                _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(true);
+
                 // Results Message
 
-                var msgUP = StrategyBuilder.CorrelationNodesUP.Count > 0 ? $"{StrategyBuilder.CorrelationNodesUP.Count} Correlation UP Nodes Found!" : "No Correlation UP Nodes Found.";
-                var msgDOWN = StrategyBuilder.CorrelationNodesDOWN.Count > 0 ? $"{StrategyBuilder.CorrelationNodesDOWN.Count} Correlation DOWN Nodes Found!" : "No Correlation DOWN Nodes Found.";
+                var msgUP = StrategyBuilder.CorrelationNodesUP.Count > 0 ? $"{StrategyBuilder.CorrelationNodesUP.Count} Correlation UP Nodes Found." : "No Correlation UP Nodes Found.";
+                var msgDOWN = StrategyBuilder.CorrelationNodesDOWN.Count > 0 ? $"{StrategyBuilder.CorrelationNodesDOWN.Count} Correlation DOWN Nodes Found." : "No Correlation DOWN Nodes Found.";
 
                 MessageHelper.ShowMessage(this,
                     CommonResources.StrategyBuilder,
                     $"{MessageResources.StrategyBuilderCompleted}\n\n"
                     + $"{msgUP}\n"
-                    + $"{msgDOWN}\n\n"
-                    + $"Strategy Builder Completed in {stopwatch.Elapsed:hh\\:mm\\:ss\\.fff}");
+                    + $"{msgDOWN}");
             }
             catch (OperationCanceledException)
             {
@@ -394,13 +261,120 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             finally
             {
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = null;
-
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
+
+                _cancellationTokenSource?.Dispose();
+                _cancellationTokenSource = null;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+
+
+        private void ExtractionProcess(IEnumerable<Candle> projectCandles)
+        {
+        }
+
+        private List<REPTreeNodeModel> GetBacktestNodes()
+        {
+            var backtestNodes = new List<REPTreeNodeModel>();
+
+            foreach (var process in StrategyBuilderProcesses)
+            {
+                _manualResetEventSlim.Wait();
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                // Weka
+
+                process.Message = StrategyBuilderStatus.ExecutingWeka.GetMetadata().Description;
+
+                var wekaApi = new WekaApiClient();
+                var responseWeka = wekaApi.GetREPTreeClassifier(
+                    process.ExtractionStrategyBuilderPath,
+                    ProjectConfiguration.DepthWeka,
+                    ProjectConfiguration.TotalDecimalWeka,
+                    ProjectConfiguration.MinimalSeed,
+                    ProjectConfiguration.MaximumSeed,
+                    ProjectConfiguration.TotalInstanceWeka,
+                    (double)ProjectConfiguration.MaxRatioTree,
+                    (double)ProjectConfiguration.NTotalTree);
+
+                process.Tree = responseWeka[0];
+
+                var nodes = process.Tree.NodeOutput.Where(node => node.Winner)
+                .Select(node =>
+                {
+                    node.Node = node.Node.OrderByDescending(node => node).ToList();
+                    return node;
+                })
+                .ToList();
+
+                backtestNodes.AddRange(nodes);
+                process.BacktestNodes.Clear();
+                process.BacktestNodes.AddRange(nodes);
+
+                _manualResetEventSlim.Wait();
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                process.Message = StrategyBuilderStatus.WekaCompleted.GetMetadata().Description;
+            }
+
+            return backtestNodes;
+        }
+
+        private void BacktestProcess(List<REPTreeNodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
+        {
+            var backtestNodesPartition = Partitioner.Create(backtestNodes, EnumerablePartitionerOptions.NoBuffering);
+
+            Parallel.ForEach(
+                backtestNodesPartition,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = MaxParallelism,
+                    CancellationToken = _cancellationTokenSource.Token,
+                },
+                node =>
+                {
+                    _manualResetEventSlim.Wait();
+                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                    var process = StrategyBuilderProcesses.Where(process => process.BacktestNodes.Any(processNode => processNode == node)).FirstOrDefault();
+
+                    lock (_lock)
+                    {
+                        process.ExecutingBacktests++;
+                        process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                    }
+
+                    _strategyBuilderService.BuildBacktestOfNode(
+                        node,
+                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                        projectCandles,
+                        _manualResetEventSlim,
+                        _cancellationTokenSource.Token);
+
+                    if (node.WinningStrategy)
+                    {
+                        StrategyBuilderService.SerializeNode(EntityTypeEnum.StrategyBuilder, ProcessArgs.ProjectName, node);
+                    }
+
+                    lock (_lock)
+                    {
+                        process.ExecutingBacktests--;
+                        process.CompletedBacktests++;
+                        process.ProgressCounter++;
+
+                        if (process.CompletedBacktests == process.BacktestNodes.Count)
+                        {
+                            process.Message = StrategyBuilderStatus.BacktestCompleted.GetMetadata().Description;
+                        }
+                        else
+                        {
+                            process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        }
+                    }
+                });
+        }
+
 
         public async void PopulateViewModel()
         {
@@ -410,19 +384,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
                 ProjectConfiguration = project?.ProjectConfigurations.FirstOrDefault();
 
-                UpdateTotalCorrelationNodes();
+                // INTEGRATE EXTRACTION INSIDE SB
+                // EXTRACTOR WILL ONLY BE USED TO ADD TEMPLATES
+                // DO NOT REMOVE THE EXTRACTION YET THOUGH
 
-                if (!IsTransactionActive && !StrategyBuilderProcesses.Any())
+                if (!IsTransactionActive
+                    && StrategyBuilderProcesses.Any(process => process.Message == StrategyBuilderStatus.Completed.GetMetadata().Description)
                 {
-                    if (ProjectConfiguration.WithoutSchedule)
+                    var extractionTemplatesDirectory = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
+                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(extractionTemplatesDirectory);
+
+                    foreach (var file in extractionTemplates)
                     {
-                        PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory());
-                    }
-                    else
-                    {
-                        PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory());
-                        PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory());
-                        PopulateStrategyBuilderProcesses(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory());
+                        StrategyBuilderProcesses.Add(new StrategyBuilderProcessModel
+                        {
+                            ExtractionTemplatePath = file.FullName,
+                            ExtractionTemplateName = file.Name,
+                            ExtractionStrategyBuilderName = file.Name,
+                            Message = StrategyBuilderStatus.NotStarted.GetMetadata().Description,
+                            Tree = new(),
+                            BacktestNodes = new()
+                        });
                     }
                 }
             }
@@ -433,55 +415,26 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        private void PopulateStrategyBuilderProcesses(string extractionPath)
+        private void PopulateStrategyBuilderProcesses(string extractorTemplatePath)
         {
             var regionName = "WithoutSchedule";
 
-            if (extractionPath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
+            if (extractorTemplatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
             {
                 regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America);
             }
 
-            if (extractionPath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe)))
+            else if (extractorTemplatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe)))
             {
                 regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe);
             }
 
-            if (extractionPath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia)))
+            else if (extractorTemplatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia)))
             {
                 regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia);
             }
 
-            _projectDirectoryService.GetFilesInPath(extractionPath).ToList().ForEach(file =>
-            {
-                StrategyBuilderProcesses.Add(new StrategyBuilderProcessModel
-                {
-                    ExtractionPath = file.FullName,
-                    ExtractionName = file.Name,
-                    Message = StrategyBuilderStatus.NotStarted.GetMetadata().Description,
-                    Tree = new(),
-                    BacktestNodes = new()
-                });
-            });
-        }
 
-        private void UpdateTotalCorrelationNodes()
-        {
-            var upCorrelationDirectory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory();
-            var downCorrelationDirectory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory();
-
-            StrategyBuilder.CorrelationNodesUP.Clear();
-            StrategyBuilder.CorrelationNodesDOWN.Clear();
-
-            _projectDirectoryService.GetFilesInPath(upCorrelationDirectory, "*.xml").ToList().ForEach(file =>
-            {
-                StrategyBuilder.CorrelationNodesUP.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
-            });
-
-            _projectDirectoryService.GetFilesInPath(downCorrelationDirectory, "*.xml").ToList().ForEach(file =>
-            {
-                StrategyBuilder.CorrelationNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
-            });
         }
 
         // View Bindings

@@ -19,7 +19,7 @@
     <UserControl.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
-        
+
         <Style TargetType="Button"
                x:Key="DisableBorderRarioBtn">
             <Setter Property="Padding"
@@ -374,7 +374,6 @@
                            Header="Strategy Builder">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -448,39 +447,6 @@
                     <Label Content="Maximum Parallelism" />
                     <TextBox Text="{Binding MaxParallelism}"
                              IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
-                </StackPanel>
-                <!--#endregion-->
-                
-                <!--#region Refresh Button-->
-                <StackPanel Grid.Column="2"
-                            Margin="{StaticResource ColumnMargin}"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right">
-                    <Grid>
-                        <Button x:Name="refreshBtn"
-                                Width="80"
-                                Height="40"
-                                IsEnabled="{Binding CanExecute}">
-                            <StackPanel Orientation="Horizontal"
-                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                                <iconPacks:PackIconFontAwesome Kind="RedoSolid"
-                                                               VerticalAlignment="Center"
-                                                               Width="14" />
-                                <Label Content="Refresh"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="refreshBtn"
-                                                        EventName="Click">
-                                    <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                        <metro:ProgressRing IsActive="True"
-                                            Width="25"
-                                            Height="25"
-                                            Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </Grid>
                 </StackPanel>
                 <!--#endregion-->
             </Grid>

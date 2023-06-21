@@ -8,13 +8,22 @@ namespace AdionFA.UI.Station.Project.Model.StrategyBuilder
     {
         // Extraction
 
-        public string ExtractionPath { get; set; }
+        public string ExtractionTemplatePath { get; set; }
 
-        private string _extractionName;
-        public string ExtractionName
+        private string _extractionTemplateName;
+        public string ExtractionTemplateName
         {
-            get => _extractionName;
-            set => SetProperty(ref _extractionName, value);
+            get => _extractionTemplateName;
+            set => SetProperty(ref _extractionTemplateName, value);
+        }
+
+        public string ExtractionStrategyBuilderPath { get; set; }
+
+        private string _extractionStrategyBuilderName;
+        public string ExtractionStrategyBuilderName
+        {
+            get => _extractionStrategyBuilderName;
+            set => SetProperty(ref _extractionStrategyBuilderName, value);
         }
 
         // Backtests

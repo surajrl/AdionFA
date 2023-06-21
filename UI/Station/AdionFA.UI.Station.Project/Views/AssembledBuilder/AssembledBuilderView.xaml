@@ -216,7 +216,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <!--#region Assembled Nodes Buttons-->
@@ -315,29 +314,6 @@
                             Margin="{StaticResource ColumnMargin}"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Button x:Name="refreshBtn"
-                            Width="80"
-                            Height="40"
-                            IsEnabled="{Binding CanExecute}">
-                        <StackPanel Orientation="Horizontal"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                            <iconPacks:PackIconFontAwesome Kind="RedoSolid"
-                                                           VerticalAlignment="Center"
-                                                           Width="14" />
-                            <Label Content="Refresh"
-                                   FontSize="11" />
-                        </StackPanel>
-                        <behaviors:Interaction.Triggers>
-                            <behaviors:EventTrigger SourceName="refreshBtn"
-                                                    EventName="Click">
-                                <behaviors:InvokeCommandAction Command="{Binding RefreshCommand}" />
-                            </behaviors:EventTrigger>
-                        </behaviors:Interaction.Triggers>
-                    </Button>
-                    <metro:ProgressRing IsActive="True"
-                                        Width="25"
-                                        Height="25"
-                                        Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
             </Grid>
         </metro:MetroHeader>

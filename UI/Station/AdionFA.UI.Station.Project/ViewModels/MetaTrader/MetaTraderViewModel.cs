@@ -49,7 +49,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private Candle _currentCandle;
         private bool _disposedValue;
 
-        public MetaTraderViewModel(MainViewModel mainViewModel) : base(mainViewModel)
+        public MetaTraderViewModel(MainViewModel mainViewModel)
+            : base(mainViewModel)
         {
             _tradeService = IoC.Get<ITradeService>();
 
@@ -63,6 +64,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
+            Nodes = new();
             MessageInput = new();
             MessageOutput = new();
 
@@ -199,7 +201,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    if (Node != null || AssembledNode != null)
+                    if (Nodes != null || AssembledNode != null)
                     {
                         // Perform algorithm --------------------------------------------------
                         var messageInputCopy = MessageInput.ToList(); // Copy in case it gets modified
@@ -219,14 +221,21 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         var isTrade = false;
                         var label = string.Empty;
 
-                        if (TestNode)
+                        if (TestNodes)
                         {
-                            isTrade = _tradeService.IsTrade(
-                                Node,
-                                candles,
-                                _currentCandle);
+                            foreach (var node in Nodes)
+                            {
+                                isTrade = _tradeService.IsTrade(
+                                    node,
+                                    candles,
+                                    _currentCandle);
 
-                            label = Node.Label;
+                                if (isTrade)
+                                {
+                                    label = node.Label;
+                                    break;
+                                }
+                            }
                         }
                         else if (TestAssembledNode)
                         {
@@ -294,7 +303,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             if (item is REPTreeNodeModel singleNode)
             {
-                Node = singleNode;
+                if (Nodes.IndexOf(singleNode) == -1)
+                {
+                    Nodes.Add(singleNode);
+                }
             }
 
             if (item is AssembledNodeModel assembledNode)
@@ -305,9 +317,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is REPTreeNodeModel singleNode)
+            if (item is REPTreeNodeModel singleNode) // Unboxing ??
             {
-                Node = null;
+                Nodes.Remove(singleNode);
             }
 
             if (item is AssembledNodeModel assembledNode)
@@ -402,18 +414,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _testAssembledNode, value);
         }
 
-        private bool _testNode;
-        public bool TestNode
+        private bool _testNodes;
+        public bool TestNodes
         {
-            get => _testNode;
-            set => SetProperty(ref _testNode, value);
+            get => _testNodes;
+            set => SetProperty(ref _testNodes, value);
         }
 
-        private REPTreeNodeModel _node;
-        public REPTreeNodeModel Node
+        private ObservableCollection<REPTreeNodeModel> _nodes;
+        public ObservableCollection<REPTreeNodeModel> Nodes
         {
-            get => _node;
-            set => SetProperty(ref _node, value);
+            get => _nodes;
+            set => SetProperty(ref _nodes, value);
         }
 
         private AssembledNodeModel _assembledNode;

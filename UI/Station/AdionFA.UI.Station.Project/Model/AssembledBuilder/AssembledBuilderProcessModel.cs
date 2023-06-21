@@ -28,15 +28,6 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
 
         // Backtests
 
-
-        private int _totalBacktest;
-        public int TotalBacktests
-        {
-            get => _totalBacktest;
-            set => SetProperty(ref _totalBacktest, value);
-        }
-
-
         private int _executingBacktest;
         public int ExecutingBacktests
         {

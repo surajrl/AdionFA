@@ -23,7 +23,6 @@ using AdionFA.UI.Station.Project.Model.AssembledBuilder;
 using AdionFA.UI.Station.Project.Validators.AssembledBuilder;
 using AutoMapper;
 using DynamicData;
-using MahApps.Metro.Controls.Dialogs;
 using Microsoft.CodeAnalysis;
 using Prism.Commands;
 using Prism.Events;
@@ -71,13 +70,33 @@ namespace AdionFA.UI.Station.Project.ViewModels
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Subscribe(completed =>
+            {
+                if (completed)
+                {
+                    // Load the Correlation Nodes
+                    AssembledBuilder = _assembledBuilderService.LoadAssembledBuilder(ProcessArgs.ProjectName);
+                }
+                else
+                {
+                    // Delete Assembled Nodes
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssembledBuilderNodesUPDirectory(), "*.xml", isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssembledBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+
+                    AssembledBuilder.AssembledNodesUP.Clear();
+                    AssembledBuilder.AssembledNodesDOWN.Clear();
+                    AssembledBuilder.ChildNodesUP.Clear();
+                    AssembledBuilder.ChildNodesDOWN.Clear();
+                }
+            });
 
             _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
 
-            AssembledBuilder = new();
+
+            AssembledBuilder = _assembledBuilderService.LoadAssembledBuilder(ProcessArgs.ProjectName);
             AssembledBuilderProcessUP = new();
             AssembledBuilderProcessDOWN = new();
             MaxParallelism = Environment.ProcessorCount - 1;
@@ -151,40 +170,25 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             try
             {
-                if (!Validate(new AssembledBuilderValidator()).IsValid)
+                var validator = Validate(new AssembledBuilderValidator());
+                if (!validator.IsValid)
                 {
+                    MessageHelper.ShowMessages(this,
+                       EntityTypeEnum.AssembledBuilder.GetMetadata().Description,
+                       validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+
                     return;
                 }
 
-                var deletePrevious = await MessageHelper.ShowMessageInput(this,
-                    "Assembled Builder",
-                    "Do you want to delete all the previous extractions and assembled nodes?").ConfigureAwait(true);
-
-                if (deletePrevious == MessageDialogResult.Affirmative)
-                {
-                    // Delete assembled builder extractions
-                    var extractionDirectoryUP = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("up");
-                    var extractionDirectoryDOWN = ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("down");
-                    _projectDirectoryService.DeleteAllFiles(extractionDirectoryUP, isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(extractionDirectoryDOWN, isBackup: false);
-
-                    // Delete assembled nodes
-                    var nodesDirectoryUP = ProcessArgs.ProjectName.ProjectAssembledBuilderNodesUPDirectory();
-                    var nodesDirectoryDOWN = ProcessArgs.ProjectName.ProjectAssembledBuilderNodesDOWNDirectory();
-                    _projectDirectoryService.DeleteAllFiles(nodesDirectoryUP, ext: "*.xml", isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(nodesDirectoryDOWN, ext: "*.xml", isBackup: false);
-                }
-                else
-                {
-                    return;
-                }
+                // Delete Assembled Builder Extractions
+                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
+                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssembledBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
 
                 IsTransactionActive = true;
+
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                 _cancellationTokenSource = new();
-
-                Refresh();
 
                 // Historical Data
 
@@ -206,43 +210,45 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 await Task.Factory.StartNew(() =>
                 {
-                    // Extraction
-                    var backtestNodes = new List<REPTreeNodeModel>();
 
                     if (AssembledBuilder.ChildNodesUP.Count > 0 && AssembledBuilder.ChildNodesDOWN.Count > 0)
                     {
                         ExtractionProcess("up", allProjectCandles);
                         ExtractionProcess("down", allProjectCandles);
 
-                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessUP, "up"));
-                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessDOWN, "down"));
+                        var backtestNodes = new List<REPTreeNodeModel>
+                        {
+                            GetBacktestNodes(AssembledBuilderProcessUP, "up"),
+                            GetBacktestNodes(AssembledBuilderProcessDOWN, "down")
+                        };
+
+                        BacktestProcess(backtestNodes, allProjectCandles);
                     }
                     else if (AssembledBuilder.ChildNodesUP.Count > 0)
                     {
                         ExtractionProcess("up", allProjectCandles);
-                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessUP, "up"));
+                        BacktestProcess(GetBacktestNodes(AssembledBuilderProcessUP, "up"), allProjectCandles);
                     }
                     else if (AssembledBuilder.ChildNodesDOWN.Count > 0)
                     {
                         ExtractionProcess("down", allProjectCandles);
-                        backtestNodes.Add(GetBacktestNodes(AssembledBuilderProcessDOWN, "down"));
+                        BacktestProcess(GetBacktestNodes(AssembledBuilderProcessDOWN, "down"), allProjectCandles);
                     }
                     else
                     {
                         return;
                     }
 
-                    BacktestProcess(backtestNodes, allProjectCandles);
                 }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
 
-                // Correlation ...
+                // TODO: Correlation Analysis
 
                 IsTransactionActive = false;
 
                 // Result Message
 
-                var msgUP = AssembledBuilder.AssembledNodesUP.Count > 0 ? $"{AssembledBuilder.AssembledNodesUP.Count} UP nodes found." : "No UP nodes found.";
-                var msgDOWN = AssembledBuilder.AssembledNodesDOWN.Count > 0 ? $"{AssembledBuilder.AssembledNodesDOWN.Count} DOWN nodes found." : "No DOWN nodes found.";
+                var msgUP = AssembledBuilder.AssembledNodesUP.Count > 0 ? $"{AssembledBuilder.AssembledNodesUP.Count} UP Assembled Nodes Found." : "No UP Assembled Nodes Found.";
+                var msgDOWN = AssembledBuilder.AssembledNodesDOWN.Count > 0 ? $"{AssembledBuilder.AssembledNodesDOWN.Count} DOWN Assembled Nodes Found." : "No DOWN Assembled Nodes Found.";
 
                 MessageHelper.ShowMessage(this,
                     CommonResources.AssembledBuilder,
@@ -395,7 +401,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private List<REPTreeNodeModel> GetBacktestNodes(IEnumerable<AssembledBuilderProcessModel> assembledBuilderProcess, string label)
         {
-            var allBacktestNodes = new List<REPTreeNodeModel>();
+            var backtestNodes = new List<REPTreeNodeModel>();
 
             foreach (var process in assembledBuilderProcess)
             {
@@ -415,8 +421,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         ProjectConfiguration.MaximumSeed,
                         ProjectConfiguration.TotalInstanceWeka,
                         (double)ProjectConfiguration.ABWekaMaxRatioTree,
-                        (double)ProjectConfiguration.ABWekaNTotalTree,
-                        true);
+                        (double)ProjectConfiguration.ABWekaNTotalTree);
 
                 process.Tree = responseWeka[0];
 
@@ -430,7 +435,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         return node;
                     }).ToList();
 
-                allBacktestNodes.AddRange(nodes);
+                backtestNodes.AddRange(nodes);
                 process.BacktestNodes.Clear();
                 process.BacktestNodes.AddRange(nodes);
 
@@ -440,7 +445,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 process.Message = AssembledBuilderStatus.WekaCompleted.GetMetadata().Description;
             }
 
-            return allBacktestNodes;
+            return backtestNodes;
         }
 
         private void BacktestProcess(List<REPTreeNodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
@@ -501,29 +506,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 });
         }
 
-        public ICommand RefreshCommand => new DelegateCommand(() =>
-        {
-            try
-            {
-                Refresh();
-                PopulateViewModel();
-            }
-            catch (Exception ex)
-            {
-                IsTransactionActive = false;
-                LogHelper.LogException<AssembledBuilderViewModel>(ex);
-                throw;
-            }
-        }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
-
         public async void PopulateViewModel()
         {
             try
             {
                 var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
                 ProjectConfiguration = project?.ProjectConfigurations.FirstOrDefault();
-
-                AssembledBuilder = _assembledBuilderService.LoadAssembledBuilder(ProcessArgs.ProjectName);
 
                 if (!IsTransactionActive)
                 {
@@ -567,40 +555,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 LogHelper.LogException<AssembledBuilderViewModel>(ex);
                 throw;
-            }
-        }
-
-        private void Refresh()
-        {
-            AssembledBuilder = _assembledBuilderService.LoadAssembledBuilder(ProcessArgs.ProjectName);
-
-            AssembledBuilderProcessDOWN.Clear();
-            AssembledBuilderProcessUP.Clear();
-
-            var extractionTemplatesDirectory = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
-            var extractionTemplates = _projectDirectoryService.GetFilesInPath(extractionTemplatesDirectory);
-
-            foreach (var file in extractionTemplates)
-            {
-                AssembledBuilderProcessUP.Add(new AssembledBuilderProcessModel
-                {
-                    ExtractionTemplatePath = file.FullName,
-                    ExtractionTemplateName = file.Name,
-                    ExtractionAssembledBuilderName = file.Name,
-                    Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
-                    BacktestNodes = new(),
-                    Tree = new(),
-                });
-
-                AssembledBuilderProcessDOWN.Add(new AssembledBuilderProcessModel
-                {
-                    ExtractionTemplatePath = file.FullName,
-                    ExtractionTemplateName = file.Name,
-                    ExtractionAssembledBuilderName = file.Name,
-                    Message = AssembledBuilderStatus.NotStarted.GetMetadata().Description,
-                    BacktestNodes = new(),
-                    Tree = new(),
-                });
             }
         }
 

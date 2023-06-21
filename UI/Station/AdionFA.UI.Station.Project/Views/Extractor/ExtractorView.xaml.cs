@@ -27,16 +27,19 @@ namespace AdionFA.UI.Station.Project.Views
 
         private void addTemplateBtn_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "CSV Files (*.csv)|*.csv";
-            openFileDialog.Multiselect = true;
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv",
+                Multiselect = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
             if (openFileDialog.ShowDialog() == true)
             {
                 IProjectDirectoryService directoryService = new ProjectDirectoryService();
                 foreach (var filename in openFileDialog.FileNames)
                 {
-                    FileInfo fi = new FileInfo(filename);
+                    var fi = new FileInfo(filename);
                     directoryService.CopyCSVFileTo(fi, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
                     ((ExtractorViewModel)DataContext).ExtractionProcessList.Add(new ExtractionProcessModel
                     {
@@ -50,7 +53,7 @@ namespace AdionFA.UI.Station.Project.Views
 
         private void replaceTemplateBtn_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "CSV Files (*.csv)|*.csv";
             openFileDialog.Multiselect = true;
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -59,10 +62,10 @@ namespace AdionFA.UI.Station.Project.Views
                 IProjectDirectoryService directoryService = new ProjectDirectoryService();
                 if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory()))
                 {
-                    List<ExtractionProcessModel> fileModels = new List<ExtractionProcessModel>();
+                    var fileModels = new List<ExtractionProcessModel>();
                     foreach (var filename in openFileDialog.FileNames)
                     {
-                        FileInfo fi = new FileInfo(filename);
+                        var fi = new FileInfo(filename);
                         directoryService.CopyCSVFileToAsync(fi, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
                         fileModels.Add(new ExtractionProcessModel
                         {

@@ -16,22 +16,22 @@ namespace AdionFA.UI.Station.Project.Views
 
         private void TestAssembledNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!((MetaTraderViewModel)DataContext).TestNode)
+            if (!((MetaTraderViewModel)DataContext).TestNodes)
             {
                 return;
             }
 
-            ((MetaTraderViewModel)DataContext).TestNode = !((MetaTraderViewModel)DataContext).TestAssembledNode;
+            ((MetaTraderViewModel)DataContext).TestNodes = !((MetaTraderViewModel)DataContext).TestAssembledNode;
         }
 
-        private void TestNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        private void TestNodesToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             if (!((MetaTraderViewModel)DataContext).TestAssembledNode)
             {
                 return;
             }
 
-            ((MetaTraderViewModel)DataContext).TestAssembledNode = !((MetaTraderViewModel)DataContext).TestNode;
+            ((MetaTraderViewModel)DataContext).TestAssembledNode = !((MetaTraderViewModel)DataContext).TestNodes;
         }
     }
 }

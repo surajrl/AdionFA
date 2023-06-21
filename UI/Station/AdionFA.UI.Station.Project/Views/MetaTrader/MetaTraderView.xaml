@@ -243,9 +243,9 @@
                                             IsOn="{Binding TestAssembledNode, Mode=TwoWay}" />
                     </StackPanel>
                     <StackPanel>
-                        <Label Content="Test Node" />
-                        <metro:ToggleSwitch Toggled="TestNodeToggleSwitch_Toggled"
-                                            IsOn="{Binding TestNode, Mode=TwoWay}" />
+                        <Label Content="Test Nodes" />
+                        <metro:ToggleSwitch Toggled="TestNodesToggleSwitch_Toggled"
+                                            IsOn="{Binding TestNodes, Mode=TwoWay}" />
                     </StackPanel>
                 </StackPanel>
                 <!--#endregion-->
@@ -282,7 +282,7 @@
                             </behaviors:Interaction.Triggers>
                         </Button>
                     </Grid>
-                    <!--#region Single Node-->
+                    <!--#region Nodes-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="nodeBtn"
                                 Width="80"
@@ -291,7 +291,7 @@
                                 <iconPacks:PackIconMaterial Kind="FileTreeOutline"
                                                             VerticalAlignment="Center"
                                                             Width="15" />
-                                <Label Content="Node"
+                                <Label Content="Nodes"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
@@ -301,7 +301,7 @@
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                <Binding Path="Node" />
+                                                <Binding Path="Nodes" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
