@@ -10,8 +10,7 @@ namespace AdionFA.Infrastructure.Common.Managements
         public static string DefaultDirectory() =>
             string.Format(@"{0}\{1}", !string.IsNullOrWhiteSpace(DefaultWorkspace)
                 ? DefaultWorkspace
-                : Environment.GetFolderPath((Environment.SpecialFolder)ProjectDirectoryEnum.DefaultWorkspace)
-            , ProjectDirectoryEnum.DefaultWorkspace.GetDescription());
+                : Environment.GetFolderPath((Environment.SpecialFolder)ProjectDirectoryEnum.DefaultWorkspace), ProjectDirectoryEnum.DefaultWorkspace.GetDescription());
 
         public static string ProjectsDirectoryBase() => string.Format(@"{0}\{1}", DefaultDirectory(), ProjectDirectoryEnum.Projects.GetDescription());
 
@@ -21,40 +20,6 @@ namespace AdionFA.Infrastructure.Common.Managements
         }
 
         // Extractor
-
-        public static string ProjectExtractorDirectory(this string projectNameFolder)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.Extractor.GetDescription(), projectNameFolder));
-        }
-
-        public static string ProjectExtractorEuropeDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Europe.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectExtractorAmericaDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.America.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectExtractorAsiaDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Asia.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
-
-        public static string ProjectExtractorWithoutScheduleDirectory(this string projectNameFolder, string withFileName = null)
-        {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.ExtractorWithoutSchedule.GetDescription(), projectNameFolder))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
-        }
 
         public static string ProjectExtractorTemplatesDirectory(this string projectNameFolder)
         {
@@ -68,6 +33,45 @@ namespace AdionFA.Infrastructure.Common.Managements
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.StrategyBuilder.GetDescription(), projectNameFolder));
+        }
+
+
+        // Strategy Builder Extractor
+
+        public static string ProjectStrategyBuilderExtractorEuropeDirectory(this string projectNameFolder, string withFileName = null)
+        {
+            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Europe.GetMetadata().Name))
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
+        }
+
+        public static string ProjectStrategyBuilderExtractorAmericaDirectory(this string projectNameFolder, string withFileName = null)
+        {
+            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.America.GetMetadata().Name))
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
+        }
+
+        public static string ProjectStrategyBuilderExtractorAsiaDirectory(this string projectNameFolder, string withFileName = null)
+        {
+            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Asia.GetMetadata().Name))
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
+        }
+
+        public static string ProjectStrategyBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string withFileName = null)
+        {
+            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder))
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
         }
 
         // Strategy Builder Nodes
@@ -119,7 +123,9 @@ namespace AdionFA.Infrastructure.Common.Managements
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder,
                 label.ToLower() == "up" ? "UP" : "DOWN"))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
         }
 
         public static string ProjectAssembledBuilderExtractorEuropeDirectory(this string projectNameFolder, string label, string withFileName = null)
@@ -128,7 +134,9 @@ namespace AdionFA.Infrastructure.Common.Managements
                 string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectNameFolder
                 , label.ToLower() == "up" ? "UP" : "DOWN"
                 , MarketRegionEnum.Europe.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
         }
 
         public static string ProjectAssembledBuilderExtractorAmericaDirectory(this string projectNameFolder, string label, string withFileName = null)
@@ -137,7 +145,9 @@ namespace AdionFA.Infrastructure.Common.Managements
                 string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectNameFolder
                 , label.ToLower() == "up" ? "UP" : "DOWN"
                 , MarketRegionEnum.America.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
         }
 
         public static string ProjectAssembledBuilderExtractorAsiaDirectory(this string projectNameFolder, string label, string withFileName = null)
@@ -146,7 +156,9 @@ namespace AdionFA.Infrastructure.Common.Managements
                 string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectNameFolder
                 , label.ToLower() == "up" ? "UP" : "DOWN"
                 , MarketRegionEnum.Asia.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName)
+                ? @$"\{withFileName}"
+                : string.Empty);
         }
 
         // Assembled Builder Nodes

@@ -107,42 +107,33 @@ namespace AdionFA.UI.Station.Project
                 var settingService = FacadeService.SharedServiceAgent;
                 ProjectDirectoryManager.DefaultWorkspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace)?.Value;
 
-                var directoryService = FacadeService.DirectoryService;
-                if (!directoryService.IsValidProjectDirectory(ProcessArgs.ProjectName))
+                try
                 {
-                    MessageBox.Show("Error Loading Project");
-                    Current.Shutdown();
+                    // Theme
+
+                    var themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
+                    ThemeManager.Current.ChangeThemeBaseColor(Current, themeSetting?.Value ?? "Light");
+
+                    var colorSetting = settingService.GetSetting((int)SettingEnum.Color);
+                    ThemeManager.Current.ChangeThemeColorScheme(Current, colorSetting?.Value ?? "Orange");
+
+                    // Culture
+
+                    var cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList();
+
+                    var cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
+                    var culture = cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == cultureSetting?.Value)
+                        ?? cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
+
+                    Thread.CurrentThread.CurrentCulture = culture;
+                    Thread.CurrentThread.CurrentUICulture = culture;
+
+                    ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        // Theme
-
-                        var themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
-                        ThemeManager.Current.ChangeThemeBaseColor(Current, themeSetting?.Value ?? "Light");
-
-                        var colorSetting = settingService.GetSetting((int)SettingEnum.Color);
-                        ThemeManager.Current.ChangeThemeColorScheme(Current, colorSetting?.Value ?? "Orange");
-
-                        // Culture
-
-                        var cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList();
-
-                        var cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
-                        var culture = cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == cultureSetting?.Value)
-                            ?? cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
-
-                        Thread.CurrentThread.CurrentCulture = culture;
-                        Thread.CurrentThread.CurrentUICulture = culture;
-
-                        ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError(ex.Message);
-                        throw;
-                    }
+                    Trace.TraceError(ex.Message);
+                    throw;
                 }
             }
             else

@@ -515,8 +515,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (!IsTransactionActive)
                 {
-                    var extractionTemplatesDirectory = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
-                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(extractionTemplatesDirectory);
+                    AssembledBuilderProcessUP.Clear();
+                    AssembledBuilderProcessDOWN.Clear();
+
+                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
                     foreach (var file in extractionTemplates)
                     {
                         AssembledBuilderProcessUP.Add(new AssembledBuilderProcessModel

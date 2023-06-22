@@ -13,17 +13,8 @@ namespace AdionFA.Infrastructure.Enums
 
         // Extractor
 
-        [Description(@"{0}\Extractions")]
-        Extractor = 120,
-
-        [Description(@"{0}\Extractions\{1}")]
-        ExtractorMarket = 130,
-
-        [Description(@"{0}\Extractions\WithoutSchedule")]
-        ExtractorWithoutSchedule = 140,
-
-        [Description(@"{0}\Extractions\Templates")]
-        ExtractorTemplate = 150,
+        [Description(@"{0}\ExtractorTemplates")]
+        ExtractorTemplate = 120,
 
         // Strategy Builder
 
@@ -38,6 +29,12 @@ namespace AdionFA.Infrastructure.Enums
 
         [Description(@"{0}\StrategyBuilder\Nodes\DOWN")]
         StrategyBuilderNodesDOWN = 240,
+
+        [Description(@"{0}\StrategyBuilder\Extractions\{1}")]
+        StrategyBuilderExtractorMarket = 250,
+
+        [Description(@"{0}\StrategyBuilder\Extractions\WithoutSchedule")]
+        StrategyBuilderExtractorWithoutSchedule = 260,
 
         // Assembled Builder
 

@@ -66,10 +66,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand RefreshBtnCommand => new DelegateCommand(() =>
         {
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory(), isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory(), isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory(), isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorAmericaDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorEuropeDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorAsiaDirectory(), isBackup: false);
 
             PopulateViewModel();
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
@@ -87,10 +87,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Process
 
-                if (_projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory(), isBackup: false) &&
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory(), isBackup: false) &&
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory(), isBackup: false) &&
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory(), isBackup: false))
+                if (_projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorAmericaDirectory(), isBackup: false) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorEuropeDirectory(), isBackup: false) &&
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorAsiaDirectory(), isBackup: false))
                 {
                     IsTransactionActive = true;
                     _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
@@ -161,7 +161,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                     var nameSignature = extractionProcess.TemplateName.Replace(".csv", string.Empty);
 
                                     _extractorService.ExtractorWrite(
-                                        ProcessArgs.ProjectName.ProjectExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
+                                        ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
                                         extractions,
                                         0,
                                         0);
@@ -174,7 +174,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                                         extractionProcess.Message = "Writing Extraction File America";
                                         _extractorService.ExtractorWrite(
-                                            ProcessArgs.ProjectName.ProjectExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
+                                            ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorAmericaDirectory($"{nameSignature}.{timeSignature}.America.csv"),
                                             indicators,
                                             projectConfiguration.FromTimeInSecondsAmerica.Hour, projectConfiguration.ToTimeInSecondsAmerica.Hour
                                         );
@@ -183,7 +183,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                                         extractionProcess.Message = "Writing Extraction File Europe";
                                         _extractorService.ExtractorWrite(
-                                            ProcessArgs.ProjectName.ProjectExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
+                                            ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorEuropeDirectory($"{nameSignature}.{timeSignature}.Europe.csv"),
                                             indicators,
                                             projectConfiguration.FromTimeInSecondsEurope.Hour, projectConfiguration.ToTimeInSecondsEurope.Hour
                                         );
@@ -192,7 +192,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                                         extractionProcess.Message = "Writing Extraction File Asia";
                                         _extractorService.ExtractorWrite(
-                                            ProcessArgs.ProjectName.ProjectExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
+                                            ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorAsiaDirectory($"{nameSignature}.{timeSignature}.Asia.csv"),
                                             indicators,
                                             projectConfiguration.FromTimeInSecondsAsia.Hour, projectConfiguration.ToTimeInSecondsAsia.Hour
                                         );
@@ -239,7 +239,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             try
             {
                 var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
-                ExtractorPath = ProcessArgs.ProjectName.ProjectExtractorDirectory();
 
                 var projectConfigurationVM = project?.ProjectConfigurations.FirstOrDefault();
                 Symbol = ((CurrencyPairEnum)projectConfigurationVM?.SymbolId).GetMetadata()?.Name;

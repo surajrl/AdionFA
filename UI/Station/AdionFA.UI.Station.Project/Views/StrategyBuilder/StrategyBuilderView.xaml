@@ -500,7 +500,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Margin="5"
-                                   Content="{Binding ExtractionName}" />
+                                   Content="{Binding ExtractionStrategyBuilderName}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

@@ -4,7 +4,6 @@ using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Enums;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -110,10 +109,6 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                     {
                         // Extractor
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorWithoutSchedule.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectName));
 
                         // StrategyBuilder
@@ -121,14 +116,21 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectName));
 
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorWithoutSchedule.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Europe.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
+
                         // AssembledBuilder
 
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUP.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWN.GetDescription(), projectName));
+
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
+
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
@@ -136,31 +138,6 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                     }
                 }
 
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                return false;
-            }
-        }
-
-        public bool IsValidProjectDirectory(string projectName)
-        {
-            try
-            {
-                DirectoryInfo di = new(projectName.ProjectDirectory());
-                if (di.Exists)
-                {
-                    List<DirectoryInfo> extractorDirectories = di.GetDirectories().FirstOrDefault(
-                        sub => sub.FullName.Replace(@"\", string.Empty) == projectName.ProjectExtractorDirectory().Replace(@"\", string.Empty))?.GetDirectories().ToList() ?? new List<DirectoryInfo>();
-                    bool extratorDirectoryValidate = extractorDirectories.Any(sub => sub.FullName.Replace(@"\", string.Empty) == projectName.ProjectExtractorEuropeDirectory().Replace(@"\", string.Empty)) &&
-                                                     extractorDirectories.Any(sub => sub.FullName.Replace(@"\", string.Empty) == projectName.ProjectExtractorAmericaDirectory().Replace(@"\", string.Empty)) &&
-                                                     extractorDirectories.Any(sub => sub.FullName.Replace(@"\", string.Empty) == projectName.ProjectExtractorAsiaDirectory().Replace(@"\", string.Empty)) &&
-                                                     extractorDirectories.Any(sub => sub.FullName.Replace(@"\", string.Empty) == projectName.ProjectExtractorWithoutScheduleDirectory().Replace(@"\", string.Empty)) &&
-                                                     extractorDirectories.Any(sub => sub.FullName.Replace(@"\", string.Empty) == projectName.ProjectExtractorTemplatesDirectory().Replace(@"\", string.Empty));
-                    return extratorDirectoryValidate;
-                }
                 return false;
             }
             catch (Exception ex)
@@ -194,8 +171,8 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             {
                 if (File.Exists(fi.FullName))
                 {
-                    using FileStream SourceStream = File.Open(fi.FullName, FileMode.Open);
-                    using FileStream DestinationStream = File.Create(Path.Combine(targetDir, fi.Name));
+                    using var SourceStream = File.Open(fi.FullName, FileMode.Open);
+                    using var DestinationStream = File.Create(Path.Combine(targetDir, fi.Name));
 
                     await SourceStream.CopyToAsync(DestinationStream);
 
@@ -216,10 +193,10 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             {
                 if (Directory.Exists(sourceDir) && Directory.Exists(targetDir) && HasWritePermissionOnPath(targetDir))
                 {
-                    IEnumerable<string> txtFiles = Directory.EnumerateFiles(sourceDir, "*.csv");
-                    foreach (string currentFile in txtFiles)
+                    var txtFiles = Directory.EnumerateFiles(sourceDir, "*.csv");
+                    foreach (var currentFile in txtFiles)
                     {
-                        string fileName = currentFile[(sourceDir.Length + 1)..];
+                        var fileName = currentFile[(sourceDir.Length + 1)..];
                         File.Copy(currentFile, Path.Combine(targetDir, fileName));
                     }
                 }
@@ -246,7 +223,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                 if (Directory.Exists(path))
                 {
                     DirectoryInfo di = new(path);
-                    DirectoryInfo bu = di.CreateSubdirectory("Backup_" + DateTime.UtcNow.Ticks);
+                    var bu = di.CreateSubdirectory("Backup_" + DateTime.UtcNow.Ticks);
                     return CopyCSVFiles(di.FullName, di.FullName);
                 }
                 return false;
@@ -282,26 +259,26 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
         public bool DeleteAllFiles(string sourceDir, string ext = "*.csv", SearchOption option = 0, bool overwrite = false, bool isBackup = true)
         {
-            string backupDir = @$"{sourceDir}\Backup_" + DateTime.UtcNow.Ticks;
+            var backupDir = @$"{sourceDir}\Backup_" + DateTime.UtcNow.Ticks;
 
             try
             {
-                string[] csvList = Directory.GetFiles(sourceDir, ext, option).Where(d => !d.Contains("Backup_")).ToArray();
+                var csvList = Directory.GetFiles(sourceDir, ext, option).Where(d => !d.Contains("Backup_")).ToArray();
 
                 if (isBackup)
                 {
                     // Copy text files.
-                    foreach (string f in csvList)
+                    foreach (var f in csvList)
                     {
                         // Remove path from the file name.
-                        string fName = f[(sourceDir.Length + 1)..];
+                        var fName = f[(sourceDir.Length + 1)..];
 
                         try
                         {
                             if (!Directory.Exists(backupDir))
                                 Directory.CreateDirectory(backupDir);
                             // Will not overwrite if the destination file already exists.
-                            string targetPath = Path.Combine(backupDir, option == SearchOption.AllDirectories ? Path.GetFileName(fName) : fName);
+                            var targetPath = Path.Combine(backupDir, option == SearchOption.AllDirectories ? Path.GetFileName(fName) : fName);
                             File.Copy(Path.Combine(sourceDir, fName), targetPath, overwrite);
                         }
 
@@ -315,7 +292,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                 }
 
                 // Delete source files that were copied.
-                foreach (string f in csvList)
+                foreach (var f in csvList)
                 {
                     File.Delete(f);
                 }

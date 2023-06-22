@@ -34,6 +34,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -171,6 +172,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 {
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
 
                     StrategyBuilder.CorrelationNodesUP.Clear();
                     StrategyBuilder.CorrelationNodesDOWN.Clear();
@@ -211,6 +213,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 await Task.Factory.StartNew(() =>
                 {
+                    ExtractionProcess(allProjectCandles);
                     BacktestProcess(GetBacktestNodes(), allProjectCandles);
                 }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
 
@@ -272,6 +275,39 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private void ExtractionProcess(IEnumerable<Candle> projectCandles)
         {
+            Parallel.ForEach(
+                StrategyBuilderProcesses,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = MaxParallelism,
+                    CancellationToken = _cancellationTokenSource.Token
+                },
+                process =>
+                {
+                    process.Message = ExtractorStatusEnum.Executing.GetMetadata().Description;
+
+                    var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
+                    var extractionResult = _extractorService.DoExtraction(
+                        ProjectConfiguration.FromDateIS.Value,
+                        ProjectConfiguration.ToDateIS.Value,
+                        indicators,
+                        projectCandles.ToList(),
+                        ProjectConfiguration.TimeframeId,
+                        ProjectConfiguration.ExtractorMinVariation);
+
+                    var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
+                    var nameSignature = process.ExtractionTemplateName.Replace(".csv", string.Empty);
+
+                    _extractorService.ExtractorWrite(
+                        ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv"),
+                        extractionResult,
+                        0,
+                        0);
+
+                    process.ExtractionStrategyBuilderName = $"{nameSignature}.{timeSignature}.csv";
+                    process.ExtractionStrategyBuilderPath = ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv");
+                    process.Message = ExtractorStatusEnum.Completed.GetMetadata().Description;
+                });
         }
 
         private List<REPTreeNodeModel> GetBacktestNodes()
@@ -384,15 +420,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
                 ProjectConfiguration = project?.ProjectConfigurations.FirstOrDefault();
 
-                // INTEGRATE EXTRACTION INSIDE SB
-                // EXTRACTOR WILL ONLY BE USED TO ADD TEMPLATES
-                // DO NOT REMOVE THE EXTRACTION YET THOUGH
+                // MODIFY EXTRACTOR SO THAT IT IS USED TO ADD TEMPLATES ONLY
 
                 if (!IsTransactionActive
-                    && StrategyBuilderProcesses.Any(process => process.Message == StrategyBuilderStatus.Completed.GetMetadata().Description)
+                    && !StrategyBuilderProcesses.Any(process => process.Message == StrategyBuilderStatus.Completed.GetMetadata().Description))
                 {
-                    var extractionTemplatesDirectory = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
-                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(extractionTemplatesDirectory);
+                    StrategyBuilderProcesses.Clear();
+
+                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
 
                     foreach (var file in extractionTemplates)
                     {
@@ -413,28 +448,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Trace.TraceError(ex.Message);
                 throw;
             }
-        }
-
-        private void PopulateStrategyBuilderProcesses(string extractorTemplatePath)
-        {
-            var regionName = "WithoutSchedule";
-
-            if (extractorTemplatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America)))
-            {
-                regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.America);
-            }
-
-            else if (extractorTemplatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe)))
-            {
-                regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Europe);
-            }
-
-            else if (extractorTemplatePath.Contains(Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia)))
-            {
-                regionName = Enum.GetName(typeof(MarketRegionEnum), MarketRegionEnum.Asia);
-            }
-
-
         }
 
         // View Bindings

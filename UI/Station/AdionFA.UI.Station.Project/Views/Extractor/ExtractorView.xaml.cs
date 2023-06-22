@@ -83,9 +83,9 @@ namespace AdionFA.UI.Station.Project.Views
 
         private void openExtractorPathBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(ProcessArgs.ProjectName.ProjectExtractorDirectory()))
+            if (Directory.Exists(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory()))
             {
-                Process.Start("explorer.exe", ProcessArgs.ProjectName.ProjectExtractorDirectory());
+                Process.Start("explorer.exe", ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
             }
             else
             {

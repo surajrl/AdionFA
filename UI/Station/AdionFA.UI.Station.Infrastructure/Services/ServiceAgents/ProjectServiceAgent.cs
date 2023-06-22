@@ -41,7 +41,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    IList<ProjectDTO> all = IoC.Get<IProjectAPI>().GetAllProject();
+                    var all = IoC.Get<IProjectAPI>().GetAllProject();
 
                     projects = Mapper.Map<IList<ProjectDTO>, IList<ProjectVM>>(all);
                 });
@@ -62,7 +62,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 ProjectVM project = null;
                 await Task.Run(() =>
                 {
-                    ProjectDTO dto = IoC.Get<IProjectAPI>().GetProject(projectId, includeGraph);
+                    var dto = IoC.Get<IProjectAPI>().GetProject(projectId, includeGraph);
 
                     project = Mapper.Map<ProjectDTO, ProjectVM>(dto);
                 });
@@ -83,7 +83,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 ProjectConfigurationVM project = null;
                 await Task.Run(() =>
                 {
-                    TransferObject.Project.ProjectConfigurationDTO dto = IoC.Get<IProjectAPI>().GetProjectConfiguration(projectId, includeGraph);
+                    var dto = IoC.Get<IProjectAPI>().GetProjectConfiguration(projectId, includeGraph);
 
                     project = Mapper.Map<TransferObject.Project.ProjectConfigurationDTO, ProjectConfigurationVM>(dto);
                 });
@@ -105,7 +105,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    TransferObject.Project.ProjectConfigurationDTO config = Mapper.Map<ProjectConfigurationVM, TransferObject.Project.ProjectConfigurationDTO>(configuration);
+                    var config = Mapper.Map<ProjectConfigurationVM, TransferObject.Project.ProjectConfigurationDTO>(configuration);
 
                     result = IoC.Get<IProjectAPI>().UpdateProjectConfiguration(config);
                 });
@@ -145,7 +145,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             {
                 var result = new ResponseDTO { IsSuccess = false };
 
-                ProjectDTO dto = Mapper.Map<ProjectVM, ProjectDTO>(project);
+                var dto = Mapper.Map<ProjectVM, ProjectDTO>(project);
 
                 await Task.Run(() =>
                 {
@@ -155,7 +155,8 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                     if (result.IsSuccess)
                     {
                         FacadeService.DirectoryService.CreateDefaultProjectWorkspace(dto.ProjectName);
-                        if (int.TryParse(result.EntityId, out int pId))
+
+                        if (int.TryParse(result.EntityId, out var pId))
                         {
                             var conf = service.GetProjectConfiguration(pId);
                             if (conf != null)
@@ -289,7 +290,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    TransferObject.Common.ConfigurationDTO config = Mapper.Map<ConfigurationVM, TransferObject.Common.ConfigurationDTO>(configuration);
+                    var config = Mapper.Map<ConfigurationVM, TransferObject.Common.ConfigurationDTO>(configuration);
 
                     result = IoC.Get<ISharedAPI>().UpdateConfiguration(config);
                 });
