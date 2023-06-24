@@ -83,7 +83,7 @@
                 <StackPanel Orientation="Horizontal">
                     <!--#region Variation-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Variation" />
+                        <Label Content="Minimum Variation" />
                         <TextBox Text="{Binding ProjectConfiguration.ExtractorMinVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"

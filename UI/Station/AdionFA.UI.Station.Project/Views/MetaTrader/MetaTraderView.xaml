@@ -240,11 +240,13 @@
                     <StackPanel>
                         <Label Content="Test Assembled Node" />
                         <metro:ToggleSwitch Toggled="TestAssembledNodeToggleSwitch_Toggled"
+                                            IsEnabled="{Binding CanExecute}"
                                             IsOn="{Binding TestAssembledNode, Mode=TwoWay}" />
                     </StackPanel>
                     <StackPanel>
                         <Label Content="Test Nodes" />
                         <metro:ToggleSwitch Toggled="TestNodesToggleSwitch_Toggled"
+                                            IsEnabled="{Binding CanExecute}"
                                             IsOn="{Binding TestNodes, Mode=TwoWay}" />
                     </StackPanel>
                 </StackPanel>

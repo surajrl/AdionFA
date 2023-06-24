@@ -166,7 +166,7 @@
                 <StackPanel Orientation="Horizontal">
                     <!--#region Total Instance Weka-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="{x:Static commonResources:CommonResources.Instances}" />
+                        <Label Content="Total Instances" />
                         <TextBox Text="{Binding ProjectConfiguration.TotalInstanceWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -176,7 +176,7 @@
                     <!--#endregion-->
                     <!--#region N Total Tree-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="{x:Static commonResources:CommonResources.NTotals}" />
+                        <Label Content="N Total" />
                         <TextBox Text="{Binding ProjectConfiguration.NTotalTree}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -186,7 +186,7 @@
                     <!--#endregion-->
                     <!--#region Depth Weka-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="{x:Static commonResources:CommonResources.Depth}" />
+                        <Label Content="Maximum Depth" />
                         <TextBox Text="{Binding ProjectConfiguration.DepthWeka}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -208,20 +208,20 @@
 
                 <StackPanel Grid.Row="1"
                             Orientation="Horizontal">
-                    <!--#region Maximum Seed-->
+                    <!--#region Minimal Seed-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Seed" />
-                        <TextBox Text="{Binding ProjectConfiguration.MaximumSeed}"
+                        <Label Content="Minimal Seed" />
+                        <TextBox Text="{Binding ProjectConfiguration.MinimalSeed}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-                    <!--#region Minimal Seed-->
+                    <!--#region Maximum Seed-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimal Seed" />
-                        <TextBox Text="{Binding ProjectConfiguration.MinimalSeed}"
+                        <Label Content="Maximum Seed" />
+                        <TextBox Text="{Binding ProjectConfiguration.MaximumSeed}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -244,7 +244,7 @@
                             Orientation="Horizontal">
                     <!--#region Winning Strategy Total UP-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Total Winning Strategy UP Target" />
+                        <Label Content="Winning Strategy UP Target" />
                         <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyUPTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -254,7 +254,7 @@
                     <!--#endregion-->
                     <!--#region Winning Strategy Total DOWN-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Total Winning Strategy DOWN Target" />
+                        <Label Content="Winning Strategy DOWN Target" />
                         <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyDOWNTarget}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -303,7 +303,7 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-                    <!--#region Max Percent Correlation-->
+                    <!--#region Maximum Correlation Percent-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
                         <Label Content="Maximum Correlation %" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
@@ -317,7 +317,7 @@
 
                 <StackPanel Grid.Row="4"
                             Orientation="Horizontal">
-                    <!--#region Min Transaction Count IS-->
+                    <!--#region Minimum Transactions IS-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
                         <Label Content="Minimum Transactions (IS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsIS}"
@@ -341,9 +341,9 @@
 
                 <StackPanel Grid.Row="5"
                             Orientation="Horizontal">
-                    <!--#region Min Percent Success IS-->
+                    <!--#region Minimum Success Rate Percent IS-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Success Rate Percent (IS)" />
+                        <Label Content="Minimum Success Rate % (IS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -351,9 +351,9 @@
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-                    <!--#region MinPercentSuccessOS-->
+                    <!--#region Minimum Success Rate Percent IS-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Success Rate Percent (OS)" />
+                        <Label Content="Minimum Success Rate % (OS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentOS}"
                                  IsReadOnly="True"
                                  Focusable="False"

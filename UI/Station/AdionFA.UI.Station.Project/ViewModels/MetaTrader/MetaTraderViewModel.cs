@@ -79,12 +79,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public DelegateCommand StopCommand => new DelegateCommand(() =>
+        public ICommand StopCommand => new DelegateCommand(() =>
         {
             _cancellationTokenSource.Cancel();
         }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public DelegateCommand ProcessCommand => new DelegateCommand(async () =>
+        public ICommand ProcessCommand => new DelegateCommand(async () =>
         {
             try
             {
@@ -145,7 +145,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
-        }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, () => !IsTransactionActive && (TestNodes || TestAssembledNode))
+            .ObservesProperty(() => IsTransactionActive)
+            .ObservesProperty(() => TestNodes)
+            .ObservesProperty(() => TestAssembledNode);
 
         private async Task SubSocket(IProgress<ZmqMsgModel> progress)
         {

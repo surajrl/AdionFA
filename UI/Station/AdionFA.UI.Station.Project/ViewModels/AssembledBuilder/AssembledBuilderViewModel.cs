@@ -362,8 +362,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         lastOperation,
                         indicators,
                         projectCandles.ToList(),
-                        ProjectConfiguration.TimeframeId,
-                        ProjectConfiguration.ExtractorMinVariation);
+                        ProjectConfiguration.TimeframeId);
 
                     // Filter the extraction for only the candles with backtest operations
                     var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })

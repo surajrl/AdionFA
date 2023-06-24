@@ -154,7 +154,7 @@
                   Header="{x:Static commonResources:CommonResources.Configuration}"
                   IsExpanded="False">
             <StackPanel Orientation="Horizontal">
-                <!--#region Transaction Target-->
+                <!--#region Transaction Target IS-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Label Content="Transactions Target (IS)" />
                     <TextBox Text="{Binding ProjectConfiguration.ABTransactionsTarget}"
@@ -164,9 +164,9 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <!--#region Minimum Assembly Percent-->
+                <!--#region Minimum Success Rate Improvement IS-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Minimum Success Rate Improvement %" />
+                    <Label Content="Minimum Success Rate Improvement (IS) %" />
                     <TextBox Text="{Binding ProjectConfiguration.ABMinImprovePercent}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -174,9 +174,9 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <!--#region Weka Total Trees-->
+                <!--#region N Total-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Weka NTotals" />
+                    <Label Content="N Total" />
                     <TextBox Text="{Binding ProjectConfiguration.ABWekaNTotalTree}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -184,9 +184,9 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <!--#region Weka Max Ratio-->
+                <!--#region Maximum Ratio-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Weka Maximum Ratio" />
+                    <Label Content="Maximum Ratio" />
                     <TextBox Text="{Binding ProjectConfiguration.ABWekaMaxRatioTree}"
                              IsReadOnly="True"
                              Focusable="False"
@@ -194,9 +194,9 @@
                              Width="225" />
                 </StackPanel>
                 <!--#endregion-->
-                <!--#region Correlation-->
+                <!--#region Maximum Correlation Percent-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Maximum Correlation" />
+                    <Label Content="Maximum Correlation %" />
                     <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
                              IsReadOnly="True"
                              Focusable="False"
