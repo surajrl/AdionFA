@@ -20,5 +20,10 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Contracts
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
+
+        void Correlation(
+            string projectName,
+            AssembledBuilderModel assembledBuilder,
+            decimal maxCorrelation);
     }
 }

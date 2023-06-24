@@ -162,9 +162,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal">
                     <!--#region Total Instance Weka-->
@@ -298,7 +295,7 @@
                     </StackPanel>
                     <!--#region Progressiveness-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Progressiveness %" />
+                        <Label Content="Maximum Progressiveness Variation" />
                         <TextBox Text="{Binding ProjectConfiguration.MaxProgressivenessVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -322,7 +319,7 @@
                             Orientation="Horizontal">
                     <!--#region Min Transaction Count IS-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Transactions (OS)" />
+                        <Label Content="Minimum Transactions (IS)" />
                         <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -374,7 +371,7 @@
                            Header="Strategy Builder">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -440,7 +437,7 @@
 
                 <!--#region Maximum Parallelism Configuration-->
                 <StackPanel Grid.Column="1"
-                            HorizontalAlignment="Center"
+                            HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Margin="{StaticResource ColumnMargin}"
                             Orientation="Horizontal">

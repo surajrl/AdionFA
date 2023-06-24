@@ -1,8 +1,5 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Directories.Services;
+﻿using AdionFA.Infrastructure.Common.Directories.Services;
 using AdionFA.Infrastructure.Common.Managements;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.UI.Station.Project.Model.Extractor;
 using AdionFA.UI.Station.Project.ViewModels;
 using Microsoft.Win32;
 using System;
@@ -36,47 +33,40 @@ namespace AdionFA.UI.Station.Project.Views
 
             if (openFileDialog.ShowDialog() == true)
             {
-                IProjectDirectoryService directoryService = new ProjectDirectoryService();
+                var directoryService = new ProjectDirectoryService();
                 foreach (var filename in openFileDialog.FileNames)
                 {
-                    var fi = new FileInfo(filename);
-                    directoryService.CopyCSVFileTo(fi, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
-                    ((ExtractorViewModel)DataContext).ExtractionProcessList.Add(new ExtractionProcessModel
-                    {
-                        TemplateName = fi.Name,
-                        Status = ExtractorStatusEnum.NoStarted.GetMetadata().Name,
-                        Path = fi.FullName
-                    });
+                    var fileInfo = new FileInfo(filename);
+                    directoryService.CopyCSVFileTo(fileInfo, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+                    ((ExtractorViewModel)DataContext).ExtractorTemplates.Add(fileInfo.Name);
                 }
             }
         }
 
         private void replaceTemplateBtn_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "CSV Files (*.csv)|*.csv";
-            openFileDialog.Multiselect = true;
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv",
+                Multiselect = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
             if (openFileDialog.ShowDialog() == true)
             {
-                IProjectDirectoryService directoryService = new ProjectDirectoryService();
-                if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory()))
+                var directoryService = new ProjectDirectoryService();
+                if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), isBackup: false))
                 {
-                    var fileModels = new List<ExtractionProcessModel>();
+                    var filenames = new List<string>();
                     foreach (var filename in openFileDialog.FileNames)
                     {
-                        var fi = new FileInfo(filename);
-                        directoryService.CopyCSVFileToAsync(fi, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
-                        fileModels.Add(new ExtractionProcessModel
-                        {
-                            TemplateName = fi.Name,
-                            Status = ExtractorStatusEnum.NoStarted.GetMetadata().Name,
-                            Path = fi.FullName
-                        });
+                        var fileInfo = new FileInfo(filename);
+                        directoryService.CopyCSVFileTo(fileInfo, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+                        filenames.Add(fileInfo.Name);
                     }
 
-                    ((ExtractorViewModel)DataContext).ExtractionProcessList = new ObservableCollection<ExtractionProcessModel>();
-                    ((ExtractorViewModel)DataContext).ExtractionProcessList.AddRange(fileModels);
+                    ((ExtractorViewModel)DataContext).ExtractorTemplates.Clear();
+                    ((ExtractorViewModel)DataContext).ExtractorTemplates.AddRange(filenames);
                 }
             }
         }

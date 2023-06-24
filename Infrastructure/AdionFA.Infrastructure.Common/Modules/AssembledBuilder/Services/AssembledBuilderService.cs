@@ -7,6 +7,7 @@ using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Project;
@@ -179,6 +180,113 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
                 SerializeAssembledNode(projectName, assembledNode);
             }
+        }
+
+        public void Correlation(string projectName, AssembledBuilderModel assembledBuilder, decimal maxCorrelation)
+        {
+            try
+            {
+                string directory;
+                IList<BacktestModel> backtests;
+                IList<AssembledNodeModel> assembledNodes;
+
+                FindCorrelation("up");
+                FindCorrelation("down");
+
+                void FindCorrelation(string label)
+                {
+                    switch (label.ToLowerInvariant())
+                    {
+                        case "up":
+                            directory = projectName.ProjectAssembledBuilderNodesUPDirectory();
+                            backtests = assembledBuilder.AssembledNodesUP.Select(assembledNode => assembledNode.ParentNode.BacktestIS).ToList();
+                            assembledNodes = assembledBuilder.AssembledNodesUP;
+                            break;
+
+                        case "down":
+                            directory = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                            backtests = assembledBuilder.AssembledNodesDOWN.Select(assembledNode => assembledNode.ParentNode.BacktestIS).ToList();
+                            assembledNodes = assembledBuilder.AssembledNodesDOWN;
+                            break;
+
+                        default:
+                            return;
+                    }
+
+                    _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
+                    {
+                        var assembledNode = SerializerHelper.XMLDeSerializeObject<AssembledNodeModel>(file.FullName);
+
+                        // Algorithm to find correlation
+                        var indexOf = IndexOfCorrelation(backtests, assembledNode.ParentNode.BacktestIS, maxCorrelation);
+
+                        assembledNode.ParentNode.BacktestIS.CorrelationPass = indexOf != null;
+                        if (assembledNode.ParentNode.BacktestIS.CorrelationPass)
+                        {
+                            assembledNodes.Add(assembledNode);
+
+                            if (indexOf >= 0)
+                            {
+                                backtests.Insert(indexOf.Value, assembledNode.ParentNode.BacktestIS);
+                            }
+                            if (indexOf == -1)
+                            {
+                                backtests.Add(assembledNode.ParentNode.BacktestIS);
+                            }
+                        }
+                        else
+                        {
+                            _projectDirectoryService.DeleteFile(file.FullName);
+                        }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException<IStrategyBuilderService>(ex);
+                throw;
+            }
+        }
+
+        private static int? IndexOfCorrelation(IList<BacktestModel> backtests, BacktestModel btModel, decimal correlation)
+        {
+            int? indexOf = !backtests.Any()
+                ? -1
+                : null;
+
+            foreach (var backtest in backtests)
+            {
+                var coincidences =
+                    backtest.BacktestOperations
+                    .Where(operation => btModel.BacktestOperations.Any(_bto => _bto.Date == operation.Date))
+                    .ToList();
+
+                var totalCoincidences = coincidences.Count;
+                var btItemCount = backtest.BacktestOperations.Count;
+                var btModelCount = btModel.BacktestOperations.Count;
+
+                var percentBtItem = totalCoincidences * 100 / btItemCount;
+                var percentBtModel = totalCoincidences * 100 / btModelCount;
+
+                if (totalCoincidences == 0 && btModelCount > btItemCount)
+                {
+                    return backtests.IndexOf(backtest);
+                }
+
+                if ((percentBtItem + percentBtModel) / 2 <= correlation)
+                {
+                    indexOf = percentBtItem > percentBtModel
+                        ? backtests.IndexOf(backtest)
+                        : -1;
+                }
+
+                if (indexOf > -1)
+                {
+                    break;
+                }
+            }
+
+            return indexOf;
         }
 
         // Serialization

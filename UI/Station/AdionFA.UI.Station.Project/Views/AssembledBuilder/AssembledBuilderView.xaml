@@ -281,21 +281,8 @@
                     <!--#endregion-->
                 </StackPanel>
 
-                <!--#region Maximum Parallelism Configuration-->
-                <StackPanel Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="{StaticResource ColumnMargin}"
-                            Orientation="Horizontal">
-                    <Label Content="Maximum Parallelism" />
-                    <TextBox Text="{Binding MaxParallelism}"
-                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
-                </StackPanel>
-                <!--#endregion-->
-
                 <!--#region Mean Success Rate Percent-->
-                <StackPanel Grid.Column="2"
-                            HorizontalAlignment="Center"
+                <StackPanel Grid.Column="1"
                             VerticalAlignment="Center"
                             Margin="{StaticResource ColumnMargin}">
                     <TextBlock>
@@ -309,12 +296,17 @@
                 </StackPanel>
                 <!--#endregion-->
 
-                <!--#region Refresh Button-->
-                <StackPanel Grid.Column="3"
+                <!--#region Maximum Parallelism Configuration-->
+                <StackPanel Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
                             Margin="{StaticResource ColumnMargin}"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right">
+                            Orientation="Horizontal">
+                    <Label Content="Maximum Parallelism" />
+                    <TextBox Text="{Binding MaxParallelism}"
+                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
                 </StackPanel>
+                <!--#endregion-->
             </Grid>
         </metro:MetroHeader>
         <!--#endregion-->

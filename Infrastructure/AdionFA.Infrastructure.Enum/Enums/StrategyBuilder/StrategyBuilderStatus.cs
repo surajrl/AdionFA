@@ -5,7 +5,16 @@ namespace AdionFA.Infrastructure.Enums
     public enum StrategyBuilderStatus
     {
         [Metadata(descriptionKey: "Strategy Builder Not Started")]
-        NotStarted = 0,
+        SBNotStarted = 0,
+
+        [Metadata(descriptionKey: "Assembled Builder Not Started")]
+        ABNotStarted,
+
+        [Metadata(descriptionKey: "Executing Extraction")]
+        ExecutingExtraction,
+
+        [Metadata(descriptionKey: "Extraction Completed")]
+        ExtractionCompleted,
 
         [Metadata(descriptionKey: "Executing Weka")]
         ExecutingWeka,
@@ -23,7 +32,10 @@ namespace AdionFA.Infrastructure.Enums
         ExecutingCorrelation,
 
         [Metadata(descriptionKey: "Strategy Builder Completed")]
-        Completed,
+        SBCompleted,
+
+        [Metadata(descriptionKey: "Assembled Builder Completed")]
+        ABCompleted,
 
         [Metadata(descriptionKey: "Stopped")]
         Stopped,

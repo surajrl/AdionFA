@@ -60,115 +60,31 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="10 0 0 0">
-        <!--#region Row & Col Definition-->
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <!--#endregion-->
 
-        <!--#region ProcessBtn-->
-        <Grid HorizontalAlignment="Right"
-              Margin="0 20 10 0">
-            <Button Width="80"
-                    Height="40"
-                    IsEnabled="{Binding CanExecute}"
-                    Command="{Binding ProcessBtnCommand}"
-                    HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal"
-                            Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <iconPacks:FontAwesome Kind="PlaySolid"
-                                           Width="14" />
-                    <Label Content="Process"
-                           FontSize="11" />
-                </StackPanel>
-            </Button>
-            <metro:ProgressRing IsActive="True"
-                                Width="25"
-                                Height="25"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        </Grid>
-        <!--#endregion-->
-
-        <!--#region Configurations Vars-->
-        <metro:MetroHeader Grid.Row="1"
-                           Margin="0 0 10 15"
-                           Header="{x:Static commonResources:CommonResources.Configurations}">
+        <!--#region Configuration-->
+        <Expander Grid.Row="1"
+                  Margin="0 10 0 10"
+                  Style="{DynamicResource ControlExpanderStyle}"
+                  Header="{x:Static commonResources:CommonResources.Configuration}"
+                  IsExpanded="False">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0"
-                            Margin="10 0"
-                            Orientation="Horizontal">
 
-                    <!--#region CurrencyPair-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Symbols}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
-                        <TextBox Text="{Binding Symbol}"
-                                 IsReadOnly="True"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 Width="225" />
-                    </StackPanel>
-                    <!--#endregion-->
-
-                    <!--#region CurrencyPeriod-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Time}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
-                        <TextBox Text="{Binding Timeframe}"
-                                 IsReadOnly="True"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 Width="225" />
-                    </StackPanel>
-                    <!--#endregion-->
-
+                <StackPanel Orientation="Horizontal">
                     <!--#region Variation-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.Variation}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
-                        <TextBox Text="{Binding Variation}"
-                                 IsReadOnly="True"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 Width="225" />
-                    </StackPanel>
-                    <!--#endregion-->
-
-                    <!--#region WithoutSchedule-->
-                    <StackPanel Margin="{StaticResource ControlMargin}">
-                        <Label>
-                            <TextBlock>
-                                    <Run Text="{x:Static commonResources:CommonResources.WithoutSchedules}" />
-                                    <Run Text="" />
-                            </TextBlock>
-                        </Label>
-                        <TextBox Text="{Binding WithoutSchedule}"
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Variation" />
+                        <TextBox Text="{Binding ProjectConfiguration.ExtractorMinVariation}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
@@ -176,203 +92,122 @@
                     </StackPanel>
                     <!--#endregion-->
                 </StackPanel>
-                <StackPanel Grid.Row="1"
-                            Margin="10 0"
-                            Orientation="Horizontal">
 
-                    <!--#region ExtractorPath-->
-                    <StackPanel>
-                        <Label>
-                            <TextBlock>
-                                        <Run Text="{x:Static commonResources:CommonResources.Extractor}" />
-                                        <Run Text="" />
-                            </TextBlock>
-                        </Label>
-                        <TextBox x:Name="txtPathFile"
-                                 IsReadOnly="True"
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal">
+                    <!--#region Extractor Path-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Extractor Templates Path" />
+                        <TextBox IsReadOnly="True"
                                  Focusable="False"
                                  MinWidth="700"
                                  IsEnabled="False"
                                  Text="{Binding ExtractorPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
-                    <!--#endregion-->
-
                     <!--#region openExtractorPathBtn-->
-                    <Button Name="openExtractorPathBtn"
-                            VerticalAlignment="Bottom"
-                            Style="{StaticResource DisableBorderRarioBtn}"
+                    <!--#endregion-->
+                    <Button VerticalAlignment="Bottom"
+                            Width="40"
+                            Height="40"
                             Click="openExtractorPathBtn_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:FontAwesome Kind="FolderOpenSolid"
-                                                   Width="14" />
-                        </StackPanel>
+                        <iconPacks:FontAwesome Kind="FolderOpenSolid"
+                                               Width="14" />
                     </Button>
                     <!--#endregion-->
                 </StackPanel>
             </Grid>
-        </metro:MetroHeader>
+        </Expander>
         <!--#endregion-->
 
-        <!--#region ExtractorInformation-->
+        <!--#region Extractor-->
         <metro:MetroHeader Grid.Row="2"
-                           Margin="0 0 10 20"
-                           Header="{x:Static commonResources:CommonResources.ExtractorInformation}">
-            <Grid Margin="0 10 0 0">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+                           Header="Extractor">
+            <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0"
-                            Margin="10 0"
+                <StackPanel HorizontalAlignment="Left"
                             Orientation="Horizontal">
-
                     <!--#region StartDate-->
-                    <StackPanel Margin="0 0 25 0">
-                        <Label>
-                            <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.StartTime}" />
-                                <Run Text="{x:Static commonResources:CommonResources.IS}" />
-                                <Run Text="*" />
-                            </TextBlock>
-                        </Label>
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Start Time (IS)" />
                         <metro:DateTimePicker SelectedTimeFormat="Short"
                                               Culture="(Default)"
                                               Width="225"
                                               IsEnabled="False"
                                               Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                              SelectedDateTime="{Binding StartDate, Mode=TwoWay}" />
-                    </StackPanel>
+                                              SelectedDateTime="{Binding ProjectConfiguration.FromDateIS, Mode=TwoWay}" />
+                    </Grid>
                     <!--#endregion-->
 
                     <!--#region EndDate-->
-                    <StackPanel Margin="0 0 25 0">
-                        <Label>
-                            <TextBlock>
-                                <Run Text="{x:Static commonResources:CommonResources.EndTime}" />
-                                <Run Text="{x:Static commonResources:CommonResources.IS}" />
-                                <Run Text="*" />
-                            </TextBlock>
-                        </Label>
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Start Time (OS)" />
                         <metro:DateTimePicker SelectedTimeFormat="Short"
                                               Culture="(Default)"
                                               Width="225"
                                               IsEnabled="False"
                                               Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                              SelectedDateTime="{Binding EndDate, Mode=TwoWay}" />
-                    </StackPanel>
+                                              SelectedDateTime="{Binding ProjectConfiguration.ToDateIS, Mode=TwoWay}" />
+                    </Grid>
                     <!--#endregion-->
                 </StackPanel>
 
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right">
                 <!--#region addTemplateBtn-->
-                <Button x:Name="addTemplateBtn"
-                        Width="80"
-                        Height="40"
-                        IsEnabled="{Binding CanExecute}"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Click="addTemplateBtn_Click">
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:FontAwesome Kind="PlusSolid"
-                                               Width="14" />
-                        <Label Content="Add"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-                <metro:ProgressRing Grid.Column="1"
-                                    IsActive="True"
-                                    Width="25"
-                                    Height="25"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <!--#endregion-->
-
-                <!--#region replaceTemplateBtn-->
-                <Button x:Name="replaceTemplateBtn"
-                        Width="80"
-                        Height="40"
-                        Margin="10 0 0 0"
-                        IsEnabled="{Binding CanExecute}"
-                        Grid.Column="2"
-                        HorizontalAlignment="Right"
-                        Click="replaceTemplateBtn_Click">
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:FontAwesome Kind="UploadSolid"
-                                               Width="14" />
-                        <Label Content="Replace"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-                <metro:ProgressRing Grid.Column="2"
-                                    IsActive="True"
-                                    Width="25"
-                                    Height="25"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <!--#endregion-->
-
-                <!--#region Refresh Button-->
-                <Button Width="80"
-                        Height="40"
-                        Margin="10 0 0 0"
-                        IsEnabled="{Binding CanExecute}"
-                        Grid.Column="3"
-                        HorizontalAlignment="Right"
-                        Command="{Binding RefreshBtnCommand}">
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:PackIconFontAwesome Kind="RedoSolid"
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button Width="80"
+                                Height="40"
+                                Click="addTemplateBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:FontAwesome Kind="PlusSolid"
                                                        Width="14" />
-                        <Label Content="Refresh"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-                <metro:ProgressRing Grid.Column="3"
-                                    IsActive="True"
-                                    Width="25"
-                                    Height="25"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <!--#endregion-->
+                                <Label Content="Add"
+                                       FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                    <!--#region replaceTemplateBtn-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button Width="80"
+                                Height="40"
+                                Click="replaceTemplateBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:FontAwesome Kind="UploadSolid"
+                                                       Width="14" />
+                                <Label Content="Replace"
+                                       FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                        <!--#endregion-->
+                    </Grid>
+                </StackPanel>
             </Grid>
         </metro:MetroHeader>
         <!--#endregion-->
 
         <!--#region Grid-->
-        <DataGrid x:Name="ExtractionProcessDataGrid"
-                  Grid.Row="3"
-                  Grid.Column="1"
-                  Margin="10 5"
+        <DataGrid Grid.Row="3"
+                  Margin="0, 10, 0, 0"
                   IsReadOnly="True"
                   AutoGenerateColumns="False"
-                  ItemsSource="{Binding ExtractionProcessList}"
-                  RowHeaderWidth="0">
+                  ItemsSource="{Binding ExtractorTemplates}">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="1*"
-                                    Binding="{Binding TemplateName}"
+                <DataGridTextColumn Binding="{Binding Path=.}"
                                     Header="{x:Static commonResources:CommonResources.TemplateName}" />
-                <DataGridTextColumn Width="1*"
-                                    Binding="{Binding Status}"
-                                    Header="{x:Static commonResources:CommonResources.Status}" />
-                <DataGridTextColumn Width="1*"
-                                    Binding="{Binding ExtractionName}"
-                                    Header="{x:Static commonResources:CommonResources.ExtractionName}" />
-                <DataGridTextColumn Width="1*"
-                                    Binding="{Binding Message}"
-                                    Header="{x:Static commonResources:CommonResources.Message}" />
             </DataGrid.Columns>
         </DataGrid>
 
         <StackPanel Grid.Row="3"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    VerticalAlignment="Center">
             <Label Content="Extractor Process is Empty"
-                   Visibility="{Binding ExtractionProcessList.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
+                   Visibility="{Binding ExtractorTemplates.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
         </StackPanel>
         <!--#endregion-->
     </Grid>

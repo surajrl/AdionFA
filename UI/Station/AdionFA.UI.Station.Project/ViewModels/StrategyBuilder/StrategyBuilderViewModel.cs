@@ -85,13 +85,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _manualResetEventSlim = new(true);
             _cancellationTokenSource = new();
 
-
             StrategyBuilderProcesses = new();
             MaxParallelism = Environment.ProcessorCount - 1;
 
             // Load XML files containing Correlation Nodes
             StrategyBuilder = new();
-
             _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
             {
                 StrategyBuilder.CorrelationNodesUP.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
@@ -116,8 +114,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             foreach (var process in StrategyBuilderProcesses)
             {
-                if (process.Message != StrategyBuilderStatus.Completed.GetMetadata().Description
-                && process.Message != StrategyBuilderStatus.NotStarted.GetMetadata().Description)
+                if (process.Message != StrategyBuilderStatus.SBCompleted.GetMetadata().Description
+                && process.Message != StrategyBuilderStatus.SBNotStarted.GetMetadata().Description)
                 {
                     var stopped = StrategyBuilderStatus.Stopped.GetMetadata().Description;
                     process.Message = $"{process.Message} - {stopped}";
@@ -170,10 +168,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 if (deleteAll == MessageDialogResult.Affirmative)
                 {
+                    // Delete Strategy Builder Extractions
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
+                    // Delete Strategy Builder Nodes
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
-
                     StrategyBuilder.CorrelationNodesUP.Clear();
                     StrategyBuilder.CorrelationNodesDOWN.Clear();
                 }
@@ -209,7 +208,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Label = hdCandle.Close > hdCandle.Open ? "UP" : "DOWN"
                 })
                 .OrderBy(candle => candle.Date)
-                .ThenBy(candle => candle.Time).ToList();
+                .ThenBy(candle => candle.Time);
 
                 await Task.Factory.StartNew(() =>
                 {
@@ -234,7 +233,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach (var process in StrategyBuilderProcesses)
                 {
-                    process.Message = StrategyBuilderStatus.Completed.GetMetadata().Description;
+                    process.Message = StrategyBuilderStatus.SBCompleted.GetMetadata().Description;
                 }
 
                 _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(true);
@@ -284,7 +283,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 },
                 process =>
                 {
-                    process.Message = ExtractorStatusEnum.Executing.GetMetadata().Description;
+                    process.Message = StrategyBuilderStatus.ExecutingExtraction.GetMetadata().Description;
 
                     var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
                     var extractionResult = _extractorService.DoExtraction(
@@ -306,7 +305,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     process.ExtractionStrategyBuilderName = $"{nameSignature}.{timeSignature}.csv";
                     process.ExtractionStrategyBuilderPath = ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv");
-                    process.Message = ExtractorStatusEnum.Completed.GetMetadata().Description;
+                    process.Message = StrategyBuilderStatus.ExtractionCompleted.GetMetadata().Description;
                 });
         }
 
@@ -420,10 +419,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
                 ProjectConfiguration = project?.ProjectConfigurations.FirstOrDefault();
 
-                // MODIFY EXTRACTOR SO THAT IT IS USED TO ADD TEMPLATES ONLY
-
                 if (!IsTransactionActive
-                    && !StrategyBuilderProcesses.Any(process => process.Message == StrategyBuilderStatus.Completed.GetMetadata().Description))
+                    && !StrategyBuilderProcesses.Any(process => process.Message == StrategyBuilderStatus.SBCompleted.GetMetadata().Description))
                 {
                     StrategyBuilderProcesses.Clear();
 
@@ -436,7 +433,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             ExtractionTemplatePath = file.FullName,
                             ExtractionTemplateName = file.Name,
                             ExtractionStrategyBuilderName = file.Name,
-                            Message = StrategyBuilderStatus.NotStarted.GetMetadata().Description,
+                            Message = StrategyBuilderStatus.SBNotStarted.GetMetadata().Description,
                             Tree = new(),
                             BacktestNodes = new()
                         });
