@@ -153,58 +153,126 @@
                   Style="{DynamicResource ControlExpanderStyle}"
                   Header="{x:Static commonResources:CommonResources.Configuration}"
                   IsExpanded="False">
-            <StackPanel Orientation="Horizontal">
-                <!--#region Transaction Target IS-->
-                <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Transactions Target (IS)" />
-                    <TextBox Text="{Binding ProjectConfiguration.ABTransactionsTarget}"
-                             IsReadOnly="True"
-                             Focusable="False"
-                             IsEnabled="False"
-                             Width="225" />
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <!--#region Transaction Target IS-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Transactions Target (IS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.ABTransactionsTarget}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Minimum Success Rate Improvement IS-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate Improvement (IS) %" />
+                        <TextBox Text="{Binding ProjectConfiguration.ABMinImprovePercent}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#region Maximum Correlation Percent-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Correlation %" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
                 </StackPanel>
                 <!--#endregion-->
-                <!--#region Minimum Success Rate Improvement IS-->
-                <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Minimum Success Rate Improvement (IS) %" />
-                    <TextBox Text="{Binding ProjectConfiguration.ABMinImprovePercent}"
-                             IsReadOnly="True"
-                             Focusable="False"
-                             IsEnabled="False"
-                             Width="225" />
+
+                <!--#region Weka-->
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1">
+                    <!--#region Total Instances-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Instances" />
+                        <TextBox Text="{Binding ProjectConfiguration.TotalInstanceWeka}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region N Total-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="N Total" />
+                        <TextBox Text="{Binding ProjectConfiguration.ABWekaNTotalTree}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Maximum Ratio-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Ratio" />
+                        <TextBox Text="{Binding ProjectConfiguration.ABWekaMaxRatioTree}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Depth Weka-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Depth" />
+                        <TextBox Text="{Binding ProjectConfiguration.DepthWeka}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="2">
+                    <!--#region Minimal Seed-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimal Seed" />
+                        <TextBox Text="{Binding ProjectConfiguration.MinimalSeed}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Maximum Seed-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Seed" />
+                        <TextBox Text="{Binding ProjectConfiguration.MaximumSeed}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Total Decimal Weka-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Decimals" />
+                        <TextBox Text="{Binding ProjectConfiguration.TotalDecimalWeka}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
                 </StackPanel>
                 <!--#endregion-->
-                <!--#region N Total-->
-                <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="N Total" />
-                    <TextBox Text="{Binding ProjectConfiguration.ABWekaNTotalTree}"
-                             IsReadOnly="True"
-                             Focusable="False"
-                             IsEnabled="False"
-                             Width="225" />
-                </StackPanel>
-                <!--#endregion-->
-                <!--#region Maximum Ratio-->
-                <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Maximum Ratio" />
-                    <TextBox Text="{Binding ProjectConfiguration.ABWekaMaxRatioTree}"
-                             IsReadOnly="True"
-                             Focusable="False"
-                             IsEnabled="False"
-                             Width="225" />
-                </StackPanel>
-                <!--#endregion-->
-                <!--#region Maximum Correlation Percent-->
-                <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Maximum Correlation %" />
-                    <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
-                             IsReadOnly="True"
-                             Focusable="False"
-                             IsEnabled="False"
-                             Width="225" />
-                </StackPanel>
-                <!--#endregion-->
-            </StackPanel>
+            </Grid>
         </Expander>
         <!--#endregion-->
 
