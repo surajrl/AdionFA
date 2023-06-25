@@ -82,10 +82,10 @@ namespace AdionFA.Infrastructure.Enums
         [Description(@"{0}\CrossingBuilder\Nodes")]
         CrossingBuilderNodes = 460,
 
-        [Description(@"{0}\CrossingBuilder\Nodes\UP")]
+        [Description(@"{0}\CrossingBuilder\Nodes\UP\{1}")]
         CrossingBuilderNodesUP = 470,
 
-        [Description(@"{0}\CrossingBuilder\Nodes\DOWN")]
+        [Description(@"{0}\CrossingBuilder\Nodes\DOWN\{1}")]
         CrossingBuilderNodesDOWN = 480,
 
     }

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -113,10 +114,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             foreach (var process in StrategyBuilderProcesses)
             {
-                if (process.Message != StrategyBuilderStatus.SBCompleted.GetMetadata().Description
-                && process.Message != StrategyBuilderStatus.SBNotStarted.GetMetadata().Description)
+                if (process.Message != BuilderProcessStatus.SBCompleted.GetMetadata().Description
+                && process.Message != BuilderProcessStatus.SBNotStarted.GetMetadata().Description)
                 {
-                    var stopped = StrategyBuilderStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
                     process.Message = $"{process.Message} - {stopped}";
                 }
             }
@@ -138,7 +139,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             _manualResetEventSlim.Set();
 
-            var stopped = StrategyBuilderStatus.Stopped.GetMetadata().Description;
+            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
             foreach (var process in StrategyBuilderProcesses)
             {
                 process.Message = process.Message.Replace($" - {stopped}", string.Empty);
@@ -179,8 +180,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
                     // Delete Crossing Builder Nodes
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesUPDirectory(), "*.xml", isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDirectory(), "*.xml", option: SearchOption.AllDirectories, isBackup: false);
                 }
                 else
                 {
@@ -227,7 +227,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach (var process in StrategyBuilderProcesses)
                 {
-                    process.Message = StrategyBuilderStatus.ExecutingCorrelation.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
                 }
 
                 await Task.Run(() =>
@@ -240,7 +240,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach (var process in StrategyBuilderProcesses)
                 {
-                    process.Message = StrategyBuilderStatus.SBCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.SBCompleted.GetMetadata().Description;
                 }
 
                 _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(true);
@@ -260,7 +260,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 foreach (var strategyBuilderProcess in StrategyBuilderProcesses)
                 {
-                    strategyBuilderProcess.Message = StrategyBuilderStatus.Canceled.GetMetadata().Description;
+                    strategyBuilderProcess.Message = BuilderProcessStatus.Canceled.GetMetadata().Description;
                 }
             }
             catch (Exception ex)
@@ -290,7 +290,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 },
                 process =>
                 {
-                    process.Message = StrategyBuilderStatus.ExecutingExtraction.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Description;
 
                     var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
                     var extractionResult = _extractorService.DoExtraction(
@@ -310,9 +310,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         0,
                         0);
 
-                    process.ExtractionStrategyBuilderName = $"{nameSignature}.{timeSignature}.csv";
-                    process.ExtractionStrategyBuilderPath = ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv");
-                    process.Message = StrategyBuilderStatus.ExtractionCompleted.GetMetadata().Description;
+                    process.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
+                    process.ExtractionPath = ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv");
+                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Description;
                 });
         }
 
@@ -327,7 +327,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Weka
 
-                process.Message = StrategyBuilderStatus.ExecutingWeka.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
 
                 var wekaApi = new WekaApiClient();
                 var responseWeka = wekaApi.GetREPTreeClassifier(
@@ -357,7 +357,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                process.Message = StrategyBuilderStatus.WekaCompleted.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
             }
 
             return backtestNodes;
@@ -384,7 +384,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     lock (_lock)
                     {
                         process.ExecutingBacktests++;
-                        process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                     }
 
                     _strategyBuilderService.BuildBacktestOfNode(
@@ -407,11 +407,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                         if (process.CompletedBacktests == process.BacktestNodes.Count)
                         {
-                            process.Message = StrategyBuilderStatus.BacktestCompleted.GetMetadata().Description;
+                            process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description;
                         }
                         else
                         {
-                            process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                            process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                         }
                     }
                 });
@@ -427,7 +427,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 ProjectConfiguration = project?.ProjectConfigurations.FirstOrDefault();
 
                 if (!IsTransactionActive
-                    && !StrategyBuilderProcesses.Any(process => process.Message == StrategyBuilderStatus.SBCompleted.GetMetadata().Description))
+                    && !StrategyBuilderProcesses.Any(process => process.Message == BuilderProcessStatus.SBCompleted.GetMetadata().Description))
                 {
                     StrategyBuilderProcesses.Clear();
 
@@ -440,7 +440,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             ExtractionTemplatePath = file.FullName,
                             ExtractionTemplateName = file.Name,
                             ExtractionName = file.Name,
-                            Message = StrategyBuilderStatus.SBNotStarted.GetMetadata().Description,
+                            Message = BuilderProcessStatus.SBNotStarted.GetMetadata().Description,
                             Tree = new(),
                             BacktestNodes = new()
                         });

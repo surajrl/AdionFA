@@ -2,13 +2,16 @@
 
 namespace AdionFA.Infrastructure.Enums
 {
-    public enum StrategyBuilderStatus
+    public enum BuilderProcessStatus
     {
         [Metadata(descriptionKey: "Strategy Builder Not Started")]
         SBNotStarted = 0,
 
         [Metadata(descriptionKey: "Assembly Builder Not Started")]
         ABNotStarted,
+
+        [Metadata(descriptionKey: "Correlation Builder Not Started")]
+        CBNotStarted,
 
         [Metadata(descriptionKey: "Executing Extraction")]
         ExecutingExtraction,
@@ -36,6 +39,9 @@ namespace AdionFA.Infrastructure.Enums
 
         [Metadata(descriptionKey: "Assembly Builder Completed")]
         ABCompleted,
+
+        [Metadata(descriptionKey: "Correlation Builder Completed")]
+        CBCompleted,
 
         [Metadata(descriptionKey: "Stopped")]
         Stopped,

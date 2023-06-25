@@ -111,8 +111,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
 
                     if (!IsTransactionActive
-                        && !AssemblyBuilderProcessDOWN.Any(process => process.Message == StrategyBuilderStatus.ABCompleted.GetMetadata().Description)
-                        && !AssemblyBuilderProcessUP.Any(process => process.Message == StrategyBuilderStatus.ABCompleted.GetMetadata().Description))
+                        && !AssemblyBuilderProcessDOWN.Any(process => process.Message == BuilderProcessStatus.ABCompleted.GetMetadata().Description)
+                        && !AssemblyBuilderProcessUP.Any(process => process.Message == BuilderProcessStatus.ABCompleted.GetMetadata().Description))
                     {
                         AssemblyBuilderProcessUP.Clear();
                         AssemblyBuilderProcessDOWN.Clear();
@@ -125,7 +125,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 ExtractionTemplatePath = file.FullName,
                                 ExtractionTemplateName = file.Name,
                                 ExtractionName = file.Name,
-                                Message = StrategyBuilderStatus.ABNotStarted.GetMetadata().Description,
+                                Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Description,
                                 Tree = new(),
                                 BacktestNodes = new(),
                             });
@@ -135,7 +135,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 ExtractionTemplatePath = file.FullName,
                                 ExtractionTemplateName = file.Name,
                                 ExtractionName = file.Name,
-                                Message = StrategyBuilderStatus.ABNotStarted.GetMetadata().Description,
+                                Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Description,
                                 Tree = new(),
                                 BacktestNodes = new(),
                             });
@@ -156,17 +156,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
-                if (processUP.Message != StrategyBuilderStatus.ABCompleted.GetMetadata().Description
-                    && processUP.Message != StrategyBuilderStatus.ABNotStarted.GetMetadata().Description)
+                if (processUP.Message != BuilderProcessStatus.ABCompleted.GetMetadata().Description
+                    && processUP.Message != BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
                 {
-                    var stopped = StrategyBuilderStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
                     processUP.Message = $"{processUP.Message} - {stopped}";
                 }
 
-                if (processDOWN.Message != StrategyBuilderStatus.ABCompleted.GetMetadata().Description
-                    && processDOWN.Message != StrategyBuilderStatus.ABNotStarted.GetMetadata().Description)
+                if (processDOWN.Message != BuilderProcessStatus.ABCompleted.GetMetadata().Description
+                    && processDOWN.Message != BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
                 {
-                    var stopped = StrategyBuilderStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
                     processDOWN.Message = $"{processDOWN.Message} - {stopped}";
                 }
             }
@@ -188,7 +188,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             _manualResetEventSlim.Set();
 
-            var stopped = StrategyBuilderStatus.Stopped.GetMetadata().Description;
+            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
             foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
                 processUP.Message = $"{processUP.Message} - {stopped}";
@@ -281,8 +281,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
-                    processUP.Message = StrategyBuilderStatus.ExecutingCorrelation.GetMetadata().Description;
-                    processDOWN.Message = StrategyBuilderStatus.ExecutingCorrelation.GetMetadata().Description;
+                    processUP.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
+                    processDOWN.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
                 }
 
                 await Task.Run(() =>
@@ -295,8 +295,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
-                    processUP.Message = StrategyBuilderStatus.ABCompleted.GetMetadata().Description;
-                    processDOWN.Message = StrategyBuilderStatus.ABCompleted.GetMetadata().Description;
+                    processUP.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Description;
+                    processDOWN.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Description;
                 }
 
                 // Result Message
@@ -316,8 +316,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
-                    var canceled = StrategyBuilderStatus.Canceled.GetMetadata().Description;
-                    var stopped = StrategyBuilderStatus.Stopped.GetMetadata().Description;
+                    var canceled = BuilderProcessStatus.Canceled.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
 
                     processUP.Message = processUP.Message.Replace(stopped, canceled);
                     processDOWN.Message = processUP.Message.Replace(stopped, canceled);
@@ -392,7 +392,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 },
                 process =>
                 {
-                    process.Message = StrategyBuilderStatus.ExecutingExtraction.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Description;
 
                     // Perfrom extraction
                     var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
@@ -444,22 +444,22 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     process.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
                     process.ExtractionPath = ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv");
-                    process.Message = StrategyBuilderStatus.ExtractionCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Description;
                 });
         }
 
-        private List<REPTreeNodeModel> GetBacktestNodes(IEnumerable<BuilderProcess> assembledBuilderProcess, string label)
+        private List<REPTreeNodeModel> GetBacktestNodes(IEnumerable<BuilderProcess> assemblyBuilderProcess, string label)
         {
             var backtestNodes = new List<REPTreeNodeModel>();
 
-            foreach (var process in assembledBuilderProcess)
+            foreach (var process in assemblyBuilderProcess)
             {
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                 // Weka 
 
-                process.Message = StrategyBuilderStatus.ExecutingWeka.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
 
                 var wekaApi = new WekaApiClient();
                 var responseWeka = wekaApi.GetREPTreeClassifier(
@@ -491,7 +491,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                process.Message = StrategyBuilderStatus.WekaCompleted.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
             }
 
             return backtestNodes;
@@ -524,7 +524,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     lock (_lock)
                     {
                         process.ExecutingBacktests++;
-                        process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                     }
 
                     _assembledBuilderService.BuildBacktestOfNode(
@@ -545,11 +545,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                         if (process.CompletedBacktests == process.BacktestNodes.Count)
                         {
-                            process.Message = StrategyBuilderStatus.BacktestCompleted.GetMetadata().Description;
+                            process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description;
                         }
                         else
                         {
-                            process.Message = $"{StrategyBuilderStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                            process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                         }
                     }
                 });

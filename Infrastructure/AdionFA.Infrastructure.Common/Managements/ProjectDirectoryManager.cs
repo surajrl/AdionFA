@@ -195,16 +195,25 @@ namespace AdionFA.Infrastructure.Common.Managements
 
         // Crossing Builder Nodes
 
-        public static string ProjectCrossingBuilderNodesUPDirectory(this string projectNameFolder)
+        public static string ProjectCrossingBuilderNodesDirectory(this string projectNameFolder)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectNameFolder));
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
+                string.Format(ProjectDirectoryEnum.CrossingBuilderNodes.GetDescription(), projectNameFolder));
         }
 
-        public static string ProjectCrossingBuilderNodesDOWNDirectory(this string projectNameFolder)
+        public static string ProjectCrossingBuilderNodesUPDirectory(this string projectNameFolder, string symbolName)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectNameFolder));
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
+                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectNameFolder, symbolName));
+        }
+
+        public static string ProjectCrossingBuilderNodesDOWNDirectory(this string projectNameFolder, string symbolName)
+        {
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
+                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectNameFolder, symbolName));
         }
     }
 }
