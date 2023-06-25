@@ -37,7 +37,7 @@ namespace AdionFA.UI.Station.Project.Services
             try
             {
                 ProjectConfigurationVM config =
-                    await _projectService.GetProjectConfiguration(projectId, includeGraph);
+                    await _projectService.GetProjectConfigurationAsync(projectId, includeGraph);
 
                 ProjectConfigurationModel pcsModel =
                     _mapper.Map<ProjectConfigurationVM, ProjectConfigurationModel>(config);
@@ -96,7 +96,7 @@ namespace AdionFA.UI.Station.Project.Services
 
                 var configVm = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationModel>(config);
 
-                var response = await _projectService.UpdateProjectConfiguration(configVm);
+                var response = await _projectService.UpdateProjectConfigurationAsync(configVm);
 
                 return response;
             }

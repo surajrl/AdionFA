@@ -33,7 +33,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
         // Project
 
-        public async Task<IList<ProjectVM>> GetAllProjects()
+        public async Task<IList<ProjectVM>> GetAllProjectAsync()
         {
             try
             {
@@ -76,7 +76,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ProjectConfigurationVM> GetProjectConfiguration(int projectId, bool includeGraph = false)
+        public async Task<ProjectConfigurationVM> GetProjectConfigurationAsync(int projectId, bool includeGraph = false)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> UpdateProjectConfiguration(ProjectConfigurationVM configuration)
+        public async Task<ResponseVM> UpdateProjectConfigurationAsync(ProjectConfigurationVM configuration)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> RestoreProjectConfiguration(int projectId)
+        public async Task<ResponseVM> RestoreProjectConfigurationAsync(int projectId)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> CreateProject(ProjectVM project, int globalConfigurationId, int marketDataId)
+        public async Task<ResponseVM> CreateProjectAsync(ProjectVM project, int globalConfigurationId, int marketDataId)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> PinnedProject(int projectId, bool isPinned)
+        public async Task<ResponseVM> PinnedProjectAsync(int projectId, bool isPinned)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> UpdateProcessId(int projectId, long? processId)
+        public async Task<ResponseVM> UpdateProcessIdAsync(int projectId, long? processId)
         {
             try
             {
@@ -219,7 +219,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
         // Configuration
 
-        public async Task<IList<ConfigurationVM>> GetAllConfiguration(bool includeGraph = false)
+        public async Task<IList<ConfigurationVM>> GetAllConfigurationAsync(bool includeGraph = false)
         {
             try
             {
@@ -239,7 +239,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ConfigurationVM> GetConfiguration(int? configurationId = null, bool includeGraph = false)
+        public async Task<ConfigurationVM> GetConfigurationAsync(int? configurationId = null, bool includeGraph = false)
         {
             try
             {
@@ -260,7 +260,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ConfigurationVM> GetConfiguration(int configurationId, bool includeGraph = false)
+        public async Task<ConfigurationVM> GetConfigurationAsync(int configurationId, bool includeGraph = false)
         {
             try
             {
@@ -282,7 +282,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> UpdateConfiguration(ConfigurationVM configuration)
+        public async Task<ResponseVM> UpdateConfigurationAsync(ConfigurationVM configuration)
         {
             try
             {

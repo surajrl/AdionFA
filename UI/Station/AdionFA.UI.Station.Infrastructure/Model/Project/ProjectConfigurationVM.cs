@@ -21,6 +21,8 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Project
 
         public bool IsFavorite { get; set; }
         public string WorkspacePath { get; set; }
+
+        public IList<HistoricalDataVM> CrossingHistoricalData { get; set; }
         public IList<ProjectScheduleConfigurationVM> ProjectScheduleConfigurations { get; set; }
     }
 }

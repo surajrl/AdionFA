@@ -1,4 +1,4 @@
-﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Model;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.MarketData;
@@ -9,7 +9,7 @@ using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Infrastructure.Model.ReferenceData;
-using AdionFA.UI.Station.Project.Model.AssembledBuilder;
+using AdionFA.UI.Station.Project.Model.Common;
 using AdionFA.UI.Station.Project.Model.Configuration;
 using AutoMapper;
 
@@ -55,10 +55,10 @@ namespace AdionFA.UI.Station.Project.AutoMapper
             CreateMap<ConfigurationDTO, ConfigurationVM>().ReverseMap();
             CreateMap<ProjectConfigurationVM, ConfigurationDTO>().ReverseMap();
 
-            // Assembled Builder
+            // Assembly Builder
 
             CreateMap<ProjectConfigurationVM, ConfigurationBaseDTO>().ReverseMap();
-            CreateMap<AssembledBuilderModel, AssembledBuilderProcessModel>().ReverseMap();
+            CreateMap<AssemblyBuilderModel, BuilderProcess>().ReverseMap();
         }
     }
 }

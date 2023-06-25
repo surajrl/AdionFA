@@ -2,7 +2,7 @@
 
 namespace AdionFA.Infrastructure.Common.Weka.Model
 {
-    public class AssembledNodeModel
+    public class AssemblyNodeModel
     {
         public REPTreeNodeModel ParentNode { get; set; }
         public List<REPTreeNodeModel> ChildNodes { get; set; }

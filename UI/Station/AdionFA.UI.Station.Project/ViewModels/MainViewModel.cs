@@ -22,7 +22,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public async void PopulateViewModel()
         {
             IsTransactionActive = false;
+
             ProjectName = "Loading...";
+
             var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
             if (project != null)
             {
@@ -61,7 +63,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     ToolTip = $"Open {HamburgerMenuItems.StrategyBuilder}"
                 },
 
-                new AssembledBuilderViewModel(this)
+                new AssemblyBuilderViewModel(this)
                 {
                     Icon = new PackIconMaterialDesign()
                     {
@@ -69,9 +71,22 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         Width = 20,
                         Height = 20
                     },
-                    Label = HamburgerMenuItems.AssembledBuilder,
-                    Name = HamburgerMenuItems.AssembledBuilder.Replace(" ", string.Empty),
-                    ToolTip = $"Open {HamburgerMenuItems.AssembledBuilder}"
+                    Label = HamburgerMenuItems.AssemblyBuilder,
+                    Name = HamburgerMenuItems.AssemblyBuilder.Replace(" ", string.Empty),
+                    ToolTip = $"Open {HamburgerMenuItems.AssemblyBuilder}"
+                },
+
+                new CrossingBuilderViewModel(this)
+                {
+                    Icon = new PackIconMaterial()
+                    {
+                        Kind = PackIconMaterialKind.Cross,
+                        Width = 20,
+                        Height = 20
+                    },
+                    Label = HamburgerMenuItems.CrossingBuilder,
+                    Name = HamburgerMenuItems.CrossingBuilder.Replace(" ", string.Empty),
+                    ToolTip = $"Open {HamburgerMenuItems.CrossingBuilder}"
                 }
             };
 

@@ -117,7 +117,7 @@ namespace AdionFA.UI.Station.Project.Validators.Configuration
             RuleFor(m => m.SBWinningStrategyDOWNTarget).GreaterThanOrEqualTo(0)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));
 
-            // Assembled Builder
+            // Assembly Builder
 
             RuleFor(m => m.ABTransactionsTarget).GreaterThanOrEqualTo(0)
                  .WithMessage(m => string.Format(CultureInfo.InvariantCulture, ValidationResources.NumberGreaterThan, 0));

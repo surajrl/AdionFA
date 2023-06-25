@@ -33,7 +33,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             int? instances = default,
             double? ratio = default,
             double? total = default,
-            bool? isAssembled = default,
+            bool? isAssembly = default,
             Dictionary<string, List<string>> customHeaders = null,
             CancellationToken cancellationToken = default)
         {
@@ -55,7 +55,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
                     { "instances", instances },
                     { "ratio", ratio },
                     { "total", total },
-                    { "isAssembled", isAssembled },
+                    { "isAssembly", isAssembly },
                     { "cancellationToken", cancellationToken }
                 };
 
@@ -99,9 +99,9 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             {
                 _queryParameters.Add(string.Format("total={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(total, SerializationSettings).Trim('"'))));
             }
-            if (isAssembled != null)
+            if (isAssembly != null)
             {
-                _queryParameters.Add(string.Format("isAssembled={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(isAssembled, SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("isAssembly={0}", Uri.EscapeDataString(SafeJsonConvert.SerializeObject(isAssembly, SerializationSettings).Trim('"'))));
             }
 
             if (_queryParameters.Count > 0)

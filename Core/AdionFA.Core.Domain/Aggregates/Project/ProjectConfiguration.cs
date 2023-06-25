@@ -25,6 +25,7 @@ namespace AdionFA.Core.Domain.Aggregates.Project
         public string WorkspacePath { get; set; }
 
         // Navigation
+        public ICollection<HistoricalData> CorssingHistoricalData { get; set; }
 
         public ICollection<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
     }

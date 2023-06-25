@@ -7,7 +7,7 @@ namespace AdionFA.Infrastructure.Enums
         [Metadata(descriptionKey: "Strategy Builder Not Started")]
         SBNotStarted = 0,
 
-        [Metadata(descriptionKey: "Assembled Builder Not Started")]
+        [Metadata(descriptionKey: "Assembly Builder Not Started")]
         ABNotStarted,
 
         [Metadata(descriptionKey: "Executing Extraction")]
@@ -34,7 +34,7 @@ namespace AdionFA.Infrastructure.Enums
         [Metadata(descriptionKey: "Strategy Builder Completed")]
         SBCompleted,
 
-        [Metadata(descriptionKey: "Assembled Builder Completed")]
+        [Metadata(descriptionKey: "Assembly Builder Completed")]
         ABCompleted,
 
         [Metadata(descriptionKey: "Stopped")]

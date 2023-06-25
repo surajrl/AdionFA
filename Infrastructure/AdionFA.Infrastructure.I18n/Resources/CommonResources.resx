@@ -147,14 +147,14 @@
   <data name="Asia1" xml:space="preserve">
     <value>Asia</value>
   </data>
-  <data name="Assembled" xml:space="preserve">
-    <value>Assembled</value>
+  <data name="Assembly" xml:space="preserve">
+    <value>Assembly</value>
   </data>
-  <data name="AssembledBuilder" xml:space="preserve">
-    <value>Assembled Builder</value>
+  <data name="AssemblyBuilder" xml:space="preserve">
+    <value>Assembly Builder</value>
   </data>
-  <data name="AssembledBuilderInformation" xml:space="preserve">
-    <value>Assembled Builder Information</value>
+  <data name="AssemblyBuilderInformation" xml:space="preserve">
+    <value>Assembly Builder Information</value>
   </data>
   <data name="AssemblyIterations" xml:space="preserve">
     <value>Assembly Iterations</value>
@@ -264,8 +264,8 @@
   <data name="DOWN" xml:space="preserve">
     <value>DOWN</value>
   </data>
-  <data name="DOWNNodeAssembled" xml:space="preserve">
-    <value>DOWN Node Assembled</value>
+  <data name="DOWNNodeAssembly" xml:space="preserve">
+    <value>DOWN Node Assembly</value>
   </data>
   <data name="Eight" xml:space="preserve">
     <value>Eight</value>
@@ -714,8 +714,8 @@
   <data name="UploadHistoricalData" xml:space="preserve">
     <value>Upload Historical Data</value>
   </data>
-  <data name="UPNodeAssembled" xml:space="preserve">
-    <value>UP Node Assembled</value>
+  <data name="UPNodeAssembly" xml:space="preserve">
+    <value>UP Node Assembly</value>
   </data>
   <data name="Validation" xml:space="preserve">
     <value>Validation</value>

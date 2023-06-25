@@ -259,7 +259,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                 if (ApproveCandle(nodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
                 {
-                    if (entityType == EntityTypeEnum.AssembledBuilder)
+                    if (entityType == EntityTypeEnum.AssemblyBuilder)
                     {
                         var childNodePass = false;
                         foreach (var childNode in childNodes)
@@ -389,10 +389,10 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
                     break;
 
-                case EntityTypeEnum.AssembledBuilder:
+                case EntityTypeEnum.AssemblyBuilder:
                     directory = node.Label.ToLower() == "up"
-                        ? projectName.ProjectAssembledBuilderNodesUPDirectory()
-                        : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                        ? projectName.ProjectAssemblyBuilderNodesUPDirectory()
+                        : projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
                     break;
 
                 default:

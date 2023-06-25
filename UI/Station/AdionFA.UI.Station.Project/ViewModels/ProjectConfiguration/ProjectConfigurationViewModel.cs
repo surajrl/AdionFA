@@ -1,21 +1,19 @@
 ﻿using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.Enums.Model;
 using AdionFA.Infrastructure.I18n.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Model.Base;
+using AdionFA.UI.Station.Infrastructure.Model.MarketData;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.Configuration;
 using AdionFA.UI.Station.Project.Services;
-using DynamicData;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
@@ -70,6 +68,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
+        public ICommand CrossingBuilderCommand => new DelegateCommand<HistoricalDataVM>(ProjectConfiguration.CrossingHistoricalData.Add);
+
         public ICommand SaveBtnCommand => new DelegateCommand(async () =>
         {
             try
@@ -87,7 +87,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                var result = await _appProjectService.UpdateProjectConfiguration(_projectConfiguration);
+                var result = await _appProjectService.UpdateProjectConfiguration(ProjectConfiguration);
 
                 IsTransactionActive = false;
 
@@ -114,7 +114,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                var result = await _projectService.RestoreProjectConfiguration(ProcessArgs.ProjectId);
+                var result = await _projectService.RestoreProjectConfigurationAsync(ProcessArgs.ProjectId);
                 if (result?.IsSuccess ?? false)
                 {
                     PopulateViewModel(ProcessArgs.ProjectId);
@@ -146,44 +146,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public async void PopulateViewModel(int projectId)
         {
-            Symbols.Clear();
-            var symbols = await _historicalDataService.GetAllSymbol().ConfigureAwait(true);
-            Symbols.AddRange(symbols.Select(symbol => new Metadata
-            {
-                Id = symbol.SymbolId,
-                Name = symbol.Name
-            }));
-
-            Timeframes.Clear();
-            var timeframes = await _historicalDataService.GetAllTimeframe().ConfigureAwait(true);
-            Timeframes.AddRange(timeframes.Select(timeframe => new Metadata
-            {
-                Id = timeframe.TimeframeId,
-                Name = timeframe.Name
-            }));
-
-            HistoricalDataList.Clear();
-            HistoricalDataList.Insert(0, new Metadata
-            {
-                Id = 0,
-                Name = CommonResources.SelectItem
-            });
-            HistoricalDataList.AddRange((await _historicalDataService.GetAllHistoricalData()).Select(md => new Metadata
-            {
-                Id = md.HistoricalDataId,
-                Name = md.Description,
-            }));
-
             ProjectConfiguration = await _appProjectService.GetProjectConfiguration(projectId, true);
 
-            ProjectConfiguration.HistoricalDataId ??= 0;
-
-            if (!HistoricalDataList.Any(md => md.Id == _projectConfiguration.HistoricalDataId))
-            {
-                MessageHelper.ShowMessage(this,
-                    "Info",
-                    "The project is associated with outdated historical data, consider updating the Market Data field");
-            }
+            ProjectConfiguration.Timeframe = await _historicalDataService.GetTimeframeAsync(ProjectConfiguration.TimeframeId).ConfigureAwait(true);
+            ProjectConfiguration.Symbol = await _historicalDataService.GetSymbolAsync(ProjectConfiguration.SymbolId).ConfigureAwait(true);
         }
 
         public void PropertyValidator(ResponseVM response, bool showDialogWithErrors = false, bool showMessageInControl = false)
@@ -234,9 +200,5 @@ namespace AdionFA.UI.Station.Project.ViewModels
             get => _projectConfiguration;
             set => SetProperty(ref _projectConfiguration, value);
         }
-
-        public ObservableCollection<Metadata> Symbols { get; } = new ObservableCollection<Metadata>();
-        public ObservableCollection<Metadata> Timeframes { get; } = new ObservableCollection<Metadata>();
-        public ObservableCollection<Metadata> HistoricalDataList { get; } = new ObservableCollection<Metadata>();
     }
 }

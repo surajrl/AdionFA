@@ -1,4 +1,4 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.AssembledBuilder.AssembledNodesFlyoutView"
+﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.AssemblyBuilder.AssemblyNodesFlyoutView"
               xmlns:prism="http://prismlibrary.com/"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
               xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -16,7 +16,7 @@
               Theme="Adapt"
               Width="1200"
               CloseButtonIsCancel="True"
-              Header="Assembled Nodes"
+              Header="Assembly Nodes"
               IsModal="True">
 
     <metro:Flyout.Resources>
@@ -297,7 +297,7 @@
                 <DataGrid Grid.Column="1"
                           IsReadOnly="True"
                           AutoGenerateColumns="False"
-                          ItemsSource="{Binding AssembledNodes}">
+                          ItemsSource="{Binding AssemblyNodes}">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                          Color="White" />

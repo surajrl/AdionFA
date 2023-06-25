@@ -1,5 +1,5 @@
 ﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Project.AssembledBuilder;
+using AdionFA.UI.Station.Project.AssemblyBuilder;
 using AdionFA.UI.Station.Project.StrategyBuilder;
 using AdionFA.UI.Station.Project.ViewModels;
 using MahApps.Metro.Controls;
@@ -29,7 +29,7 @@ namespace AdionFA.UI.Station.Project
                 // Common
 
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodesFlyoutView));
-                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(AssembledNodesFlyoutView));
+                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(AssemblyNodesFlyoutView));
             }
         }
 

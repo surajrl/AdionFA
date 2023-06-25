@@ -57,7 +57,7 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
 
         // View Bindings
 
-        public ObservableCollection<AssembledNodeModel> SavedAssembledNodes { get; set; }
+        public ObservableCollection<AssemblyNodeModel> SavedAssemblyNodes { get; set; }
         public ObservableCollection<REPTreeNodeModel> SavedNodes { get; set; }
     }
 }

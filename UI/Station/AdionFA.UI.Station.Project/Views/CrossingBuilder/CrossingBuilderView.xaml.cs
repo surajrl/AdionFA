@@ -3,11 +3,11 @@
 namespace AdionFA.UI.Station.Project.Views
 {
     /// <summary>
-    /// Interaction logic for AssembledBuilderView.xaml
+    /// Interaction logic for CrossingBuilderView.xaml
     /// </summary>
-    public partial class AssembledBuilderView : UserControl
+    public partial class CrossingBuilderView : UserControl
     {
-        public AssembledBuilderView()
+        public CrossingBuilderView()
         {
             InitializeComponent();
         }

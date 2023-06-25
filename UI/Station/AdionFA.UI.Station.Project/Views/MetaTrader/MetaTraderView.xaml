@@ -238,10 +238,10 @@
                 <StackPanel Grid.Column="2"
                             Orientation="Horizontal">
                     <StackPanel>
-                        <Label Content="Test Assembled Node" />
-                        <metro:ToggleSwitch Toggled="TestAssembledNodeToggleSwitch_Toggled"
+                        <Label Content="Test Assembly Node" />
+                        <metro:ToggleSwitch Toggled="TestAssemblyNodeToggleSwitch_Toggled"
                                             IsEnabled="{Binding CanExecute}"
-                                            IsOn="{Binding TestAssembledNode, Mode=TwoWay}" />
+                                            IsOn="{Binding TestAssemblyNode, Mode=TwoWay}" />
                     </StackPanel>
                     <StackPanel>
                         <Label Content="Test Nodes" />
@@ -256,7 +256,7 @@
                 <StackPanel Grid.Column="3"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <!--#region Assembled Node-->
+                    <!--#region Assembly Node-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assembledNodesBtn"
                                 Width="125"
@@ -265,7 +265,7 @@
                                 <iconPacks:PackIconMaterial Kind="GraphOutline"
                                                             VerticalAlignment="Center"
                                                             Width="15" />
-                                <Label Content="Assembled Node"
+                                <Label Content="Assembly Node"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
@@ -274,9 +274,9 @@
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
-                                                <Binding Path="AssembledNode" />
-                                                <Binding Path="AssembledNode.ChildNodes" />
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                                <Binding Path="AssemblyNode" />
+                                                <Binding Path="AssemblyNode.ChildNodes" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>

@@ -120,8 +120,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     });
 
                     string marketName = ((MarketEnum)UploadHistoricalData.MarketId).GetMetadata().Name;
-                    var symbol = await _marketDataService.GetSymbol(UploadHistoricalData.SymbolId);
-                    var timeframe = await _marketDataService.GetTimeframe(UploadHistoricalData.TimeframeId);
+                    var symbol = await _marketDataService.GetSymbolAsync(UploadHistoricalData.SymbolId);
+                    var timeframe = await _marketDataService.GetTimeframeAsync(UploadHistoricalData.TimeframeId);
 
                     var candlesOrdered = result.OrderByDescending(candle => candle.Date);
                     var firstCandleDate = candlesOrdered.LastOrDefault().Date;
@@ -165,13 +165,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
             if (!Timeframes.Any())
             {
-                var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
+                var timeframes = await _marketDataService.GetAllTimeframeAsync().ConfigureAwait(true);
                 timeframes.ToList().ForEach(Timeframes.Add);
             }
 
             if (!Symbols.Any())
             {
-                var symbols = await _marketDataService.GetAllSymbol().ConfigureAwait(true);
+                var symbols = await _marketDataService.GetAllSymbolAsync().ConfigureAwait(true);
                 symbols.ToList().ForEach(Symbols.Add);
             }
         }

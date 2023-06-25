@@ -26,7 +26,7 @@ namespace AdionFA.Infrastructure.Enums
         [Metadata(codeKey: "SB", nameKey: "StrategyBuilder", descriptionKey: "Strategy Builder", resourceType: typeof(EnumResources))]
         StrategyBuilder = 504,
 
-        [Metadata(codeKey: "AB", nameKey: "AssembledBuilder", descriptionKey: "Assembled Builder", resourceType: typeof(EnumResources))]
-        AssembledBuilder = 505,
+        [Metadata(codeKey: "AB", nameKey: "AssemblyBuilder", descriptionKey: "Assembly Builder", resourceType: typeof(EnumResources))]
+        AssemblyBuilder = 505,
     }
 }

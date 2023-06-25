@@ -1,14 +1,14 @@
-﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Services;
+﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.AssemblyBuilder.Services;
 using Ninject.Modules;
 
-namespace AdionFA.Infrastructure.Core.IofC.Modules.AssembledBuilder
+namespace AdionFA.Infrastructure.Core.IofC.Modules.AssemblyBuilder
 {
-    public class AssembledBuilderModule : NinjectModule
+    public class AssemblyBuilderModule : NinjectModule
     {
         public override void Load()
         {
-            Kernel.Bind<IAssembledBuilderService>().To<AssembledBuilderService>();
+            Kernel.Bind<IAssemblyBuilderService>().To<AssemblyBuilderService>();
         }
     }
 }

@@ -145,10 +145,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
-        }, () => !IsTransactionActive && (TestNodes || TestAssembledNode))
+        }, () => !IsTransactionActive && (TestNodes || TestAssemblyNode))
             .ObservesProperty(() => IsTransactionActive)
             .ObservesProperty(() => TestNodes)
-            .ObservesProperty(() => TestAssembledNode);
+            .ObservesProperty(() => TestAssemblyNode);
 
         private async Task SubSocket(IProgress<ZmqMsgModel> progress)
         {
@@ -204,7 +204,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    if (Nodes != null || AssembledNode != null)
+                    if (Nodes != null || AssemblyNode != null)
                     {
                         // Perform algorithm --------------------------------------------------
                         var messageInputCopy = MessageInput.ToList(); // Copy in case it gets modified
@@ -240,14 +240,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 }
                             }
                         }
-                        else if (TestAssembledNode)
+                        else if (TestAssemblyNode)
                         {
                             isTrade = _tradeService.IsTrade(
-                                AssembledNode,
+                                AssemblyNode,
                                 candles,
                                 _currentCandle);
 
-                            label = AssembledNode.ParentNode.Label;
+                            label = AssemblyNode.ParentNode.Label;
                         }
 
                         if (isTrade)
@@ -312,9 +312,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
             }
 
-            if (item is AssembledNodeModel assembledNode)
+            if (item is AssemblyNodeModel assembledNode)
             {
-                AssembledNode = assembledNode;
+                AssemblyNode = assembledNode;
             }
         });
 
@@ -325,9 +325,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 Nodes.Remove(singleNode);
             }
 
-            if (item is AssembledNodeModel assembledNode)
+            if (item is AssemblyNodeModel assembledNode)
             {
-                AssembledNode = null;
+                AssemblyNode = null;
             }
         });
 
@@ -410,11 +410,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _expertAdvisor, value);
         }
 
-        private bool _testAssembledNode;
-        public bool TestAssembledNode
+        private bool _testAssemblyNode;
+        public bool TestAssemblyNode
         {
-            get => _testAssembledNode;
-            set => SetProperty(ref _testAssembledNode, value);
+            get => _testAssemblyNode;
+            set => SetProperty(ref _testAssemblyNode, value);
         }
 
         private bool _testNodes;
@@ -431,8 +431,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _nodes, value);
         }
 
-        private AssembledNodeModel _assembledNode;
-        public AssembledNodeModel AssembledNode
+        private AssemblyNodeModel _assembledNode;
+        public AssemblyNodeModel AssemblyNode
         {
             get => _assembledNode;
             set => SetProperty(ref _assembledNode, value);

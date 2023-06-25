@@ -21,7 +21,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
         }
 
         public bool IsTrade(
-            AssembledNodeModel assembledNode,
+            AssemblyNodeModel assembledNode,
             IList<Candle> candleHistory,
             Candle currentCandle)
         {

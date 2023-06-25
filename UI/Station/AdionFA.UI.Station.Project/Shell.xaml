@@ -62,8 +62,12 @@
                 <views:StrategyBuilderView DataContext="{Binding}" />
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vmodel:AssembledBuilderViewModel}">
-                <views:AssembledBuilderView DataContext="{Binding}" />
+            <DataTemplate DataType="{x:Type vmodel:AssemblyBuilderViewModel}">
+                <views:AssemblyBuilderView DataContext="{Binding}" />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmodel:CrossingBuilderViewModel}">
+                <views:CrossingBuilderView DataContext="{Binding}" />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vmodel:MetaTraderViewModel}">

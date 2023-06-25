@@ -40,7 +40,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Contracts
             int? instances = default,
             double? ratio = default,
             double? total = default,
-            bool? isAssembled = default,
+            bool? isAssembly = default,
             Dictionary<string, List<string>> customHeaders = null,
             CancellationToken cancellationToken = default);
     }

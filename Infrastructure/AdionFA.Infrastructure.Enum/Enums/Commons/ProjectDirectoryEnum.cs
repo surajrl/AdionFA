@@ -36,30 +36,57 @@ namespace AdionFA.Infrastructure.Enums
         [Description(@"{0}\StrategyBuilder\Extractions\WithoutSchedule")]
         StrategyBuilderExtractorWithoutSchedule = 260,
 
-        // Assembled Builder
+        // Assembly Builder
 
-        [Description(@"{0}\AssembledBuilder")]
-        AssembledBuilder = 310,
+        [Description(@"{0}\AssemblyBuilder")]
+        AssemblyBuilder = 310,
 
-        [Description(@"{0}\AssembledBuilder\Extractions\UP")]
-        AssembledBuilderExtractorUP = 320,
+        [Description(@"{0}\AssembltBuilder\Extractions\UP")]
+        AssemblyBuilderExtractorUP = 320,
 
-        [Description(@"{0}\AssembledBuilder\Extractions\DOWN")]
-        AssembledBuilderExtractorDOWN = 330,
+        [Description(@"{0}\AssemblyBuilder\Extractions\DOWN")]
+        AssemblyBuilderExtractorDOWN = 330,
 
-        [Description(@"{0}\AssembledBuilder\Extractions\{1}\{2}")]
-        AssembledBuilderExtractorMarket = 340,
+        [Description(@"{0}\AssemblyBuilder\Extractions\{1}\{2}")]
+        AssemblyBuilderExtractorMarket = 340,
 
-        [Description(@"{0}\AssembledBuilder\Extractions\{1}\WithoutSchedule")]
-        AssembledBuilderExtractorWithoutSchedule = 350,
+        [Description(@"{0}\AssemblyBuilder\Extractions\{1}\WithoutSchedule")]
+        AssemblyBuilderExtractorWithoutSchedule = 350,
 
-        [Description(@"{0}\AssembledBuilder\Nodes")]
-        AssembledBuilderNodes = 360,
+        [Description(@"{0}\AssemblyBuilder\Nodes")]
+        AssemblyBuilderNodes = 360,
 
-        [Description(@"{0}\AssembledBuilder\Nodes\UP")]
-        AssembledBuilderNodesUP = 370,
+        [Description(@"{0}\AssemblyBuilder\Nodes\UP")]
+        AssemblyBuilderNodesUP = 370,
 
-        [Description(@"{0}\AssembledBuilder\Nodes\DOWN")]
-        AssembledBuilderNodesDOWN = 380,
+        [Description(@"{0}\AssemblyBuilder\Nodes\DOWN")]
+        AssemblyBuilderNodesDOWN = 380,
+
+        // Crossing Builder
+
+        [Description(@"{0}\CrossingBuilder")]
+        CrossingBuilder = 410,
+
+        [Description(@"{0}\CrossingBuilder\Extractions\UP")]
+        CrossingBuilderExtractorUP = 420,
+
+        [Description(@"{0}\CrossingBuilder\Extractions\DOWN")]
+        CrossingBuilderExtractorDOWN = 430,
+
+        [Description(@"{0}\CrossingBuilder\Extractions\{1}\{2}")]
+        CrossingBuilderExtractorMarket = 440,
+
+        [Description(@"{0}\CrossingBuilder\Extractions\{1}\WithoutSchedule")]
+        CrossingBuilderExtractorWithoutSchedule = 450,
+
+        [Description(@"{0}\CrossingBuilder\Nodes")]
+        CrossingBuilderNodes = 460,
+
+        [Description(@"{0}\CrossingBuilder\Nodes\UP")]
+        CrossingBuilderNodesUP = 470,
+
+        [Description(@"{0}\CrossingBuilder\Nodes\DOWN")]
+        CrossingBuilderNodesDOWN = 480,
+
     }
 }

@@ -86,7 +86,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     {
                         if (_directoryService.CreateDefaultWorkspace())
                         {
-                            IList<ProjectVM> projects = await _projectService.GetAllProjects();
+                            IList<ProjectVM> projects = await _projectService.GetAllProjectAsync();
 
                             foreach (var p in projects)
                             {

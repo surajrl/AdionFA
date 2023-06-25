@@ -78,7 +78,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition />
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal"
@@ -87,7 +87,7 @@
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding StopCommand}">
+                        Command="{Binding Stop}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Kind="PauseCircleSolid"
                                                Width="14" />
@@ -101,7 +101,7 @@
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding CancelCommand}">
+                        Command="{Binding Cancel}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Kind="StopCircleSolid"
                                                Width="14" />
@@ -115,7 +115,7 @@
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding ContinueCommand}">
+                        Command="{Binding Continue}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Kind="PlayCircleSolid"
                                                Width="14" />
@@ -130,7 +130,7 @@
                 <Button Width="80"
                         Height="40"
                         IsEnabled="{Binding CanExecute}"
-                        Command="{Binding ProcessCommand}">
+                        Command="{Binding Process}">
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <iconPacks:FontAwesome Kind="PlaySolid"
@@ -497,7 +497,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Margin="5"
-                                   Content="{Binding ExtractionStrategyBuilderName}" />
+                                   Content="{Binding ExtractionName}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

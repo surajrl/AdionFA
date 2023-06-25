@@ -38,7 +38,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                var list = await _projectService.GetAllConfiguration(includeGraph);
+                var list = await _projectService.GetAllConfigurationAsync(includeGraph);
                 var vm = _mapper.Map<IList<ConfigurationVM>, IList<ConfigurationVM>>(list);
                 return vm;
             }
@@ -53,7 +53,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                var globalConfig = await _projectService.GetConfiguration(includeGraph: true);
+                var globalConfig = await _projectService.GetConfigurationAsync(includeGraph: true);
                 var result = _mapper.Map<ConfigurationVM, ConfigurationModel>(globalConfig);
 
                 var europa = globalConfig.ScheduleConfigurations.FirstOrDefault(gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe);
@@ -112,7 +112,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
 
                 var configVm = _mapper.Map<ConfigurationVM, ConfigurationModel>(config);
 
-                var response = await _projectService.UpdateConfiguration(configVm);
+                var response = await _projectService.UpdateConfigurationAsync(configVm);
                 return response.IsSuccess;
             }
             catch (Exception ex)
@@ -128,7 +128,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                var list = await _marketDataService.GetAllHistoricalData(includeGraph);
+                var list = await _marketDataService.GetAllHistoricalDataAsync(includeGraph);
                 return _mapper.Map<IList<HistoricalDataVM>, IList<HistoricalDataVM>>(list);
             }
             catch (Exception ex)
@@ -142,7 +142,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                HistoricalDataVM vm = await _marketDataService.GetHistoricalData(marketId, symbolId, timeframeId);
+                HistoricalDataVM vm = await _marketDataService.GetHistoricalDataAsync(marketId, symbolId, timeframeId);
 
                 var settingVm = _mapper.Map<HistoricalDataVM, UploadHistoricalDataModel>(vm) ?? new UploadHistoricalDataModel();
                 List<HistoricalDataCandleSettingVM> details = vm?.HistoricalDataCandles.Select(
@@ -166,7 +166,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                var result = await _marketDataService.CreateHistoricalData(vm);
+                var result = await _marketDataService.CreateHistoricalDataAsync(vm);
                 return result.IsSuccess;
             }
             catch (Exception ex)
@@ -180,7 +180,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                var result = await _marketDataService.CreateHistoricalData(vm);
+                var result = await _marketDataService.CreateHistoricalDataAsync(vm);
                 return result.IsSuccess;
             }
             catch (Exception ex)
@@ -194,7 +194,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                var result = await _marketDataService.CreateHistoricalData(vm);
+                var result = await _marketDataService.CreateHistoricalDataAsync(vm);
                 return result.IsSuccess;
             }
             catch (Exception ex)
@@ -210,7 +210,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.Services
         {
             try
             {
-                var result = await _projectService.CreateProject(
+                var result = await _projectService.CreateProjectAsync(
                     project,
                     project.ConfigurationId ?? 0,
                     project.HistoricalDataId ?? 0);

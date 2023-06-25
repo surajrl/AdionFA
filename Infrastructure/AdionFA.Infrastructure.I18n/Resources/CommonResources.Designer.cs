@@ -151,29 +151,29 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assembled.
+        ///   Looks up a localized string similar to Assembly.
         /// </summary>
-        public static string Assembled {
+        public static string Assembly {
             get {
-                return ResourceManager.GetString("Assembled", resourceCulture);
+                return ResourceManager.GetString("Assembly", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assembled Builder.
+        ///   Looks up a localized string similar to Assembly Builder.
         /// </summary>
-        public static string AssembledBuilder {
+        public static string AssemblyBuilder {
             get {
-                return ResourceManager.GetString("AssembledBuilder", resourceCulture);
+                return ResourceManager.GetString("AssemblyBuilder", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assembled Builder Information.
+        ///   Looks up a localized string similar to Assembly Builder Information.
         /// </summary>
-        public static string AssembledBuilderInformation {
+        public static string AssemblyBuilderInformation {
             get {
-                return ResourceManager.GetString("AssembledBuilderInformation", resourceCulture);
+                return ResourceManager.GetString("AssemblyBuilderInformation", resourceCulture);
             }
         }
         
@@ -493,11 +493,11 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DOWN Node Assembled.
+        ///   Looks up a localized string similar to DOWN Node Assembly.
         /// </summary>
-        public static string DOWNNodeAssembled {
+        public static string DOWNNodeAssembly {
             get {
-                return ResourceManager.GetString("DOWNNodeAssembled", resourceCulture);
+                return ResourceManager.GetString("DOWNNodeAssembly", resourceCulture);
             }
         }
         
@@ -1843,11 +1843,11 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UP Node Assembled.
+        ///   Looks up a localized string similar to UP Node Assembly.
         /// </summary>
-        public static string UPNodeAssembled {
+        public static string UPNodeAssembly {
             get {
-                return ResourceManager.GetString("UPNodeAssembled", resourceCulture);
+                return ResourceManager.GetString("UPNodeAssembly", resourceCulture);
             }
         }
         

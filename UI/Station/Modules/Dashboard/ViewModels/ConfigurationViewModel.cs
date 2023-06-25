@@ -103,7 +103,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         public async void PopulateViewModel()
         {
             Symbols.Clear();
-            var symbols = await _marketDataService.GetAllSymbol().ConfigureAwait(true);
+            var symbols = await _marketDataService.GetAllSymbolAsync().ConfigureAwait(true);
             Symbols.AddRange(symbols.Select(symbol => new Metadata
             {
                 Id = symbol.SymbolId,
@@ -111,7 +111,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }));
 
             Timeframes.Clear();
-            var timeframes = await _marketDataService.GetAllTimeframe().ConfigureAwait(true);
+            var timeframes = await _marketDataService.GetAllTimeframeAsync().ConfigureAwait(true);
             Timeframes.AddRange(timeframes.Select(timeframe => new Metadata
             {
                 Id = timeframe.TimeframeId,

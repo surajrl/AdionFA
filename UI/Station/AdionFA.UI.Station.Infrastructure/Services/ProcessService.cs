@@ -1,15 +1,12 @@
 ﻿using AdionFA.Infrastructure.Enums;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Common;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Infrastructure.Contracts.Services;
 using Prism.Commands;
 using Prism.Ioc;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
-using System.IO;
 
 namespace AdionFA.UI.Station.Infrastructure.Services
 {
@@ -29,16 +26,16 @@ namespace AdionFA.UI.Station.Infrastructure.Services
 
         public async void StartProcessProject(int? projectId)
         {
-            IProjectServiceAgent service = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            ISharedServiceAgent shareService = ContainerLocator.Container.Resolve<ISharedServiceAgent>();
+            var service = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
+            var shareService = ContainerLocator.Container.Resolve<ISharedServiceAgent>();
 
-            ProjectVM project = await service.GetProjectAsync(projectId ?? 0);
-            EntityServiceHostVM host = await shareService.GetEntityServiceHost((int)EntityTypeEnum.Project, project?.ProjectId ?? 0);
+            var project = await service.GetProjectAsync(projectId ?? 0);
+            var host = await shareService.GetEntityServiceHost((int)EntityTypeEnum.Project, project?.ProjectId ?? 0);
 
             if (project != null)
             {
-                long? currentProjectProcessId = host?.ProcessId;
-                List<Process> processes = Process.GetProcessesByName("AdionFA.UI.Station.Project").ToList();
+                var currentProjectProcessId = host?.ProcessId;
+                var processes = Process.GetProcessesByName("AdionFA.UI.Station.Project").ToList();
                 if (!processes.Any(p => p.Id == currentProjectProcessId))
                 {
                     var st = new ProcessStartInfo
@@ -46,10 +43,11 @@ namespace AdionFA.UI.Station.Infrastructure.Services
                         FileName = "AdionFA.UI.Station.Project.exe",
                         Arguments = $"{projectId}_AdionFA.UI.Station.Project_{project.ProjectName}",
                     };
-                    Process process = Process.Start(st);
+                    var process = Process.Start(st);
                     currentProjectProcessId = process.Id;
                 }
-                await service.UpdateProcessId(projectId.Value, currentProjectProcessId);
+
+                await service.UpdateProcessIdAsync(projectId.Value, currentProjectProcessId);
             }
         }
 
@@ -67,8 +65,8 @@ namespace AdionFA.UI.Station.Infrastructure.Services
 
         public void EndAllProcessProject(bool? includeStation)
         {
-            List<Process> processesProject = Process.GetProcessesByName("AdionFA.UI.Station.Project").ToList();
-            List<Process> processesStation = Process.GetProcessesByName("AdionFA.UI.Station").ToList();
+            var processesProject = Process.GetProcessesByName("AdionFA.UI.Station.Project").ToList();
+            var processesStation = Process.GetProcessesByName("AdionFA.UI.Station").ToList();
 
             ((includeStation ?? false) ? processesProject.Union(processesStation) : processesProject).ToList().ForEach(p =>
             {

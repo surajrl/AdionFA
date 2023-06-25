@@ -42,6 +42,6 @@
         // Common
 
         public const string FlyoutProjectModuleNodes = "FlyoutProjectModuleNodes";
-        public const string FlyoutProjectModuleAssembledNodes = "FlyoutProjectModuleAssembledNodes";
+        public const string FlyoutProjectModuleAssemblyNodes = "FlyoutProjectModuleAssemblyNodes";
     }
 }

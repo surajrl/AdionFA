@@ -61,11 +61,11 @@ namespace AdionFA.Infrastructure.I18n.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assembled builder completed.
+        ///   Looks up a localized string similar to Assembly builder completed.
         /// </summary>
-        public static string AssembledBuilderCompleted {
+        public static string AssemblyBuilderCompleted {
             get {
-                return ResourceManager.GetString("AssembledBuilderCompleted", resourceCulture);
+                return ResourceManager.GetString("AssemblyBuilderCompleted", resourceCulture);
             }
         }
         

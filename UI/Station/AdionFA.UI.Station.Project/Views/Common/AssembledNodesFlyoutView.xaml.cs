@@ -3,19 +3,19 @@ using AdionFA.UI.Station.Infrastructure.Contracts;
 using AdionFA.UI.Station.Project.ViewModels.Common;
 using MahApps.Metro.Controls;
 
-namespace AdionFA.UI.Station.Project.AssembledBuilder
+namespace AdionFA.UI.Station.Project.AssemblyBuilder
 {
     /// <summary>
-    /// Interaction logic for AssembledNodesFlyoutView.xaml
+    /// Interaction logic for AssemblyNodesFlyoutView.xaml
     /// </summary>
-    public partial class AssembledNodesFlyoutView : Flyout, IFlyoutView
+    public partial class AssemblyNodesFlyoutView : Flyout, IFlyoutView
     {
-        public AssembledNodesFlyoutView(AssembledNodesFlyoutViewModel vm)
+        public AssemblyNodesFlyoutView(AssemblyNodesFlyoutViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;
         }
 
-        public string FlyoutName => FlyoutRegions.FlyoutProjectModuleAssembledNodes;
+        public string FlyoutName => FlyoutRegions.FlyoutProjectModuleAssemblyNodes;
     }
 }

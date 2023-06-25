@@ -1,9 +1,9 @@
 ﻿using AdionFA.Infrastructure.Common.Weka.Model;
 using System.Collections.Generic;
 
-namespace AdionFA.Infrastructure.Common.AssembledBuilder.Model
+namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Model
 {
-    public class AssembledBuilderModel
+    public class AssemblyBuilderModel
     {
         /// <summary>
         /// Correlation nodes from Strategy Builder.
@@ -12,9 +12,9 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Model
         public List<REPTreeNodeModel> ChildNodesDOWN { get; set; } = new();
 
         /// <summary>
-        /// Assembled nodes from Assembled Builder.
+        /// Assembly nodes from Assembly Builder.
         /// </summary>
-        public List<AssembledNodeModel> AssembledNodesUP { get; set; } = new();
-        public List<AssembledNodeModel> AssembledNodesDOWN { get; set; } = new();
+        public List<AssemblyNodeModel> AssemblyNodesUP { get; set; } = new();
+        public List<AssemblyNodeModel> AssemblyNodesDOWN { get; set; } = new();
     }
 }

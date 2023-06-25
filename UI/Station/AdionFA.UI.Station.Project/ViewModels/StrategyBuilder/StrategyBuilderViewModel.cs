@@ -20,7 +20,7 @@ using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Model.StrategyBuilder;
+using AdionFA.UI.Station.Project.Model.Common;
 using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
 using AutoMapper;
 using DynamicData;
@@ -59,7 +59,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private ManualResetEventSlim _manualResetEventSlim;
         private readonly object _lock;
         private bool _disposedValue;
-
 
         public StrategyBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
@@ -108,7 +107,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public ICommand StopCommand => new DelegateCommand(() =>
+        public ICommand Stop => new DelegateCommand(() =>
         {
             _manualResetEventSlim.Reset();
 
@@ -127,7 +126,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             .ObservesProperty(() => IsTransactionActive)
             .ObservesProperty(() => CanCancelOrContinue);
 
-        public ICommand CancelCommand => new DelegateCommand(() =>
+        public ICommand Cancel => new DelegateCommand(() =>
         {
             _cancellationTokenSource.Cancel();
             _manualResetEventSlim.Set();
@@ -135,7 +134,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             CanCancelOrContinue = false;
         }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
 
-        public ICommand ContinueCommand => new DelegateCommand(() =>
+        public ICommand Continue => new DelegateCommand(() =>
         {
             _manualResetEventSlim.Set();
 
@@ -147,7 +146,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             CanCancelOrContinue = false;
         }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
 
-        public ICommand ProcessCommand => new DelegateCommand(async () =>
+        public ICommand Process => new DelegateCommand(async () =>
         {
             try
             {
@@ -163,18 +162,25 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var deleteAll = await MessageHelper.ShowMessageInput(this,
                     "Strategy Builder",
-                    "Starting a new process will delete all the Correlation Nodes and Assembled Nodes.\n"
+                    "Starting a new process will delete all the Correlation Nodes and Assembly Nodes.\n"
                     + "Do you want to continue?").ConfigureAwait(true);
 
                 if (deleteAll == MessageDialogResult.Affirmative)
                 {
+                    StrategyBuilder.CorrelationNodesUP.Clear();
+                    StrategyBuilder.CorrelationNodesDOWN.Clear();
+
                     // Delete Strategy Builder Extractions
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
                     // Delete Strategy Builder Nodes
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
-                    StrategyBuilder.CorrelationNodesUP.Clear();
-                    StrategyBuilder.CorrelationNodesDOWN.Clear();
+                    // Delete Assembly Builder Nodes
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+                    // Delete Crossing Builder Nodes
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesUPDirectory(), "*.xml", isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
                 }
                 else
                 {
@@ -185,12 +191,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
                 _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(false);
+                _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(false);
 
                 _cancellationTokenSource = new();
 
                 // Historical Data
 
-                var projectHistoricalData = await _marketDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
+                var projectHistoricalData = await _marketDataService.GetHistoricalDataAsync(ProjectConfiguration.HistoricalDataId.Value, true);
                 var allProjectCandles = projectHistoricalData.HistoricalDataCandles
                 .Select(hdCandle => new Candle
                 {
@@ -324,7 +331,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var wekaApi = new WekaApiClient();
                 var responseWeka = wekaApi.GetREPTreeClassifier(
-                    process.ExtractionStrategyBuilderPath,
+                    process.ExtractionPath,
                     ProjectConfiguration.DepthWeka,
                     ProjectConfiguration.TotalDecimalWeka,
                     ProjectConfiguration.MinimalSeed,
@@ -428,11 +435,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     foreach (var file in extractionTemplates)
                     {
-                        StrategyBuilderProcesses.Add(new StrategyBuilderProcessModel
+                        StrategyBuilderProcesses.Add(new BuilderProcess
                         {
                             ExtractionTemplatePath = file.FullName,
                             ExtractionTemplateName = file.Name,
-                            ExtractionStrategyBuilderName = file.Name,
+                            ExtractionName = file.Name,
                             Message = StrategyBuilderStatus.SBNotStarted.GetMetadata().Description,
                             Tree = new(),
                             BacktestNodes = new()
@@ -491,8 +498,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _strategyBuilder, value);
         }
 
-        private ObservableCollection<StrategyBuilderProcessModel> _strategyBuilderProcesses;
-        public ObservableCollection<StrategyBuilderProcessModel> StrategyBuilderProcesses
+        private ObservableCollection<BuilderProcess> _strategyBuilderProcesses;
+        public ObservableCollection<BuilderProcess> StrategyBuilderProcesses
         {
             get => _strategyBuilderProcesses;
             set => SetProperty(ref _strategyBuilderProcesses, value);

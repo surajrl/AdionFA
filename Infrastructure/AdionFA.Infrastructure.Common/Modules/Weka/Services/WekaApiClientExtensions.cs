@@ -18,7 +18,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             int? instances = default,
             double? ratio = default,
             double? total = default,
-            bool? isAssembled = default)
+            bool? isAssembly = default)
         {
             return Task.Factory.StartNew(s => ((IWekaApiClient)s).GetREPTreeClassifierAsync(
                 path,
@@ -29,7 +29,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
                 instances,
                 ratio,
                 total,
-                isAssembled),
+                isAssembly),
                 operations, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default).Unwrap().GetAwaiter().GetResult();
         }
 
@@ -43,7 +43,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
             int? instances = default,
             double? ratio = default,
             double? total = default,
-            bool? isAssembled = default,
+            bool? isAssembly = default,
             Dictionary<string, List<string>> customHeaders = null,
             CancellationToken cancellationToken = default)
         {
@@ -56,7 +56,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Services
                 instances,
                 ratio,
                 total,
-                isAssembled,
+                isAssembly,
                 null,
                 cancellationToken).ConfigureAwait(false);
 

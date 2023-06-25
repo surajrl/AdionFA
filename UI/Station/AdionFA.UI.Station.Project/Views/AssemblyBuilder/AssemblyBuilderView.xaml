@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AdionFA.UI.Station.Project.Views.AssembledBuilderView"
+﻿<UserControl x:Class="AdionFA.UI.Station.Project.Views.AssemblyBuilderView"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
@@ -10,7 +10,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:AdionFA.UI.Station.Project.Views"
-             xmlns:model="clr-namespace:AdionFA.UI.Station.Project.Model.AssembledBuilder"
              xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
              dialog:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d"
@@ -77,7 +76,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition />
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal"
@@ -86,7 +85,7 @@
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding StopCommand}">
+                        Command="{Binding Stop}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Kind="PauseCircleSolid"
                                                Width="14" />
@@ -100,7 +99,7 @@
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding CancelCommand}">
+                        Command="{Binding Cancel}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Kind="StopCircleSolid"
                                                Width="14" />
@@ -114,7 +113,7 @@
             <Grid Margin="0 20 10 0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding ContinueCommand}">
+                        Command="{Binding Continue}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Kind="PlayCircleSolid"
                                                Width="14" />
@@ -130,7 +129,7 @@
                         Width="80"
                         Height="40"
                         IsEnabled="{Binding CanExecute}"
-                        Command="{Binding ProcessCommand}">
+                        Command="{Binding Process}">
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <iconPacks:FontAwesome Kind="PlaySolid"
@@ -276,9 +275,9 @@
         </Expander>
         <!--#endregion-->
 
-        <!--#region Assembled Builder-->
+        <!--#region Assembly Builder-->
         <metro:MetroHeader Grid.Row="2"
-                           Header="Assembled Builder">
+                           Header="Assembly Builder">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -286,30 +285,30 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!--#region Assembled Nodes Buttons-->
+                <!--#region Assembly Nodes Buttons-->
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left">
-                    <!--#region Assembled Nodes UP-->
+                    <!--#region Assembly Nodes UP-->
                     <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="assembledNodesUP"
+                        <Button x:Name="assemblyNodesUP"
                                 Width="175"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="GraphOutline"
                                                             VerticalAlignment="Center"
                                                             Width="14" />
-                                <Label Content="Assembled Nodes UP"
+                                <Label Content="Assembly Nodes UP"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="assembledNodesUP"
+                                <behaviors:EventTrigger SourceName="assemblyNodesUP"
                                                         EventName="Click">
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
-                                                <Binding Path="AssembledBuilder.AssembledNodesUP" />
-                                                <Binding Path="AssembledBuilder.ChildNodesUP" />
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                                <Binding Path="AssemblyBuilder.AssemblyNodesUP" />
+                                                <Binding Path="AssemblyBuilder.ChildNodesUP" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
@@ -318,27 +317,27 @@
                         </Button>
                     </Grid>
                     <!--#endregion-->
-                    <!--#region Assembled Nodes DOWN-->
+                    <!--#region Assembly Nodes DOWN-->
                     <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="assembledNodesDOWN"
+                        <Button x:Name="assemblyNodesDOWN"
                                 Width="175"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="GraphOutline"
                                                             VerticalAlignment="Center"
                                                             Width="14" />
-                                <Label Content="Assembled Nodes DOWN"
+                                <Label Content="Assembly Nodes DOWN"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="assembledNodesDOWN"
+                                <behaviors:EventTrigger SourceName="assemblyNodesDOWN"
                                                         EventName="Click">
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssembledNodes}" />
-                                                <Binding Path="AssembledBuilder.AssembledNodesDOWN" />
-                                                <Binding Path="AssembledBuilder.ChildNodesDOWN" />
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                                <Binding Path="AssemblyBuilder.AssemblyNodesDOWN" />
+                                                <Binding Path="AssemblyBuilder.ChildNodesDOWN" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
@@ -379,7 +378,7 @@
         </metro:MetroHeader>
         <!--#endregion-->
 
-        <!--#region Assembled Builder Processes-->
+        <!--#region Assembly Builder Processes-->
         <Grid Grid.Row="3"
               Margin="0, 10, 0, 0">
             <Grid.ColumnDefinitions>
@@ -387,11 +386,11 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!--#region Assembled Builder Process UP Nodes-->
+            <!--#region Assembly Builder Process UP Nodes-->
             <DataGrid AutoGenerateColumns="False"
                       Margin="0, 0, 10, 0"
                       IsReadOnly="True"
-                      ItemsSource="{Binding AssembledBuilderProcessUP}">
+                      ItemsSource="{Binding AssemblyBuilderProcessUP}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
@@ -434,13 +433,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Margin="5"
-                                       Content="{Binding ExtractionAssembledBuilderName}" />
+                                       Content="{Binding ExtractionName}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <!--#endregion-->
-                    <!--#region Assembled Nodes UP-->
-                    <DataGridTemplateColumn Header="Assembled Nodes UP"
+                    <!--#region Assembly Nodes UP-->
+                    <DataGridTemplateColumn Header="Assembly Nodes UP"
                                             Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -525,12 +524,12 @@
             </DataGrid>
             <!--#endregion-->
 
-            <!--#region Assembled Builder Process DOWN Nodes-->
+            <!--#region Assembly Builder Process DOWN Nodes-->
             <DataGrid Grid.Column="1"
                       Margin="10, 0, 0, 0"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
-                      ItemsSource="{Binding AssembledBuilderProcessDOWN}">
+                      ItemsSource="{Binding AssemblyBuilderProcessDOWN}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
@@ -573,13 +572,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Margin="5"
-                                       Content="{Binding ExtractionAssembledBuilderName}" />
+                                       Content="{Binding ExtractionName}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <!--#endregion-->
-                    <!--#region Assembled Nodes DOWN-->
-                    <DataGridTemplateColumn Header="Assembled Nodes DOWN"
+                    <!--#region Assembly Nodes DOWN-->
+                    <DataGridTemplateColumn Header="Assembly Nodes DOWN"
                                             Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

@@ -45,7 +45,7 @@ namespace AdionFA.UI.Station.Module.Shell.Services
         {
             try
             {
-                var projects = await ProjectService.GetAllProjects();
+                var projects = await ProjectService.GetAllProjectAsync();
                 var result = (from p in projects
                               let config = p.ProjectConfigurations.FirstOrDefault(c => c.EndDate == null)
                               let workspace = config?.WorkspacePath != null
@@ -79,7 +79,7 @@ namespace AdionFA.UI.Station.Module.Shell.Services
         {
             try
             {
-                var result = await ProjectService.PinnedProject(projectId, isPinned);
+                var result = await ProjectService.PinnedProjectAsync(projectId, isPinned);
                 return result.IsSuccess;
             }
             catch (Exception ex)

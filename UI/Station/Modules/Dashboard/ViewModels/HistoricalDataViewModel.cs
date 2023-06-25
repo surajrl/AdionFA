@@ -61,11 +61,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 }
 
                 Symbols?.Clear();
-                var symbols = await _historicalDataService.GetAllSymbol().ConfigureAwait(true);
+                var symbols = await _historicalDataService.GetAllSymbolAsync().ConfigureAwait(true);
                 symbols.ToList().ForEach(Symbols.Add);
 
                 Timeframes?.Clear();
-                var timeframes = await _historicalDataService.GetAllTimeframe().ConfigureAwait(true);
+                var timeframes = await _historicalDataService.GetAllTimeframeAsync().ConfigureAwait(true);
                 timeframes.ToList().ForEach(Timeframes.Add);
 
                 LoadHistoricalData();

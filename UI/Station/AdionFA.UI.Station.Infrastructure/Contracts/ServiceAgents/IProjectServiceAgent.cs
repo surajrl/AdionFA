@@ -9,20 +9,24 @@ namespace AdionFA.UI.Station.Infrastructure.Contracts.AppServices
     public interface IProjectServiceAgent
     {
         // Project
-        Task<IList<ProjectVM>> GetAllProjects();
+
+        Task<IList<ProjectVM>> GetAllProjectAsync();
         Task<ProjectVM> GetProjectAsync(int projectId, bool includeGraph = false);
-        Task<ProjectConfigurationVM> GetProjectConfiguration(int projectId, bool includeGraph = false);
-        Task<ResponseVM> UpdateProjectConfiguration(ProjectConfigurationVM configuration);
-        Task<ResponseVM> RestoreProjectConfiguration(int projectId);
-        Task<ResponseVM> CreateProject(ProjectVM project, int configurationId, int marketDataId);
-        Task<ResponseVM> PinnedProject(int projectId, bool isPinned);
-        Task<ResponseVM> UpdateProcessId(int projectId, long? processId);
+        Task<ResponseVM> CreateProjectAsync(ProjectVM project, int configurationId, int marketDataId);
+        Task<ResponseVM> PinnedProjectAsync(int projectId, bool isPinned);
+
+        // Project Configuration
+
+        Task<ProjectConfigurationVM> GetProjectConfigurationAsync(int projectId, bool includeGraph = false);
+        Task<ResponseVM> UpdateProjectConfigurationAsync(ProjectConfigurationVM configuration);
+        Task<ResponseVM> RestoreProjectConfigurationAsync(int projectId);
+        Task<ResponseVM> UpdateProcessIdAsync(int projectId, long? processId);
 
         // Configuration
 
-        Task<IList<ConfigurationVM>> GetAllConfiguration(bool includeGraph = false);
-        Task<ConfigurationVM> GetConfiguration(int? ConfigurationId = null, bool includeGraph = false);
-        Task<ConfigurationVM> GetConfiguration(int configurationId, bool includeGraph = false);
-        Task<ResponseVM> UpdateConfiguration(ConfigurationVM configuration);
+        Task<IList<ConfigurationVM>> GetAllConfigurationAsync(bool includeGraph = false);
+        Task<ConfigurationVM> GetConfigurationAsync(int? ConfigurationId = null, bool includeGraph = false);
+        Task<ConfigurationVM> GetConfigurationAsync(int configurationId, bool includeGraph = false);
+        Task<ResponseVM> UpdateConfigurationAsync(ConfigurationVM configuration);
     }
 }

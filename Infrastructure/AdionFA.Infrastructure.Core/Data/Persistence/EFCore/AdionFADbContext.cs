@@ -270,11 +270,11 @@ namespace AdionFA.Infrastructure.Core.Data.Persistence
                 SBWinningStrategyUPTarget = 6,
                 SBTransactionsTarget = 300,
 
-                // Assembled Builder
+                // Assembly Builder
 
                 ABTransactionsTarget = 600,
                 ABMinImprovePercent = 5,
-                ABWekaMaxRatioTree = (decimal)2,
+                ABWekaMaxRatioTree = 2,
                 ABWekaNTotalTree = 500,
 
                 // Time Sensitive Base

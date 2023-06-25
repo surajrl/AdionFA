@@ -213,7 +213,7 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
         }
 
 
-        // Assembled Builder
+        // Assembly Builder
 
         private int _abTransactionsTarget;
         public int ABTransactionsTarget

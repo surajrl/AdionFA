@@ -1,5 +1,5 @@
-﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Contracts;
-using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Contracts;
+using AdionFA.Infrastructure.Common.AssemblyBuilder.Model;
 using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
@@ -16,30 +16,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
+namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Services
 {
-    public class AssembledBuilderService : IAssembledBuilderService
+    public class AssemblyBuilderService : IAssemblyBuilderService
     {
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IStrategyBuilderService _strategyBuilderService;
 
-        public AssembledBuilderService()
+        public AssemblyBuilderService()
         {
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
             _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
         }
 
-        public AssembledBuilderModel LoadAssembledBuilder(string projectName)
+        public AssemblyBuilderModel LoadAssemblyBuilder(string projectName)
         {
             try
             {
-                var assembledBuilder = new AssembledBuilderModel();
+                var assembledBuilder = new AssemblyBuilderModel();
 
                 LoadStrategyBuilderCorrelationNodes("up");
                 LoadStrategyBuilderCorrelationNodes("down");
 
-                LoadAssembledNodes("up");
-                LoadAssembledNodes("down");
+                LoadAssemblyNodes("up");
+                LoadAssemblyNodes("down");
 
                 return assembledBuilder;
 
@@ -70,21 +70,21 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                     });
                 }
 
-                void LoadAssembledNodes(string label)
+                void LoadAssemblyNodes(string label)
                 {
                     var directoryAB = string.Empty;
-                    var assembledNodes = new List<AssembledNodeModel>();
+                    var assembledNodes = new List<AssemblyNodeModel>();
 
                     switch (label.ToLowerInvariant())
                     {
                         case "up":
-                            directoryAB = projectName.ProjectAssembledBuilderNodesUPDirectory();
-                            assembledNodes = assembledBuilder.AssembledNodesUP;
+                            directoryAB = projectName.ProjectAssemblyBuilderNodesUPDirectory();
+                            assembledNodes = assembledBuilder.AssemblyNodesUP;
                             break;
 
                         case "down":
-                            directoryAB = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
-                            assembledNodes = assembledBuilder.AssembledNodesDOWN;
+                            directoryAB = projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
+                            assembledNodes = assembledBuilder.AssemblyNodesDOWN;
                             break;
 
                         default:
@@ -93,20 +93,20 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
                     _projectDirectoryService.GetFilesInPath(directoryAB, "*.xml").ToList().ForEach(file =>
                     {
-                        assembledNodes.Add(SerializerHelper.XMLDeSerializeObject<AssembledNodeModel>(file.FullName));
+                        assembledNodes.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
                     });
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<AssembledBuilderService>(ex);
+                LogHelper.LogException<AssemblyBuilderService>(ex);
                 throw;
             }
         }
 
         public void BuildBacktestOfNode(
             string projectName,
-            AssembledBuilderModel assembledBuilder,
+            AssemblyBuilderModel assembledBuilder,
             REPTreeNodeModel parentNode,
             IList<REPTreeNodeModel> childNodes,
             ProjectConfigurationDTO configuration,
@@ -118,7 +118,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
             _strategyBuilderService.ExecuteBacktest(
                 parentNode.BacktestIS,
-                EntityTypeEnum.AssembledBuilder,
+                EntityTypeEnum.AssemblyBuilder,
                 configuration.FromDateIS.Value,
                 configuration.ToDateIS.Value,
                 configuration.TimeframeId,
@@ -145,7 +145,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
             _strategyBuilderService.ExecuteBacktest(
                 parentNode.BacktestOS,
-                EntityTypeEnum.AssembledBuilder,
+                EntityTypeEnum.AssemblyBuilder,
                 configuration.FromDateOS.Value,
                 configuration.ToDateOS.Value,
                 configuration.TimeframeId,
@@ -161,7 +161,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
             if (parentNode.WinningStrategy)
             {
-                var assembledNode = new AssembledNodeModel
+                var assembledNode = new AssemblyNodeModel
                 {
                     ParentNode = parentNode,
                     ChildNodes = childNodes.ToList(),
@@ -170,25 +170,25 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                 switch (parentNode.Label.ToLowerInvariant())
                 {
                     case "up":
-                        assembledBuilder.AssembledNodesUP.Add(assembledNode);
+                        assembledBuilder.AssemblyNodesUP.Add(assembledNode);
                         break;
 
                     case "down":
-                        assembledBuilder.AssembledNodesDOWN.Add(assembledNode);
+                        assembledBuilder.AssemblyNodesDOWN.Add(assembledNode);
                         break;
                 }
 
-                SerializeAssembledNode(projectName, assembledNode);
+                SerializeAssemblyNode(projectName, assembledNode);
             }
         }
 
-        public void Correlation(string projectName, AssembledBuilderModel assembledBuilder, decimal maxCorrelation)
+        public void Correlation(string projectName, AssemblyBuilderModel assembledBuilder, decimal maxCorrelation)
         {
             try
             {
                 string directory;
                 IList<BacktestModel> backtests;
-                IList<AssembledNodeModel> assembledNodes;
+                IList<AssemblyNodeModel> assembledNodes;
 
                 FindCorrelation("up");
                 FindCorrelation("down");
@@ -198,15 +198,15 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
                     switch (label.ToLowerInvariant())
                     {
                         case "up":
-                            directory = projectName.ProjectAssembledBuilderNodesUPDirectory();
-                            backtests = assembledBuilder.AssembledNodesUP.Select(assembledNode => assembledNode.ParentNode.BacktestIS).ToList();
-                            assembledNodes = assembledBuilder.AssembledNodesUP;
+                            directory = projectName.ProjectAssemblyBuilderNodesUPDirectory();
+                            backtests = assembledBuilder.AssemblyNodesUP.Select(assembledNode => assembledNode.ParentNode.BacktestIS).ToList();
+                            assembledNodes = assembledBuilder.AssemblyNodesUP;
                             break;
 
                         case "down":
-                            directory = projectName.ProjectAssembledBuilderNodesDOWNDirectory();
-                            backtests = assembledBuilder.AssembledNodesDOWN.Select(assembledNode => assembledNode.ParentNode.BacktestIS).ToList();
-                            assembledNodes = assembledBuilder.AssembledNodesDOWN;
+                            directory = projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
+                            backtests = assembledBuilder.AssemblyNodesDOWN.Select(assembledNode => assembledNode.ParentNode.BacktestIS).ToList();
+                            assembledNodes = assembledBuilder.AssemblyNodesDOWN;
                             break;
 
                         default:
@@ -215,7 +215,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
                     _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
                     {
-                        var assembledNode = SerializerHelper.XMLDeSerializeObject<AssembledNodeModel>(file.FullName);
+                        var assembledNode = SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName);
 
                         // Algorithm to find correlation
                         var indexOf = IndexOfCorrelation(backtests, assembledNode.ParentNode.BacktestIS, maxCorrelation);
@@ -291,11 +291,11 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Services
 
         // Serialization
 
-        public static void SerializeAssembledNode(string projectName, AssembledNodeModel assembledNode)
+        public static void SerializeAssemblyNode(string projectName, AssemblyNodeModel assembledNode)
         {
             var directory = assembledNode.ParentNode.Label.ToLower() == "up"
-                ? projectName.ProjectAssembledBuilderNodesUPDirectory()
-                : projectName.ProjectAssembledBuilderNodesDOWNDirectory();
+                ? projectName.ProjectAssemblyBuilderNodesUPDirectory()
+                : projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
 
             var filename = RegexHelper.GetValidFileName(assembledNode.ParentNode.Name, "_") + ".xml";
             SerializerHelper.XMLSerializeObject(assembledNode, string.Format(@"{0}\{1}", directory, filename));

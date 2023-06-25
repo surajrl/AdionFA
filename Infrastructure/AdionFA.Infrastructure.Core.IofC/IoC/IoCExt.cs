@@ -1,6 +1,6 @@
 ﻿using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Core.IofC;
-using AdionFA.Infrastructure.Core.IofC.Modules.AssembledBuilder;
+using AdionFA.Infrastructure.Core.IofC.Modules.AssemblyBuilder;
 using AdionFA.Infrastructure.Core.IofC.Modules.Commons;
 using AdionFA.Infrastructure.Core.IofC.Modules.Directories;
 using AdionFA.Infrastructure.Core.IofC.Modules.Extractor;
@@ -20,7 +20,7 @@ namespace AdionFA.Infrastructure.Core.IofCExt
             ioC.Load(new DirectoryModule());
             ioC.Load(new ExtractorModule());
             ioC.Load(new StrategyBuilderModule());
-            ioC.Load(new AssembledBuilderModule());
+            ioC.Load(new AssemblyBuilderModule());
             ioC.Load(new HistoricalDataModule());
             ioC.Load(new ProjectModule());
             ioC.Load(new TradeModule());

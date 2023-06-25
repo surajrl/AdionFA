@@ -169,7 +169,7 @@ namespace AdionFA.Core.Domain.Services.Projects
                     SBWinningStrategyDOWNTarget = configuration.SBWinningStrategyDOWNTarget,
                     SBTransactionsTarget = configuration.SBTransactionsTarget,
 
-                    // Assembled Builder
+                    // Assembly Builder
 
                     ABTransactionsTarget = configuration.ABTransactionsTarget,
                     ABMinImprovePercent = configuration.ABMinImprovePercent,
@@ -383,7 +383,7 @@ namespace AdionFA.Core.Domain.Services.Projects
                     SBWinningStrategyDOWNTarget = configuration.SBWinningStrategyDOWNTarget,
                     SBTransactionsTarget = configuration.SBTransactionsTarget,
 
-                    // Assembled Builder
+                    // Assembly Builder
 
                     ABTransactionsTarget = configuration.ABTransactionsTarget,
                     ABMinImprovePercent = configuration.ABMinImprovePercent,

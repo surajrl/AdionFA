@@ -56,7 +56,7 @@ namespace AdionFA.TransferObject.Base
         public int SBWinningStrategyDOWNTarget { get; set; }
         public int SBTransactionsTarget { get; set; }
 
-        // Assembled Builder
+        // Assembly Builder
 
         public int ABTransactionsTarget { get; set; }
         public decimal ABMinImprovePercent { get; set; }

@@ -11,36 +11,36 @@ using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels.Common
 {
-    public class AssembledNodesFlyoutViewModel : ViewModelBase
+    public class AssemblyNodesFlyoutViewModel : ViewModelBase
     {
-        public AssembledNodesFlyoutViewModel(IApplicationCommands applicationCommands)
+        public AssemblyNodesFlyoutViewModel(IApplicationCommands applicationCommands)
         {
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
             applicationCommands.RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTraderCommand);
 
-            AssembledNodes = new();
+            AssemblyNodes = new();
             ChildNodes = new();
         }
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyout =>
         {
-            if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAssembledNodes, StringComparison.Ordinal))
+            if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAssemblyNodes, StringComparison.Ordinal))
             {
-                AssembledNodes.Clear();
+                AssemblyNodes.Clear();
                 ChildNodes.Clear();
 
                 switch (flyout.ModelOne)
                 {
-                    case ObservableCollection<AssembledNodeModel> collection:
-                        AssembledNodes.Add(collection);
+                    case ObservableCollection<AssemblyNodeModel> collection:
+                        AssemblyNodes.Add(collection);
                         break;
 
-                    case List<AssembledNodeModel> list:
-                        AssembledNodes.Add(list);
+                    case List<AssemblyNodeModel> list:
+                        AssemblyNodes.Add(list);
                         break;
 
-                    case AssembledNodeModel assembledNode:
-                        AssembledNodes.Add(assembledNode);
+                    case AssemblyNodeModel assembledNode:
+                        AssemblyNodes.Add(assembledNode);
                         break;
                 }
 
@@ -63,15 +63,15 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
 
         public ICommand RemoveNodeFromMetaTraderCommand => new DelegateCommand<object>(item =>
         {
-            if (item is AssembledNodeModel assembledNode)
+            if (item is AssemblyNodeModel assembledNode)
             {
-                AssembledNodes.Remove(assembledNode);
+                AssemblyNodes.Remove(assembledNode);
             }
         });
 
         // View Bindings
 
         public ObservableCollection<REPTreeNodeModel> ChildNodes { get; set; }
-        public ObservableCollection<AssembledNodeModel> AssembledNodes { get; set; }
+        public ObservableCollection<AssemblyNodeModel> AssemblyNodes { get; set; }
     }
 }

@@ -97,6 +97,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!--General Information-->
@@ -117,30 +118,38 @@
                 <!--Symbols and Timeframe-->
                 <metro:MetroHeader Grid.Row="1"
                                    Margin="0 10 0 10"
-                                   Header="Currency">
+                                   Header="Strategy">
                     <StackPanel Orientation="Horizontal">
+                        <!--#region Historical Data-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Historical Data" />
+                            <TextBox Text="{Binding ProjectConfiguration.HistoricalDataName, Mode=OneWay}"
+                                     IsReadOnly="True"
+                                     Focusable="False"
+                                     IsEnabled="False" />
+                        </StackPanel>
+                        <!--#endregion-->
                         <!--#region Symbols-->
                         <StackPanel Margin="{StaticResource ColumnMargin}"
                                     MinWidth="{StaticResource ColumnWidth}">
-                            <Label Content="Symbols *" />
-                            <ComboBox ItemsSource="{Binding Symbols}"
-                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                      DisplayMemberPath="Name"
-                                      SelectedValuePath="Id"
-                                      SelectedValue="{Binding ProjectConfiguration.SymbolId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            <Label Content="Symbol" />
+                            <TextBox Text="{Binding ProjectConfiguration.Symbol.Name, Mode=OneWay}"
+                                     IsReadOnly="True"
+                                     Focusable="False"
+                                     IsEnabled="False" />
                         </StackPanel>
                         <!--#endregion-->
                         <!--#region Timeframes-->
                         <StackPanel Margin="{StaticResource ColumnMargin}"
                                     MinWidth="{StaticResource ColumnWidth}">
-                            <Label Content="Timeframes *" />
-                            <ComboBox ItemsSource="{Binding Timeframes}"
-                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                      DisplayMemberPath="Name"
-                                      SelectedValuePath="Id"
-                                      SelectedValue="{Binding ProjectConfiguration.TimeframeId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            <!--#endregion-->
+                            <Label Content="Timeframe" />
+                            <TextBox Text="{Binding ProjectConfiguration.Timeframe.Name, Mode=OneWay}"
+                                     IsReadOnly="True"
+                                     Focusable="False"
+                                     IsEnabled="False" />
                         </StackPanel>
+                        <!--#endregion-->
                     </StackPanel>
                 </metro:MetroHeader>
                 <!--#endregion-->
@@ -237,6 +246,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <StackPanel Orientation="Horizontal">
@@ -250,6 +260,10 @@
                                                      Value="{Binding ProjectConfiguration.ExtractorMinVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
+                        </StackPanel>
+                        <!--#endregion-->
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="1">
                             <!--#region From Date IS-->
                             <StackPanel Margin="{StaticResource ColumnMargin}">
                                 <Label Content="From Date (IS) *" />
@@ -259,6 +273,19 @@
                                                       SelectedDateTime="{Binding ProjectConfiguration.FromDateIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
+                            <!--#region To Date IS-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}">
+                                <Label Content="To Date (IS) *" />
+                                <metro:DateTimePicker SelectedTimeFormat="Short"
+                                                      Culture="(Default)"
+                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                      SelectedDateTime="{Binding ProjectConfiguration.ToDateIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+                        <!--#endregion-->
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="2">
                             <!--#region From Date OS-->
                             <StackPanel Margin="{StaticResource ColumnMargin}">
                                 <Label Content="From Date (OS) *" />
@@ -267,29 +294,6 @@
                                                       Culture="(Default)"
                                                       Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                       SelectedDateTime="{Binding ProjectConfiguration.FromDateOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-                        </StackPanel>
-                        <!--#endregion-->
-                        <StackPanel Orientation="Horizontal"
-                                    Grid.Row="1">
-                            <!--#region HistoricalData-->
-                            <StackPanel Margin="{StaticResource ColumnMargin}"
-                                        MinWidth="{StaticResource ColumnWidth}">
-                                <Label Content="Historical Data *" />
-                                <ComboBox ItemsSource="{Binding HistoricalDataList}"
-                                          Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                          DisplayMemberPath="Name"
-                                          SelectedValuePath="Id"
-                                          SelectedValue="{Binding ProjectConfiguration.HistoricalDataId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-                            <!--#endregion-->
-                            <!--#region To Date IS-->
-                            <StackPanel Margin="{StaticResource ColumnMargin}">
-                                <Label Content="To Date (IS) *" />
-                                <metro:DateTimePicker SelectedTimeFormat="Short"
-                                                      Culture="(Default)"
-                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                      SelectedDateTime="{Binding ProjectConfiguration.ToDateIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
                             <!--#region To Date OS-->
@@ -548,10 +552,10 @@
                 </metro:MetroHeader>
                 <!--#endregion-->
 
-                <!--#region Assembled Builder-->
+                <!--#region Assembly Builder-->
                 <metro:MetroHeader Grid.Row="6"
                                    Margin="0, 10, 0, 10"
-                                   Header="{x:Static commonResources:CommonResources.AssembledBuilder}">
+                                   Header="{x:Static commonResources:CommonResources.AssemblyBuilder}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -582,7 +586,7 @@
                             <!--#endregion-->
                         </StackPanel>
 
-                        <!--#region Assembled Builder Weka-->
+                        <!--#region Assembly Builder Weka-->
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal">
                             <!--#region AB Weka NTotals-->
@@ -610,6 +614,13 @@
                             <!--#endregion-->
                         </StackPanel>
                     </Grid>
+                </metro:MetroHeader>
+                <!--#endregion-->
+
+                <!--#region Crossing Builder-->
+                <metro:MetroHeader Grid.Row="7"
+                                   Margin="0, 10, 0, 10"
+                                   Header="Crossing Builder">
                 </metro:MetroHeader>
                 <!--#endregion-->
             </Grid>

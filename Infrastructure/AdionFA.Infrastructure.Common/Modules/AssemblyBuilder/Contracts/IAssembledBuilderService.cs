@@ -1,19 +1,19 @@
-﻿using AdionFA.Infrastructure.Common.AssembledBuilder.Model;
+﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Model;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.TransferObject.Project;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace AdionFA.Infrastructure.Common.AssembledBuilder.Contracts
+namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Contracts
 {
-    public interface IAssembledBuilderService
+    public interface IAssemblyBuilderService
     {
-        AssembledBuilderModel LoadAssembledBuilder(string projectName);
+        AssemblyBuilderModel LoadAssemblyBuilder(string projectName);
 
         void BuildBacktestOfNode(
             string projectName,
-            AssembledBuilderModel assmebledBuilder,
+            AssemblyBuilderModel assmebledBuilder,
             REPTreeNodeModel parentNode,
             IList<REPTreeNodeModel> childNodes,
             ProjectConfigurationDTO projectConfiguration,
@@ -23,7 +23,7 @@ namespace AdionFA.Infrastructure.Common.AssembledBuilder.Contracts
 
         void Correlation(
             string projectName,
-            AssembledBuilderModel assembledBuilder,
+            AssemblyBuilderModel assembledBuilder,
             decimal maxCorrelation);
     }
 }

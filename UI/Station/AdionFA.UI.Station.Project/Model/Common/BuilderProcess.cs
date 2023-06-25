@@ -2,9 +2,9 @@
 using AdionFA.UI.Station.Infrastructure.Base;
 using System.Collections.ObjectModel;
 
-namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
+namespace AdionFA.UI.Station.Project.Model.Common
 {
-    public class AssembledBuilderProcessModel : ViewModelBase
+    public class BuilderProcess : ViewModelBase
     {
         // Extraction
 
@@ -17,13 +17,13 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
             set => SetProperty(ref _extractionTemplateName, value);
         }
 
-        public string ExtractionAssembledBuilderPath { get; set; }
+        public string ExtractionPath { get; set; }
 
-        private string _extractionAssembledBuilderName;
-        public string ExtractionAssembledBuilderName
+        private string _extractionName;
+        public string ExtractionName
         {
-            get => _extractionAssembledBuilderName;
-            set => SetProperty(ref _extractionAssembledBuilderName, value);
+            get => _extractionName;
+            set => SetProperty(ref _extractionName, value);
         }
 
         // Backtests
@@ -51,7 +51,7 @@ namespace AdionFA.UI.Station.Project.Model.AssembledBuilder
 
         public ObservableCollection<REPTreeNodeModel> BacktestNodes { get; set; }
 
-        // Process Status 
+        // BuilderProcess Status 
 
         private string _message;
         public string Message

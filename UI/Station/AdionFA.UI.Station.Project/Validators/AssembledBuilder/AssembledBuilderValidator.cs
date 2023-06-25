@@ -1,11 +1,11 @@
 ﻿using AdionFA.UI.Station.Project.ViewModels;
 using FluentValidation;
 
-namespace AdionFA.UI.Station.Project.Validators.AssembledBuilder
+namespace AdionFA.UI.Station.Project.Validators.AssemblyBuilder
 {
-    public class AssembledBuilderValidator : AbstractValidator<AssembledBuilderViewModel>
+    public class AssemblyBuilderValidator : AbstractValidator<AssemblyBuilderViewModel>
     {
-        public AssembledBuilderValidator()
+        public AssemblyBuilderValidator()
         {
 
         }

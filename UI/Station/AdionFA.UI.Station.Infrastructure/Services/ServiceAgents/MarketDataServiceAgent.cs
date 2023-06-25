@@ -35,7 +35,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
         // Historical Data
 
-        public async Task<IList<HistoricalDataVM>> GetAllHistoricalData(bool includeGraph = false)
+        public async Task<IList<HistoricalDataVM>> GetAllHistoricalDataAsync(bool includeGraph = false)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<HistoricalDataVM> GetHistoricalData(int historicalDataId, bool includeGraph = false)
+        public async Task<HistoricalDataVM> GetHistoricalDataAsync(int historicalDataId, bool includeGraph = false)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<HistoricalDataVM> GetHistoricalData(int marketId = (int)MarketEnum.Forex, int symbolId = (int)CurrencyPairEnum.EURUSD, int timeframeId = (int)TimeframeEnum.H1)
+        public async Task<HistoricalDataVM> GetHistoricalDataAsync(int marketId = (int)MarketEnum.Forex, int symbolId = (int)CurrencyPairEnum.EURUSD, int timeframeId = (int)TimeframeEnum.H1)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<ResponseVM> CreateHistoricalData(HistoricalDataVM vm)
+        public async Task<ResponseVM> CreateHistoricalDataAsync(HistoricalDataVM vm)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
         // Timeframe
 
-        public async Task<IList<TimeframeVM>> GetAllTimeframe(bool includeGraph = false)
+        public async Task<IList<TimeframeVM>> GetAllTimeframeAsync(bool includeGraph = false)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<TimeframeVM> GetTimeframe(int timeframeId)
+        public async Task<TimeframeVM> GetTimeframeAsync(int timeframeId)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
         // Symbol
 
-        public async Task<ResponseVM> CreateSymbol(SymbolVM symbolVM)
+        public async Task<ResponseVM> CreateSymbolAsync(SymbolVM symbolVM)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<IList<SymbolVM>> GetAllSymbol(bool includeGraph = false)
+        public async Task<IList<SymbolVM>> GetAllSymbolAsync(bool includeGraph = false)
         {
             try
             {
@@ -202,7 +202,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<SymbolVM> GetSymbol(int symbolId)
+        public async Task<SymbolVM> GetSymbolAsync(int symbolId)
         {
             try
             {
@@ -222,7 +222,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
             }
         }
 
-        public async Task<SymbolVM> GetSymbol(string symbolName)
+        public async Task<SymbolVM> GetSymbolAsync(string symbolName)
         {
             try
             {

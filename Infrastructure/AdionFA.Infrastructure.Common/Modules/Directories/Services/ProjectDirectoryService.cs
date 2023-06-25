@@ -111,7 +111,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectName));
 
-                        // StrategyBuilder
+                        // Strategy Builder
 
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectName));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectName));
@@ -121,20 +121,35 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
 
-                        // AssembledBuilder
+                        // Assembly Builder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesUP.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderNodesDOWN.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription(), projectName));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssembledBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
+
+                        // Crossing Builder
+
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectName));
+
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
+
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
                     }
                 }
 
