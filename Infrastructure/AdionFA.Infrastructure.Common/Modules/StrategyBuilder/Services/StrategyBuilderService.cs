@@ -210,6 +210,185 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
+        public void BuildBacktestOfCrossingNode(
+            StrategyNodeModel strategyNode,
+            REPTreeNodeModel backtestingNode,
+            IEnumerable<Candle> mainCandles,
+            IEnumerable<Candle> crossingCandles,
+            ProjectConfigurationDTO projectConfiguration,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                // OS Backtest
+
+                ExecuteCrossingBacktest(
+                    strategyNode,
+                    backtestingNode,
+                    backtestingNode.BacktestOS,
+                    mainCandles,
+                    crossingCandles,
+                    projectConfiguration.FromDateOS.Value,
+                    projectConfiguration.ToDateOS.Value,
+                    projectConfiguration.TimeframeId,
+                    manualResetEvent,
+                    cancellationToken);
+
+                // IS Backtest
+
+                ExecuteCrossingBacktest(
+                    strategyNode,
+                    backtestingNode,
+                    backtestingNode.BacktestIS,
+                    mainCandles,
+                    crossingCandles,
+                    projectConfiguration.FromDateIS.Value,
+                    projectConfiguration.ToDateIS.Value,
+                    projectConfiguration.TimeframeId,
+                    manualResetEvent,
+                    cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException<StrategyBuilderService>(ex);
+                throw;
+            }
+        }
+
+        private void ExecuteCrossingBacktest(
+            StrategyNodeModel strategyNode,
+            REPTreeNodeModel backtestingNode,
+            BacktestModel backtest,
+            IEnumerable<Candle> mainCandles,
+            IEnumerable<Candle> crossingCandles,
+            DateTime fromDate,
+            DateTime toDate,
+            int timeframeId,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken)
+        {
+
+            var mainCandlesRange = (from candle in mainCandles
+                                    let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
+                                    where dt >= fromDate && dt <= toDate
+                                    select candle).ToList();
+
+            var crossingCandlesRange = (from candle in crossingCandles
+                                        let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
+                                        where dt >= fromDate && dt <= toDate
+                                        select candle).ToList();
+
+            backtest.FromDate = fromDate;
+            backtest.ToDate = toDate;
+            backtest.TimeframeId = timeframeId;
+
+            backtest.BacktestOperations = new List<BacktestOperationModel>();
+            backtest.TotalOpportunity = crossingCandlesRange.Count - 1;
+
+            for (var candleIdx = 0; candleIdx < crossingCandlesRange.Count - 1; candleIdx++)
+            {
+                //manualResetEvent.Wait();
+                //cancellationToken.ThrowIfCancellationRequested();
+
+                var firstCandle = crossingCandlesRange[0];
+                var nextCandle = crossingCandlesRange[candleIdx + 1];
+                var currentMainCandle = new Candle
+                {
+                    Date = mainCandlesRange[candleIdx].Date,
+                    Time = mainCandlesRange[candleIdx].Time,
+
+                    Open = mainCandlesRange[candleIdx].Open,
+                    High = mainCandlesRange[candleIdx].Open,
+                    Low = mainCandlesRange[candleIdx].Open,
+                    Close = mainCandlesRange[candleIdx].Open,
+
+                    Spread = mainCandlesRange[candleIdx].Spread
+                };
+
+                // Has to approve the parent backtestingNode of the main backtestingNode           
+                var mainNodeIndicators = _extractorService.BuildIndicatorsFromNode(strategyNode.MainNode.ParentNode.Node).ToList();
+                if (ApproveCandle(mainNodeIndicators, candleIdx, mainCandlesRange, currentMainCandle, mainCandlesRange))
+                {
+                    // Has to approve one of the child nodes from the main backtestingNode
+                    var childNodePass = false;
+                    foreach (var childNode in strategyNode.MainNode.ChildNodes)
+                    {
+                        var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
+                        if (ApproveCandle(childNodeIndicators, candleIdx, firstCandle, mainCandlesRange, mainCandlesRange))
+                        {
+                            childNodePass = true;
+                            break;
+                        }
+                    }
+
+                    // DEBUG BACKTEST OF CROSSING NODE
+                    // FIX PROBLEM WITH DIFFERENT HISTORICAL DATA CANDLES FOR EACH NODE
+                    // MULTITHREADING WITH SYNCHRONIZATION, LOCKS, SEMAPHORES, ETC ??
+
+                    if (!childNodePass)
+                    {
+                        // No trade signal, move to the next candle
+                        continue;
+                    }
+
+                    // Has to approve the node being backtested
+                    var backtestingNodeIndicators = _extractorService.BuildIndicatorsFromNode(backtestingNode.Node).ToList();
+                    if (!ApproveCandle(backtestingNodeIndicators, candleIdx, firstCandle, currentCandle, crossingCandlesRange))
+                    {
+                        continue;
+                    }
+
+                    // Has to approve all of the crossing nodes
+                    var crossingNodePass = true;
+                    foreach (var crossingNode in strategyNode.CrossingNodes)
+                    {
+                        var candlesRange = (from candle in crossingNode.Item2
+                                            let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
+                                            where dt >= fromDate && dt <= toDate
+                                            select candle).ToList();
+
+                        var crossingNodeIndicators = _extractorService.BuildIndicatorsFromNode(crossingNode.Item1.Node).ToList();
+                        if (!ApproveCandle(crossingNodeIndicators, candleIdx, firstCandle, currentCandle, candlesRange))
+                        {
+                            crossingNodePass = false;
+                            break;
+                        }
+                    }
+
+                    if (!crossingNodePass)
+                    {
+                        // No trade signal, move to the next candle
+                        continue;
+                    }
+
+                    backtest.TotalTrades++;
+
+                    var isWinnerTrade = false;
+                    var spread = currentCandle.Spread * 0.00001;
+
+                    isWinnerTrade = strategyNode.MainNode.ParentNode.Label.ToLowerInvariant() == "up"
+                        ? (currentCandle.Open + spread) < nextCandle.Open
+                        : currentCandle.Open > (nextCandle.Open + spread);
+
+                    if (isWinnerTrade)
+                    {
+                        backtest.WinningTrades++;
+                    }
+                    else
+                    {
+                        backtest.LosingTrades++;
+                    }
+
+                    backtest.BacktestOperations.Add(new BacktestOperationModel
+                    {
+                        Date = DateTimeHelper.BuildDateTime(timeframeId, currentCandle.Date, currentCandle.Time),
+                        IsWinner = isWinnerTrade
+                    });
+                }
+            }
+        }
+
         public void ExecuteBacktest(
             BacktestModel backtest,
             EntityTypeEnum entityType,

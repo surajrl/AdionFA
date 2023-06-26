@@ -10,7 +10,6 @@ using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Contracts;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Contracts.Services;
-using AdionFA.UI.Station.Infrastructure.Model.Common;
 using AdionFA.UI.Station.Infrastructure.Services;
 using AdionFA.UI.Station.Infrastructure.Services.AppServices;
 using AdionFA.UI.Station.Module.Dashboard;
@@ -98,14 +97,14 @@ namespace AdionFA.UI.Station
         {
             base.ConfigureModuleCatalog(moduleCatalog);
 
-            Type shellModuleType = typeof(ShellModule);
+            var shellModuleType = typeof(ShellModule);
             moduleCatalog.AddModule(new ModuleInfo()
             {
                 ModuleName = shellModuleType.Name,
                 ModuleType = shellModuleType.AssemblyQualifiedName,
             });
 
-            Type settingModuleType = typeof(DashboardModule);
+            var settingModuleType = typeof(DashboardModule);
             moduleCatalog.AddModule(new ModuleInfo()
             {
                 ModuleName = settingModuleType.Name,
@@ -130,8 +129,8 @@ namespace AdionFA.UI.Station
 
         protected override void OnInitialized()
         {
-            ISharedServiceAgent settingService = ContainerLocator.Current.Resolve<ISharedServiceAgent>();
-            IProjectDirectoryService directoryService = IoC.Get<IProjectDirectoryService>();
+            var settingService = ContainerLocator.Current.Resolve<ISharedServiceAgent>();
+            var directoryService = IoC.Get<IProjectDirectoryService>();
 
             // Workspace
 
@@ -145,10 +144,10 @@ namespace AdionFA.UI.Station
 
             // Theme
 
-            SettingVM themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
+            var themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
             ThemeManager.Current.ChangeThemeBaseColor(Application.Current, themeSetting?.Value ?? "Light");
 
-            SettingVM colorSetting = settingService.GetSetting((int)SettingEnum.Color);
+            var colorSetting = settingService.GetSetting((int)SettingEnum.Color);
             ThemeManager.Current.ChangeThemeColorScheme(Application.Current, colorSetting?.Value ?? "Orange");
 
             // Culture
@@ -158,9 +157,9 @@ namespace AdionFA.UI.Station
             IList<CultureInfo> cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures)
                 .Where(c => culturesAvailables.Any(ca => ca == c.ThreeLetterISOLanguageName)).ToList();
 
-            SettingVM cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
+            var cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
 
-            CultureInfo Culture = cultures.FirstOrDefault(
+            var Culture = cultures.FirstOrDefault(
                 c => c.ThreeLetterISOLanguageName == cultureSetting?.Value) ?? cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
 
             Thread.CurrentThread.CurrentCulture = Culture;

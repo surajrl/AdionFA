@@ -6,15 +6,20 @@ using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Modules.CrossingBuilder.Model;
+using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.Weka.Model;
+using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.Enums.Model;
+using AdionFA.TransferObject.Project;
 using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Station.Project.AutoMapper;
 using AdionFA.UI.Station.Project.Commands;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.Common;
+using AutoMapper;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
@@ -23,6 +28,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -32,17 +38,20 @@ namespace AdionFA.UI.Station.Project.ViewModels
     {
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IExtractorService _extractorService;
+        private readonly IStrategyBuilderService _strategyBuilderService;
 
         private readonly IEventAggregator _eventAggregator;
         private readonly IMarketDataServiceAgent _marketDataService;
         private readonly IProjectServiceAgent _projectService;
 
+        private readonly IMapper _mapper;
 
         public CrossingBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
             _projectDirectoryService = IoC.Get<IProjectDirectoryService>();
             _extractorService = IoC.Get<IExtractorService>();
+            _strategyBuilderService = IoC.Get<IStrategyBuilderService>();
 
             _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
@@ -65,6 +74,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 if (assemblyBuilderCompleted)
                 {
                     // Load new Assembly Nodes UP and Assembly Nodes DOWN
+                    CrossingBuilder.StrategyNodesUP.Clear();
+                    CrossingBuilder.StrategyNodesDOWN.Clear();
+
                     _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
                     {
                         CrossingBuilder.StrategyNodesUP.Add(new StrategyNodeModel
@@ -83,6 +95,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     });
                 }
             });
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingAppProjectProfile());
+            }).CreateMapper();
 
             CrossingHistoricalData = new();
             CrossingBuilderProcessesUP = new();
@@ -181,8 +198,25 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // ...
 
-                var crossingHistoricalData = await _marketDataService.GetHistoricalDataAsync(CrossingHistoricalDataId, false).ConfigureAwait(true);
-                var candles = crossingHistoricalData.HistoricalDataCandles.Select(candle => new Candle
+                var crossingHistoricalData = await _marketDataService.GetHistoricalDataAsync(CrossingHistoricalDataId, true).ConfigureAwait(true);
+                var crossingCandles = crossingHistoricalData.HistoricalDataCandles.Select(candle => new Candle
+                {
+                    Date = candle.StartDate,
+                    Time = candle.StartTime,
+
+                    Open = candle.Open,
+                    High = candle.High,
+                    Low = candle.Low,
+                    Close = candle.Close,
+
+                    Volume = candle.Volume,
+                    Spread = candle.Spread
+                })
+                .OrderBy(d => d.Date)
+                .ThenBy(d => d.Time);
+
+                var mainHistoricalData = await _marketDataService.GetHistoricalDataAsync(ProjectConfiguration.HistoricalDataId.Value, true).ConfigureAwait(true);
+                var mainCandles = mainHistoricalData.HistoricalDataCandles.Select(candle => new Candle
                 {
                     Date = candle.StartDate,
                     Time = candle.StartTime,
@@ -204,13 +238,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     foreach (var process in CrossingBuilderProcessesUP)
                     {
-                        // Assembly Node
+                        // Strategy Node
 
                         foreach (var strategyNode in CrossingBuilder.StrategyNodesUP)
                         {
-                            // Backtest Operations will be those of the last crossing node
-                            // added or of the main node if there are no crossing nodes
-                            var backtestOperations = strategyNode.MainNode.ParentNode.BacktestIS.BacktestOperations;
+                            var backtestOperations = strategyNode.CrossingNodes.Count > 0
+                            ? strategyNode.CrossingNodes.Last().Item1.BacktestIS.BacktestOperations
+                            : strategyNode.MainNode.ParentNode.BacktestIS.BacktestOperations;
 
                             // Perfrom extraction
                             var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
@@ -218,10 +252,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 backtestOperations.First().Date,
                                 backtestOperations.Last().Date,
                                 indicators,
-                                candles.ToList(),
+                                crossingCandles.ToList(),
                                 ProjectConfiguration.TimeframeId);
 
-                            // Filter the extraction for only the candles with backtest operations
+                            // Filter the extraction for only the crossingCandles with backtest operations
                             var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
                                           let backtestOperation = backtestOperations.Where(operation => operation.Date == il._il.Interval)
                                           where backtestOperation.Any()
@@ -264,11 +298,54 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             // Generate Weka Tree
 
+                            process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
+
+                            var wekaApi = new WekaApiClient();
+                            var responseWeka = wekaApi.GetREPTreeClassifier(
+                                    process.ExtractionPath,
+                                    ProjectConfiguration.DepthWeka,
+                                    ProjectConfiguration.TotalDecimalWeka,
+                                    ProjectConfiguration.MinimalSeed,
+                                    ProjectConfiguration.MaximumSeed,
+                                    ProjectConfiguration.TotalInstanceWeka,
+                                    (double)ProjectConfiguration.ABWekaMaxRatioTree,
+                                    (double)ProjectConfiguration.ABWekaNTotalTree);
+
+                            process.Tree = responseWeka[0];
+
                             // Get Backtest Nodes
 
+                            // UP   ->  WINNER
+                            // DOWN ->  LOSER
+                            var nodes = process.Tree.NodeOutput.Where(node => node.Winner && node.Label.ToLowerInvariant() == "up")
+                                .Select(node =>
+                                {
+                                    node.Node = node.Node.OrderByDescending(node => node).ToList();
+                                    node.Label = "UP";
+                                    return node;
+                                }).ToList();
+
+                            process.BacktestNodes.Clear();
+                            process.BacktestNodes.AddRange(nodes);
+
+                            process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+
                             // Perform Backtest
-                            // Backtest will take the Strategy Node, and check
-                            // for trade signals on the main node and crossing nodes
+
+                            foreach (var backtestingNode in process.BacktestNodes)
+                            {
+                                process.ExecutingBacktests++;
+                                process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+
+                                _strategyBuilderService.BuildBacktestOfCrossingNode(
+                                    strategyNode,
+                                    backtestingNode,
+                                    mainCandles,
+                                    crossingCandles,
+                                    _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                                    null,
+                                    CancellationToken.None);
+                            }
 
                             //strategyNode.CrossingNodes.Add(new REPTreeNodeModel { /* Winner Node */ });
                         }

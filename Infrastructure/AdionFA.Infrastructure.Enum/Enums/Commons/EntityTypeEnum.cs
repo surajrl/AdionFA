@@ -28,5 +28,8 @@ namespace AdionFA.Infrastructure.Enums
 
         [Metadata(codeKey: "AB", nameKey: "AssemblyBuilder", descriptionKey: "Assembly Builder", resourceType: typeof(EnumResources))]
         AssemblyBuilder = 505,
+
+        [Metadata(codeKey: "CB", nameKey: "CrossingBuilder", descriptionKey: "Crossing Builder", resourceType: typeof(EnumResources))]
+        CrossingBuilder = 506,
     }
 }
