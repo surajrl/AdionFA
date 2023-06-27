@@ -97,7 +97,7 @@ namespace AdionFA.Infrastructure.Common.Managements
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder,
-                label.ToLower() == "up" ? "UP" : "DOWN"))
+                label.ToLowerInvariant() == "up" ? "UP" : "DOWN"))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"
                 : string.Empty);
@@ -108,7 +108,7 @@ namespace AdionFA.Infrastructure.Common.Managements
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(),
                 projectNameFolder,
-                label.ToLower() == "up" ? "UP" : "DOWN",
+                label.ToLowerInvariant() == "up" ? "UP" : "DOWN",
                 MarketRegionEnum.Europe.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
@@ -118,7 +118,7 @@ namespace AdionFA.Infrastructure.Common.Managements
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(),
                 projectNameFolder,
-                label.ToLower() == "up" ? "UP" : "DOWN",
+                label.ToLowerInvariant() == "up" ? "UP" : "DOWN",
                 MarketRegionEnum.America.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
@@ -127,7 +127,7 @@ namespace AdionFA.Infrastructure.Common.Managements
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectNameFolder
-                , label.ToLower() == "up" ? "UP" : "DOWN"
+                , label.ToLowerInvariant() == "up" ? "UP" : "DOWN"
                 , MarketRegionEnum.Asia.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"
@@ -156,7 +156,7 @@ namespace AdionFA.Infrastructure.Common.Managements
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder,
-                label.ToLower() == "up" ? "UP" : "DOWN"))
+                label.ToLowerInvariant() == "up" ? "UP" : "DOWN"))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"
                 : string.Empty);
@@ -167,7 +167,7 @@ namespace AdionFA.Infrastructure.Common.Managements
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(),
                 projectNameFolder,
-                label.ToLower() == "up" ? "UP" : "DOWN",
+                label.ToLowerInvariant() == "up" ? "UP" : "DOWN",
                 MarketRegionEnum.Europe.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
@@ -177,7 +177,7 @@ namespace AdionFA.Infrastructure.Common.Managements
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(),
                 projectNameFolder,
-                label.ToLower() == "up" ? "UP" : "DOWN",
+                label.ToLowerInvariant() == "up" ? "UP" : "DOWN",
                 MarketRegionEnum.America.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
@@ -186,7 +186,7 @@ namespace AdionFA.Infrastructure.Common.Managements
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectNameFolder
-                , label.ToLower() == "up" ? "UP" : "DOWN"
+                , label.ToLowerInvariant() == "up" ? "UP" : "DOWN"
                 , MarketRegionEnum.Asia.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"

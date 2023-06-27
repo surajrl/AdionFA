@@ -405,14 +405,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         process.CompletedBacktests++;
                         process.ProgressCounter++;
 
-                        if (process.CompletedBacktests == process.BacktestNodes.Count)
-                        {
-                            process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description;
-                        }
-                        else
-                        {
-                            process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
-                        }
+                        process.Message = process.CompletedBacktests == process.BacktestNodes.Count
+                        ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description
+                        : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                     }
                 });
         }

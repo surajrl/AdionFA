@@ -169,7 +169,7 @@
                   Margin="0 10 0 10"
                   Style="{DynamicResource ControlExpanderStyle}"
                   Header="{x:Static commonResources:CommonResources.Configuration}"
-                  IsExpanded="False">
+                  IsExpanded="True">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -229,7 +229,7 @@
             <DataGrid AutoGenerateColumns="False"
                       Margin="0, 0, 10, 0"
                       IsReadOnly="True"
-                      ItemsSource="{Binding}">
+                      ItemsSource="{Binding CrossingBuilderProcessesUP}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
@@ -273,7 +273,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Margin="5"
-                                       Content="{Binding}" />
+                                       Content="{Binding ExtractionName}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -285,7 +285,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Expander Style="{StaticResource ControlExpanderStyle}"
-                                          IsEnabled="{Binding}">
+                                          IsEnabled="{Binding BacktestNodes.Count, Converter={StaticResource IntToBooleanConverter}}">
                                     <Expander.Header>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -370,7 +370,7 @@
                       Margin="10, 0, 0, 0"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
-                      ItemsSource="{Binding}">
+                      ItemsSource="{Binding CrossingBuilderProcessesDOWN}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
@@ -414,7 +414,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Margin="5"
-                                       Content="{Binding}" />
+                                       Content="{Binding ExtractionName}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

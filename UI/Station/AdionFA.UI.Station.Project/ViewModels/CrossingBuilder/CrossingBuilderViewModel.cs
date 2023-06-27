@@ -20,6 +20,7 @@ using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.Common;
 using AutoMapper;
+using DynamicData;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
@@ -139,7 +140,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     Name = hd.Description
                 }));
 
-                if (!IsTransactionActive /* Check if any of the correlation nodes has been completed */)
+                if (!IsTransactionActive
+                && CrossingBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Description)
+                && CrossingBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Description))
                 {
                     var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
                     foreach (var file in extractionTemplates)
@@ -191,12 +194,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand Process => new DelegateCommand(async () =>
         {
+            // TEST CROSSING BUILDER OF VARIOUS NODES
+            // FIND A WAY TO DISPLAY THE STRATEGY NODES IN THE UI
+            // FIND A WAY TO DISPLAY THE SAME EXTRACTIONS EXECUITNG FOR DIFFERENT ASSEMBLED NODES
+            // FIND A WAY TO DISPLAY THE NUMBER OF CROSSING BUILDS COMPLETED
+
             try
             {
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
-
-                // ...
 
                 var crossingHistoricalData = await _marketDataService.GetHistoricalDataAsync(CrossingHistoricalDataId, true).ConfigureAwait(true);
                 var crossingCandles = crossingHistoricalData.HistoricalDataCandles.Select(candle => new Candle
@@ -234,120 +240,145 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 await Task.Factory.StartNew(() =>
                 {
-                    // Extractor Template
 
-                    foreach (var process in CrossingBuilderProcessesUP)
+
+                    CrossingBuilderExecution(CrossingBuilderProcessesUP, "up");
+                    CrossingBuilderExecution(CrossingBuilderProcessesDOWN, "down");
+
+                    void CrossingBuilderExecution(IList<BuilderProcess> processes, string label)
                     {
-                        // Strategy Node
+                        // Go through each Extractor Template
 
-                        foreach (var strategyNode in CrossingBuilder.StrategyNodesUP)
+                        foreach (var process in processes)
                         {
-                            var backtestOperations = strategyNode.CrossingNodes.Count > 0
-                            ? strategyNode.CrossingNodes.Last().Item1.BacktestIS.BacktestOperations
-                            : strategyNode.MainNode.ParentNode.BacktestIS.BacktestOperations;
+                            // Go through each Strategy Node (or Assembly Node)
 
-                            // Perfrom extraction
-                            var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
-                            var extractionResult = _extractorService.DoExtraction(
-                                backtestOperations.First().Date,
-                                backtestOperations.Last().Date,
-                                indicators,
-                                crossingCandles.ToList(),
-                                ProjectConfiguration.TimeframeId);
-
-                            // Filter the extraction for only the crossingCandles with backtest operations
-                            var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
-                                          let backtestOperation = backtestOperations.Where(operation => operation.Date == il._il.Interval)
-                                          where backtestOperation.Any()
-                                          select new
-                                          {
-                                              idx = il._idx,
-                                              il = new IntervalLabel
-                                              {
-                                                  Interval = il._il.Interval,
-                                                  Label = backtestOperation.Any(operation => operation.IsWinner) ? "UP" : "DOWN"
-                                              },
-                                          }).ToList();
-
-
-                            foreach (var extraction in extractionResult)
+                            foreach (var strategyNode in (label.ToLowerInvariant() == "up" ? CrossingBuilder.StrategyNodesUP : CrossingBuilder.StrategyNodesDOWN))
                             {
-                                extraction.IntervalLabels = filter.Select(a => a.il).ToArray();
+                                var backtestOperations = strategyNode.CrossingNodes.Count > 0
+                                ? strategyNode.CrossingNodes.Last().Item1.BacktestIS.BacktestOperations
+                                : strategyNode.MainNode.ParentNode.BacktestIS.BacktestOperations;
 
-                                var outputExtraction = new List<double>();
-                                foreach (var idx in filter.Select(a => a.idx))
+                                // ADD A COUNTER OR SOMETHING FOR THE STRATEGY OR ASSEMBLY NODE BEING TESTED
+                                // DO NOT REMOVE ALREADY BACKTESTED NODES FROM THE SAME TEMPLATE, MANTAIN BUT
+                                // SHOWING IT IS FROM A DIFFERENT STRATEGY NODE
+
+                                process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Description;
+
+                                // Perfrom extraction
+                                var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
+                                var extractionResult = _extractorService.DoExtraction(
+                                    backtestOperations.First().Date,
+                                    backtestOperations.Last().Date,
+                                    indicators,
+                                    crossingCandles.ToList(),
+                                    ProjectConfiguration.TimeframeId);
+
+                                // Filter the extraction for only the crossingCandles with backtest operations
+                                var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
+                                              let backtestOperation = backtestOperations.Where(operation => operation.Date == il._il.Interval)
+                                              where backtestOperation.Any()
+                                              select new
+                                              {
+                                                  idx = il._idx,
+                                                  il = new IntervalLabel
+                                                  {
+                                                      Interval = il._il.Interval,
+                                                      Label = backtestOperation.Any(operation => operation.IsWinner) ? "UP" : "DOWN"
+                                                  },
+                                              }).ToList();
+
+
+                                foreach (var extraction in extractionResult)
                                 {
-                                    outputExtraction.Add(extraction.Output[idx]);
+                                    extraction.IntervalLabels = filter.Select(a => a.il).ToArray();
+
+                                    var outputExtraction = new List<double>();
+                                    foreach (var idx in filter.Select(a => a.idx))
+                                    {
+                                        outputExtraction.Add(extraction.Output[idx]);
+                                    }
+
+                                    extraction.Output = outputExtraction.ToArray();
                                 }
 
-                                extraction.Output = outputExtraction.ToArray();
-                            }
+                                var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
+                                var nameSignature = process.ExtractionTemplateName.Replace(".csv", string.Empty);
 
-                            var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
-                            var nameSignature = process.ExtractionTemplateName.Replace(".csv", string.Empty);
+                                _extractorService.ExtractorWrite(
+                                    ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv"),
+                                    extractionResult,
+                                    0,
+                                    0);
 
-                            _extractorService.ExtractorWrite(
-                                ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("UP", $"{nameSignature}.{timeSignature}.csv"),
-                                extractionResult,
-                                0,
-                                0);
+                                process.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
+                                process.ExtractionPath = ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv");
+                                process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Description;
 
-                            process.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
-                            process.ExtractionPath = ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("UP", $"{nameSignature}.{timeSignature}.csv");
-                            process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Description;
+                                // Generate Weka Tree
 
-                            // Generate Weka Tree
+                                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
 
-                            process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
+                                var wekaApi = new WekaApiClient();
+                                var responseWeka = wekaApi.GetREPTreeClassifier(
+                                        process.ExtractionPath,
+                                        ProjectConfiguration.DepthWeka,
+                                        ProjectConfiguration.TotalDecimalWeka,
+                                        ProjectConfiguration.MinimalSeed,
+                                        ProjectConfiguration.MaximumSeed,
+                                        ProjectConfiguration.TotalInstanceWeka,
+                                        (double)ProjectConfiguration.ABWekaMaxRatioTree,
+                                        (double)ProjectConfiguration.ABWekaNTotalTree);
 
-                            var wekaApi = new WekaApiClient();
-                            var responseWeka = wekaApi.GetREPTreeClassifier(
-                                    process.ExtractionPath,
-                                    ProjectConfiguration.DepthWeka,
-                                    ProjectConfiguration.TotalDecimalWeka,
-                                    ProjectConfiguration.MinimalSeed,
-                                    ProjectConfiguration.MaximumSeed,
-                                    ProjectConfiguration.TotalInstanceWeka,
-                                    (double)ProjectConfiguration.ABWekaMaxRatioTree,
-                                    (double)ProjectConfiguration.ABWekaNTotalTree);
+                                process.Tree = responseWeka[0];
 
-                            process.Tree = responseWeka[0];
+                                // Get Backtest Nodes
 
-                            // Get Backtest Nodes
+                                // UP   ->  WINNER
+                                // DOWN ->  LOSER
+                                var nodes = process.Tree.NodeOutput.Where(node => node.Winner && node.Label.ToLowerInvariant() == "up")
+                                    .Select(node =>
+                                    {
+                                        node.Node = node.Node.OrderByDescending(node => node).ToList();
+                                        node.Label = label.ToUpperInvariant();
+                                        return node;
+                                    }).ToList();
 
-                            // UP   ->  WINNER
-                            // DOWN ->  LOSER
-                            var nodes = process.Tree.NodeOutput.Where(node => node.Winner && node.Label.ToLowerInvariant() == "up")
-                                .Select(node =>
+                                process.BacktestNodes.Clear();
+                                process.BacktestNodes.AddRange(nodes);
+
+                                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+
+                                // Perform Backtest
+
+                                foreach (var backtestingNode in process.BacktestNodes)
                                 {
-                                    node.Node = node.Node.OrderByDescending(node => node).ToList();
-                                    node.Label = "UP";
-                                    return node;
-                                }).ToList();
+                                    process.ExecutingBacktests++;
+                                    process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
 
-                            process.BacktestNodes.Clear();
-                            process.BacktestNodes.AddRange(nodes);
+                                    var winningNode = _strategyBuilderService.BuildBacktestOfCrossingNode(
+                                        strategyNode,
+                                        backtestingNode,
+                                        mainCandles,
+                                        crossingCandles,
+                                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                                        null,
+                                        CancellationToken.None);
 
-                            process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+                                    if (winningNode)
+                                    {
+                                        strategyNode.CrossingNodes.Add((backtestingNode, crossingCandles.ToList()));
+                                    }
 
-                            // Perform Backtest
+                                    process.ExecutingBacktests--;
+                                    process.CompletedBacktests++;
+                                    process.ProgressCounter++;
 
-                            foreach (var backtestingNode in process.BacktestNodes)
-                            {
-                                process.ExecutingBacktests++;
-                                process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
-
-                                _strategyBuilderService.BuildBacktestOfCrossingNode(
-                                    strategyNode,
-                                    backtestingNode,
-                                    mainCandles,
-                                    crossingCandles,
-                                    _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
-                                    null,
-                                    CancellationToken.None);
+                                    process.Message = process.CompletedBacktests == process.BacktestNodes.Count
+                                    ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description
+                                    : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                                }
                             }
-
-                            //strategyNode.CrossingNodes.Add(new REPTreeNodeModel { /* Winner Node */ });
                         }
                     }
                 });

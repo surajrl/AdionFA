@@ -27,7 +27,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
 
-        void BuildBacktestOfCrossingNode(
+        bool BuildBacktestOfCrossingNode(
             StrategyNodeModel strategyNode,
             REPTreeNodeModel backtestingNode,
             IEnumerable<Candle> mainCandles,
