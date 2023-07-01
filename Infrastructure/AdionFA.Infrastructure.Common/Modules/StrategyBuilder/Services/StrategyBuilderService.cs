@@ -1,4 +1,5 @@
-﻿using AdionFA.Infrastructure.Common.Directories.Contracts;
+﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Model;
+using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
@@ -35,69 +36,120 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         public void Correlation(
             string projectName,
             StrategyBuilderModel strategyBuilder,
-            decimal correlation)
+            decimal maxCorrelation)
         {
-            try
+            string directory;
+            IList<REPTreeNodeModel> winningNodes;
+
+            FindCorrelation("up");
+            FindCorrelation("down");
+
+            void FindCorrelation(string label)
             {
-                string directory;
-                IList<BacktestModel> backtests;
-                IList<REPTreeNodeModel> nodes;
-
-                FindCorrelation("up");
-                FindCorrelation("down");
-
-                void FindCorrelation(string label)
+                switch (label.ToLowerInvariant())
                 {
-                    switch (label.ToLowerInvariant())
-                    {
-                        case "up":
-                            directory = projectName.ProjectStrategyBuilderNodesUPDirectory();
-                            backtests = strategyBuilder.CorrelationNodesUP.Select(node => node.BacktestIS).ToList();
-                            nodes = strategyBuilder.CorrelationNodesUP;
-                            break;
+                    case "up":
+                        directory = projectName.ProjectStrategyBuilderNodesUPDirectory();
+                        winningNodes = strategyBuilder.WinningNodesUP;
+                        break;
 
-                        case "down":
-                            directory = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-                            backtests = strategyBuilder.CorrelationNodesDOWN.Select(node => node.BacktestIS).ToList();
-                            nodes = strategyBuilder.CorrelationNodesDOWN;
-                            break;
+                    case "down":
+                        directory = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                        winningNodes = strategyBuilder.WinningNodesDOWN;
+                        break;
 
-                        default:
-                            return;
-                    }
-
-                    _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
-                    {
-                        var node = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
-
-                        // Algorithm to find correlation
-                        var indexOf = IndexOfCorrelation(backtests, node.BacktestIS, correlation);
-
-                        node.BacktestIS.CorrelationPass = indexOf != null;
-                        if (node.BacktestIS.CorrelationPass)
-                        {
-                            nodes.Add(node);
-
-                            if (indexOf >= 0)
-                            {
-                                backtests.Insert(indexOf.Value, node.BacktestIS);
-                            }
-                            if (indexOf == -1)
-                            {
-                                backtests.Add(node.BacktestIS);
-                            }
-                        }
-                        else
-                        {
-                            _projectDirectoryService.DeleteFile(file.FullName);
-                        }
-                    });
+                    default:
+                        return;
                 }
+
+                var backtests = new List<BacktestModel>();
+
+                _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
+                {
+                    var node = SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName);
+
+                    // Algorithm to find maxCorrelation
+                    var indexOf = IndexOfCorrelation(backtests, node.BacktestIS, maxCorrelation);
+                    node.BacktestIS.CorrelationPass = indexOf != null;
+
+                    if (node.BacktestIS.CorrelationPass)
+                    {
+                        winningNodes.Add(node);
+
+                        if (indexOf >= 0)
+                        {
+                            backtests.Insert(indexOf.Value, node.BacktestIS);
+                        }
+                        if (indexOf == -1)
+                        {
+                            backtests.Add(node.BacktestIS);
+                        }
+                    }
+                    else
+                    {
+                        _projectDirectoryService.DeleteFile(file.FullName);
+                    }
+                });
             }
-            catch (Exception ex)
+        }
+
+        public void Correlation(
+            string projectName,
+            AssemblyBuilderModel assemblyBuilder,
+            decimal maxCorrelation)
+        {
+            string directory;
+            IList<AssemblyNodeModel> winningAssemblyNodes;
+
+            FindCorrelation("up");
+            FindCorrelation("down");
+
+            void FindCorrelation(string label)
             {
-                LogHelper.LogException<IStrategyBuilderService>(ex);
-                throw;
+                switch (label.ToLowerInvariant())
+                {
+                    case "up":
+                        directory = projectName.ProjectAssemblyBuilderNodesUPDirectory();
+                        winningAssemblyNodes = assemblyBuilder.WinningAssemblyNodesUP;
+                        break;
+
+                    case "down":
+                        directory = projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
+                        winningAssemblyNodes = assemblyBuilder.WinningAssemblyNodesDOWN;
+                        break;
+
+                    default:
+                        return;
+                }
+
+                var backtests = new List<BacktestModel>();
+
+                _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
+                {
+                    var assemblyNode = SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName);
+
+                    // Algorithm to find correlation
+                    var indexOf = IndexOfCorrelation(backtests, assemblyNode.ParentNode.BacktestIS, maxCorrelation);
+                    assemblyNode.ParentNode.BacktestIS.CorrelationPass = indexOf != null;
+
+                    if (assemblyNode.ParentNode.BacktestIS.CorrelationPass)
+                    {
+                        winningAssemblyNodes.Add(assemblyNode);
+
+                        if (indexOf >= 0)
+                        {
+                            backtests.Insert(indexOf.Value, assemblyNode.ParentNode.BacktestIS);
+                        }
+                        if (indexOf == -1)
+                        {
+                            backtests.Add(assemblyNode.ParentNode.BacktestIS);
+                        }
+                    }
+                    else
+                    {
+                        _projectDirectoryService.DeleteFile(file.FullName);
+                    }
+                });
             }
         }
 
@@ -144,10 +196,10 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
         // Backtest
 
-        public void BuildBacktestOfNode(
+        public bool BuildBacktestOfNode(
             REPTreeNodeModel node,
-            ProjectConfigurationDTO projectConfiguration,
             IEnumerable<Candle> candles,
+            ProjectConfigurationDTO projectConfiguration,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
@@ -167,13 +219,15 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     manualResetEvent,
                     cancellationToken);
 
+                // OS Winning Conditions
+
                 node.WinningStrategy =
                     node.BacktestOS.WinningTrades >= projectConfiguration.SBMinTransactionsOS
                     && node.BacktestOS.SuccessRatePercent >= (double)projectConfiguration.SBMinSuccessRatePercentOS;
 
                 if (!node.WinningStrategy)
                 {
-                    return;
+                    return false;
                 }
 
                 // IS Backtest
@@ -190,18 +244,19 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     manualResetEvent,
                     cancellationToken);
 
+                // IS Winning Conditions
+
                 node.WinningStrategy =
                      node.BacktestIS.WinningTrades >= projectConfiguration.SBMinTransactionsIS
                      && node.BacktestIS.SuccessRatePercent >= (double)projectConfiguration.SBMinSuccessRatePercentIS;
 
-                if (!node.WinningStrategy)
-                {
-                    return;
-                }
+                // Winning Conditions
 
                 node.WinningStrategy =
                     node.SuccessRateVariation <= (double)projectConfiguration.SBMaxSuccessRateVariation
                     && (!projectConfiguration.IsProgressiveness || node.ProgressivenessVariation <= (double)projectConfiguration.MaxProgressivenessVariation);
+
+                return node.WinningStrategy;
             }
             catch (Exception ex)
             {
@@ -210,9 +265,69 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
+        public bool BuildBacktestOfAssemblyNode(
+            REPTreeNodeModel backtestingAssemblyNode,
+            IList<REPTreeNodeModel> childNodes,
+            ProjectConfigurationDTO projectConfiguration,
+            IEnumerable<Candle> candles,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken)
+        {
+            // IS Backtest
+
+            ExecuteBacktest(
+                backtestingAssemblyNode.BacktestIS,
+                EntityTypeEnum.AssemblyBuilder,
+                projectConfiguration.FromDateIS.Value,
+                projectConfiguration.ToDateIS.Value,
+                projectConfiguration.TimeframeId,
+                candles,
+                backtestingAssemblyNode,
+                childNodes,
+                manualResetEvent,
+                cancellationToken);
+
+            // IS Winning Conditions
+
+            var meanSuccessRatePercentIS = childNodes
+                .Select(node => node.BacktestIS.SuccessRatePercent)
+                .Sum() / childNodes.Count;
+
+            backtestingAssemblyNode.WinningStrategy =
+                (backtestingAssemblyNode.BacktestIS.SuccessRatePercent - meanSuccessRatePercentIS) >= (double)projectConfiguration.ABMinImprovePercent
+                && backtestingAssemblyNode.BacktestIS.TotalTrades >= projectConfiguration.ABTransactionsTarget;
+
+            if (!backtestingAssemblyNode.WinningStrategy)
+            {
+                return false;
+            }
+
+            // OS Backtest
+
+            ExecuteBacktest(
+                backtestingAssemblyNode.BacktestOS,
+                EntityTypeEnum.AssemblyBuilder,
+                projectConfiguration.FromDateOS.Value,
+                projectConfiguration.ToDateOS.Value,
+                projectConfiguration.TimeframeId,
+                candles,
+                backtestingAssemblyNode,
+                childNodes,
+                manualResetEvent,
+                cancellationToken);
+
+            // Winning Conditions
+
+            backtestingAssemblyNode.WinningStrategy =
+                backtestingAssemblyNode.SuccessRateVariation <= (double)projectConfiguration.SBMaxSuccessRateVariation
+                && (!projectConfiguration.IsProgressiveness || backtestingAssemblyNode.ProgressivenessVariation <= (double)projectConfiguration.MaxProgressivenessVariation);
+
+            return backtestingAssemblyNode.WinningStrategy;
+        }
+
         public bool BuildBacktestOfCrossingNode(
-            StrategyNodeModel strategyNode,
-            REPTreeNodeModel backtestingNode,
+            StrategyNodeModel mainNode,
+            REPTreeNodeModel backtestingCrossingNode,
             IEnumerable<Candle> mainCandles,
             IEnumerable<Candle> crossingCandles,
             ProjectConfigurationDTO projectConfiguration,
@@ -224,9 +339,9 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                 // OS Backtest
 
                 ExecuteCrossingBacktest(
-                    strategyNode,
-                    backtestingNode,
-                    backtestingNode.BacktestOS,
+                    mainNode,
+                    backtestingCrossingNode,
+                    backtestingCrossingNode.BacktestOS,
                     mainCandles,
                     crossingCandles,
                     projectConfiguration.FromDateOS.Value,
@@ -238,9 +353,9 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                 // IS Backtest
 
                 ExecuteCrossingBacktest(
-                    strategyNode,
-                    backtestingNode,
-                    backtestingNode.BacktestIS,
+                    mainNode,
+                    backtestingCrossingNode,
+                    backtestingCrossingNode.BacktestIS,
                     mainCandles,
                     crossingCandles,
                     projectConfiguration.FromDateIS.Value,
@@ -259,8 +374,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
         }
 
         private void ExecuteCrossingBacktest(
-            StrategyNodeModel strategyNode,
-            REPTreeNodeModel backtestingNode,
+            StrategyNodeModel mainNode,
+            REPTreeNodeModel backtestingCrossingNode,
             BacktestModel backtest,
             IEnumerable<Candle> mainCandles,
             IEnumerable<Candle> crossingCandles,
@@ -293,8 +408,8 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             var mainFirstCandle = mainCandlesRange[0];
             var crossingFirstCandle = crossingCandlesRange[0];
 
-            var mainNodeIndicators = _extractorService.BuildIndicatorsFromNode(strategyNode.MainNode.ParentNode.Node).ToList();
-            var backtestingNodeIndicators = _extractorService.BuildIndicatorsFromNode(backtestingNode.Node).ToList();
+            var mainNodeIndicators = _extractorService.BuildIndicatorsFromNode(mainNode.MainNode.ParentNode.Node).ToList();
+            var backtestingNodeIndicators = _extractorService.BuildIndicatorsFromNode(backtestingCrossingNode.Node).ToList();
 
             for (var idx = 0; idx < mainCandlesRange.Count - 1; idx++)
             {
@@ -314,12 +429,12 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     Spread = mainCandlesRange[idx].Spread
                 };
 
-                // Has to approve the parent node of the main node           
+                // Has to approve the parent assemblyNode of the main assemblyNode           
                 if (ApproveCandle(mainNodeIndicators, idx, mainFirstCandle, currentMainCandle, mainCandlesRange))
                 {
-                    // Has to approve one of the child nodes from the main Node
+                    // Has to approve one of the child winningNodes from the main Node
                     var childNodePass = false;
-                    foreach (var childNode in strategyNode.MainNode.ChildNodes)
+                    foreach (var childNode in mainNode.MainNode.ChildNodes)
                     {
                         var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
                         if (ApproveCandle(childNodeIndicators, idx, mainFirstCandle, currentMainCandle, mainCandlesRange))
@@ -335,7 +450,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         continue;
                     }
 
-                    // Has to approve the node being backtested
+                    // Has to approve the assemblyNode being backtested
                     var currentCrossingCandle = new Candle
                     {
                         Date = crossingCandlesRange[idx].Date,
@@ -353,9 +468,9 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                         continue;
                     }
 
-                    // Has to approve all of the crossing nodes
+                    // Has to approve all of the crossing winningNodes
                     var crossingNodePass = true;
-                    foreach (var crossingNode in strategyNode.CrossingNodes)
+                    foreach (var crossingNode in mainNode.CrossingNodes)
                     {
                         var candlesRange = (from candle in crossingNode.Item2
                                             let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
@@ -394,7 +509,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     var isWinnerTrade = false;
                     var spread = currentMainCandle.Spread * 0.00001;
 
-                    isWinnerTrade = strategyNode.MainNode.ParentNode.Label.ToLowerInvariant() == "up"
+                    isWinnerTrade = mainNode.MainNode.ParentNode.Label.ToLowerInvariant() == "up"
                         ? (currentMainCandle.Open + spread) < mainCandlesRange[idx + 1].Open
                         : currentMainCandle.Open > (mainCandlesRange[idx + 1].Open + spread);
 
@@ -416,7 +531,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
         }
 
-        public void ExecuteBacktest(
+        private void ExecuteBacktest(
             BacktestModel backtest,
             EntityTypeEnum entityType,
             DateTime fromDate,
@@ -480,7 +595,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                         if (!childNodePass)
                         {
-                            // Move to the next candle if none of the child nodes is a pass
+                            // Move to the next candle if none of the child winningNodes is a pass
                             continue;
                         }
                     }

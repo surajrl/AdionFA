@@ -43,5 +43,6 @@
 
         public const string FlyoutProjectModuleNodes = "FlyoutProjectModuleNodes";
         public const string FlyoutProjectModuleAssemblyNodes = "FlyoutProjectModuleAssemblyNodes";
+        public const string FlyoutProjectModuleStrategyNodes = "FlyoutProjectModuleStrategyNodes";
     }
 }

@@ -41,8 +41,8 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
                         break;
 
                     case StrategyBuilderModel strategyBuilder:
-                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).CorrelationNodesDOWN);
-                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).CorrelationNodesUP);
+                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).WinningNodesDOWN);
+                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).WinningNodesUP);
                         break;
 
                     case REPTreeNodeModel node:

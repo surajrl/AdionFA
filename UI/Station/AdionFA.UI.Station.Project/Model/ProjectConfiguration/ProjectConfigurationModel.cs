@@ -1,6 +1,6 @@
 ﻿using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.Validators.Configuration;
+using AdionFA.UI.Station.Project.Validators.ProjectConfiguration;
 using FluentValidation.Results;
 using System;
 
@@ -65,7 +65,7 @@ namespace AdionFA.UI.Station.Project.Model.Configuration
         // Validation
         public ValidationResult GetValidationResult()
         {
-            ProjectConfigurationSettingVMValidator v = new();
+            ProjectConfigurationValidator v = new();
             return v.Validate(this);
         }
     }

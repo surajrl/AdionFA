@@ -3,7 +3,7 @@ using AdionFA.UI.Station.Infrastructure.Contracts;
 using AdionFA.UI.Station.Project.ViewModels.Common;
 using MahApps.Metro.Controls;
 
-namespace AdionFA.UI.Station.Project.StrategyBuilder
+namespace AdionFA.UI.Station.Project.Common
 {
     /// <summary>
     /// Interaction logic for NodesFlyoutView.xaml

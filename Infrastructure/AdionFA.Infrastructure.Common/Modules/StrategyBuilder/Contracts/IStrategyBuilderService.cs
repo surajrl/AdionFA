@@ -1,9 +1,8 @@
-﻿using AdionFA.Infrastructure.Common.Extractor.Model;
+﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Model;
+using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
-using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Project;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -16,35 +15,36 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
         void Correlation(
             string projectName,
             StrategyBuilderModel strategyBuilder,
-            decimal correlation);
+            decimal maxCorrelation);
+
+        void Correlation(
+            string projectName,
+            AssemblyBuilderModel assembledBuilder,
+            decimal maxCorrelation);
 
         // Backtest
 
-        void BuildBacktestOfNode(
-            REPTreeNodeModel node,
+        bool BuildBacktestOfNode(
+            REPTreeNodeModel backtestingNode,
+            IEnumerable<Candle> candles,
+            ProjectConfigurationDTO projectConfiguration,
+            ManualResetEventSlim manualResetEvent,
+            CancellationToken cancellationToken);
+
+        bool BuildBacktestOfAssemblyNode(
+            REPTreeNodeModel backtestingAssemblyNode,
+            IList<REPTreeNodeModel> childNodes,
             ProjectConfigurationDTO projectConfiguration,
             IEnumerable<Candle> candles,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
 
         bool BuildBacktestOfCrossingNode(
-            StrategyNodeModel strategyNode,
-            REPTreeNodeModel backtestingNode,
+            StrategyNodeModel mainNode,
+            REPTreeNodeModel backtestingCrossingNode,
             IEnumerable<Candle> mainCandles,
             IEnumerable<Candle> crossingCandles,
             ProjectConfigurationDTO projectConfiguration,
-            ManualResetEventSlim manualResetEvent,
-            CancellationToken cancellationToken);
-
-        void ExecuteBacktest(
-            BacktestModel backtest,
-            EntityTypeEnum entityType,
-            DateTime fromDate,
-            DateTime toDate,
-            int timeframeId,
-            IEnumerable<Candle> candles,
-            REPTreeNodeModel parentNode,
-            IList<REPTreeNodeModel> childNodes,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
     }

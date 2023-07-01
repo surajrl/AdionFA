@@ -1,5 +1,5 @@
 ﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Project.AssemblyBuilder;
+using AdionFA.UI.Station.Project.Common;
 using AdionFA.UI.Station.Project.StrategyBuilder;
 using AdionFA.UI.Station.Project.ViewModels;
 using MahApps.Metro.Controls;

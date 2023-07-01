@@ -291,13 +291,13 @@
                     <!--#region Assembly Nodes UP-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assemblyNodesUP"
-                                Width="175"
+                                Width="215"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="GraphOutline"
                                                             VerticalAlignment="Center"
                                                             Width="14" />
-                                <Label Content="Assembly Nodes UP"
+                                <Label Content="Winning Assembly Nodes UP"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
@@ -307,7 +307,7 @@
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
-                                                <Binding Path="AssemblyBuilder.AssemblyNodesUP" />
+                                                <Binding Path="AssemblyBuilder.WinningAssemblyNodesUP" />
                                                 <Binding Path="AssemblyBuilder.ChildNodesUP" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
@@ -320,13 +320,13 @@
                     <!--#region Assembly Nodes DOWN-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assemblyNodesDOWN"
-                                Width="175"
+                                Width="215"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="GraphOutline"
                                                             VerticalAlignment="Center"
                                                             Width="14" />
-                                <Label Content="Assembly Nodes DOWN"
+                                <Label Content="Winning Assembly Nodes DOWN"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
@@ -336,7 +336,7 @@
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
-                                                <Binding Path="AssemblyBuilder.AssemblyNodesDOWN" />
+                                                <Binding Path="AssemblyBuilder.WinningAssemblyNodesDOWN" />
                                                 <Binding Path="AssemblyBuilder.ChildNodesDOWN" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
@@ -625,7 +625,7 @@
                                                         <behaviors:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                                <Binding Path="Tree.NodeOutput" />
+                                                                <Binding Path="BacktestNodes" />
                                                             </MultiBinding>
                                                         </behaviors:InvokeCommandAction.CommandParameter>
                                                     </behaviors:InvokeCommandAction>

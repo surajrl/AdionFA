@@ -51,7 +51,14 @@ namespace AdionFA.UI.Station.Project.Model.Common
 
         public ObservableCollection<REPTreeNodeModel> BacktestNodes { get; set; }
 
-        // BuilderProcess Status 
+        private StrategyNodeModel _strategyNode;
+        public StrategyNodeModel StrategyNode
+        {
+            get => _strategyNode;
+            set => SetProperty(ref _strategyNode, value);
+        }
+
+        // Builder Process Status 
 
         private string _message;
         public string Message

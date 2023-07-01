@@ -7,5 +7,8 @@ namespace AdionFA.Infrastructure.Common.Modules.CrossingBuilder.Model
     {
         public List<StrategyNodeModel> StrategyNodesUP { get; } = new();
         public List<StrategyNodeModel> StrategyNodesDOWN { get; } = new();
+
+        public List<StrategyNodeModel> WinningStrategyNodesUP { get; } = new();
+        public List<StrategyNodeModel> WinningStrategyNodesDOWN { get; } = new();
     }
 }

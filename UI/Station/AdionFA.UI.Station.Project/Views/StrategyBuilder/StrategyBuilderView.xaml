@@ -408,13 +408,13 @@
                     <!--#region Correlation Nodes Button-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="correlationNodesBtn"
-                                Width="160"
+                                Width="120"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconFontAwesome Kind="BuromobelexperteBrands"
+                                <iconPacks:PackIconFontAwesome Kind="TrophySolid"
                                                                VerticalAlignment="Center"
                                                                Width="14" />
-                                <Label Content="Correlation Nodes"
+                                <Label Content="Winning Nodes"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>

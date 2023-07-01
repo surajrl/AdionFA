@@ -14,7 +14,7 @@ namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Model
         /// <summary>
         /// Assembly nodes from Assembly Builder.
         /// </summary>
-        public List<AssemblyNodeModel> AssemblyNodesUP { get; set; } = new();
-        public List<AssemblyNodeModel> AssemblyNodesDOWN { get; set; } = new();
+        public List<AssemblyNodeModel> WinningAssemblyNodesUP { get; set; } = new();
+        public List<AssemblyNodeModel> WinningAssemblyNodesDOWN { get; set; } = new();
     }
 }

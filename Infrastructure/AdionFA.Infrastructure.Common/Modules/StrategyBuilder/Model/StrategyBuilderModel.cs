@@ -5,7 +5,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
 {
     public class StrategyBuilderModel
     {
-        public List<REPTreeNodeModel> CorrelationNodesUP { get; set; } = new();
-        public List<REPTreeNodeModel> CorrelationNodesDOWN { get; set; } = new();
+        public List<REPTreeNodeModel> WinningNodesUP { get; set; } = new();
+        public List<REPTreeNodeModel> WinningNodesDOWN { get; set; } = new();
     }
 }

@@ -88,23 +88,38 @@ namespace AdionFA.UI.Station.Project.ViewModels
             StrategyBuilderProcesses = new();
             MaxParallelism = Environment.ProcessorCount - 1;
 
-            // Load XML files containing Correlation Nodes
+            // Load XML files containing Winning Nodes
             StrategyBuilder = new();
             _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
             {
-                StrategyBuilder.CorrelationNodesUP.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                StrategyBuilder.WinningNodesUP.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
             });
             _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml").ToList().ForEach(file =>
             {
-                StrategyBuilder.CorrelationNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                StrategyBuilder.WinningNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
             });
         }
 
-        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
+        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
         {
             if (item == HamburgerMenuItems.StrategyBuilder.Replace(" ", string.Empty))
             {
-                PopulateViewModel();
+                try
+                {
+                    // Latest project configuration
+                    ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
+
+                    if (!IsTransactionActive
+                        && StrategyBuilderProcesses.All(process => process.Message == BuilderProcessStatus.SBNotStarted.GetMetadata().Description))
+                    {
+                        ResetBuilder();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message);
+                    throw;
+                }
             }
         });
 
@@ -163,24 +178,33 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var deleteAll = await MessageHelper.ShowMessageInput(this,
                     "Strategy Builder",
-                    "Starting a new process will delete all the Correlation Nodes and Assembly Nodes.\n"
+                    "Starting a new process will delete all the Winning Nodes, Assembly Nodes and Strategy Nodes.\n"
                     + "Do you want to continue?").ConfigureAwait(true);
 
                 if (deleteAll == MessageDialogResult.Affirmative)
                 {
-                    StrategyBuilder.CorrelationNodesUP.Clear();
-                    StrategyBuilder.CorrelationNodesDOWN.Clear();
+                    ResetBuilder();
 
-                    // Delete Strategy Builder Extractions
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
+                    StrategyBuilder.WinningNodesUP.Clear();
+                    StrategyBuilder.WinningNodesDOWN.Clear();
+
                     // Delete Strategy Builder Nodes
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+                    // Delete Strategy Builder Extractions
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
                     // Delete Assembly Builder Nodes
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+                    // Delete Assembly Builder Extractions
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
                     // Delete Crossing Builder Nodes
                     _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDirectory(), "*.xml", option: SearchOption.AllDirectories, isBackup: false);
+                    // Delete Crossing Builder Extractions
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
+                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
+
                 }
                 else
                 {
@@ -188,8 +212,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
 
                 IsTransactionActive = true;
-
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
+
                 _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(false);
                 _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(false);
 
@@ -247,8 +271,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Results Message
 
-                var msgUP = StrategyBuilder.CorrelationNodesUP.Count > 0 ? $"{StrategyBuilder.CorrelationNodesUP.Count} Correlation UP Nodes Found." : "No Correlation UP Nodes Found.";
-                var msgDOWN = StrategyBuilder.CorrelationNodesDOWN.Count > 0 ? $"{StrategyBuilder.CorrelationNodesDOWN.Count} Correlation DOWN Nodes Found." : "No Correlation DOWN Nodes Found.";
+                var msgUP = StrategyBuilder.WinningNodesUP.Count > 0 ? $"{StrategyBuilder.WinningNodesUP.Count} Correlation UP Nodes Found." : "No Correlation UP Nodes Found.";
+                var msgDOWN = StrategyBuilder.WinningNodesDOWN.Count > 0 ? $"{StrategyBuilder.WinningNodesDOWN.Count} Correlation DOWN Nodes Found." : "No Correlation DOWN Nodes Found.";
 
                 MessageHelper.ShowMessage(this,
                     CommonResources.StrategyBuilder,
@@ -387,14 +411,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
                     }
 
-                    _strategyBuilderService.BuildBacktestOfNode(
+                    var winningNode = _strategyBuilderService.BuildBacktestOfNode(
                         node,
-                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
                         projectCandles,
+                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);
 
-                    if (node.WinningStrategy)
+                    if (winningNode)
                     {
                         StrategyBuilderService.SerializeNode(EntityTypeEnum.StrategyBuilder, ProcessArgs.ProjectName, node);
                     }
@@ -412,40 +436,22 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 });
         }
 
-
-        public async void PopulateViewModel()
+        private void ResetBuilder()
         {
-            try
-            {
-                // Get the latest project configuration
-                var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
-                ProjectConfiguration = project?.ProjectConfigurations.FirstOrDefault();
+            StrategyBuilderProcesses.Clear();
 
-                if (!IsTransactionActive
-                    && !StrategyBuilderProcesses.Any(process => process.Message == BuilderProcessStatus.SBCompleted.GetMetadata().Description))
+            var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+            foreach (var file in extractionTemplates)
+            {
+                StrategyBuilderProcesses.Add(new BuilderProcess
                 {
-                    StrategyBuilderProcesses.Clear();
-
-                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
-
-                    foreach (var file in extractionTemplates)
-                    {
-                        StrategyBuilderProcesses.Add(new BuilderProcess
-                        {
-                            ExtractionTemplatePath = file.FullName,
-                            ExtractionTemplateName = file.Name,
-                            ExtractionName = file.Name,
-                            Message = BuilderProcessStatus.SBNotStarted.GetMetadata().Description,
-                            Tree = new(),
-                            BacktestNodes = new()
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
+                    ExtractionTemplatePath = file.FullName,
+                    ExtractionTemplateName = file.Name,
+                    ExtractionName = file.Name,
+                    Message = BuilderProcessStatus.SBNotStarted.GetMetadata().Description,
+                    Tree = new(),
+                    BacktestNodes = new()
+                });
             }
         }
 

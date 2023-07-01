@@ -1,4 +1,4 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.StrategyBuilder.NodesFlyoutView"
+﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.Common.NodesFlyoutView"
               xmlns:prism="http://prismlibrary.com/"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
               xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
