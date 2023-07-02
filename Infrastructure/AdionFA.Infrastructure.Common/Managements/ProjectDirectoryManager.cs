@@ -202,18 +202,18 @@ namespace AdionFA.Infrastructure.Common.Managements
                 string.Format(ProjectDirectoryEnum.CrossingBuilderNodes.GetDescription(), projectNameFolder));
         }
 
-        public static string ProjectCrossingBuilderNodesUPDirectory(this string projectNameFolder, string symbolName)
+        public static string ProjectCrossingBuilderNodesUPDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}",
                 ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectNameFolder, symbolName));
+                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectNameFolder));
         }
 
-        public static string ProjectCrossingBuilderNodesDOWNDirectory(this string projectNameFolder, string symbolName)
+        public static string ProjectCrossingBuilderNodesDOWNDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}",
                 ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectNameFolder, symbolName));
+                string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectNameFolder));
         }
     }
 }

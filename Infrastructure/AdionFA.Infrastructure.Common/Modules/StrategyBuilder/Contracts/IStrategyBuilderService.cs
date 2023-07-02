@@ -1,5 +1,6 @@
 ﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Model;
 using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.TransferObject.Project;
@@ -19,31 +20,29 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Contracts
 
         void Correlation(
             string projectName,
-            AssemblyBuilderModel assembledBuilder,
+            AssemblyBuilderModel assemblyBuilder,
             decimal maxCorrelation);
 
         // Backtest
 
         bool BuildBacktestOfNode(
-            REPTreeNodeModel backtestingNode,
+            NodeModel backtestingNode,
             IEnumerable<Candle> candles,
             ProjectConfigurationDTO projectConfiguration,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
 
         bool BuildBacktestOfAssemblyNode(
-            REPTreeNodeModel backtestingAssemblyNode,
-            IList<REPTreeNodeModel> childNodes,
-            ProjectConfigurationDTO projectConfiguration,
+            AssemblyNodeModel backtestingNode,
             IEnumerable<Candle> candles,
+            ProjectConfigurationDTO projectConfiguration,
+            double meanSuccessRatePercentIS,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
 
-        bool BuildBacktestOfCrossingNode(
-            StrategyNodeModel mainNode,
-            REPTreeNodeModel backtestingCrossingNode,
-            IEnumerable<Candle> mainCandles,
-            IEnumerable<Candle> crossingCandles,
+        bool BuildBacktestOfStrategyNode(
+            StrategyNodeModel backtestingNode,
+            IEnumerable<Candle> candles,
             ProjectConfigurationDTO projectConfiguration,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);

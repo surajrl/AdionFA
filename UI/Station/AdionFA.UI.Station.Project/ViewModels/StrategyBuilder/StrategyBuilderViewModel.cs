@@ -5,10 +5,9 @@ using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-using AdionFA.Infrastructure.Common.StrategyBuilder.Services;
-using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Services;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
@@ -92,11 +91,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             StrategyBuilder = new();
             _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
             {
-                StrategyBuilder.WinningNodesUP.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                StrategyBuilder.WinningNodesUP.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });
             _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml").ToList().ForEach(file =>
             {
-                StrategyBuilder.WinningNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                StrategyBuilder.WinningNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });
         }
 
@@ -340,9 +339,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 });
         }
 
-        private List<REPTreeNodeModel> GetBacktestNodes()
+        private List<NodeModel> GetBacktestNodes()
         {
-            var backtestNodes = new List<REPTreeNodeModel>();
+            var backtestNodes = new List<NodeModel>();
 
             foreach (var process in StrategyBuilderProcesses)
             {
@@ -370,7 +369,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 .Select(node =>
                 {
                     node.Node = node.Node.OrderByDescending(node => node).ToList();
-                    return node;
+                    return new NodeModel
+                    {
+                        NodeData = node
+                    };
                 })
                 .ToList();
 
@@ -387,7 +389,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             return backtestNodes;
         }
 
-        private void BacktestProcess(List<REPTreeNodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
+        private void BacktestProcess(List<NodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
         {
             var backtestNodesPartition = Partitioner.Create(backtestNodes, EnumerablePartitionerOptions.NoBuffering);
 
@@ -412,15 +414,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     }
 
                     var winningNode = _strategyBuilderService.BuildBacktestOfNode(
-                        node,
-                        projectCandles,
-                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
-                        _manualResetEventSlim,
-                        _cancellationTokenSource.Token);
+                            node,
+                            projectCandles,
+                            _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                            _manualResetEventSlim,
+                            _cancellationTokenSource.Token);
 
                     if (winningNode)
                     {
-                        StrategyBuilderService.SerializeNode(EntityTypeEnum.StrategyBuilder, ProcessArgs.ProjectName, node);
+                        SerializerHelper.SerializeNode(EntityTypeEnum.StrategyBuilder, ProcessArgs.ProjectName, node);
                     }
 
                     lock (_lock)

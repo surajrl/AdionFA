@@ -138,8 +138,8 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
                         // Crossing Builder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUPGeneral.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWNGeneral.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectName));
 
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));

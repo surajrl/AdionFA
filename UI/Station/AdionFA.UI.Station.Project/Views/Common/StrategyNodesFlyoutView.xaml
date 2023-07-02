@@ -22,18 +22,43 @@
     <metro:Flyout.Resources>
         <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
         <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+
+        <Style x:Key="ListViewItemContainerStyle"
+               TargetType="ListBoxItem">
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="FocusVisualStyle"
+                    Value="{x:Null}" />
+            <Setter Property="Foreground"
+                    Value="Black" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected"
+                         Value="True">
+                    <Setter Property="BorderBrush"
+                            Value="Gray" />
+                    <Setter Property="BorderThickness"
+                            Value="0" />
+                    <Setter Property="Foreground"
+                            Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </metro:Flyout.Resources>
 
     <Grid>
-        <Expander Header="Nodes"
+        <Expander Header="Strategy Nodes"
                   IsExpanded="True">
+
+            <!--#region Strategy Nodes-->
             <DataGrid IsReadOnly="True"
                       AutoGenerateColumns="False"
                       ItemsSource="{Binding StrategyNodes}">
+
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
                 </DataGrid.Resources>
+
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="BorderThickness"
@@ -44,6 +69,7 @@
                                 Value="Black" />
                     </Style>
                 </DataGrid.CellStyle>
+
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="BorderThickness"
@@ -70,109 +96,104 @@
                     <DataGridTemplateColumn Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <!--#region Node Expander-->
+                                <!--#region Expander-->
                                 <Expander Style="{x:Null}">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                <Run Text="{Binding MainNode.Label}"
+                                                <Run Text="{Binding ParentNodeData.Label}"
                                                      FontWeight="SemiBold" />
                                             </TextBlock>
                                         </StackPanel>
                                     </Expander.Header>
 
                                     <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!--#region Main Node-->
-                                        <ListView ItemsSource="{Binding MainNode.Node}"
-                                                  Padding="20 1" />
-                                        <!--#endregion-->
-
-                                        <!--#region Main Node Tree Details-->
-                                        <StackPanel Grid.Column="1">
+                                        <!--#region Parent Node-->
+                                        <Border BorderBrush="Black" BorderThickness="1" Margin="5" Padding="5">
                                             <Grid>
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                </Grid.ColumnDefinitions>
 
-                                                <!--#region Total UP-->
-                                                <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.TotalUP}"
-                                                         FontWeight="SemiBold" />
-                                                    <Run Text=":" />
-                                                    <Run Text="{Binding TotalUP, StringFormat=N2}" />
-                                                </TextBlock>
-                                                <!--#endregion-->
-                                                <!--#region Total DOWN-->
-                                                <TextBlock Grid.Row="1"
-                                                           Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}"
-                                                         FontWeight="SemiBold" />
-                                                    <Run Text=":" />
-                                                    <Run Text="{Binding TotalDOWN, StringFormat=N2}" />
-                                                </TextBlock>
-                                                <!--#endregion-->
-                                                <!--#region NTotals-->
-                                                <TextBlock Grid.Column="1"
-                                                           Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.NTotals}"
-                                                         FontWeight="SemiBold" />
-                                                    <Run Text=":" />
-                                                    <Run Text="{Binding Total, StringFormat=N2}" />
-                                                </TextBlock>
+                                                <StackPanel>
+                                                    <Label Content="Parent Node"
+                                                           FontWeight="SemiBold" />
+                                                    <ListView ItemsSource="{Binding}"
+                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                        <Expander Style="{x:Null}">
+                                                            <!--<Expander.Header>
+                                                        <Label Content="Parent Node" />
+                                                    </Expander.Header>-->
+                                                            <ListView ItemsSource="{Binding ParentNodeData.Node}" />
+                                                        </Expander>
+                                                    </ListView>
+                                                </StackPanel>
                                                 <!--#endregion-->
 
-                                                <!--#region Ratio UP-->
-                                                <TextBlock Grid.Row="2"
-                                                           Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.RatioUP}"
-                                                         FontWeight="SemiBold" />
-                                                    <Run Text=":" />
-                                                    <Run Text="{Binding RatioUP, StringFormat=N2}" />
-                                                </TextBlock>
+                                                <!--#region Child Nodes-->
+                                                <StackPanel Grid.Row="1">
+                                                    <Label Content="Child Nodes"
+                                                           FontWeight="SemiBold" />
+                                                    <ListView ItemsSource="{Binding ChildNodesData}"
+                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                        <ListView.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <WrapPanel Orientation="Horizontal" />
+                                                            </ItemsPanelTemplate>
+                                                        </ListView.ItemsPanel>
+                                                        <ListView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Expander Style="{x:Null}">
+                                                                    <!--<Expander.Header>
+                                                                <Label Content="Child Node" />
+                                                            </Expander.Header>-->
+                                                                    <ListView ItemsSource="{Binding Node}"
+                                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}" />
+                                                                </Expander>
+                                                            </DataTemplate>
+                                                        </ListView.ItemTemplate>
+                                                    </ListView>
+                                                </StackPanel>
                                                 <!--#endregion-->
-                                                <!--#region Ratio DOWN-->
-                                                <TextBlock Grid.Row="3"
-                                                           Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}"
-                                                         FontWeight="SemiBold" />
-                                                    <Run Text=":" />
-                                                    <Run Text="{Binding RatioDOWN, StringFormat=N2}" />
-                                                </TextBlock>
-                                                <!--#endregion-->
-                                                <!--#region Ratio Max-->
-                                                <TextBlock Grid.Row="2"
-                                                           Grid.Column="2"
-                                                           Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.RatioMax}"
-                                                         FontWeight="SemiBold" />
-                                                    <Run Text=":" />
-                                                    <Run Text="{Binding RatioMax, StringFormat=N2}" />
-                                                </TextBlock>
-                                                <!--#endregion-->
+
+                                                <!--#region Crossing Nodes-->
+                                                <StackPanel Grid.Row="2">
+                                                    <Label Content="Crossing Nodes"
+                                                           FontWeight="SemiBold" />
+                                                    <ListView ItemsSource="{Binding CrossingNodesData}"
+                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                        <ListView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Expander Style="{x:Null}">
+                                                                    <Expander.Header>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <Label Content="Historical Data ID" />
+                                                                            <Label Content="{Binding Item2}" />
+                                                                        </StackPanel>
+                                                                    </Expander.Header>
+                                                                    <ListView ItemsSource="{Binding Item1.Node}"
+                                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}" />
+                                                                </Expander>
+                                                            </DataTemplate>
+                                                        </ListView.ItemTemplate>
+                                                    </ListView>
+                                                </StackPanel>
                                             </Grid>
-                                        </StackPanel>
+                                        </Border>
+                                        <!--#endregion-->
 
-                                        <!--#region Main Node IS and OS Details-->
-                                        <StackPanel Grid.Column="2">
+                                        <!--#region IS and OS Details-->
+                                        <StackPanel Grid.Column="1">
                                             <Grid>
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />
@@ -334,72 +355,47 @@
                                                 </TextBlock>
                                                 <!--#endregion-->
                                             </Grid>
-                                        </StackPanel>
-
-                                        <!--#region Main Node Child Nodes (only node itself)-->
-                                        <!--#region Main Node Crossing Nodes (only node itself and symbol)-->
-                                        
-                                        <!--#region Buttons-->
-                                        <StackPanel Grid.ColumnSpan="3"
-                                                    Grid.Row="1"
-                                                    Orientation="Horizontal"
-                                                    HorizontalAlignment="Right">
-                                            <!--#region Save Node Button-->
-                                            <Button x:Name="saveNodeBtn"
-                                                    Width="150"
-                                                    Margin="{StaticResource ControlMargin}">
-                                                <Button.Content>
-                                                    <TextBlock Text="Save Node" />
-                                                </Button.Content>
-                                                <behaviors:Interaction.Triggers>
-                                                    <behaviors:EventTrigger SourceName="saveNodeBtn"
-                                                                            EventName="Click">
-                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.SaveNodeCommand}">
-                                                            <behaviors:InvokeCommandAction.CommandParameter>
-                                                                <Binding Path="." />
-                                                            </behaviors:InvokeCommandAction.CommandParameter>
-                                                        </behaviors:InvokeCommandAction>
-                                                    </behaviors:EventTrigger>
-                                                </behaviors:Interaction.Triggers>
-                                            </Button>
-                                            <!--#endregion-->
+                                            <!--#region Buttons-->
                                             <!--#region Add to MetaTrader Button-->
-                                            <Button x:Name="addToMetaTraderBtn"
-                                                    Width="150"
-                                                    Margin="{StaticResource ControlMargin}">
-                                                <Button.Content>
-                                                    <TextBlock Text="Add To MetaTrader" />
-                                                </Button.Content>
-                                                <behaviors:Interaction.Triggers>
-                                                    <behaviors:EventTrigger SourceName="addToMetaTraderBtn"
-                                                                            EventName="Click">
-                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.AddNodeToMetaTrader}">
-                                                            <behaviors:InvokeCommandAction.CommandParameter>
-                                                                <Binding Path="." />
-                                                            </behaviors:InvokeCommandAction.CommandParameter>
-                                                        </behaviors:InvokeCommandAction>
-                                                    </behaviors:EventTrigger>
-                                                </behaviors:Interaction.Triggers>
-                                            </Button>
-                                            <!--#endregion-->
-                                            <!--#region Remove from MetaTrader Button-->
-                                            <Button x:Name="removeFromMetaTraderBtn"
-                                                    Width="150"
-                                                    Margin="{StaticResource ControlMargin}">
-                                                <Button.Content>
-                                                    <TextBlock Text="Remove From MetaTrader" />
-                                                </Button.Content>
-                                                <behaviors:Interaction.Triggers>
-                                                    <behaviors:EventTrigger SourceName="removeFromMetaTraderBtn"
-                                                                            EventName="Click">
-                                                        <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.RemoveNodeFromMetaTrader}">
-                                                            <behaviors:InvokeCommandAction.CommandParameter>
-                                                                <Binding Path="." />
-                                                            </behaviors:InvokeCommandAction.CommandParameter>
-                                                        </behaviors:InvokeCommandAction>
-                                                    </behaviors:EventTrigger>
-                                                </behaviors:Interaction.Triggers>
-                                            </Button>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button x:Name="addToMetaTraderBtn"
+                                                        Width="150"
+                                                        Margin="{StaticResource ControlMargin}">
+                                                    <Button.Content>
+                                                        <TextBlock Text="Add To MetaTrader" />
+                                                    </Button.Content>
+                                                    <behaviors:Interaction.Triggers>
+                                                        <behaviors:EventTrigger SourceName="addToMetaTraderBtn"
+                                                                                EventName="Click">
+                                                            <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.AddNodeToMetaTrader}">
+                                                                <behaviors:InvokeCommandAction.CommandParameter>
+                                                                    <Binding Path="." />
+                                                                </behaviors:InvokeCommandAction.CommandParameter>
+                                                            </behaviors:InvokeCommandAction>
+                                                        </behaviors:EventTrigger>
+                                                    </behaviors:Interaction.Triggers>
+                                                </Button>
+                                                <!--#endregion-->
+                                                <!--#region Remove from MetaTrader Button-->
+                                                <Button x:Name="removeFromMetaTraderBtn"
+                                                        Width="150"
+                                                        Margin="{StaticResource ControlMargin}">
+                                                    <Button.Content>
+                                                        <TextBlock Text="Remove From MetaTrader" />
+                                                    </Button.Content>
+                                                    <behaviors:Interaction.Triggers>
+                                                        <behaviors:EventTrigger SourceName="removeFromMetaTraderBtn"
+                                                                                EventName="Click">
+                                                            <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.RemoveNodeFromMetaTrader}">
+                                                                <behaviors:InvokeCommandAction.CommandParameter>
+                                                                    <Binding Path="." />
+                                                                </behaviors:InvokeCommandAction.CommandParameter>
+                                                            </behaviors:InvokeCommandAction>
+                                                        </behaviors:EventTrigger>
+                                                    </behaviors:Interaction.Triggers>
+                                                </Button>
+                                                <!--#endregion-->
+                                            </StackPanel>
                                             <!--#endregion-->
                                         </StackPanel>
                                         <!--#endregion-->
@@ -412,4 +408,4 @@
             </DataGrid>
         </Expander>
     </Grid>
-</metro:Flyout>
+</metro:Flyout >

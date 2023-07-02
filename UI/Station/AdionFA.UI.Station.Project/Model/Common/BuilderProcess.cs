@@ -1,4 +1,5 @@
-﻿using AdionFA.Infrastructure.Common.Weka.Model;
+﻿using AdionFA.Infrastructure.Common.Modules.Weka.Model;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure.Base;
 using System.Collections.ObjectModel;
 
@@ -49,14 +50,10 @@ namespace AdionFA.UI.Station.Project.Model.Common
             set => SetProperty(ref _tree, value);
         }
 
-        public ObservableCollection<REPTreeNodeModel> BacktestNodes { get; set; }
-
-        private StrategyNodeModel _strategyNode;
-        public StrategyNodeModel StrategyNode
-        {
-            get => _strategyNode;
-            set => SetProperty(ref _strategyNode, value);
-        }
+        public ObservableCollection<NodeModel> BacktestNodes { get; set; }  // Used for Strategy Builder
+        public ObservableCollection<AssemblyNodeModel> BacktestAssemblyNodes { get; set; } // Used for Assembly Builder
+        public ObservableCollection<StrategyNodeModel> BacktestStrategyNodes { get; set; } // Used for Crossing Builder
+        public StrategyNodeModel PreviousStrategyNode { get; set; } // Used for Crossing Builder
 
         // Builder Process Status 
 

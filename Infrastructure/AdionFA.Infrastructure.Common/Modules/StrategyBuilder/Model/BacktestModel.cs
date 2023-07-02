@@ -5,6 +5,23 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Model
 {
     public class BacktestModel
     {
+        public BacktestModel()
+        {
+        }
+
+        public BacktestModel(BacktestModel backtestOS)
+        {
+            FromDate = backtestOS.FromDate;
+            ToDate = backtestOS.ToDate;
+            TimeframeId = backtestOS.TimeframeId;
+            CorrelationPass = backtestOS.CorrelationPass;
+            TotalOpportunity = backtestOS.TotalOpportunity;
+            TotalTrades = backtestOS.TotalTrades;
+            WinningTrades = backtestOS.WinningTrades;
+            LosingTrades = backtestOS.LosingTrades;
+            BacktestOperations = backtestOS.BacktestOperations;
+        }
+
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public int TimeframeId { get; set; }

@@ -30,6 +30,8 @@ namespace AdionFA.UI.Station.Project
 
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(AssemblyNodesFlyoutView));
+                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(StrategyNodesFlyoutView));
+
             }
         }
 

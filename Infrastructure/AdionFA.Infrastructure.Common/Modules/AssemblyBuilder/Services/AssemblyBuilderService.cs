@@ -5,6 +5,7 @@ using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using System;
@@ -28,31 +29,31 @@ namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Services
         {
             try
             {
-                var assembledBuilder = new AssemblyBuilderModel();
+                var assemblyBuilder = new AssemblyBuilderModel();
 
-                LoadStrategyBuilderCorrelationNodes("up");
-                LoadStrategyBuilderCorrelationNodes("down");
+                LoadStrategyBuilderNodes("up");
+                LoadStrategyBuilderNodes("down");
 
                 LoadAssemblyNodes("up");
                 LoadAssemblyNodes("down");
 
-                return assembledBuilder;
+                return assemblyBuilder;
 
-                void LoadStrategyBuilderCorrelationNodes(string label)
+                void LoadStrategyBuilderNodes(string label)
                 {
                     string directorySB;
-                    IList<REPTreeNodeModel> nodes;
+                    IList<NodeModel> nodes;
 
                     switch (label.ToLowerInvariant())
                     {
                         case "up":
                             directorySB = projectName.ProjectStrategyBuilderNodesUPDirectory();
-                            nodes = assembledBuilder.ChildNodesUP;
+                            nodes = assemblyBuilder.ChildNodesUP;
                             break;
 
                         case "down":
                             directorySB = projectName.ProjectStrategyBuilderNodesDOWNDirectory();
-                            nodes = assembledBuilder.ChildNodesDOWN;
+                            nodes = assemblyBuilder.ChildNodesDOWN;
                             break;
 
                         default:
@@ -61,7 +62,7 @@ namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Services
 
                     _projectDirectoryService.GetFilesInPath(directorySB, "*.xml").ToList().ForEach(file =>
                     {
-                        nodes.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                        nodes.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
                     });
                 }
 
@@ -74,12 +75,12 @@ namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Services
                     {
                         case "up":
                             directoryAB = projectName.ProjectAssemblyBuilderNodesUPDirectory();
-                            assembledNodes = assembledBuilder.WinningAssemblyNodesUP;
+                            assembledNodes = assemblyBuilder.WinningAssemblyNodesUP;
                             break;
 
                         case "down":
                             directoryAB = projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
-                            assembledNodes = assembledBuilder.WinningAssemblyNodesDOWN;
+                            assembledNodes = assemblyBuilder.WinningAssemblyNodesDOWN;
                             break;
 
                         default:
@@ -97,18 +98,6 @@ namespace AdionFA.Infrastructure.Common.AssemblyBuilder.Services
                 LogHelper.LogException<AssemblyBuilderService>(ex);
                 throw;
             }
-        }
-
-        // Serialization
-
-        public static void SerializeAssemblyNode(string projectName, AssemblyNodeModel assemblyNode)
-        {
-            var directory = assemblyNode.ParentNode.Label.ToLower() == "up"
-                ? projectName.ProjectAssemblyBuilderNodesUPDirectory()
-                : projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
-
-            var filename = RegexHelper.GetValidFileName(assemblyNode.ParentNode.Name, "_") + ".xml";
-            SerializerHelper.XMLSerializeObject(assemblyNode, string.Format(@"{0}\{1}", directory, filename));
         }
     }
 }

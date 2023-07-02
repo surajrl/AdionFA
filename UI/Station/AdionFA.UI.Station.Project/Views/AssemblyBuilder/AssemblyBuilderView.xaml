@@ -76,7 +76,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal"
@@ -390,7 +390,7 @@
             <DataGrid AutoGenerateColumns="False"
                       Margin="0, 0, 10, 0"
                       IsReadOnly="True"
-                      ItemsSource="{Binding AssemblyBuilderProcessUP}">
+                      ItemsSource="{Binding AssemblyBuilderProcessesUP}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
@@ -444,7 +444,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Expander Style="{StaticResource ControlExpanderStyle}"
-                                          IsEnabled="{Binding BacktestNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
+                                          IsEnabled="{Binding BacktestAssemblyNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
                                     <Expander.Header>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -461,7 +461,7 @@
                                                         <Run Text="{Binding CompletedBacktests}"
                                                              FontWeight="SemiBold" />
                                                         <Run Text="/" />
-                                                        <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                        <Run Text="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                              FontWeight="SemiBold" />
                                             </TextBlock>
                                         </Grid>
@@ -485,8 +485,8 @@
                                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                         <behaviors:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                                <Binding Path="BacktestNodes" />
+                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                                                <Binding Path="BacktestAssemblyNodes" />
                                                             </MultiBinding>
                                                         </behaviors:InvokeCommandAction.CommandParameter>
                                                     </behaviors:InvokeCommandAction>
@@ -500,7 +500,7 @@
                                                                     Background="Transparent"
                                                                     Foreground="CadetBlue"
                                                                     Minimum="0"
-                                                                    Maximum="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                                    Maximum="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                                     Value="{Binding ProgressCounter}" />
                                             <TextBlock Grid.Column="2"
                                                        HorizontalAlignment="Center"
@@ -510,7 +510,7 @@
                                                         <Run Text="{Binding ProgressCounter}"
                                                              FontWeight="SemiBold" />
                                                         <Run Text="/" />
-                                                        <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                        <Run Text="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                              FontWeight="SemiBold" />
                                             </TextBlock>
                                         </Grid>
@@ -529,7 +529,7 @@
                       Margin="10, 0, 0, 0"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
-                      ItemsSource="{Binding AssemblyBuilderProcessDOWN}">
+                      ItemsSource="{Binding AssemblyBuilderProcessesDOWN}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
@@ -583,7 +583,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Expander Style="{StaticResource ControlExpanderStyle}"
-                                          IsEnabled="{Binding BacktestNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
+                                          IsEnabled="{Binding BacktestAssemblyNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
                                     <Expander.Header>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -600,7 +600,7 @@
                                                         <Run Text="{Binding CompletedBacktests}"
                                                              FontWeight="SemiBold" />
                                                         <Run Text="/" />
-                                                        <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                        <Run Text="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                              FontWeight="SemiBold" />
                                             </TextBlock>
                                         </Grid>
@@ -624,8 +624,8 @@
                                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                         <behaviors:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                                <Binding Path="BacktestNodes" />
+                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                                                <Binding Path="BacktestAssemblyNodes" />
                                                             </MultiBinding>
                                                         </behaviors:InvokeCommandAction.CommandParameter>
                                                     </behaviors:InvokeCommandAction>
@@ -639,7 +639,7 @@
                                                                     Background="Transparent"
                                                                     Foreground="CadetBlue"
                                                                     Minimum="0"
-                                                                    Maximum="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                                    Maximum="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                                     Value="{Binding ProgressCounter}" />
                                             <TextBlock Grid.Column="2"
                                                        HorizontalAlignment="Center"
@@ -649,7 +649,7 @@
                                                         <Run Text="{Binding ProgressCounter}"
                                                              FontWeight="SemiBold" />
                                                         <Run Text="/" />
-                                                        <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                        <Run Text="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                              FontWeight="SemiBold" />
                                             </TextBlock>
                                         </Grid>

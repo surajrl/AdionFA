@@ -247,7 +247,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 candles,
                                 _currentCandle);
 
-                            label = AssemblyNode.ParentNode.Label;
+                            label = AssemblyNode.ParentNodeData.Label;
                         }
 
                         if (isTrade)

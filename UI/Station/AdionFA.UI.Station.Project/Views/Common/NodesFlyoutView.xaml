@@ -27,13 +27,17 @@
     <Grid>
         <Expander Header="Nodes"
                   IsExpanded="True">
+
+            <!--#region Nodes-->
             <DataGrid IsReadOnly="True"
                       AutoGenerateColumns="False"
                       ItemsSource="{Binding Nodes}">
+                
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />
                 </DataGrid.Resources>
+                
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="BorderThickness"
@@ -44,6 +48,7 @@
                                 Value="Black" />
                     </Style>
                 </DataGrid.CellStyle>
+                
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="BorderThickness"
@@ -70,12 +75,12 @@
                     <DataGridTemplateColumn Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <!--#region Node Expander-->
+                                <!--#region Expander-->
                                 <Expander Style="{x:Null}">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                <Run Text="{Binding Label}"
+                                                <Run Text="{Binding NodeData.Label}"
                                                      FontWeight="SemiBold" />
                                             </TextBlock>
                                         </StackPanel>
@@ -83,8 +88,6 @@
 
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
@@ -95,7 +98,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!--#region Node-->
-                                        <ListView ItemsSource="{Binding Node}"
+                                        <ListView ItemsSource="{Binding NodeData.Node}"
                                                   Padding="20 1" />
                                         <!--#endregion-->
 
@@ -109,8 +112,8 @@
                                                     <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <!--#region Total UP-->
@@ -118,7 +121,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalUP}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding TotalUP, StringFormat=N2}" />
+                                                    <Run Text="{Binding NodeData.TotalUP, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Total DOWN-->
@@ -127,7 +130,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding TotalDOWN, StringFormat=N2}" />
+                                                    <Run Text="{Binding NodeData.TotalDOWN, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region NTotals-->
@@ -136,7 +139,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.NTotals}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding Total, StringFormat=N2}" />
+                                                    <Run Text="{Binding NodeData.Total, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
 
@@ -146,7 +149,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioUP}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding RatioUP, StringFormat=N2}" />
+                                                    <Run Text="{Binding NodeData.RatioUP, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Ratio DOWN-->
@@ -155,7 +158,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding RatioDOWN, StringFormat=N2}" />
+                                                    <Run Text="{Binding NodeData.RatioDOWN, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                                 <!--#region Ratio Max-->
@@ -165,7 +168,7 @@
                                                     <Run Text="{x:Static commonResources:CommonResources.RatioMax}"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
-                                                    <Run Text="{Binding RatioMax, StringFormat=N2}" />
+                                                    <Run Text="{Binding NodeData.RatioMax, StringFormat=N2}" />
                                                 </TextBlock>
                                                 <!--#endregion-->
                                             </Grid>

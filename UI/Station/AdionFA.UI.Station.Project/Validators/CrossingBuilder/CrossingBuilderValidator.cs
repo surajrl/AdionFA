@@ -7,10 +7,16 @@ namespace AdionFA.UI.Station.Project.Validators.CrossingBuilder
     {
         public CrossingBuilderValidator()
         {
-            RuleFor(model => model.CrossingBuilderProcessesUP).NotEmpty()
-                .WithMessage("Missing extractor eemplates");
-            RuleFor(model => model.CrossingBuilderProcessesDOWN).NotEmpty()
-                .WithMessage("Missing extractor templates");
+            RuleFor(model => model.CrossingBuilderProcessesUP)
+                .NotEmpty()
+                .When(model => model.CrossingBuilderProcessesDOWN.Count == 0)
+                .WithMessage("No nodes to build");
+
+            RuleFor(model => model.CrossingBuilderProcessesDOWN)
+                .NotEmpty()
+                .When(model => model.CrossingBuilderProcessesUP.Count == 0)
+                .WithMessage("No nodes to build");
+
             RuleFor(model => model.CrossingHistoricalDataId).GreaterThanOrEqualTo(1)
                 .WithMessage("Choose a crossing historical data");
         }

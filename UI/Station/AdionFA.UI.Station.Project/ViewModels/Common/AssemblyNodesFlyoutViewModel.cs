@@ -19,7 +19,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
             applicationCommands.RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTraderCommand);
 
             AssemblyNodes = new();
-            ChildNodes = new();
         }
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyout =>
@@ -27,7 +26,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
             if ((flyout?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutProjectModuleAssemblyNodes, StringComparison.Ordinal))
             {
                 AssemblyNodes.Clear();
-                ChildNodes.Clear();
 
                 switch (flyout.ModelOne)
                 {
@@ -43,21 +41,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
                         AssemblyNodes.Add(assembledNode);
                         break;
                 }
-
-                switch (flyout.ModelTwo)
-                {
-                    case ObservableCollection<REPTreeNodeModel> collection:
-                        ChildNodes.Add(collection);
-                        break;
-
-                    case List<REPTreeNodeModel> list:
-                        ChildNodes.Add(list);
-                        break;
-
-                    case REPTreeNodeModel node:
-                        ChildNodes.Add(node);
-                        break;
-                }
             }
         });
 
@@ -71,7 +54,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
 
         // View Bindings
 
-        public ObservableCollection<REPTreeNodeModel> ChildNodes { get; set; }
         public ObservableCollection<AssemblyNodeModel> AssemblyNodes { get; set; }
     }
 }

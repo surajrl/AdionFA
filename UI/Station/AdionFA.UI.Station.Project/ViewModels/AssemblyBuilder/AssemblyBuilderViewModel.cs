@@ -1,9 +1,9 @@
 ﻿using AdionFA.Infrastructure.Common.AssemblyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.AssemblyBuilder.Model;
-using AdionFA.Infrastructure.Common.AssemblyBuilder.Services;
 using AdionFA.Infrastructure.Common.Directories.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
+using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
@@ -99,8 +99,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _manualResetEventSlim = new(true);
             _lock = new();
 
-            AssemblyBuilderProcessUP = new();
-            AssemblyBuilderProcessDOWN = new();
+            AssemblyBuilderProcessesUP = new();
+            AssemblyBuilderProcessesDOWN = new();
             MaxParallelism = Environment.ProcessorCount - 1;
             AssemblyBuilder = _assemblyBuilderService.LoadAssemblyBuilder(ProcessArgs.ProjectName);
         }
@@ -114,8 +114,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
 
                     if (!IsTransactionActive
-                        && AssemblyBuilderProcessDOWN.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
-                        && AssemblyBuilderProcessUP.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description))
+                        && AssemblyBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
+                        && AssemblyBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description))
                     {
                         ResetBuilder();
                     }
@@ -132,7 +132,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             _manualResetEventSlim.Reset();
 
-            foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
+            foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
                 if (processUP.Message != BuilderProcessStatus.ABCompleted.GetMetadata().Description
                     && processUP.Message != BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
@@ -149,32 +149,32 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 }
             }
 
-            CanCancelOrContinue = true;
-        }, () => IsTransactionActive && !CanCancelOrContinue)
+            IsStopped = true;
+        }, () => IsTransactionActive && !IsStopped)
             .ObservesProperty(() => IsTransactionActive)
-            .ObservesProperty(() => CanCancelOrContinue);
+            .ObservesProperty(() => IsStopped);
 
         public ICommand Cancel => new DelegateCommand(() =>
         {
             _cancellationTokenSource.Cancel();
             _manualResetEventSlim.Set();
 
-            CanCancelOrContinue = false;
-        }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
+            IsStopped = false;
+        }, () => IsStopped).ObservesProperty(() => IsStopped);
 
         public ICommand Continue => new DelegateCommand(() =>
         {
             _manualResetEventSlim.Set();
 
             var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
-            foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
+            foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
                 processUP.Message = $"{processUP.Message} - {stopped}";
                 processDOWN.Message = $"{processDOWN.Message} - {stopped}";
             }
 
-            CanCancelOrContinue = false;
-        }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
+            IsStopped = false;
+        }, () => IsStopped).ObservesProperty(() => IsStopped);
 
         public ICommand Process => new DelegateCommand(async () =>
         {
@@ -182,6 +182,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
+
+                _cancellationTokenSource = new();
 
                 ResetBuilder();
 
@@ -195,7 +197,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
                 _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
 
-                _cancellationTokenSource = new();
 
                 // Historical Data
 
@@ -224,10 +225,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         ExtractionProcess("up", allProjectCandles);
                         ExtractionProcess("down", allProjectCandles);
 
-                        var backtestNodes = new List<REPTreeNodeModel>
+                        var backtestNodes = new List<AssemblyNodeModel>
                         {
-                            GetBacktestNodes(AssemblyBuilderProcessUP, "up"),
-                            GetBacktestNodes(AssemblyBuilderProcessDOWN, "down")
+                            GetAssemblyNodeBacktests(AssemblyBuilderProcessesUP, "up"),
+                            GetAssemblyNodeBacktests(AssemblyBuilderProcessesDOWN, "down")
                         };
 
                         BacktestProcess(backtestNodes, allProjectCandles);
@@ -235,12 +236,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     else if (AssemblyBuilder.ChildNodesUP.Count > 0)
                     {
                         ExtractionProcess("up", allProjectCandles);
-                        BacktestProcess(GetBacktestNodes(AssemblyBuilderProcessUP, "up"), allProjectCandles);
+                        BacktestProcess(GetAssemblyNodeBacktests(AssemblyBuilderProcessesUP, "up"), allProjectCandles);
                     }
                     else if (AssemblyBuilder.ChildNodesDOWN.Count > 0)
                     {
                         ExtractionProcess("down", allProjectCandles);
-                        BacktestProcess(GetBacktestNodes(AssemblyBuilderProcessDOWN, "down"), allProjectCandles);
+                        BacktestProcess(GetAssemblyNodeBacktests(AssemblyBuilderProcessesDOWN, "down"), allProjectCandles);
                     }
                     else
                     {
@@ -249,7 +250,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
 
-                foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
+                foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
                     processUP.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
                     processDOWN.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
@@ -263,7 +264,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         ProjectConfiguration.SBMaxCorrelationPercent);
                 });
 
-                foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
+                foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
                     processUP.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Description;
                     processDOWN.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Description;
@@ -284,7 +285,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             catch (OperationCanceledException)
             {
-                foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessUP.Zip(AssemblyBuilderProcessDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
+                foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
                     var canceled = BuilderProcessStatus.Canceled.GetMetadata().Description;
                     var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
@@ -293,7 +294,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     processDOWN.Message = processUP.Message.Replace(stopped, canceled);
                 }
 
-                CanCancelOrContinue = false;
+                IsStopped = false;
             }
             catch (Exception ex)
             {
@@ -311,7 +312,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         // ONLY IMPLEMENTED WITHOUT SCHEDULE EXTRACTIONS !!
-        private void ExtractionProcess(string label, IEnumerable<Candle> projectCandles)
+        private void ExtractionProcess(string label, IEnumerable<Candle> candles)
         {
             IList<BacktestModel> backtests;
             IList<BuilderProcess> assemblyBuilderProcess;
@@ -320,12 +321,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 case "up":
                     backtests = AssemblyBuilder.ChildNodesUP.Select(node => node.BacktestIS).ToList();
-                    assemblyBuilderProcess = AssemblyBuilderProcessUP;
+                    assemblyBuilderProcess = AssemblyBuilderProcessesUP;
                     break;
 
                 case "down":
                     backtests = AssemblyBuilder.ChildNodesDOWN.Select(node => node.BacktestIS).ToList();
-                    assemblyBuilderProcess = AssemblyBuilderProcessDOWN;
+                    assemblyBuilderProcess = AssemblyBuilderProcessesDOWN;
                     break;
 
                 default:
@@ -370,7 +371,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         firstOperation,
                         lastOperation,
                         indicators,
-                        projectCandles.ToList(),
+                        candles.ToList(),
                         ProjectConfiguration.TimeframeId);
 
                     // Filter the extraction for only the candles with backtest operations
@@ -418,9 +419,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 });
         }
 
-        private List<REPTreeNodeModel> GetBacktestNodes(IEnumerable<BuilderProcess> assemblyBuilderProcess, string label)
+        private List<AssemblyNodeModel> GetAssemblyNodeBacktests(IEnumerable<BuilderProcess> assemblyBuilderProcess, string label)
         {
-            var backtestNodes = new List<REPTreeNodeModel>();
+            var backtestNodes = new List<AssemblyNodeModel>();
 
             foreach (var process in assemblyBuilderProcess)
             {
@@ -451,12 +452,19 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     {
                         node.Node = node.Node.OrderByDescending(node => node).ToList();
                         node.Label = label.ToUpperInvariant();
-                        return node;
+                        return new AssemblyNodeModel
+                        {
+                            ParentNodeData = node,
+                            ChildNodesData = (label.ToLowerInvariant() == "up"
+                            ? AssemblyBuilder.ChildNodesUP
+                            : AssemblyBuilder.ChildNodesDOWN)
+                            .Select(node => node.NodeData).ToList()
+                        };
                     }).ToList();
 
                 backtestNodes.AddRange(nodes);
-                process.BacktestNodes.Clear();
-                process.BacktestNodes.AddRange(nodes);
+                process.BacktestAssemblyNodes.Clear();
+                process.BacktestAssemblyNodes.AddRange(nodes);
 
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
@@ -467,7 +475,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             return backtestNodes;
         }
 
-        private void BacktestProcess(List<REPTreeNodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
+        private void BacktestProcess(List<AssemblyNodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
         {
             var backtestNodesPartition = Partitioner.Create(backtestNodes, EnumerablePartitionerOptions.NoBuffering);
 
@@ -478,82 +486,91 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     MaxDegreeOfParallelism = MaxParallelism,
                     CancellationToken = _cancellationTokenSource.Token
                 },
-                backtestingNode =>
+                bactestingAssemblyNode =>
                 {
                     _manualResetEventSlim.Wait();
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    var childNodes = backtestingNode.Label.ToLowerInvariant() == "up"
-                    ? AssemblyBuilder.ChildNodesUP
-                    : AssemblyBuilder.ChildNodesDOWN;
+                    BuilderProcess builderProcess;
+                    double meanSuccessRatePercentIS;
 
-                    var process = backtestingNode.Label.ToLowerInvariant() == "up"
-                    ? AssemblyBuilderProcessUP.Where(process => process.BacktestNodes.Any(processNode => processNode == backtestingNode)).FirstOrDefault()
-                    : AssemblyBuilderProcessDOWN.Where(process => process.BacktestNodes.Any(processNode => processNode == backtestingNode)).FirstOrDefault();
+                    switch (bactestingAssemblyNode.ParentNodeData.Label.ToLowerInvariant())
+                    {
+                        case "up":
+                            builderProcess = AssemblyBuilderProcessesUP
+                            .Where(process => process.BacktestAssemblyNodes
+                            .Any(processNode => processNode == bactestingAssemblyNode)).FirstOrDefault();
+                            meanSuccessRatePercentIS = MeanSuccessRatePercentUP;
+                            break;
+
+                        case "down":
+                            builderProcess = AssemblyBuilderProcessesDOWN
+                            .Where(process => process.BacktestAssemblyNodes
+                            .Any(processNode => processNode == bactestingAssemblyNode)).FirstOrDefault();
+                            meanSuccessRatePercentIS = MeanSuccessRatePercentDOWN;
+                            break;
+
+                        default:
+                            return;
+                    }
 
                     lock (_lock)
                     {
-                        process.ExecutingBacktests++;
-                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        builderProcess.ExecutingBacktests++;
+                        builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {builderProcess.ExecutingBacktests} Nodes";
                     }
 
                     var winningNode = _strategyBuilderService.BuildBacktestOfAssemblyNode(
-                        backtestingNode,
-                        childNodes,
-                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                        bactestingAssemblyNode,
                         projectCandles,
+                        _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                        meanSuccessRatePercentIS,
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);
 
                     if (winningNode)
                     {
-                        var assemblyNode = new AssemblyNodeModel
-                        {
-                            ParentNode = backtestingNode,
-                            ChildNodes = childNodes.ToList(),
-                        };
-
-                        AssemblyBuilderService.SerializeAssemblyNode(ProcessArgs.ProjectName, assemblyNode);
+                        SerializerHelper.SerializeAssemblyNode(ProcessArgs.ProjectName, bactestingAssemblyNode);
                     }
 
                     lock (_lock)
                     {
-                        process.ExecutingBacktests--;
-                        process.CompletedBacktests++;
-                        process.ProgressCounter++;
+                        builderProcess.ExecutingBacktests--;
+                        builderProcess.CompletedBacktests++;
+                        builderProcess.ProgressCounter++;
 
-                        process.Message = process.CompletedBacktests == process.BacktestNodes.Count
-                        ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description
-                        : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        builderProcess.Message = builderProcess.CompletedBacktests == builderProcess.BacktestAssemblyNodes.Count
+                        ? builderProcess.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description
+                        : builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {builderProcess.ExecutingBacktests} Nodes";
                     }
                 });
         }
 
         private void ResetBuilder()
         {
-            AssemblyBuilderProcessUP.Clear();
-            AssemblyBuilderProcessDOWN.Clear();
+            AssemblyBuilderProcessesUP.Clear();
+            AssemblyBuilderProcessesDOWN.Clear();
 
             var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
             foreach (var file in extractionTemplates)
             {
-                AssemblyBuilderProcessUP.Add(new BuilderProcess
+                AssemblyBuilderProcessesUP.Add(new BuilderProcess
                 {
                     ExtractionTemplatePath = file.FullName,
                     ExtractionTemplateName = file.Name,
                     ExtractionName = file.Name,
                     Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Description,
                     Tree = new(),
-                    BacktestNodes = new(),
+                    BacktestAssemblyNodes = new()
                 });
-                AssemblyBuilderProcessDOWN.Add(new BuilderProcess
+                AssemblyBuilderProcessesDOWN.Add(new BuilderProcess
                 {
                     ExtractionTemplatePath = file.FullName,
                     ExtractionTemplateName = file.Name,
                     ExtractionName = file.Name,
                     Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Description,
                     Tree = new(),
-                    BacktestNodes = new(),
+                    BacktestAssemblyNodes = new(),
                 });
             }
         }
@@ -575,11 +592,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private bool _canCancelOrContinue;
-        public bool CanCancelOrContinue
+        private bool _isStopped;
+        public bool IsStopped
         {
-            get => _canCancelOrContinue;
-            set => SetProperty(ref _canCancelOrContinue, value);
+            get => _isStopped;
+            set => SetProperty(ref _isStopped, value);
         }
 
         private ProjectConfigurationVM _projectConfiguration;
@@ -629,8 +646,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _meanSuccessRatePercentDOWN, value);
         }
 
-        public ObservableCollection<BuilderProcess> AssemblyBuilderProcessUP { get; set; }
-        public ObservableCollection<BuilderProcess> AssemblyBuilderProcessDOWN { get; set; }
+        public ObservableCollection<BuilderProcess> AssemblyBuilderProcessesUP { get; set; }
+        public ObservableCollection<BuilderProcess> AssemblyBuilderProcessesDOWN { get; set; }
 
         // IDisposable Implementation
 

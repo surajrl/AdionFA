@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
-using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
 using AdionFA.UI.Station.Infrastructure.Services;
@@ -32,27 +32,27 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
                 Nodes.Clear();
                 switch (flyout.ModelOne)
                 {
-                    case ObservableCollection<REPTreeNodeModel> collection:
+                    case ObservableCollection<NodeModel> collection:
                         Nodes.Add(collection);
                         break;
 
-                    case List<REPTreeNodeModel> list:
+                    case List<NodeModel> list:
                         Nodes.Add(list);
                         break;
 
                     case StrategyBuilderModel strategyBuilder:
-                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).WinningNodesDOWN);
                         Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).WinningNodesUP);
+                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).WinningNodesDOWN);
                         break;
 
-                    case REPTreeNodeModel node:
+                    case NodeModel node:
                         Nodes.Add(node);
                         break;
                 }
             }
         });
 
-        public static ICommand SaveNodeCommand => new DelegateCommand<REPTreeNodeModel>(node =>
+        public static ICommand SaveNodeCommand => new DelegateCommand<NodeModel>(node =>
         {
             var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
             var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
@@ -62,6 +62,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.Common
 
         // View Bindings
 
-        public ObservableCollection<REPTreeNodeModel> Nodes { get; set; }
+        public ObservableCollection<NodeModel> Nodes { get; set; }
     }
 }

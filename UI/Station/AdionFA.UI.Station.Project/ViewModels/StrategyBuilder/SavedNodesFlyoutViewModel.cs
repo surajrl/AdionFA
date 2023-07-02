@@ -2,6 +2,7 @@
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.UI.Station.Infrastructure;
 using AdionFA.UI.Station.Infrastructure.Base;
@@ -38,12 +39,12 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
                 _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory(), "*.xml").ToList()
                 .ForEach(file =>
                 {
-                    SavedNodes.Add(SerializerHelper.XMLDeSerializeObject<REPTreeNodeModel>(file.FullName));
+                    SavedNodes.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
                 });
             }
         });
 
-        public ICommand DeleteNodeCommand => new DelegateCommand<REPTreeNodeModel>(node =>
+        public ICommand DeleteNodeCommand => new DelegateCommand<NodeModel>(node =>
         {
             var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
             var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
@@ -58,6 +59,6 @@ namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
         // View Bindings
 
         public ObservableCollection<AssemblyNodeModel> SavedAssemblyNodes { get; set; }
-        public ObservableCollection<REPTreeNodeModel> SavedNodes { get; set; }
+        public ObservableCollection<NodeModel> SavedNodes { get; set; }
     }
 }

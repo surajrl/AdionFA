@@ -199,7 +199,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -225,7 +225,7 @@
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
-                                                <Binding Path="CrossingBuilder.StrategyNodesUP" />
+                                                <Binding Path="CrossingBuilder.WinningStrategyNodesUP" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
@@ -253,7 +253,7 @@
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
-                                                <Binding Path="CrossingBuilder.StrategyNodesDOWN" />
+                                                <Binding Path="CrossingBuilder.WinningStrategyNodesDOWN" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
@@ -265,8 +265,15 @@
                 </StackPanel>
                 <!--#endregion-->
 
-                <!--#region Current Strategy Node-->
-                <StackPanel Orientation="Horizontal">
+                <!--#region Maximum Parallelism Configuration-->
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="{StaticResource ColumnMargin}"
+                            Orientation="Horizontal">
+                    <Label Content="Maximum Parallelism" />
+                    <TextBox Text="{Binding MaxParallelism}"
+                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
                 </StackPanel>
                 <!--#endregion-->
             </Grid>
@@ -341,12 +348,11 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Expander Style="{StaticResource ControlExpanderStyle}"
-                                          IsEnabled="{Binding BacktestNodes.Count, Converter={StaticResource IntToBooleanConverter}}">
+                                          IsEnabled="{Binding BacktestStrategyNodes.Count, Converter={StaticResource IntToBooleanConverter}}">
                                     <Expander.Header>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 
@@ -359,18 +365,7 @@
                                                         <Run Text="{Binding CompletedBacktests}"
                                                              FontWeight="SemiBold" />
                                                         <Run Text="/" />
-                                                        <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
-                                                             FontWeight="SemiBold" />
-                                            </TextBlock>
-                                            <TextBlock Grid.Column="2"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center">
-                                                        <Run Text="Completed" />
-                                                        <Run Text=" - " />
-                                                        <Run Text="{Binding ProgressCounter}"
-                                                             FontWeight="SemiBold" />
-                                                        <Run Text="/" />
-                                                        <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                        <Run Text="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
                                                              FontWeight="SemiBold" />
                                             </TextBlock>
                                         </Grid>
@@ -394,8 +389,8 @@
                                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                         <behaviors:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                                <Binding Path="BacktestNodes" />
+                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
+                                                                <Binding Path="BacktestStrategyNodes" />
                                                             </MultiBinding>
                                                         </behaviors:InvokeCommandAction.CommandParameter>
                                                     </behaviors:InvokeCommandAction>
@@ -409,9 +404,20 @@
                                                                     Background="Transparent"
                                                                     Foreground="CadetBlue"
                                                                     Minimum="0"
-                                                                    Maximum="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                                    Maximum="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
                                                                     Value="{Binding ProgressCounter}" />
                                         </Grid>
+                                        <TextBlock Grid.Column="2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                            <Run Text="Completed" />
+                                            <Run Text=" - " />
+                                            <Run Text="{Binding ProgressCounter}"
+                                                 FontWeight="SemiBold" />
+                                            <Run Text="/" />
+                                            <Run Text="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
+                                                 FontWeight="SemiBold" />
+                                        </TextBlock>
                                     </Grid>
                                 </Expander>
                             </DataTemplate>
@@ -483,12 +489,11 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Expander Style="{StaticResource ControlExpanderStyle}"
-                                          IsEnabled="{Binding BacktestNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
+                                          IsEnabled="{Binding BacktestStrategyNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
                                     <Expander.Header>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 
@@ -501,7 +506,7 @@
                                                         <Run Text="{Binding CompletedBacktests}"
                                                              FontWeight="SemiBold" />
                                                         <Run Text="/" />
-                                                        <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                        <Run Text="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
                                                              FontWeight="SemiBold" />
                                             </TextBlock>
                                         </Grid>
@@ -525,8 +530,8 @@
                                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                         <behaviors:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                                <Binding Path="BacktestNodes" />
+                                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
+                                                                <Binding Path="BacktestStrategyNodes" />
                                                             </MultiBinding>
                                                         </behaviors:InvokeCommandAction.CommandParameter>
                                                     </behaviors:InvokeCommandAction>
@@ -540,9 +545,20 @@
                                                                     Background="Transparent"
                                                                     Foreground="CadetBlue"
                                                                     Minimum="0"
-                                                                    Maximum="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                                    Maximum="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
                                                                     Value="{Binding ProgressCounter}" />
                                         </Grid>
+                                        <TextBlock Grid.Column="2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                            <Run Text="Completed" />
+                                            <Run Text=" - " />
+                                            <Run Text="{Binding ProgressCounter}"
+                                                 FontWeight="SemiBold" />
+                                            <Run Text="/" />
+                                            <Run Text="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
+                                                 FontWeight="SemiBold" />
+                                        </TextBlock>
                                     </Grid>
                                 </Expander>
                             </DataTemplate>

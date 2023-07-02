@@ -63,6 +63,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\AdionFA.Core.Api.Contract\AdionFA.Core.API.Contracts.csproj" />
     <ProjectReference Include="..\..\Model\AdionFA.TransferObject\AdionFA.TransferObject.csproj" />
     <ProjectReference Include="..\AdionFA.Infrastructure.Enum\AdionFA.Infrastructure.Enum.csproj" />
   </ItemGroup>

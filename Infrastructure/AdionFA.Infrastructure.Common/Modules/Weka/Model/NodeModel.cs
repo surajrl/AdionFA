@@ -1,19 +1,19 @@
 ﻿using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
+using AdionFA.Infrastructure.Common.Weka.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace AdionFA.Infrastructure.Common.Weka.Model
+namespace AdionFA.Infrastructure.Common.Modules.Weka.Model
 {
-    public class AssemblyNodeModel
+    public class NodeModel
     {
-        // Assemebly Node
+        // Node
 
         public bool WinningStrategy { get; set; }
 
-        public REPTreeNodeModel ParentNodeData { get; set; }
-        public List<REPTreeNodeModel> ChildNodesData { get; set; }
+        public REPTreeNodeModel NodeData { get; set; }
 
         // Backtest
 
@@ -29,7 +29,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Model
             {
                 var indicators = new List<string>();
 
-                ParentNodeData.Node.ForEach(n =>
+                NodeData.Node.ForEach(n =>
                 {
                     var f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
                     string[] divisions = null;
@@ -84,7 +84,7 @@ namespace AdionFA.Infrastructure.Common.Weka.Model
                 });
 
                 var indicatorsName = string.Join("_", indicators);
-                var name = $"{indicatorsName}-{ParentNodeData.Label}-{BacktestIS.TotalTrades}-{BacktestOS.TotalTrades}";
+                var name = $"{indicatorsName}-{NodeData.Label}-{BacktestIS.TotalTrades}-{BacktestOS.TotalTrades}";
 
                 return name;
             }

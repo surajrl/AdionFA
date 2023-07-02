@@ -26,10 +26,10 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
             Candle currentCandle)
         {
             candleHistory.Add(currentCandle);
-            if (IsTrade(assembledNode.ParentNode.Node, candleHistory, currentCandle))
+            if (IsTrade(assembledNode.ParentNodeData.Node, candleHistory, currentCandle))
             {
                 // Try every child node until one is met
-                foreach (var childNode in assembledNode.ChildNodes)
+                foreach (var childNode in assembledNode.ChildNodesData)
                 {
                     if (IsTrade(childNode, candleHistory, currentCandle))
                     {
