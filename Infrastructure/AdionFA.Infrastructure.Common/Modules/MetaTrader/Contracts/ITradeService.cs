@@ -8,7 +8,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Contracts
 {
     public interface ITradeService
     {
-        ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType);
+        ZmqMsgRequestModel OpenOperation(string symbol, OrderTypeEnum orderType);
 
         bool IsTrade(IList<string> singleNode, IList<Candle> candleHistory, Candle currentCandle);
     }

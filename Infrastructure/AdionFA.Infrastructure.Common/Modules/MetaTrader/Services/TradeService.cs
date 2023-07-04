@@ -4,7 +4,6 @@ using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
 using AdionFA.Infrastructure.Enums;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,15 +19,13 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
         }
 
 
-        public ZmqMsgRequestModel OpenOperation(OrderTypeEnum orderType)
+        public ZmqMsgRequestModel OpenOperation(string symbol, OrderTypeEnum orderType)
         {
-            var request = new ZmqMsgRequestModel
+            return new ZmqMsgRequestModel
             {
-                UUID = Guid.NewGuid().ToString(),
+                Symbol = symbol,
                 OrderType = orderType,
             };
-
-            return request;
         }
 
         public bool IsTrade(
@@ -42,11 +39,6 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                 currentCandle,
                 nodeIndicators,
                 candleHistory.ToList());
-
-            if (!nodeIndicatorsResult.Any())
-            {
-                return false;
-            }
 
             // Check each indicator
             for (var i = 0; i < nodeIndicatorsResult.Count; i++)

@@ -1,5 +1,4 @@
 ﻿using AdionFA.Infrastructure.Common.Extractor.Model;
-using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
@@ -13,7 +12,6 @@ using AdionFA.UI.Station.Infrastructure.Helpers;
 using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
 using AdionFA.UI.Station.Infrastructure.Model.Project;
 using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.Enums;
 using AdionFA.UI.Station.Project.EventAggregator;
 using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.MetaTrader;
@@ -89,10 +87,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public ICommand StopCommand => new DelegateCommand(() =>
-        {
-            _cancellationTokenSource.Cancel();
-        }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        public ICommand StopCommand => new DelegateCommand(_cancellationTokenSource.Cancel,
+            () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public ICommand ProcessCommand => new DelegateCommand(async () =>
         {
@@ -101,44 +97,22 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                _cancellationTokenSource = new CancellationTokenSource();
-
-                _firstCompleteCandleReceived = false;
-
-                var requestSocketProgress = new Progress<ZmqMsgModel>();
-                requestSocketProgress.ProgressChanged += (senderOfProgressChanged, nextItem) =>
-                {
-                    MessageOutput.Insert(0, nextItem);
-                };
+                _cancellationTokenSource = new();
 
                 var subscriberSocketProgress = new Progress<ZmqMsgModel>();
                 subscriberSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
                 {
-                    if (!_firstCompleteCandleReceived && !nextItem.IsNewCandle)
-                    {
-                        _firstCompleteCandleReceived = true;
 
-                        return;
-                    }
-
-                    if (nextItem.IsNewCandle)
+                    if (nextItem.IsCurrentCandle)
                     {
                         // Current candle with only the open price
-                        _currentCandle = new Candle
-                        {
-                            Date = nextItem.Date.AddSeconds((long)TimeSpan.Parse(nextItem.Time, CultureInfo.InvariantCulture).TotalSeconds),
-                            Time = (long)TimeSpan.Parse(nextItem.Time, CultureInfo.InvariantCulture).TotalSeconds,
-                            Open = (double)nextItem.Open,
-                            High = (double)nextItem.Open,
-                            Low = (double)nextItem.Open,
-                            Close = (double)nextItem.Open,
-                        };
+
                     }
                     else
                     {
                         // Complete candle
                         MessageInput.Insert(0, nextItem);
-                        await RequestSocketAsync(requestSocketProgress);
+                        await RequestSocketAsync();
                     }
                 };
 
@@ -151,7 +125,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             finally
             {
-                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource?.Dispose();
+                _cancellationTokenSource = null;
+
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
@@ -163,15 +139,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private async Task SubscriberSocket(IProgress<ZmqMsgModel> progress)
         {
-            await Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(async () =>
             {
                 using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PublisherPort}");
                 subscriber.Subscribe("");
 
                 try
                 {
-                    _cancellationTokenSource ??= new CancellationTokenSource();
-
                     while (true)
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
@@ -185,26 +159,41 @@ namespace AdionFA.UI.Station.Project.ViewModels
                             Debug.WriteLine($"SubscriberSocket-Receive:{message}");
 
                             zmqModel.Id = MessageInput.Count;
-                            zmqModel.TemporalityName = EnumUtil.GetTimeframeEnum(zmqModel.Temporality).GetMetadata().Name;
                             zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                            zmqModel.PutType = (int)MessageZMQPutType.Input;
-                            zmqModel.PutTypeName = MessageZMQPutType.Input.GetMetadata().Name;
 
-                            progress.Report(zmqModel);
+                            if (zmqModel.IsCurrentCandle)
+                            {
+                                _currentCandle = new Candle
+                                {
+                                    Date = zmqModel.Date.AddSeconds((long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds),
+                                    Time = (long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds,
+                                    Open = (double)zmqModel.Open,
+                                    High = (double)zmqModel.Open,
+                                    Low = (double)zmqModel.Open,
+                                    Close = (double)zmqModel.Open,
+                                };
+                            }
+                            else
+                            {
+                                MessageInput.Insert(0, zmqModel);
+                                await RequestSocketAsync(); // THIS WILL WAIT FOR METHOD TO FINISH !!
+                            }
                         }
                     }
+                }
+                catch (OperationCanceledException)
+                {
+                    // Stop pressed ...
                 }
                 catch (Exception ex)
                 {
                     Trace.TraceError(ex.Message);
                     Debug.WriteLine($"SubscriberSocket:{ex.Message}");
-
-                    _cancellationTokenSource.Cancel();
                 }
             });
         }
 
-        private async Task RequestSocketAsync(IProgress<ZmqMsgModel> progress)
+        private async Task RequestSocketAsync()
         {
             await Task.Factory.StartNew(() =>
             {
@@ -212,8 +201,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 try
                 {
-                    _cancellationTokenSource ??= new CancellationTokenSource();
-
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                     if (Nodes != null || AssemblyNode != null)
@@ -333,16 +320,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         if (isTrade)
                         {
                             // Open operation request -----------------------------------------------
-                            if (label.ToLowerInvariant() == "up")
-                            {
-                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy)));
-                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Buy))}");
-                            }
-                            else
-                            {
-                                requester.SendFrame(JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell)));
-                                Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(_tradeService.OpenOperation(OrderTypeEnum.Sell))}");
-                            }
+                            var operationRequest = label.ToLowerInvariant() == "up"
+                            ? _tradeService.OpenOperation(ProjectConfiguration.Symbol.Value, OrderTypeEnum.Buy)
+                            : _tradeService.OpenOperation(ProjectConfiguration.Symbol.Value, OrderTypeEnum.Sell);
+
+                            requester.SendFrame(JsonConvert.SerializeObject(operationRequest));
+                            Debug.WriteLine($"RequestSocket-Send:{operationRequest}");
                             //-----------------------------------------------------------------------
 
                             // Open operation response ----------------------------------------------
@@ -351,29 +334,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                             var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
 
-                            var model = new ZmqMsgModel
+                            var zmqResponse = new ZmqMsgModel
                             {
                                 Id = MessageOutput.Count + 1,
                                 Date = _currentCandle.Date,
                                 DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
-                                PutType = (int)MessageZMQPutType.Output,
-                                PutTypeName = MessageZMQPutType.Output.GetMetadata().Name,
-                                PositionType = (int)response.OrderType,
-                                PositionTypeName = response.OrderType.GetMetadata().Name,
                                 Volume = decimal.Parse(response.Volume, CultureInfo.InvariantCulture)
                             };
 
-                            progress.Report(model);
+                            MessageOutput.Insert(0, zmqResponse);
                             //-----------------------------------------------------------------------
                         }
                     }
+                }
+                catch (OperationCanceledException)
+                {
+                    // Stop pressed ...
                 }
                 catch (Exception ex)
                 {
                     Trace.TraceError(ex.Message);
                     Debug.WriteLine($"RequestSocket:{ex.Message}");
-
-                    _cancellationTokenSource.Cancel();
                 }
             });
         }
@@ -468,11 +449,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ProjectConfigurationVM __projectConfiguration;
+        private ProjectConfigurationVM _projectConfiguration;
         public ProjectConfigurationVM ProjectConfiguration
         {
-            get => __projectConfiguration;
-            set => SetProperty(ref __projectConfiguration, value);
+            get => _projectConfiguration;
+            set => SetProperty(ref _projectConfiguration, value);
         }
 
         private ExpertAdvisorVM _expertAdvisor;
@@ -538,7 +519,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _messageOutput, value);
         }
 
-        // IDisposable Implementation
+        // IDisposable
 
         protected virtual void Dispose(bool disposing)
         {
