@@ -33,9 +33,9 @@ namespace AdionFA.Infrastructure.Common.Weka.Model
             {
                 var indicators = new List<string>();
 
-                ParentNodeData.Node.ForEach(n =>
+                ParentNodeData.Node.ForEach(node =>
                 {
-                    var f = n.Replace("|", string.Empty).Replace(" ", string.Empty);
+                    var f = node.Replace("|", string.Empty).Replace(" ", string.Empty);
                     string[] divisions = null;
 
                     // Operator Split

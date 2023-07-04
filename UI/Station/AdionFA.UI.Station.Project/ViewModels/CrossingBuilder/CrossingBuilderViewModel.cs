@@ -252,7 +252,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public ICommand Reset => new DelegateCommand(() =>
         {
             // Delete Crossing Builder Nodes
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDirectory(), "*.xml", option: SearchOption.AllDirectories, isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDirectory(), "*.xml", option: SearchOption.AllDirectories, isBackup: true);
             // Delete Crossing Builder Extractions
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
@@ -314,7 +314,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 CrossingBuilder.WinningStrategyNodesDOWN.Clear();
 
                 // Delete Crossing Builder Nodes
-                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDirectory(), "*.xml", option: SearchOption.AllDirectories, isBackup: false);
+                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDirectory(), "*.xml", option: SearchOption.AllDirectories, isBackup: true);
                 // Delete Crossing Builder Extractions
                 _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
                 _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
@@ -545,8 +545,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         return newStrategyNode;
                     }).ToList();
 
-                // VERIFY CROSSING BUILDER IS WORKING PROPERLY WHEN CORSSING MULTIPLE HISTORICAL DATAS
-
                 backtestNodes.AddRange(nodes);
                 process.BacktestStrategyNodes.Clear();
                 process.BacktestStrategyNodes.AddRange(nodes);
@@ -554,7 +552,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+                if (process.BacktestStrategyNodes.Count == 0)
+                {
+                    // No backtests to do
+                    process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description;
+                }
+                else
+                {
+                    process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+                }
             }
 
             return backtestNodes;
@@ -580,6 +586,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     ? CrossingBuilderProcessesUP.Where(process => process.BacktestStrategyNodes.Any(processNode => processNode == backtestingNode)).FirstOrDefault()
                     : CrossingBuilderProcessesDOWN.Where(process => process.BacktestStrategyNodes.Any(processNode => processNode == backtestingNode)).FirstOrDefault();
 
+                    // Lock due to process being shared by other threads, as one
+                    // process could be working on various backtests in parallel
                     lock (_lock)
                     {
                         process.ExecutingBacktests++;
@@ -606,6 +614,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         }
                     }
 
+                    // Lock due to process being shared by other threads, as one
+                    // process could be working on various backtests in parallel
                     lock (_lock)
                     {
                         process.ExecutingBacktests--;

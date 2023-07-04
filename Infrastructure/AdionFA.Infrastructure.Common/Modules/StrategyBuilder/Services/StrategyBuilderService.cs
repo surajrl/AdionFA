@@ -379,12 +379,20 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
-            var candlesRange = (from candle in mainCandles
-                                let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
-                                where dt >= fromDate && dt <= toDate
-                                select candle).ToList();
+            var backtest = new BacktestModel
+            {
+                FromDate = fromDate,
+                ToDate = toDate,
+                TimeframeId = timeframeId,
+                BacktestOperations = new List<BacktestOperationModel>()
+            };
 
-            var crossingCandles = new List<List<Candle>>();
+            var mainCandlesRange = (from candle in mainCandles
+                                    let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
+                                    where dt >= fromDate && dt <= toDate
+                                    select candle).ToList();
+
+            var crossingCandlesRange = new Dictionary<int, List<Candle>>();
 
             foreach (var crossingNode in strategyNode.CrossingNodesData)
             {
@@ -410,49 +418,42 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                              let dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time)
                              where dt >= fromDate && dt <= toDate
                              select candle).ToList();
-                crossingCandles.Add(range);
+
+                crossingCandlesRange.Add(crossingNode.Item2, range);
             }
 
-            var backtest = new BacktestModel
-            {
-                FromDate = fromDate,
-                ToDate = toDate,
-                TimeframeId = timeframeId,
-                BacktestOperations = new List<BacktestOperationModel>()
-            };
-
-            var mainFirstCandle = candlesRange[0];
+            var mainFirstCandle = mainCandlesRange[0];
             var parentNodeIndicators = _extractorService.BuildIndicatorsFromNode(strategyNode.ParentNodeData.Node).ToList();
 
-            for (var idx = 0; idx < candlesRange.Count - 1; idx++)
+            for (var idx = 0; idx < mainCandlesRange.Count - 1; idx++)
             {
-                backtest.TotalOpportunity++;
-
-                manualResetEvent.Wait(cancellationToken);
+                manualResetEvent.Wait();
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var currentMainCandle = new Candle
+                backtest.TotalOpportunity++;
+
+                var mainCurrentCandle = new Candle
                 {
-                    Date = candlesRange[idx].Date,
-                    Time = candlesRange[idx].Time,
+                    Date = mainCandlesRange[idx].Date,
+                    Time = mainCandlesRange[idx].Time,
 
-                    Open = candlesRange[idx].Open,
-                    High = candlesRange[idx].Open,
-                    Low = candlesRange[idx].Open,
-                    Close = candlesRange[idx].Open,
+                    Open = mainCandlesRange[idx].Open,
+                    High = mainCandlesRange[idx].Open,
+                    Low = mainCandlesRange[idx].Open,
+                    Close = mainCandlesRange[idx].Open,
 
-                    Spread = candlesRange[idx].Spread
+                    Spread = mainCandlesRange[idx].Spread
                 };
 
                 // Has to approve the parent node         
-                if (ApproveCandle(parentNodeIndicators, idx, mainFirstCandle, currentMainCandle, candlesRange))
+                if (ApproveCandle(parentNodeIndicators, idx, mainFirstCandle, mainCurrentCandle, mainCandlesRange))
                 {
                     // Has to approve one of the child nodes
                     var childNodePass = false;
                     foreach (var childNode in strategyNode.ChildNodesData)
                     {
                         var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
-                        if (ApproveCandle(childNodeIndicators, idx, mainFirstCandle, currentMainCandle, candlesRange))
+                        if (ApproveCandle(childNodeIndicators, idx, mainFirstCandle, mainCurrentCandle, mainCandlesRange))
                         {
                             childNodePass = true;
                             break;
@@ -467,25 +468,25 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                     // Has to approve all of the crossing nodes
                     var crossingNodePass = true;
-                    for (var i = 0; i < strategyNode.CrossingNodesData.Count; i++)
+                    foreach (var crossingNode in strategyNode.CrossingNodesData)
                     {
-                        var c = crossingCandles[i];
+                        var candles = crossingCandlesRange.GetValueOrDefault(crossingNode.Item2);
 
                         var currentCandle = new Candle
                         {
-                            Date = c[idx].Date,
-                            Time = c[idx].Time,
+                            Date = candles[idx].Date,
+                            Time = candles[idx].Time,
 
-                            Open = c[idx].Open,
-                            High = c[idx].Open,
-                            Low = c[idx].Open,
-                            Close = c[idx].Open,
+                            Open = candles[idx].Open,
+                            High = candles[idx].Open,
+                            Low = candles[idx].Open,
+                            Close = candles[idx].Open,
 
-                            Spread = c[idx].Spread
+                            Spread = candles[idx].Spread
                         };
 
-                        var crossingNodeIndicators = _extractorService.BuildIndicatorsFromNode(strategyNode.CrossingNodesData[i].Item1.Node).ToList();
-                        if (!ApproveCandle(crossingNodeIndicators, idx, c[0], currentCandle, c))
+                        var crossingNodeIndicators = _extractorService.BuildIndicatorsFromNode(crossingNode.Item1.Node).ToList();
+                        if (!ApproveCandle(crossingNodeIndicators, idx, candles[0], currentCandle, candles))
                         {
                             crossingNodePass = false;
                             break;
@@ -501,11 +502,11 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
                     backtest.TotalTrades++;
 
                     var isWinnerTrade = false;
-                    var spread = currentMainCandle.Spread * 0.00001;
+                    var spread = mainCurrentCandle.Spread * 0.00001;
 
                     isWinnerTrade = strategyNode.ParentNodeData.Label.ToLowerInvariant() == "up"
-                        ? (currentMainCandle.Open + spread) < candlesRange[idx + 1].Open
-                        : currentMainCandle.Open > (candlesRange[idx + 1].Open + spread);
+                        ? (mainCurrentCandle.Open + spread) < mainCandlesRange[idx + 1].Open
+                        : mainCurrentCandle.Open > (mainCandlesRange[idx + 1].Open + spread);
 
                     if (isWinnerTrade)
                     {
@@ -518,7 +519,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
                     backtest.BacktestOperations.Add(new BacktestOperationModel
                     {
-                        Date = DateTimeHelper.BuildDateTime(timeframeId, currentMainCandle.Date, currentMainCandle.Time),
+                        Date = DateTimeHelper.BuildDateTime(timeframeId, mainCurrentCandle.Date, mainCurrentCandle.Time),
                         IsWinner = isWinnerTrade
                     });
                 }
@@ -555,7 +556,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
 
             for (var idx = 0; idx < candlesRange.Count - 1; idx++)
             {
-                manualResetEvent.Wait(cancellationToken);
+                manualResetEvent.Wait();
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var firstCandle = candlesRange[0];

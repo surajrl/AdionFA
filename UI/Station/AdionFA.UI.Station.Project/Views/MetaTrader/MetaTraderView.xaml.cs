@@ -14,24 +14,31 @@ namespace AdionFA.UI.Station.Project.Views
             InitializeComponent();
         }
 
+        private void TestStrategyNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (((MetaTraderViewModel)DataContext).TestStrategyNode)
+            {
+                ((MetaTraderViewModel)DataContext).TestNodes = false;
+                ((MetaTraderViewModel)DataContext).TestAssemblyNode = false;
+            }
+        }
+
         private void TestAssemblyNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!((MetaTraderViewModel)DataContext).TestNodes)
+            if (((MetaTraderViewModel)DataContext).TestAssemblyNode)
             {
-                return;
+                ((MetaTraderViewModel)DataContext).TestNodes = false;
+                ((MetaTraderViewModel)DataContext).TestStrategyNode = false;
             }
-
-            ((MetaTraderViewModel)DataContext).TestNodes = !((MetaTraderViewModel)DataContext).TestAssemblyNode;
         }
 
         private void TestNodesToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!((MetaTraderViewModel)DataContext).TestAssemblyNode)
+            if (((MetaTraderViewModel)DataContext).TestNodes)
             {
-                return;
+                ((MetaTraderViewModel)DataContext).TestAssemblyNode = false;
+                ((MetaTraderViewModel)DataContext).TestStrategyNode = false;
             }
-
-            ((MetaTraderViewModel)DataContext).TestAssemblyNode = !((MetaTraderViewModel)DataContext).TestNodes;
         }
     }
 }

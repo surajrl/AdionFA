@@ -179,7 +179,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -196,10 +196,10 @@
                 </TextBlock>
                 <!--#endregion-->
 
-                <!--#region Clean Buttons-->
+                <!--Clean Buttons-->
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal">
-                    <!--#region Clean Input-->
+                    <!--Clean Input-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button Command="{Binding CleanMessageInputCommand}"
                                 IsEnabled="{Binding MessageInput.Count, Mode=OneWay, Converter={StaticResource IntToBooleanConverter}}"
@@ -214,8 +214,8 @@
                             </StackPanel>
                         </Button>
                     </Grid>
-                    <!--#endregion-->
-                    <!--#region Clean Output-->
+                    
+                    <!--Clean Output-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button Command="{Binding CleanMessageOutputCommand}"
                                 IsEnabled="{Binding MessageOutput.Count, Mode=OneWay, Converter={StaticResource IntToBooleanConverter}}"
@@ -230,13 +230,17 @@
                             </StackPanel>
                         </Button>
                     </Grid>
-                    <!--#endregion-->
                 </StackPanel>
-                <!--#endregion-->
 
-                <!--#region Toggle Switch-->
+                <!--Toggle Switch-->
                 <StackPanel Grid.Column="2"
                             Orientation="Horizontal">
+                    <StackPanel>
+                        <Label Content="Test Strategy Node" />
+                        <metro:ToggleSwitch Toggled="TestStrategyNodeToggleSwitch_Toggled"
+                                            IsEnabled="{Binding CanExecute}"
+                                            IsOn="{Binding TestStrategyNode, Mode=TwoWay}" />
+                    </StackPanel>
                     <StackPanel>
                         <Label Content="Test Assembly Node" />
                         <metro:ToggleSwitch Toggled="TestAssemblyNodeToggleSwitch_Toggled"
@@ -250,33 +254,31 @@
                                             IsOn="{Binding TestNodes, Mode=TwoWay}" />
                     </StackPanel>
                 </StackPanel>
-                <!--#endregion-->
 
-                <!--#region Buttons-->
+                <!--Strategy, Assembly & Nodes Buttons-->
                 <StackPanel Grid.Column="3"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <!--#region Assembly Node-->
+                    <!--Strategy Node-->
                     <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="assembledNodesBtn"
+                        <Button x:Name="strategyNodesBtn"
                                 Width="125"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="GraphOutline"
+                                <iconPacks:PackIconMaterial Kind="Graph"
                                                             VerticalAlignment="Center"
                                                             Width="15" />
-                                <Label Content="Assembly Node"
+                                <Label Content="Strategy Node"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="assembledNodesBtn"
+                                <behaviors:EventTrigger SourceName="strategyNodesBtn"
                                                         EventName="Click">
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
-                                                <Binding Path="AssemblyNode" />
-                                                <Binding Path="AssemblyNode.ChildNodes" />
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
+                                                <Binding Path="StrategyNode" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
@@ -284,13 +286,40 @@
                             </behaviors:Interaction.Triggers>
                         </Button>
                     </Grid>
-                    <!--#region Nodes-->
+                    <!--Assembly Node-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button x:Name="assemblyNodesBtn"
+                                Width="125"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Graph"
+                                                            VerticalAlignment="Center"
+                                                            Width="15" />
+                                <Label Content="Assembly Node"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="assemblyNodesBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                                <Binding Path="AssemblyNode" />
+                                            </MultiBinding>
+                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                    </behaviors:InvokeCommandAction>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                    </Grid>
+                    <!--Nodes-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="nodeBtn"
                                 Width="80"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="FileTreeOutline"
+                                <iconPacks:PackIconMaterial Kind="Graph"
                                                             VerticalAlignment="Center"
                                                             Width="15" />
                                 <Label Content="Nodes"

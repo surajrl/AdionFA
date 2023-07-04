@@ -3,6 +3,7 @@ using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
 using AdionFA.Infrastructure.Common.MetaTrader.Contracts;
 using AdionFA.Infrastructure.Common.MetaTrader.Model;
+using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
@@ -64,18 +65,27 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
-            Nodes = new();
             MessageInput = new();
             MessageOutput = new();
-
-            PopulateViewModel();
         }
 
-        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
+        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
         {
             if (item == HamburgerMenuItems.MetaTrader.Replace(" ", string.Empty))
             {
-                PopulateViewModel();
+                try
+                {
+                    ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
+
+                    ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(ProcessArgs.ProjectId);
+                    ExpertAdvisor ??= new();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message);
+
+                    throw;
+                }
             }
         });
 
@@ -132,7 +142,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     }
                 };
 
-                await SubSocket(subscriberSocketProgress);
+                await SubscriberSocket(subscriberSocketProgress);
             }
             catch (Exception ex)
             {
@@ -145,12 +155,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = false;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
-        }, () => !IsTransactionActive && (TestNodes || TestAssemblyNode))
+        }, () => !IsTransactionActive && (TestNodes || TestAssemblyNode || TestStrategyNode))
             .ObservesProperty(() => IsTransactionActive)
             .ObservesProperty(() => TestNodes)
-            .ObservesProperty(() => TestAssemblyNode);
+            .ObservesProperty(() => TestAssemblyNode)
+            .ObservesProperty(() => TestStrategyNode);
 
-        private async Task SubSocket(IProgress<ZmqMsgModel> progress)
+        private async Task SubscriberSocket(IProgress<ZmqMsgModel> progress)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -169,8 +180,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                         if (subscriber.TryReceiveFrameString(ts, out var message) && !string.IsNullOrWhiteSpace(message))
                         {
+                            // Candle data received
                             var zmqModel = JsonConvert.DeserializeObject<ZmqMsgModel>(message);
-                            Debug.WriteLine("SubscriberSocket-Receive:" + message);
+                            Debug.WriteLine($"SubscriberSocket-Receive:{message}");
 
                             zmqModel.Id = MessageInput.Count;
                             zmqModel.TemporalityName = EnumUtil.GetTimeframeEnum(zmqModel.Temporality).GetMetadata().Name;
@@ -226,28 +238,96 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                         if (TestNodes)
                         {
+                            candles.Add(_currentCandle);
+
                             foreach (var node in Nodes)
                             {
                                 isTrade = _tradeService.IsTrade(
-                                    node,
+                                    node.NodeData.Node,
                                     candles,
                                     _currentCandle);
 
                                 if (isTrade)
                                 {
-                                    label = node.Label;
                                     break;
                                 }
                             }
+
+                            label = Nodes[0].NodeData.Label;
                         }
                         else if (TestAssemblyNode)
                         {
+                            candles.Add(_currentCandle);
+
+                            // Test for parent node
                             isTrade = _tradeService.IsTrade(
-                                AssemblyNode,
+                                AssemblyNode.ParentNodeData.Node,
                                 candles,
                                 _currentCandle);
 
+                            if (!isTrade)
+                            {
+                                return;
+                            }
+
+                            // Test for one child node
+                            foreach (var childNode in AssemblyNode.ChildNodesData)
+                            {
+                                isTrade = _tradeService.IsTrade(
+                                    childNode.Node,
+                                    candles,
+                                    _currentCandle);
+
+                                if (isTrade)
+                                {
+                                    break;
+                                }
+                            }
+
                             label = AssemblyNode.ParentNodeData.Label;
+                        }
+                        else if (TestStrategyNode)
+                        {
+                            // Test for parent node
+                            isTrade = _tradeService.IsTrade(
+                                StrategyNode.ParentNodeData.Node,
+                                candles,
+                                _currentCandle);
+
+                            if (!isTrade)
+                            {
+                                return;
+                            }
+
+                            // Test for every crossing node
+                            foreach (var crossingNode in StrategyNode.CrossingNodesData)
+                            {
+                                isTrade = _tradeService.IsTrade(
+                                    crossingNode.Item1.Node,
+                                    /* crossing candles */ null,
+                                    /* current crossing candle*/ null);
+
+                                if (!isTrade)
+                                {
+                                    return;
+                                }
+                            }
+
+                            // Test for one child node
+                            foreach (var childNode in StrategyNode.ChildNodesData)
+                            {
+                                isTrade = _tradeService.IsTrade(
+                                    childNode.Node,
+                                    candles,
+                                    _currentCandle);
+
+                                if (isTrade)
+                                {
+                                    break;
+                                }
+                            }
+
+                            label = StrategyNode.ParentNodeData.Label;
                         }
 
                         if (isTrade)
@@ -304,7 +384,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is REPTreeNodeModel singleNode)
+            if (item is NodeModel singleNode)
             {
                 if (Nodes.IndexOf(singleNode) == -1)
                 {
@@ -316,11 +396,16 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 AssemblyNode = assembledNode;
             }
+
+            if (item is StrategyNodeModel strategyNode)
+            {
+                StrategyNode = strategyNode;
+            }
         });
 
         public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is REPTreeNodeModel singleNode) // Unboxing ??
+            if (item is NodeModel singleNode)
             {
                 Nodes.Remove(singleNode);
             }
@@ -328,6 +413,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             if (item is AssemblyNodeModel assembledNode)
             {
                 AssemblyNode = null;
+            }
+
+            if (item is StrategyNodeModel strategyNode)
+            {
+                StrategyNode = null;
             }
         });
 
@@ -362,24 +452,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        private async void PopulateViewModel()
-        {
-            try
-            {
-                _project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
-                Configuration = _project?.ProjectConfigurations.FirstOrDefault();
-
-                ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(_project.ProjectId);
-                ExpertAdvisor ??= new();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-
-                throw;
-            }
-        }
-
         // Bindable Model
 
         private bool _isTransactionActive;
@@ -396,11 +468,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _canExecute, value);
         }
 
-        private ProjectConfigurationVM _configuration;
-        public ProjectConfigurationVM Configuration
+        private ProjectConfigurationVM __projectConfiguration;
+        public ProjectConfigurationVM ProjectConfiguration
         {
-            get => _configuration;
-            set => SetProperty(ref _configuration, value);
+            get => __projectConfiguration;
+            set => SetProperty(ref __projectConfiguration, value);
         }
 
         private ExpertAdvisorVM _expertAdvisor;
@@ -408,6 +480,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             get => _expertAdvisor;
             set => SetProperty(ref _expertAdvisor, value);
+        }
+
+        private bool _testStrategyNode;
+        public bool TestStrategyNode
+        {
+            get => _testStrategyNode;
+            set => SetProperty(ref _testStrategyNode, value);
         }
 
         private bool _testAssemblyNode;
@@ -424,8 +503,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _testNodes, value);
         }
 
-        private ObservableCollection<REPTreeNodeModel> _nodes;
-        public ObservableCollection<REPTreeNodeModel> Nodes
+        private ObservableCollection<NodeModel> _nodes;
+        public ObservableCollection<NodeModel> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);
@@ -436,6 +515,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             get => _assembledNode;
             set => SetProperty(ref _assembledNode, value);
+        }
+
+        private StrategyNodeModel _strategyNode;
+        public StrategyNodeModel StrategyNode
+        {
+            get => _strategyNode;
+            set => SetProperty(ref _strategyNode, value);
         }
 
         private ObservableCollection<ZmqMsgModel> _messageInput;
