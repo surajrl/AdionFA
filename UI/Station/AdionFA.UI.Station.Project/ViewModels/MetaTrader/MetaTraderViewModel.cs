@@ -29,6 +29,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace AdionFA.UI.Station.Project.ViewModels
@@ -39,14 +40,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private readonly IProjectServiceAgent _projectService;
         private readonly IServiceAgent _serviceAgent;
+        private readonly IMarketDataServiceAgent _marketDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
-        private ProjectVM _project;
         private CancellationTokenSource _cancellationTokenSource;
-        private bool _firstCompleteCandleReceived;
+        private ManualResetEventSlim _manualResetEventSlim;
         private Candle _currentCandle;
         private bool _disposedValue;
+        private string _mainSymbol;
 
         public MetaTraderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
@@ -56,6 +58,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _serviceAgent = ContainerLocator.Current.Resolve<IServiceAgent>();
             _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
+            _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
             ContainerLocator.Current.Resolve<IApplicationCommands>().AddNodeToMetaTrader.RegisterCommand(AddNodeToMetaTrader);
@@ -65,6 +68,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             MessageInput = new();
             MessageOutput = new();
+
+            _manualResetEventSlim = new(false);
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
@@ -74,6 +79,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 try
                 {
                     ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
+                    var s = await _marketDataService.GetSymbolAsync(ProjectConfiguration.SymbolId).ConfigureAwait(true);
+                    _mainSymbol = s.Value;
 
                     ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(ProcessArgs.ProjectId);
                     ExpertAdvisor ??= new();
@@ -87,8 +94,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public ICommand StopCommand => new DelegateCommand(_cancellationTokenSource.Cancel,
-            () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        public ICommand StopCommand => new DelegateCommand(() =>
+        {
+            _cancellationTokenSource.Cancel();
+        }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public ICommand ProcessCommand => new DelegateCommand(async () =>
         {
@@ -99,24 +108,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 _cancellationTokenSource = new();
 
-                var subscriberSocketProgress = new Progress<ZmqMsgModel>();
-                subscriberSocketProgress.ProgressChanged += async (senderOfProgressChanged, nextItem) =>
-                {
-
-                    if (nextItem.IsCurrentCandle)
-                    {
-                        // Current candle with only the open price
-
-                    }
-                    else
-                    {
-                        // Complete candle
-                        MessageInput.Insert(0, nextItem);
-                        await RequestSocketAsync();
-                    }
-                };
-
-                await SubscriberSocket(subscriberSocketProgress);
+                Task.Factory.StartNew(() => Subscriber());
+                await Task.Factory.StartNew(() => Requester()).ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -137,226 +130,219 @@ namespace AdionFA.UI.Station.Project.ViewModels
             .ObservesProperty(() => TestAssemblyNode)
             .ObservesProperty(() => TestStrategyNode);
 
-        private async Task SubscriberSocket(IProgress<ZmqMsgModel> progress)
+        private void Subscriber()
         {
-            await Task.Factory.StartNew(async () =>
+            using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PublisherPort}");
+
+            try
             {
-                using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PublisherPort}");
                 subscriber.Subscribe("");
 
-                try
-                {
-                    while (true)
-                    {
-                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                        var ts = TimeSpan.FromMilliseconds(1000);
-
-                        if (subscriber.TryReceiveFrameString(ts, out var message) && !string.IsNullOrWhiteSpace(message))
-                        {
-                            // Candle data received
-                            var zmqModel = JsonConvert.DeserializeObject<ZmqMsgModel>(message);
-                            Debug.WriteLine($"SubscriberSocket-Receive:{message}");
-
-                            zmqModel.Id = MessageInput.Count;
-                            zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
-                            if (zmqModel.IsCurrentCandle)
-                            {
-                                _currentCandle = new Candle
-                                {
-                                    Date = zmqModel.Date.AddSeconds((long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds),
-                                    Time = (long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds,
-                                    Open = (double)zmqModel.Open,
-                                    High = (double)zmqModel.Open,
-                                    Low = (double)zmqModel.Open,
-                                    Close = (double)zmqModel.Open,
-                                };
-                            }
-                            else
-                            {
-                                MessageInput.Insert(0, zmqModel);
-                                await RequestSocketAsync(); // THIS WILL WAIT FOR METHOD TO FINISH !!
-                            }
-                        }
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    // Stop pressed ...
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message);
-                    Debug.WriteLine($"SubscriberSocket:{ex.Message}");
-                }
-            });
-        }
-
-        private async Task RequestSocketAsync()
-        {
-            await Task.Factory.StartNew(() =>
-            {
-                using var requester = new RequestSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.ResponsePort}");
-
-                try
+                while (true)
                 {
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    if (Nodes != null || AssemblyNode != null)
+                    if (subscriber.TryReceiveFrameString(TimeSpan.FromMilliseconds(1000), out var message) && !string.IsNullOrWhiteSpace(message))
                     {
-                        // Perform algorithm --------------------------------------------------
-                        var messageInputCopy = MessageInput.ToList(); // Copy in case it gets modified
+                        // Candle data received
+                        var zmqModel = JsonConvert.DeserializeObject<ZmqMsgModel>(message);
+                        Debug.WriteLine($"SubscriberSocket-Receive:{message}");
 
-                        var lastMessageInput = messageInputCopy.FirstOrDefault();
-                        var candles = messageInputCopy.Select(m => new Candle
+                        zmqModel.Id = MessageInput.Count;
+                        zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+                        if (zmqModel.IsCurrentCandle)
                         {
-                            Date = m.Date.AddSeconds((long)TimeSpan.Parse(m.Time, CultureInfo.InvariantCulture).TotalSeconds),
-                            Time = (long)TimeSpan.Parse(m.Time, CultureInfo.InvariantCulture).TotalSeconds,
-                            Open = (double)m.Open,
-                            High = (double)m.High,
-                            Low = (double)m.Low,
-                            Close = (double)m.Close
-                        })
-                        .OrderBy(m => m.Date).ToList();
-
-                        var isTrade = false;
-                        var label = string.Empty;
-
-                        if (TestNodes)
-                        {
-                            candles.Add(_currentCandle);
-
-                            foreach (var node in Nodes)
+                            _currentCandle = new Candle
                             {
-                                isTrade = _tradeService.IsTrade(
-                                    node.NodeData.Node,
-                                    candles,
-                                    _currentCandle);
+                                Date = zmqModel.Date.AddSeconds((long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds),
+                                Time = (long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds,
+                                Open = (double)zmqModel.Open,
+                                High = (double)zmqModel.Open,
+                                Low = (double)zmqModel.Open,
+                                Close = (double)zmqModel.Open,
+                            };
 
-                                if (isTrade)
-                                {
-                                    break;
-                                }
-                            }
-
-                            label = Nodes[0].NodeData.Label;
+                            // Signal requester to check for trade
+                            _manualResetEventSlim.Set();
                         }
-                        else if (TestAssemblyNode)
+                        else
                         {
-                            candles.Add(_currentCandle);
+                            Application.Current.Dispatcher.Invoke(() => MessageInput.Insert(0, zmqModel));
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Stop pressed ...
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                Debug.WriteLine($"SubscriberSocket:{ex.Message}");
+            }
+        }
 
-                            // Test for parent node
+        private void Requester()
+        {
+            using var requester = new RequestSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.ResponsePort}");
+
+            try
+            {
+                while (true)
+                {
+                    _manualResetEventSlim.Reset();   // Block
+
+                    _manualResetEventSlim.Wait(_cancellationTokenSource.Token);   // Wait until signal received from subscriber (i.e. candle received)
+                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                    // Perform algorithm --------------------------------------------------
+                    var candles = MessageInput.Select(message => new Candle
+                    {
+                        Date = message.Date.AddSeconds((long)TimeSpan.Parse(message.Time, CultureInfo.InvariantCulture).TotalSeconds),
+                        Time = (long)TimeSpan.Parse(message.Time, CultureInfo.InvariantCulture).TotalSeconds,
+                        Open = (double)message.Open,
+                        High = (double)message.High,
+                        Low = (double)message.Low,
+                        Close = (double)message.Close
+                    })
+                    .OrderBy(m => m.Date)
+                    .ToList();
+
+                    candles.Add(_currentCandle);
+
+                    var isTrade = false;
+                    var label = string.Empty;
+
+                    if (TestNodes)
+                    {
+                        foreach (var node in Nodes)
+                        {
                             isTrade = _tradeService.IsTrade(
-                                AssemblyNode.ParentNodeData.Node,
+                                node.NodeData.Node,
                                 candles,
                                 _currentCandle);
 
-                            if (!isTrade)
+                            if (isTrade)
                             {
-                                return;
+                                break;
                             }
-
-                            // Test for one child node
-                            foreach (var childNode in AssemblyNode.ChildNodesData)
-                            {
-                                isTrade = _tradeService.IsTrade(
-                                    childNode.Node,
-                                    candles,
-                                    _currentCandle);
-
-                                if (isTrade)
-                                {
-                                    break;
-                                }
-                            }
-
-                            label = AssemblyNode.ParentNodeData.Label;
                         }
-                        else if (TestStrategyNode)
+
+                        label = Nodes[0].NodeData.Label;
+                    }
+                    else if (TestAssemblyNode)
+                    {
+                        // Test for parent node
+                        isTrade = _tradeService.IsTrade(
+                            AssemblyNode.ParentNodeData.Node,
+                            candles,
+                            _currentCandle);
+
+                        if (!isTrade)
                         {
-                            // Test for parent node
+                            continue;
+                        }
+
+                        // Test for one child node
+                        foreach (var childNode in AssemblyNode.ChildNodesData)
+                        {
                             isTrade = _tradeService.IsTrade(
-                                StrategyNode.ParentNodeData.Node,
+                                childNode.Node,
                                 candles,
                                 _currentCandle);
 
-                            if (!isTrade)
+                            if (isTrade)
                             {
-                                return;
+                                break;
                             }
-
-                            // Test for every crossing node
-                            foreach (var crossingNode in StrategyNode.CrossingNodesData)
-                            {
-                                isTrade = _tradeService.IsTrade(
-                                    crossingNode.Item1.Node,
-                                    /* crossing candles */ null,
-                                    /* current crossing candle*/ null);
-
-                                if (!isTrade)
-                                {
-                                    return;
-                                }
-                            }
-
-                            // Test for one child node
-                            foreach (var childNode in StrategyNode.ChildNodesData)
-                            {
-                                isTrade = _tradeService.IsTrade(
-                                    childNode.Node,
-                                    candles,
-                                    _currentCandle);
-
-                                if (isTrade)
-                                {
-                                    break;
-                                }
-                            }
-
-                            label = StrategyNode.ParentNodeData.Label;
                         }
 
-                        if (isTrade)
+                        label = AssemblyNode.ParentNodeData.Label;
+                    }
+                    else if (TestStrategyNode)
+                    {
+                        // Test for parent node
+                        isTrade = _tradeService.IsTrade(
+                            StrategyNode.ParentNodeData.Node,
+                            candles,
+                            _currentCandle);
+
+                        if (!isTrade)
                         {
-                            // Open operation request -----------------------------------------------
-                            var operationRequest = label.ToLowerInvariant() == "up"
-                            ? _tradeService.OpenOperation(ProjectConfiguration.Symbol.Value, OrderTypeEnum.Buy)
-                            : _tradeService.OpenOperation(ProjectConfiguration.Symbol.Value, OrderTypeEnum.Sell);
+                            continue;
+                        }
 
-                            requester.SendFrame(JsonConvert.SerializeObject(operationRequest));
-                            Debug.WriteLine($"RequestSocket-Send:{operationRequest}");
-                            //-----------------------------------------------------------------------
+                        // Test for every crossing node
+                        foreach (var crossingNode in StrategyNode.CrossingNodesData)
+                        {
+                            isTrade = _tradeService.IsTrade(
+                                crossingNode.Item1.Node,
+                                /* crossing candles */ null,
+                                /* current crossing candle*/ null);
 
-                            // Open operation response ----------------------------------------------
-                            var openOperationRep = requester.ReceiveFrameString();
-                            Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
+                            if (!isTrade)
+                            {
+                                break;
+                            }
+                        }
 
-                            var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
+                        // Test for one child node
+                        foreach (var childNode in StrategyNode.ChildNodesData)
+                        {
+                            isTrade = _tradeService.IsTrade(
+                                childNode.Node,
+                                candles,
+                                _currentCandle);
 
-                            var zmqResponse = new ZmqMsgModel
+                            if (isTrade)
+                            {
+                                break;
+                            }
+                        }
+
+                        label = StrategyNode.ParentNodeData.Label;
+                    }
+
+                    if (isTrade)
+                    {
+                        // Open operation request -----------------------------------------------
+                        var operationRequest = label.ToLowerInvariant() == "up"
+                        ? _tradeService.OpenOperation(_mainSymbol, OrderTypeEnum.Buy)
+                        : _tradeService.OpenOperation(_mainSymbol, OrderTypeEnum.Sell);
+
+                        requester.SendFrame(JsonConvert.SerializeObject(operationRequest));
+                        Debug.WriteLine($"RequestSocket-Send:{operationRequest}");
+                        //-----------------------------------------------------------------------
+
+                        // Open operation response ----------------------------------------------
+                        var openOperationRep = requester.ReceiveFrameString();
+                        Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
+
+                        var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
+
+                        Application.Current.Dispatcher.Invoke(() => MessageOutput.Insert(0,
+                            new ZmqMsgModel
                             {
                                 Id = MessageOutput.Count + 1,
                                 Date = _currentCandle.Date,
                                 DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
                                 Volume = decimal.Parse(response.Volume, CultureInfo.InvariantCulture)
-                            };
-
-                            MessageOutput.Insert(0, zmqResponse);
-                            //-----------------------------------------------------------------------
-                        }
+                            }));
+                        //-----------------------------------------------------------------------
                     }
                 }
-                catch (OperationCanceledException)
-                {
-                    // Stop pressed ...
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message);
-                    Debug.WriteLine($"RequestSocket:{ex.Message}");
-                }
-            });
+            }
+            catch (OperationCanceledException)
+            {
+                // Stop pressed ...
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+                Debug.WriteLine($"RequestSocket:{ex.Message}");
+            }
         }
 
         public ICommand CleanMessageInputCommand => new DelegateCommand(MessageInput.Clear);
@@ -417,13 +403,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     return;
                 }
 
-                ExpertAdvisor.ProjectId = _project.ProjectId;
-                ExpertAdvisor.Name = $"{_project.ProjectName}.EA.{ExpertAdvisor.MagicNumber}";
+                ExpertAdvisor.ProjectId = ProcessArgs.ProjectId;
+                ExpertAdvisor.Name = $"{ProcessArgs.ProjectName}.EA.{ExpertAdvisor.MagicNumber}";
 
                 var response = await _serviceAgent.UpdateExpertAdvisor(ExpertAdvisor);
                 MessageHelper.ShowMessage(this,
                     "MetaTrader - Expert Advisor",
-                    response.IsSuccess ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
+                    response.IsSuccess
+                    ? MessageResources.EntitySaveSuccess
+                    : MessageResources.EntityErrorTransaction);
             }
             catch (Exception ex)
             {

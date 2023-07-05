@@ -108,51 +108,64 @@
                                     </Expander.Header>
 
                                     <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
                                         <!--#region Parent Node-->
-                                        <Expander Style="{x:Null}">
-                                            <Expander.Header>
-                                                <Label Content="Parent Node" />
-                                            </Expander.Header>
-                                            <ListView ItemsSource="{Binding ParentNodeData.Node}" />
-                                        </Expander>
-                                        <!--#endregion-->
+                                        <Border BorderBrush="Black"
+                                                BorderThickness="1"
+                                                Margin="5"
+                                                Padding="5">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
 
-                                        <!--#region Child Nodes-->
-                                        <ListView Grid.Row="1"
-                                                  ItemsSource="{Binding ChildNodesData}"
-                                                  ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
-                                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                            <ListView.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal" />
-                                                </ItemsPanelTemplate>
-                                            </ListView.ItemsPanel>
-                                            <ListView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Expander Style="{x:Null}">
-                                                        <Expander.Header>
-                                                            <Label Content="Child Node" />
-                                                        </Expander.Header>
-                                                        <ListView ItemsSource="{Binding Node}"
-                                                                  ItemContainerStyle="{StaticResource ListViewItemContainerStyle}" />
-                                                    </Expander>
-                                                </DataTemplate>
-                                            </ListView.ItemTemplate>
-                                        </ListView>
+                                                <StackPanel>
+                                                    <Label Content="Parent Node"
+                                                           FontWeight="SemiBold" />
+                                                    <ListView ItemsSource="{Binding}"
+                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                        <Expander Style="{x:Null}">
+                                                            <ListView ItemsSource="{Binding ParentNodeData.Node}" />
+                                                        </Expander>
+                                                    </ListView>
+                                                </StackPanel>
+                                                <!--#endregion-->
+
+                                                <!--#region Child Nodes-->
+                                                <StackPanel Grid.Row="1">
+                                                    <Label Content="Child Nodes"
+                                                           FontWeight="SemiBold" />
+                                                    <ListView ItemsSource="{Binding ChildNodesData}"
+                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                        <ListView.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <WrapPanel Orientation="Horizontal" />
+                                                            </ItemsPanelTemplate>
+                                                        </ListView.ItemsPanel>
+                                                        <ListView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Expander Style="{x:Null}">
+                                                                    <ListView ItemsSource="{Binding Node}"
+                                                                              ItemContainerStyle="{StaticResource ListViewItemContainerStyle}" />
+                                                                </Expander>
+                                                            </DataTemplate>
+                                                        </ListView.ItemTemplate>
+                                                    </ListView>
+                                                </StackPanel>
+                                                <!--#endregion-->
+                                            </Grid>
+                                        </Border>
                                         <!--#endregion-->
 
                                         <!--#region IS and OS Details-->
-                                        <StackPanel Grid.Column="1"
-                                                    Grid.RowSpan="2">
+                                        <StackPanel Grid.Column="1">
                                             <Grid>
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />

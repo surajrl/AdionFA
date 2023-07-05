@@ -114,7 +114,10 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!--#region Parent Node-->
-                                        <Border BorderBrush="Black" BorderThickness="1" Margin="5" Padding="5">
+                                        <Border BorderBrush="Black"
+                                                BorderThickness="1"
+                                                Margin="5"
+                                                Padding="5">
                                             <Grid>
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />
@@ -129,9 +132,6 @@
                                                               ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
                                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                                         <Expander Style="{x:Null}">
-                                                            <!--<Expander.Header>
-                                                        <Label Content="Parent Node" />
-                                                    </Expander.Header>-->
                                                             <ListView ItemsSource="{Binding ParentNodeData.Node}" />
                                                         </Expander>
                                                     </ListView>
@@ -153,9 +153,6 @@
                                                         <ListView.ItemTemplate>
                                                             <DataTemplate>
                                                                 <Expander Style="{x:Null}">
-                                                                    <!--<Expander.Header>
-                                                                <Label Content="Child Node" />
-                                                            </Expander.Header>-->
                                                                     <ListView ItemsSource="{Binding Node}"
                                                                               ItemContainerStyle="{StaticResource ListViewItemContainerStyle}" />
                                                                 </Expander>
