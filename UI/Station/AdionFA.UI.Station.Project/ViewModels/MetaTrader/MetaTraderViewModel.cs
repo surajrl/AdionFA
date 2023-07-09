@@ -23,6 +23,7 @@ using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -45,10 +46,15 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IEventAggregator _eventAggregator;
 
         private CancellationTokenSource _cancellationTokenSource;
-        private ManualResetEventSlim _manualResetEventSlim;
-        private Candle _currentCandle;
+        private readonly ManualResetEventSlim _manualResetEventSlim;
         private bool _disposedValue;
+
+        private Task _subscriberTask;
+
+        private readonly Dictionary<string, List<Candle>> _candles;
+        private readonly Dictionary<string, Candle> _currentCandles;
         private string _mainSymbol;
+        private readonly List<string> _crossingSymbols;
 
         public MetaTraderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
@@ -66,8 +72,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
-            MessageInput = new();
-            MessageOutput = new();
+            Nodes = new();
+            DataInput = new();
+            DataOutput = new();
+
+            _candles = new();
+            _currentCandles = new();
+            _crossingSymbols = new();
 
             _manualResetEventSlim = new(false);
         }
@@ -79,8 +90,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 try
                 {
                     ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
-                    var s = await _marketDataService.GetSymbolAsync(ProjectConfiguration.SymbolId).ConfigureAwait(true);
-                    _mainSymbol = s.Value;
 
                     ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(ProcessArgs.ProjectId);
                     ExpertAdvisor ??= new();
@@ -97,7 +106,20 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public ICommand StopCommand => new DelegateCommand(() =>
         {
             _cancellationTokenSource.Cancel();
-        }, () => IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+
+            while (!_subscriberTask.IsCompleted)
+            {
+                // Wait for the task to cancel
+            }
+
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+
+            IsTransactionActive = false;
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
+
+        }, () => IsTransactionActive)
+            .ObservesProperty(() => IsTransactionActive);
 
         public ICommand ProcessCommand => new DelegateCommand(async () =>
         {
@@ -108,21 +130,30 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 _cancellationTokenSource = new();
 
-                Task.Factory.StartNew(() => Subscriber());
-                await Task.Factory.StartNew(() => Requester()).ConfigureAwait(true);
+                if (TestStrategyNode)
+                {
+                    _candles.Clear();
+                    _crossingSymbols.Clear();
+                    _currentCandles.Clear();
+
+                    var symbol = await _marketDataService.GetSymbolAsync(ProjectConfiguration.SymbolId).ConfigureAwait(true);
+                    _candles.Add(symbol.Name, new());
+                    _mainSymbol = symbol.Name;
+
+                    foreach (var crossingNode in StrategyNode.CrossingNodesData)
+                    {
+                        var hd = await _marketDataService.GetHistoricalDataAsync(crossingNode.Item2, includeGraph: false).ConfigureAwait(true);
+                        symbol = await _marketDataService.GetSymbolAsync(hd.SymbolId).ConfigureAwait(true);
+                        _candles.Add(symbol.Name, new());
+                        _crossingSymbols.Add(symbol.Name);
+                    }
+                }
+
+                _subscriberTask = Task.Factory.StartNew(Subscriber);
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
-                Debug.WriteLine($"Process-{ex.Message}");
-            }
-            finally
-            {
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = null;
-
-                IsTransactionActive = false;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(true);
             }
         }, () => !IsTransactionActive && (TestNodes || TestAssemblyNode || TestStrategyNode))
             .ObservesProperty(() => IsTransactionActive)
@@ -148,27 +179,39 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         var zmqModel = JsonConvert.DeserializeObject<ZmqMsgModel>(message);
                         Debug.WriteLine($"SubscriberSocket-Receive:{message}");
 
-                        zmqModel.Id = MessageInput.Count;
+                        if (zmqModel.CheckTrade)
+                        {
+                            Requester();
+                            continue;
+                        }
+
                         zmqModel.DateFormat = zmqModel.Date.AddSeconds(TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds).ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
-                        if (zmqModel.IsCurrentCandle)
+                        if (zmqModel.IsCurrentBar)
                         {
-                            _currentCandle = new Candle
+                            _currentCandles[zmqModel.Symbol] = new Candle
                             {
                                 Date = zmqModel.Date.AddSeconds((long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds),
                                 Time = (long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds,
-                                Open = (double)zmqModel.Open,
-                                High = (double)zmqModel.Open,
-                                Low = (double)zmqModel.Open,
-                                Close = (double)zmqModel.Open,
+                                Open = zmqModel.Open,
+                                High = zmqModel.High,
+                                Low = zmqModel.Low,
+                                Close = zmqModel.Close
                             };
-
-                            // Signal requester to check for trade
-                            _manualResetEventSlim.Set();
                         }
                         else
                         {
-                            Application.Current.Dispatcher.Invoke(() => MessageInput.Insert(0, zmqModel));
+                            _candles[zmqModel.Symbol].Add(new Candle
+                            {
+                                Date = zmqModel.Date.AddSeconds((long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds),
+                                Time = (long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds,
+                                Open = zmqModel.Open,
+                                High = zmqModel.High,
+                                Low = zmqModel.Low,
+                                Close = zmqModel.Close
+                            });
+
+                            Application.Current.Dispatcher.Invoke(() => DataInput.Insert(0, zmqModel));
                         }
                     }
                 }
@@ -184,154 +227,166 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
+        private bool IsTradeNodes()
+        {
+            foreach (var node in Nodes)
+            {
+                var isTrade = _tradeService.IsTrade(
+                    node.NodeData.Node,
+                    _candles[_mainSymbol],
+                    _currentCandles[_mainSymbol]);
+
+                if (isTrade)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsTradeAssemblyNode()
+        {
+            // Test for parent node
+            var isTrade = _tradeService.IsTrade(
+                AssemblyNode.ParentNodeData.Node,
+                _candles[_mainSymbol],
+                _currentCandles[_mainSymbol]);
+
+            if (!isTrade)
+            {
+                return false;
+            }
+
+            // Test for one child node
+            foreach (var childNode in AssemblyNode.ChildNodesData)
+            {
+                isTrade = _tradeService.IsTrade(
+                    childNode.Node,
+                    _candles[_mainSymbol],
+                    _currentCandles[_mainSymbol]);
+
+                if (isTrade)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsTradeStrategyNode()
+        {
+            // Test parent node
+            var isTrade = _tradeService.IsTrade(
+                StrategyNode.ParentNodeData.Node,
+                _candles[_mainSymbol],
+                _currentCandles[_mainSymbol]);
+
+            if (!isTrade)
+            {
+                return false;
+            }
+
+            // Test for every crossing node
+            for (var idx = 0; idx < StrategyNode.CrossingNodesData.Count; idx++)
+            {
+                isTrade = _tradeService.IsTrade(
+                    StrategyNode.CrossingNodesData[idx].Item1.Node,
+                    _candles[_crossingSymbols[idx]],
+                    _currentCandles[_crossingSymbols[idx]]);
+
+                if (!isTrade)
+                {
+                    return false;
+                }
+            }
+
+            // Test for one child node
+            foreach (var childNode in StrategyNode.ChildNodesData)
+            {
+                isTrade = _tradeService.IsTrade(
+                    childNode.Node,
+                    _candles[_mainSymbol],
+                    _currentCandles[_mainSymbol]);
+
+                if (isTrade)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void Requester()
         {
             using var requester = new RequestSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.ResponsePort}");
 
             try
             {
-                while (true)
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                var isTrade = false;
+                var label = string.Empty;
+
+                if (TestNodes && IsTradeNodes())
                 {
-                    _manualResetEventSlim.Reset();   // Block
+                    isTrade = true;
+                    label = Nodes[0].NodeData.Label;
+                }
+                else if (TestAssemblyNode && IsTradeAssemblyNode())
+                {
+                    isTrade = true;
+                    label = AssemblyNode.ParentNodeData.Label;
+                }
+                else if (TestStrategyNode && IsTradeStrategyNode())
+                {
+                    isTrade = true;
+                    label = StrategyNode.ParentNodeData.Label;
+                }
 
-                    _manualResetEventSlim.Wait(_cancellationTokenSource.Token);   // Wait until signal received from subscriber (i.e. candle received)
-                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                if (isTrade)
+                {
+                    // request --------------------------------------------------------------
+                    var operationRequest = label.ToLowerInvariant() == "up"
+                    ? _tradeService.OperationRequest(OrderTypeEnum.Buy)
+                    : _tradeService.OperationRequest(OrderTypeEnum.Sell);
 
-                    // Perform algorithm --------------------------------------------------
-                    var candles = MessageInput.Select(message => new Candle
-                    {
-                        Date = message.Date.AddSeconds((long)TimeSpan.Parse(message.Time, CultureInfo.InvariantCulture).TotalSeconds),
-                        Time = (long)TimeSpan.Parse(message.Time, CultureInfo.InvariantCulture).TotalSeconds,
-                        Open = (double)message.Open,
-                        High = (double)message.High,
-                        Low = (double)message.Low,
-                        Close = (double)message.Close
-                    })
-                    .OrderBy(m => m.Date)
-                    .ToList();
+                    requester.SendFrame(JsonConvert.SerializeObject(operationRequest));
+                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(operationRequest)}");
+                    //-----------------------------------------------------------------------
 
-                    candles.Add(_currentCandle);
+                    // response -------------------------------------------------------------
+                    var openOperationRep = requester.ReceiveFrameString();
+                    Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
 
-                    var isTrade = false;
-                    var label = string.Empty;
+                    var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
 
-                    if (TestNodes)
-                    {
-                        foreach (var node in Nodes)
+                    Application.Current.Dispatcher.Invoke(() => DataOutput.Insert(0,
+                        new ZmqMsgModel
                         {
-                            isTrade = _tradeService.IsTrade(
-                                node.NodeData.Node,
-                                candles,
-                                _currentCandle);
+                            Id = DataOutput.Count + 1,
+                            Date = _currentCandles[_mainSymbol].Date,
+                            DateFormat = _currentCandles[_mainSymbol].Date.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                            OrderType = response.OrderType,
+                            Volume = response.Volume
+                        }));
+                    //-----------------------------------------------------------------------
+                }
+                else
+                {
+                    // request --------------------------------------------------------------
+                    var operationRequest = _tradeService.OperationRequest(OrderTypeEnum.None);
 
-                            if (isTrade)
-                            {
-                                break;
-                            }
-                        }
+                    requester.SendFrame(JsonConvert.SerializeObject(operationRequest));
+                    Debug.WriteLine($"RequestSocket-Send:{JsonConvert.SerializeObject(operationRequest)}");
+                    //-----------------------------------------------------------------------
 
-                        label = Nodes[0].NodeData.Label;
-                    }
-                    else if (TestAssemblyNode)
-                    {
-                        // Test for parent node
-                        isTrade = _tradeService.IsTrade(
-                            AssemblyNode.ParentNodeData.Node,
-                            candles,
-                            _currentCandle);
-
-                        if (!isTrade)
-                        {
-                            continue;
-                        }
-
-                        // Test for one child node
-                        foreach (var childNode in AssemblyNode.ChildNodesData)
-                        {
-                            isTrade = _tradeService.IsTrade(
-                                childNode.Node,
-                                candles,
-                                _currentCandle);
-
-                            if (isTrade)
-                            {
-                                break;
-                            }
-                        }
-
-                        label = AssemblyNode.ParentNodeData.Label;
-                    }
-                    else if (TestStrategyNode)
-                    {
-                        // Test for parent node
-                        isTrade = _tradeService.IsTrade(
-                            StrategyNode.ParentNodeData.Node,
-                            candles,
-                            _currentCandle);
-
-                        if (!isTrade)
-                        {
-                            continue;
-                        }
-
-                        // Test for every crossing node
-                        foreach (var crossingNode in StrategyNode.CrossingNodesData)
-                        {
-                            isTrade = _tradeService.IsTrade(
-                                crossingNode.Item1.Node,
-                                /* crossing candles */ null,
-                                /* current crossing candle*/ null);
-
-                            if (!isTrade)
-                            {
-                                break;
-                            }
-                        }
-
-                        // Test for one child node
-                        foreach (var childNode in StrategyNode.ChildNodesData)
-                        {
-                            isTrade = _tradeService.IsTrade(
-                                childNode.Node,
-                                candles,
-                                _currentCandle);
-
-                            if (isTrade)
-                            {
-                                break;
-                            }
-                        }
-
-                        label = StrategyNode.ParentNodeData.Label;
-                    }
-
-                    if (isTrade)
-                    {
-                        // Open operation request -----------------------------------------------
-                        var operationRequest = label.ToLowerInvariant() == "up"
-                        ? _tradeService.OpenOperation(_mainSymbol, OrderTypeEnum.Buy)
-                        : _tradeService.OpenOperation(_mainSymbol, OrderTypeEnum.Sell);
-
-                        requester.SendFrame(JsonConvert.SerializeObject(operationRequest));
-                        Debug.WriteLine($"RequestSocket-Send:{operationRequest}");
-                        //-----------------------------------------------------------------------
-
-                        // Open operation response ----------------------------------------------
-                        var openOperationRep = requester.ReceiveFrameString();
-                        Debug.WriteLine($"RequestSocket-Receive:{openOperationRep}");
-
-                        var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
-
-                        Application.Current.Dispatcher.Invoke(() => MessageOutput.Insert(0,
-                            new ZmqMsgModel
-                            {
-                                Id = MessageOutput.Count + 1,
-                                Date = _currentCandle.Date,
-                                DateFormat = _currentCandle.Date.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
-                                Volume = decimal.Parse(response.Volume, CultureInfo.InvariantCulture)
-                            }));
-                        //-----------------------------------------------------------------------
-                    }
+                    // response -------------------------------------------------------------
+                    var operationResponse = requester.ReceiveFrameString();
+                    Debug.WriteLine($"RequestSocket-Receive:{operationResponse}");
+                    //-----------------------------------------------------------------------
                 }
             }
             catch (OperationCanceledException)
@@ -345,9 +400,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }
 
-        public ICommand CleanMessageInputCommand => new DelegateCommand(MessageInput.Clear);
+        public ICommand CleanMessageInputCommand => new DelegateCommand(() =>
+        {
+            DataInput.Clear();
+        }, () => DataInput.Count > 0)
+            .ObservesProperty(() => DataInput.Count);
 
-        public ICommand CleanMessageOutputCommand => new DelegateCommand(MessageOutput.Clear);
+        public ICommand CleanMessageOutputCommand => new DelegateCommand(() =>
+        {
+            DataOutput.Clear();
+        }, () => DataOutput.Count > 0)
+            .ObservesProperty(() => DataOutput.Count);
 
         public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(item =>
         {
@@ -493,19 +556,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _strategyNode, value);
         }
 
-        private ObservableCollection<ZmqMsgModel> _messageInput;
-        public ObservableCollection<ZmqMsgModel> MessageInput
-        {
-            get => _messageInput;
-            set => SetProperty(ref _messageInput, value);
-        }
+        public ObservableCollection<ZmqMsgModel> DataInput { get; set; }
 
-        private ObservableCollection<ZmqMsgModel> _messageOutput;
-        public ObservableCollection<ZmqMsgModel> MessageOutput
-        {
-            get => _messageOutput;
-            set => SetProperty(ref _messageOutput, value);
-        }
+        public ObservableCollection<ZmqMsgModel> DataOutput { get; set; }
 
         // IDisposable
 

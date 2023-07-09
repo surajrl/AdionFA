@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Model;
@@ -24,6 +23,7 @@ using AdionFA.UI.Station.Project.Features;
 using AdionFA.UI.Station.Project.Model.Common;
 using AutoMapper;
 using DynamicData;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.CodeAnalysis;
 using Prism.Commands;
 using Prism.Events;
@@ -32,6 +32,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -77,16 +78,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
             {
                 if (strategyBuilderCompleted)
                 {
-                    // Load the new Correlation Nodes
-                    AssemblyBuilder = _assemblyBuilderService.LoadAssemblyBuilder(ProcessArgs.ProjectName);
+                    DeleteAssemblyBuilder();
+                    _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+                    ResetBuilderProcesses();
                 }
                 else
                 {
-                    // New process starting ...
-                    AssemblyBuilder.WinningAssemblyNodesUP.Clear();
-                    AssemblyBuilder.WinningAssemblyNodesDOWN.Clear();
-                    AssemblyBuilder.ChildNodesUP.Clear();
-                    AssemblyBuilder.ChildNodesDOWN.Clear();
+                    DeleteAssemblyBuilder();
                 }
             });
 
@@ -95,16 +93,41 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 mc.AddProfile(new AutoMappingAppProjectProfile());
             }).CreateMapper();
 
+            AssemblyBuilderProcessesUP = new();
+            AssemblyBuilderProcessesDOWN = new();
+            AssemblyBuilder = new();
+
+            MaxParallelism = Environment.ProcessorCount - 1;
+
             _cancellationTokenSource = new();
             _manualResetEventSlim = new(true);
             _lock = new();
 
-            AssemblyBuilderProcessesUP = new();
-            AssemblyBuilderProcessesDOWN = new();
-            MaxParallelism = Environment.ProcessorCount - 1;
-            AssemblyBuilder = _assemblyBuilderService.LoadAssemblyBuilder(ProcessArgs.ProjectName);
+
+            _assemblyBuilderService.LoadExistingAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+            if (AssemblyBuilder.WinningAssemblyNodesUP.Count == 0 && AssemblyBuilder.WinningAssemblyNodesDOWN.Count == 0)
+            {
+                _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+            }
         }
 
+        private void DeleteAssemblyBuilder()
+        {
+            // Delete Crossing Builder Nodes
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+            // Delete Crossing Builder Extractions
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
+
+            AssemblyBuilder.WinningAssemblyNodesUP.Clear();
+            AssemblyBuilder.WinningAssemblyNodesDOWN.Clear();
+
+            AssemblyBuilder.ChildNodesUP.Clear();
+            AssemblyBuilder.ChildNodesDOWN.Clear();
+
+            ResetBuilderProcesses();
+        }
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
         {
             if (item == HamburgerMenuItems.AssemblyBuilder.Replace(" ", string.Empty))
@@ -117,12 +140,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
                         && AssemblyBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
                         && AssemblyBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description))
                     {
-                        ResetBuilder();
+                        ResetBuilderProcesses();
                     }
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.LogException<AssemblyBuilderViewModel>(ex);
+                    Trace.TraceError(ex.Message);
                     throw;
                 }
             }
@@ -185,18 +208,21 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 _cancellationTokenSource = new();
 
-                ResetBuilder();
+                var deleteAll = await MessageHelper.ShowMessageInput(this,
+                    "Assembly Builder",
+                    "Starting a new process will delete all the Assembly Nodes and Strategy Nodes.\n"
+                    + "Do you want to continue?").ConfigureAwait(true);
 
-                AssemblyBuilder.WinningAssemblyNodesUP.Clear();
-                AssemblyBuilder.WinningAssemblyNodesDOWN.Clear();
+                if (deleteAll != MessageDialogResult.Affirmative)
+                {
+                    return;
+                }
 
-                // Delete Assembly Builder Extractions
-                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
-                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
-                // Delete Assembly Builder Nodes
-                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
-                _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+                DeleteAssemblyBuilder();
+                _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+                ResetBuilderProcesses();
 
+                _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(false);
 
                 // Historical Data
 
@@ -298,7 +324,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<AssemblyBuilderViewModel>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
             finally
@@ -546,7 +572,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 });
         }
 
-        private void ResetBuilder()
+        private void ResetBuilderProcesses()
         {
             AssemblyBuilderProcessesUP.Clear();
             AssemblyBuilderProcessesDOWN.Clear();
@@ -613,21 +639,21 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _maxParallelism, value);
         }
 
-        private AssemblyBuilderModel _assembledBuilder;
+        private AssemblyBuilderModel _assemblyBuilder;
         public AssemblyBuilderModel AssemblyBuilder
         {
-            get => _assembledBuilder;
+            get => _assemblyBuilder;
             set
             {
-                if (SetProperty(ref _assembledBuilder, value))
+                if (SetProperty(ref _assemblyBuilder, value))
                 {
-                    MeanSuccessRatePercentUP = _assembledBuilder.ChildNodesUP
+                    MeanSuccessRatePercentUP = _assemblyBuilder.ChildNodesUP
                         .Select(node => node.BacktestIS.SuccessRatePercent)
-                        .Sum() / _assembledBuilder.ChildNodesUP.Count;
+                        .Sum() / _assemblyBuilder.ChildNodesUP.Count;
 
-                    MeanSuccessRatePercentDOWN = _assembledBuilder.ChildNodesDOWN
+                    MeanSuccessRatePercentDOWN = _assemblyBuilder.ChildNodesDOWN
                         .Select(node => node.BacktestIS.SuccessRatePercent)
-                        .Sum() / _assembledBuilder.ChildNodesDOWN.Count;
+                        .Sum() / _assemblyBuilder.ChildNodesDOWN.Count;
                 }
             }
         }

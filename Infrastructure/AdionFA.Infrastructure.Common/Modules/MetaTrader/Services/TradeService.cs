@@ -19,11 +19,10 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
         }
 
 
-        public ZmqMsgRequestModel OpenOperation(string symbol, OrderTypeEnum orderType)
+        public ZmqMsgRequestModel OperationRequest(OrderTypeEnum orderType)
         {
             return new ZmqMsgRequestModel
             {
-                Symbol = symbol,
                 OrderType = orderType,
             };
         }
@@ -33,6 +32,8 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
             IList<Candle> candleHistory,
             Candle currentCandle)
         {
+            candleHistory.Add(currentCandle);
+
             var nodeIndicators = _extractorService.BuildIndicatorsFromNode(node.ToList());
             var nodeIndicatorsResult = _extractorService.CalculateNodeIndicators(
                 candleHistory.FirstOrDefault(),
@@ -47,6 +48,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
 
                 if (indicator.OutNBElement == 0)
                 {
+                    candleHistory.Remove(currentCandle);
                     return false;
                 }
 
@@ -59,6 +61,8 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                         {
                             break;
                         }
+
+                        candleHistory.Remove(currentCandle);
                         return false;
 
                     case MathOperatorEnum.LessThanOrEqual:
@@ -66,6 +70,8 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                         {
                             break;
                         }
+
+                        candleHistory.Remove(currentCandle);
                         return false;
 
                     case MathOperatorEnum.GreaterThan:
@@ -73,6 +79,8 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                         {
                             break;
                         }
+
+                        candleHistory.Remove(currentCandle);
                         return false;
 
                     case MathOperatorEnum.LessThan:
@@ -80,6 +88,8 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                         {
                             break;
                         }
+
+                        candleHistory.Remove(currentCandle);
                         return false;
 
                     case MathOperatorEnum.Equal:
@@ -87,10 +97,13 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Services
                         {
                             break;
                         }
+
+                        candleHistory.Remove(currentCandle);
                         return false;
                 }
             }
 
+            candleHistory.Remove(currentCandle);
             return true;
         }
     }

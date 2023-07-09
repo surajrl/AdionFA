@@ -25,14 +25,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                IList<HistoricalData> configurations = MarketDataDomainService.GetAllHistoricalData(includeGraph);
-                IList<HistoricalDataDTO> dto = Mapper.Map<IList<HistoricalDataDTO>>(configurations);
+                var configurations = MarketDataDomainService.GetAllHistoricalData(includeGraph);
+                var dto = Mapper.Map<IList<HistoricalDataDTO>>(configurations);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -42,14 +41,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                HistoricalData h = MarketDataDomainService.GetHistoricalData(marketDataId, includeGraph);
-                HistoricalDataDTO dto = Mapper.Map<HistoricalDataDTO>(h);
+                var h = MarketDataDomainService.GetHistoricalData(marketDataId, includeGraph);
+                var dto = Mapper.Map<HistoricalDataDTO>(h);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -59,14 +57,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                HistoricalData h = MarketDataDomainService.GetHistoricalData(marketId, symbolId, timeframeId);
-                HistoricalDataDTO dto = Mapper.Map<HistoricalDataDTO>(h);
+                var h = MarketDataDomainService.GetHistoricalData(marketId, symbolId, timeframeId);
+                var dto = Mapper.Map<HistoricalDataDTO>(h);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -78,18 +75,14 @@ namespace AdionFA.Core.Application.Services.MarketData
             {
                 var response = new ResponseDTO { IsSuccess = false };
 
-                HistoricalData entity = Mapper.Map<HistoricalData>(market);
+                var entity = Mapper.Map<HistoricalData>(market);
 
                 response.IsSuccess = MarketDataDomainService.CreateHistoricalData(entity) > 0;
-
-                if (response.IsSuccess)
-                    LogInfoCreate<HistoricalDataDTO>();
 
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -101,18 +94,14 @@ namespace AdionFA.Core.Application.Services.MarketData
             {
                 var response = new ResponseDTO { IsSuccess = false };
 
-                HistoricalData entity = Mapper.Map<HistoricalData>(historicalData);
+                var entity = Mapper.Map<HistoricalData>(historicalData);
 
                 response.IsSuccess = MarketDataDomainService.UpdateHistoricalData(entity) > 0;
-
-                if (response.IsSuccess)
-                    LogInfoCreate<HistoricalDataDTO>();
 
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -124,14 +113,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                IList<Timeframe> configurations = MarketDataDomainService.GetAllTimeframe(includeGraph);
-                IList<TimeframeDTO> dto = Mapper.Map<IList<TimeframeDTO>>(configurations);
+                var configurations = MarketDataDomainService.GetAllTimeframe(includeGraph);
+                var dto = Mapper.Map<IList<TimeframeDTO>>(configurations);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -141,14 +129,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                Timeframe timeframe = MarketDataDomainService.GetTimeframe(timeframeId);
-                TimeframeDTO timeframeDto = Mapper.Map<TimeframeDTO>(timeframe);
+                var timeframe = MarketDataDomainService.GetTimeframe(timeframeId);
+                var timeframeDto = Mapper.Map<TimeframeDTO>(timeframe);
 
                 return timeframeDto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -165,17 +152,13 @@ namespace AdionFA.Core.Application.Services.MarketData
                     IsSuccess = false,
                 };
 
-                Symbol symbolEntity = Mapper.Map<Symbol>(symbol);
+                var symbolEntity = Mapper.Map<Symbol>(symbol);
                 response.IsSuccess = (MarketDataDomainService.CreateSymbol(symbolEntity) ?? 1) > 0;
-
-                if (response.IsSuccess)
-                    LogInfoCreate<HistoricalDataDTO>();
 
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -185,14 +168,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                IList<Symbol> configurations = MarketDataDomainService.GetAllSymbol(includeGraph);
-                IList<SymbolDTO> dto = Mapper.Map<IList<SymbolDTO>>(configurations);
+                var configurations = MarketDataDomainService.GetAllSymbol(includeGraph);
+                var dto = Mapper.Map<IList<SymbolDTO>>(configurations);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -202,14 +184,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                Symbol symbol = MarketDataDomainService.GetSymbol(symbolId);
-                SymbolDTO symbolDto = Mapper.Map<SymbolDTO>(symbol);
+                var symbol = MarketDataDomainService.GetSymbol(symbolId);
+                var symbolDto = Mapper.Map<SymbolDTO>(symbol);
 
                 return symbolDto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -219,14 +200,13 @@ namespace AdionFA.Core.Application.Services.MarketData
         {
             try
             {
-                Symbol symbol = MarketDataDomainService.GetSymbol(symbolName);
-                SymbolDTO dto = Mapper.Map<SymbolDTO>(symbol);
+                var symbol = MarketDataDomainService.GetSymbol(symbolName);
+                var dto = Mapper.Map<SymbolDTO>(symbol);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<MarketDataAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }

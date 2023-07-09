@@ -7,7 +7,7 @@ namespace AdionFA.Infrastructure.Common.MetaTrader.Model
     {
         public string Symbol { get; set; }
         public OrderTypeEnum OrderType { get; set; }
-        public string Volume { get; set; }
+        public double Volume { get; set; }
 
     }
 

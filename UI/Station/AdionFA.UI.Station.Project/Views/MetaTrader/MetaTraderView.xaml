@@ -192,7 +192,7 @@
                              FontWeight="SemiBold" />
                         <Run Text=":"
                              FontWeight="SemiBold" />
-                        <Run Text="{Binding MessageInput.Count, Mode=OneWay}" />
+                        <Run Text="{Binding DataInput.Count, Mode=OneWay}" />
                 </TextBlock>
                 <!--#endregion-->
 
@@ -202,7 +202,6 @@
                     <!--Clean Input-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button Command="{Binding CleanMessageInputCommand}"
-                                IsEnabled="{Binding MessageInput.Count, Mode=OneWay, Converter={StaticResource IntToBooleanConverter}}"
                                 Width="100"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
@@ -218,7 +217,6 @@
                     <!--Clean Output-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button Command="{Binding CleanMessageOutputCommand}"
-                                IsEnabled="{Binding MessageOutput.Count, Mode=OneWay, Converter={StaticResource IntToBooleanConverter}}"
                                 Width="100"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
@@ -358,7 +356,7 @@
                 <Grid Name="dummygrid"
                       Visibility="Hidden">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.4*"></ColumnDefinition>
+                        <ColumnDefinition Width="0.8*"></ColumnDefinition>
                         <ColumnDefinition Width="1.2*"></ColumnDefinition>
                         <ColumnDefinition Width="1*"></ColumnDefinition>
                         <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -387,13 +385,13 @@
                 <!--#region Message Input-->
                 <metro:MetroHeader Margin="0, 0, 10, 0"
                                    Header="{x:Static commonResources:CommonResources.MessageInput}">
-                    <ListView ItemsSource="{Binding MessageInput}"
+                    <ListView ItemsSource="{Binding DataInput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="{Binding ElementName=dummywidth0, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding Id}"
-                                                Header="{x:Static commonResources:CommonResources.ID}" />
+                                                DisplayMemberBinding="{Binding Symbol}"
+                                                Header="Symbol" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding DateFormat}"
                                                 Header="{x:Static commonResources:CommonResources.Date}" />
@@ -441,19 +439,22 @@
                 <!--#region Message Output-->
                 <metro:MetroHeader Margin="10 0 0 0"
                                    Header="{x:Static commonResources:CommonResources.MessageOutput}">
-                    <ListView ItemsSource="{Binding MessageOutput}"
+                    <ListView ItemsSource="{Binding DataOutput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="{Binding ElementName=dummywidth10, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Id}"
                                                 Header="{x:Static commonResources:CommonResources.ID}" />
+                                
                                 <GridViewColumn Width="{Binding ElementName=dummywidth11, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding DateFormat}"
                                                 Header="{x:Static commonResources:CommonResources.Date}" />
+                                
                                 <GridViewColumn Width="{Binding ElementName=dummywidth12, Path=ActualWidth}"
-                                                DisplayMemberBinding="{Binding PositionTypeName}"
-                                                Header="{x:Static commonResources:CommonResources.PositionType}" />
+                                                DisplayMemberBinding="{Binding OrderType}"
+                                                Header="Order Type" />
+                                
                                 <GridViewColumn Width="{Binding ElementName=dummywidth13, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Volume, StringFormat=N5}"
                                                 Header="{x:Static commonResources:CommonResources.Volume}" />

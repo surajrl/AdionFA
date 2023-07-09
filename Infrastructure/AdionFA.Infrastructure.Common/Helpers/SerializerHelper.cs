@@ -1,14 +1,12 @@
-﻿using AdionFA.Infrastructure.Common.Logger.Helpers;
-using AdionFA.Infrastructure.Common.Managements;
+﻿using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.Weka.Model;
 using AdionFA.Infrastructure.Enums;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-
-/**https://stackoverflow.com/questions/6115721/how-to-save-restore-serializable-object-to-from-file**/
 
 namespace AdionFA.Infrastructure.Common.Helpers
 {
@@ -34,7 +32,7 @@ namespace AdionFA.Infrastructure.Common.Helpers
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<Exception>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
         }
@@ -42,7 +40,9 @@ namespace AdionFA.Infrastructure.Common.Helpers
         public static T XMLDeSerializeObject<T>(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
+            {
                 return default;
+            }
 
             T objectOut = default;
 
@@ -53,15 +53,15 @@ namespace AdionFA.Infrastructure.Common.Helpers
                 var xmlString = xmlDocument.OuterXml;
 
                 using var read = new StringReader(xmlString);
-                var outType = typeof(T);
 
+                var outType = typeof(T);
                 var serializer = new XmlSerializer(outType);
                 using var reader = new XmlTextReader(read);
                 objectOut = (T)serializer.Deserialize(reader);
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<Exception>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
 

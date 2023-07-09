@@ -25,14 +25,13 @@ namespace AdionFA.Core.Application.Services.Commons
         {
             try
             {
-                IList<Setting> settings = AppSettingDomainService.GetAllAppSetting();
-                IList<SettingDTO> dtos = Mapper.Map<IList<SettingDTO>>(settings);
+                var settings = AppSettingDomainService.GetAllAppSetting();
+                var dtos = Mapper.Map<IList<SettingDTO>>(settings);
 
                 return dtos;
             }
             catch (Exception ex)
             {
-                LogException<AppSettingAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -42,14 +41,13 @@ namespace AdionFA.Core.Application.Services.Commons
         {
             try
             {
-                Setting setting = AppSettingDomainService.GetSetting(settingId, keySetting);
-                SettingDTO dto = Mapper.Map<SettingDTO>(setting);
+                var setting = AppSettingDomainService.GetSetting(settingId, keySetting);
+                var dto = Mapper.Map<SettingDTO>(setting);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<AppSettingAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -61,19 +59,13 @@ namespace AdionFA.Core.Application.Services.Commons
             {
                 var response = new ResponseDTO { IsSuccess = false };
 
-                Setting entity = Mapper.Map<Setting>(setting);
-                int entityId = AppSettingDomainService.CreateAppSetting(entity);
-
-                if (entityId > 0)
-                {
-                    LogInfoCreate<SettingDTO>();
-                }
+                var entity = Mapper.Map<Setting>(setting);
+                var entityId = AppSettingDomainService.CreateAppSetting(entity);
 
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<AppSettingAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -85,23 +77,17 @@ namespace AdionFA.Core.Application.Services.Commons
             {
                 var response = new ResponseDTO { IsSuccess = false };
 
-                Setting entity = Mapper.Map<Setting>(setting);
+                var entity = Mapper.Map<Setting>(setting);
 
                 if (setting.SettingId > 0)
                     response.IsSuccess = AppSettingDomainService.UpdateAppSetting(entity);
                 else
                     response.IsSuccess = AppSettingDomainService.CreateAppSetting(entity) > 0;
 
-                if (response.IsSuccess)
-                {
-                    LogInfoUpdate<SettingDTO>();
-                }
-
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<AppSettingAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }

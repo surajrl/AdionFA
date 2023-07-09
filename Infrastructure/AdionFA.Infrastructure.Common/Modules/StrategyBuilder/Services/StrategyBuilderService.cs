@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
@@ -15,6 +14,7 @@ using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Project;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -267,7 +267,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<StrategyBuilderService>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
         }
@@ -365,7 +365,7 @@ namespace AdionFA.Infrastructure.Common.StrategyBuilder.Services
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<StrategyBuilderService>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
         }

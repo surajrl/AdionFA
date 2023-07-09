@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Common.Weka.Model;
 using System.Collections.Generic;
 
-namespace AdionFA.Infrastructure.Common.Modules.CrossingBuilder.Model
+namespace AdionFA.Infrastructure.Common.CrossingBuilder.Model
 {
     public class CrossingBuilderModel
     {

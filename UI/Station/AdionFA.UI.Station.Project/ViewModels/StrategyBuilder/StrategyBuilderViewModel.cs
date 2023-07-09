@@ -3,7 +3,6 @@ using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
 using AdionFA.Infrastructure.Common.IofC;
-using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Common.Modules.Weka.Model;
 using AdionFA.Infrastructure.Common.StrategyBuilder.Contracts;
@@ -34,7 +33,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,7 +54,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IEventAggregator _eventAggregator;
 
         private CancellationTokenSource _cancellationTokenSource;
-        private ManualResetEventSlim _manualResetEventSlim;
+        private readonly ManualResetEventSlim _manualResetEventSlim;
         private readonly object _lock;
         private bool _disposedValue;
 
@@ -111,7 +109,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     if (!IsTransactionActive
                         && StrategyBuilderProcesses.All(process => process.Message == BuilderProcessStatus.SBNotStarted.GetMetadata().Description))
                     {
-                        ResetBuilder();
+                        ResetBuilderProcesses();
                     }
                 }
                 catch (Exception ex)
@@ -161,10 +159,29 @@ namespace AdionFA.UI.Station.Project.ViewModels
             CanCancelOrContinue = false;
         }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
 
+        private void DeleteStrategyBuilder()
+        {
+            // Delete Strategy Builder Nodes
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), isBackup: false);
+            // Delete Strategy Builder Extractions
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), "*.xml", isBackup: false);
+
+            StrategyBuilder.WinningNodesUP.Clear();
+            StrategyBuilder.WinningNodesDOWN.Clear();
+
+            ResetBuilderProcesses();
+        }
+
         public ICommand Process => new DelegateCommand(async () =>
         {
             try
             {
+                IsTransactionActive = true;
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
+
+                _cancellationTokenSource = new();
+
                 var validator = Validate(new StrategyBuilderValidator());
                 if (!validator.IsValid)
                 {
@@ -177,46 +194,18 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 var deleteAll = await MessageHelper.ShowMessageInput(this,
                     "Strategy Builder",
-                    "Starting a new process will delete all the Winning Nodes, Assembly Nodes and Strategy Nodes.\n"
+                    "Starting a new process will delete all the Nodes, Assembly Nodes and Strategy Nodes.\n"
                     + "Do you want to continue?").ConfigureAwait(true);
 
-                if (deleteAll == MessageDialogResult.Affirmative)
-                {
-                    ResetBuilder();
-
-                    StrategyBuilder.WinningNodesUP.Clear();
-                    StrategyBuilder.WinningNodesDOWN.Clear();
-
-                    // Delete Strategy Builder Nodes
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
-                    // Delete Strategy Builder Extractions
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
-                    // Delete Assembly Builder Nodes
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
-                    // Delete Assembly Builder Extractions
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
-                    // Delete Crossing Builder Nodes
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDirectory(), "*.xml", option: SearchOption.AllDirectories, isBackup: false);
-                    // Delete Crossing Builder Extractions
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
-                    _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
-
-                }
-                else
+                if (deleteAll != MessageDialogResult.Affirmative)
                 {
                     return;
                 }
 
-                IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
+                DeleteStrategyBuilder();
 
                 _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(false);
                 _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(false);
-
-                _cancellationTokenSource = new();
 
                 // Historical Data
 
@@ -266,9 +255,9 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     process.Message = BuilderProcessStatus.SBCompleted.GetMetadata().Description;
                 }
 
-                _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(true);
-
                 // Results Message
+
+                _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(true);
 
                 var msgUP = StrategyBuilder.WinningNodesUP.Count > 0 ? $"{StrategyBuilder.WinningNodesUP.Count} Correlation UP Nodes Found." : "No Correlation UP Nodes Found.";
                 var msgDOWN = StrategyBuilder.WinningNodesDOWN.Count > 0 ? $"{StrategyBuilder.WinningNodesDOWN.Count} Correlation DOWN Nodes Found." : "No Correlation DOWN Nodes Found.";
@@ -288,7 +277,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<StrategyBuilderViewModel>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
             finally
@@ -438,7 +427,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 });
         }
 
-        private void ResetBuilder()
+        private void ResetBuilderProcesses()
         {
             StrategyBuilderProcesses.Clear();
 

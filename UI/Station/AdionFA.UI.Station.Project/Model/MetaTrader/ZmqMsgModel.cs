@@ -1,13 +1,19 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
+﻿using AdionFA.Infrastructure.Enums;
 using System;
 
 namespace AdionFA.UI.Station.Project.Model.MetaTrader
 {
-    public class ZmqMsgModel : ViewModelBase
+    public class ZmqMsgModel
     {
         public int Id { get; set; }
 
-        public bool IsCurrentCandle { get; set; }
+        public bool CheckTrade { get; set; }
+
+        public bool IsCurrentBar { get; set; }
+
+        public string Symbol { get; set; }
+
+        public OrderTypeEnum OrderType { get; set; }
 
         public string DateFormat { get; set; }
 
@@ -15,12 +21,11 @@ namespace AdionFA.UI.Station.Project.Model.MetaTrader
 
         public DateTime Date { get; set; }
         public string Time { get; set; }
-        public decimal Open { get; set; }
-        public decimal High { get; set; }
-        public decimal Low { get; set; }
-        public decimal Close { get; set; }
-        public decimal Volume { get; set; }
-        public decimal Spread { get; set; }
-
+        public double Open { get; set; }
+        public double High { get; set; }
+        public double Low { get; set; }
+        public double Close { get; set; }
+        public double Volume { get; set; }
+        public double Spread { get; set; }
     }
 }

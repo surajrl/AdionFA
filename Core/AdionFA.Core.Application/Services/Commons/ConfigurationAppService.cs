@@ -23,14 +23,13 @@ namespace AdionFA.Core.Application.Services.Commons
         {
             try
             {
-                IList<Configuration> configurations = ConfigurationDomainService.GetAllConfiguration(includeGraph);
-                IList<ConfigurationDTO> dto = Mapper.Map<IList<ConfigurationDTO>>(configurations);
+                var configurations = ConfigurationDomainService.GetAllConfiguration(includeGraph);
+                var dto = Mapper.Map<IList<ConfigurationDTO>>(configurations);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<ConfigurationAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -47,7 +46,6 @@ namespace AdionFA.Core.Application.Services.Commons
             }
             catch (Exception ex)
             {
-                LogException<ConfigurationAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -65,16 +63,10 @@ namespace AdionFA.Core.Application.Services.Commons
 
                 response.IsSuccess = true;
 
-                if (response.IsSuccess)
-                {
-                    LogInfoUpdate<ConfigurationDTO>();
-                }
-
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<ConfigurationAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }

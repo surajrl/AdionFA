@@ -80,7 +80,7 @@
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                <Run Text="{Binding NodeData.Label}"
+                                                <Run Text="{Binding Name, Mode=OneWay}"
                                                      FontWeight="SemiBold" />
                                             </TextBlock>
                                         </StackPanel>

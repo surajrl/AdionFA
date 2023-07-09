@@ -6,7 +6,6 @@ using AdionFA.Core.Domain.Contracts.Projects;
 using AdionFA.Core.Domain.Contracts.Repositories;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Base;
-using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.Project;
 using Ninject;
 using System;
@@ -41,14 +40,13 @@ namespace AdionFA.Core.Application.Services.Projects
         {
             try
             {
-                IList<Project> projects = ProjectDomainService.GetAllProjects();
-                IList<ProjectDTO> dtos = Mapper.Map<IList<ProjectDTO>>(projects);
+                var projects = ProjectDomainService.GetAllProjects();
+                var dtos = Mapper.Map<IList<ProjectDTO>>(projects);
 
                 return dtos;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -58,14 +56,13 @@ namespace AdionFA.Core.Application.Services.Projects
         {
             try
             {
-                Project project = ProjectDomainService.GetProject(projectId, includeGraph);
-                ProjectDTO dto = Mapper.Map<ProjectDTO>(project);
+                var project = ProjectDomainService.GetProject(projectId, includeGraph);
+                var dto = Mapper.Map<ProjectDTO>(project);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -92,17 +89,11 @@ namespace AdionFA.Core.Application.Services.Projects
                 response.IsSuccess = pId > 0;
                 response.EntityId = pId.ToString();
 
-                if (response.IsSuccess)
-                {
-                    LogInfoCreate<ProjectDTO>();
-                }
-
                 return response;
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
-                LogException<ProjectAppService>(ex);
                 throw;
             }
         }
@@ -113,11 +104,11 @@ namespace AdionFA.Core.Application.Services.Projects
             {
                 var response = new ResponseDTO { IsSuccess = false };
 
-                Project p = Mapper.Map<Project>(project);
+                var p = Mapper.Map<Project>(project);
 
                 if (project.ProjectConfigurations.Any())
                 {
-                    ProjectConfigurationDTO pgc = project.ProjectConfigurations.FirstOrDefault(pc => pc.EndDate == null);
+                    var pgc = project.ProjectConfigurations.FirstOrDefault(pc => pc.EndDate == null);
 
                     var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(pgc, pgc.HistoricalDataId ?? 0);
                     if (!validation.IsSuccess)
@@ -129,16 +120,10 @@ namespace AdionFA.Core.Application.Services.Projects
 
                 response.IsSuccess = ProjectDomainService.UpdateProject(p);
 
-                if (response.IsSuccess)
-                {
-                    LogInfoUpdate<ProjectDTO>();
-                }
-
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -150,14 +135,13 @@ namespace AdionFA.Core.Application.Services.Projects
         {
             try
             {
-                ProjectConfiguration model = ProjectDomainService.GetProjectConfiguration(projectId, includeGraph);
-                ProjectConfigurationDTO dto = Mapper.Map<ProjectConfigurationDTO>(model);
+                var model = ProjectDomainService.GetProjectConfiguration(projectId, includeGraph);
+                var dto = Mapper.Map<ProjectConfigurationDTO>(model);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -169,7 +153,7 @@ namespace AdionFA.Core.Application.Services.Projects
             {
                 var response = new ResponseDTO { IsSuccess = false };
 
-                ProjectConfiguration pc = Mapper.Map<ProjectConfiguration>(projectConfiguration);
+                var pc = Mapper.Map<ProjectConfiguration>(projectConfiguration);
 
                 var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(projectConfiguration, projectConfiguration.HistoricalDataId ?? 0);
                 if (!validation.IsSuccess)
@@ -180,16 +164,10 @@ namespace AdionFA.Core.Application.Services.Projects
 
                 response.IsSuccess = ProjectDomainService.CreateProjectConfiguration(pc) > 0;
 
-                if (response.IsSuccess)
-                {
-                    LogInfoCreate<ProjectConfigurationDTO>();
-                }
-
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -203,7 +181,7 @@ namespace AdionFA.Core.Application.Services.Projects
 
                 if ((projectConfiguration?.ProjectId ?? 0) > 0)
                 {
-                    ProjectConfiguration pc = Mapper.Map<ProjectConfiguration>(projectConfiguration);
+                    var pc = Mapper.Map<ProjectConfiguration>(projectConfiguration);
 
                     var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(projectConfiguration, projectConfiguration.HistoricalDataId ?? 0);
                     if (!validation.IsSuccess)
@@ -212,18 +190,12 @@ namespace AdionFA.Core.Application.Services.Projects
                     }
 
                     response.IsSuccess = ProjectDomainService.UpdateProjectConfiguration(pc);
-
-                    if (response.IsSuccess)
-                    {
-                        LogInfoUpdate<ProjectConfigurationDTO>();
-                    }
                 }
 
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -237,7 +209,7 @@ namespace AdionFA.Core.Application.Services.Projects
 
                 if (projectId > 0)
                 {
-                    ProjectConfiguration pc = ProjectDomainService.RestoreProjectConfiguration(projectId);
+                    var pc = ProjectDomainService.RestoreProjectConfiguration(projectId);
 
                     response.IsSuccess = pc != null;
 
@@ -245,8 +217,6 @@ namespace AdionFA.Core.Application.Services.Projects
                     {
                         response.Enity = pc;
                         response.EntityId = pc.ProjectConfigurationId.ToString();
-
-                        LogInfoUpdate<ProjectConfigurationDTO>();
                     }
                 }
 
@@ -254,7 +224,6 @@ namespace AdionFA.Core.Application.Services.Projects
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -266,7 +235,7 @@ namespace AdionFA.Core.Application.Services.Projects
 
             if (c != null && marketDataId > 0)
             {
-                HistoricalDataDTO md = MarketDataAppService.GetHistoricalData(marketDataId);
+                var md = MarketDataAppService.GetHistoricalData(marketDataId);
 
                 if (md != null)
                 {
@@ -299,16 +268,10 @@ namespace AdionFA.Core.Application.Services.Projects
                     response.IsSuccess = true;
                 }
 
-                if (response.IsSuccess)
-                {
-                    LogInfoUpdate<ProjectDTO>();
-                }
-
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }
@@ -322,16 +285,10 @@ namespace AdionFA.Core.Application.Services.Projects
 
                 response.IsSuccess = ProjectDomainService.UpdateProcessId(projectId, (int)EntityTypeEnum.Project, processId);
 
-                if (response.IsSuccess)
-                {
-                    LogInfoUpdate<ProjectDTO>();
-                }
-
                 return response;
             }
             catch (Exception ex)
             {
-                LogException<ProjectAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }

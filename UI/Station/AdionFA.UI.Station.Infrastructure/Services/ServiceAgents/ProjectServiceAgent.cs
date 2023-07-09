@@ -85,7 +85,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
                 {
                     var dto = IoC.Get<IProjectAPI>().GetProjectConfiguration(projectId, includeGraph);
 
-                    project = Mapper.Map<TransferObject.Project.ProjectConfigurationDTO, ProjectConfigurationVM>(dto);
+                    project = Mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(dto);
                 });
 
                 return project;
@@ -105,7 +105,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services.AppServices
 
                 await Task.Run(() =>
                 {
-                    var config = Mapper.Map<ProjectConfigurationVM, TransferObject.Project.ProjectConfigurationDTO>(configuration);
+                    var config = Mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(configuration);
 
                     result = IoC.Get<IProjectAPI>().UpdateProjectConfiguration(config);
                 });

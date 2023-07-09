@@ -9,27 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="9.0.0">
-      <PrivateAssets>none</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Ninject" Version="3.3.6">
-      <PrivateAssets>none</PrivateAssets>
     </PackageReference>
     <PackageReference Include="ninject.extensions.conventions" Version="3.3.0">
       <PrivateAssets>none</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Ninject.Extensions.NamedScope" Version="3.3.0">
-      <PrivateAssets>none</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Serilog" Version="2.12.0">
-      <PrivateAssets>none</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Serilog.Exceptions" Version="8.4.0">
       <PrivateAssets>none</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Serilog.Exceptions.EntityFrameworkCore" Version="8.4.0">

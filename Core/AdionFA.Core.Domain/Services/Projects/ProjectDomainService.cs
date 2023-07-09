@@ -40,11 +40,11 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                List<Project> all = _projectRepository.GetAll(
+                var all = _projectRepository.GetAll(
                     p => p.ProjectConfigurations
                 ).ToList();
 
-                int[] pIds = all.Select(p => p.ProjectId).ToArray();
+                var pIds = all.Select(p => p.ProjectId).ToArray();
 
                 var processHistory = from esh in _entityServiceHostRepository.GetAll(_esh => pIds.Contains(_esh.EntityId) && _esh.EntityTypeId == (int)EntityTypeEnum.Project)
                                      select esh;
@@ -76,7 +76,7 @@ namespace AdionFA.Core.Domain.Services.Projects
                 {
                     includes.Add(p => p.ExpertAdvisors);
 
-                    Project p = _projectRepository.FirstOrDefault(predicate, includes.ToArray());
+                    var p = _projectRepository.FirstOrDefault(predicate, includes.ToArray());
 
                     var pconfig = GetProjectConfiguration(p.ProjectId, true);
                     p.ProjectConfigurations = new List<ProjectConfiguration>()
@@ -253,11 +253,13 @@ namespace AdionFA.Core.Domain.Services.Projects
         {
             try
             {
-                var pc = includeGraph ? _projectConfigurationRepository.FirstOrDefault(
-                    pc => pc.ProjectId == projectId && pc.EndDate == null,
-                    pc => pc.ProjectScheduleConfigurations,
-                    pc => pc.HistoricalData)
-                    : _projectConfigurationRepository.FirstOrDefault(pc => pc.ProjectId == projectId && pc.EndDate == null);
+                var pc = includeGraph
+                    ? _projectConfigurationRepository.FirstOrDefault(
+                        pc => pc.ProjectId == projectId && pc.EndDate == null,
+                        pc => pc.ProjectScheduleConfigurations,
+                        pc => pc.HistoricalData)
+                    : _projectConfigurationRepository.FirstOrDefault(
+                        pc => pc.ProjectId == projectId && pc.EndDate == null);
 
                 return pc;
             }

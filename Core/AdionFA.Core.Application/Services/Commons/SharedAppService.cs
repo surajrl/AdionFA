@@ -21,17 +21,16 @@ namespace AdionFA.Core.Application.Services.Commons
         {
             try
             {
-                EntityServiceHost ehost = EntityServiceHostRepository.FirstOrDefault(
+                var ehost = EntityServiceHostRepository.FirstOrDefault(
                         esh => esh.EntityTypeId == entityTypeId &&
                                esh.EntityId == entityId);
 
-                EntityServiceHostDTO dto = Mapper.Map<EntityServiceHostDTO>(ehost);
+                var dto = Mapper.Map<EntityServiceHostDTO>(ehost);
 
                 return dto;
             }
             catch (Exception ex)
             {
-                LogException<SharedAppService>(ex);
                 Trace.TraceError(ex.Message);
                 throw;
             }

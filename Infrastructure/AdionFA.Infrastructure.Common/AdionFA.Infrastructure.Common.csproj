@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Logger\Model\**" />
     <Compile Remove="Security\Authentication\**" />
-    <EmbeddedResource Remove="Logger\Model\**" />
     <EmbeddedResource Remove="Security\Authentication\**" />
-    <None Remove="Logger\Model\**" />
     <None Remove="Security\Authentication\**" />
   </ItemGroup>
 

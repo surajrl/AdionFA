@@ -1,6 +1,5 @@
 ﻿using AdionFA.Infrastructure.Common.Base;
 using AdionFA.Infrastructure.Common.Directories.Contracts;
-using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Managements;
 using AdionFA.Infrastructure.Enums;
 using System;
@@ -267,7 +266,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<ProjectDirectoryService>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
         }
@@ -282,17 +281,20 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
 
                 if (isBackup)
                 {
-                    // Copy text files.
+                    // Copy text files
                     foreach (var f in csvList)
                     {
-                        // Remove path from the file name.
+                        // Remove path from the file name
                         var fName = f[(sourceDir.Length + 1)..];
 
                         try
                         {
                             if (!Directory.Exists(backupDir))
+                            {
                                 Directory.CreateDirectory(backupDir);
-                            // Will not overwrite if the destination file already exists.
+                            }
+
+                            // Will not overwrite if the destination file already exists
                             var targetPath = Path.Combine(backupDir, option == SearchOption.AllDirectories ? Path.GetFileName(fName) : fName);
                             File.Copy(Path.Combine(sourceDir, fName), targetPath, overwrite);
                         }
@@ -300,7 +302,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
                         // Catch exception if the file was already copied.
                         catch (IOException copyError)
                         {
-                            LogHelper.LogException<ProjectDirectoryService>(copyError);
+                            Trace.TraceError(copyError.Message);
                             throw;
                         }
                     }
@@ -316,7 +318,7 @@ namespace AdionFA.Infrastructure.Common.Directories.Services
             }
             catch (DirectoryNotFoundException dirNotFound)
             {
-                LogHelper.LogException<ProjectDirectoryService>(dirNotFound);
+                Trace.TraceError(dirNotFound.Message);
                 throw;
             }
         }

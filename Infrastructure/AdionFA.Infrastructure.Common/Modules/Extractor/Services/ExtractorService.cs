@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.Common.Extractor.Contracts;
 using AdionFA.Infrastructure.Common.Extractor.Mappers;
 using AdionFA.Infrastructure.Common.Extractor.Model;
 using AdionFA.Infrastructure.Common.Helpers;
-using AdionFA.Infrastructure.Common.Logger.Helpers;
 using AdionFA.Infrastructure.Common.Mappers;
 using AdionFA.Infrastructure.Enums;
 using AdionFA.Infrastructure.I18n.Resources;
@@ -548,8 +547,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<ExtractorService>(ex);
-
+                Trace.TraceError(ex.Message);
                 throw;
             }
         }
@@ -608,7 +606,7 @@ namespace AdionFA.Infrastructure.Common.Extractor.Services
             }
             catch (Exception ex)
             {
-                LogHelper.LogException<ExtractorService>(ex);
+                Trace.TraceError(ex.Message);
                 throw;
             }
         }
