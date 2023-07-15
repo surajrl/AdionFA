@@ -1,0 +1,24 @@
+﻿using AdionFA.Domain.Base;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AdionFA.Domain.Entities
+{
+    [Table(nameof(ExpertAdvisor))]
+    public class ExpertAdvisor : EntityBase
+    {
+        [Key]
+        public int ExpertAdvisorId { get; set; }
+
+        public string Name { get; set; }
+        public string MagicNumber { get; set; }
+        public string Host { get; set; }
+        public string ResponsePort { get; set; }
+        public string PublisherPort { get; set; }
+
+        public int ProjectId { get; set; }
+
+        [ForeignKey(nameof(ProjectId))]
+        public Project Project { get; set; }
+    }
+}

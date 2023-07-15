@@ -1,4 +1,10 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using AdionFA.Benchmark.Services;
+using AdionFA.Infrastructure.Common.CrossingBuilder.Model;
+using AdionFA.Infrastructure.Common.Directories.Contracts;
+using AdionFA.Infrastructure.Common.Helpers;
+using AdionFA.Infrastructure.Common.Managements;
+using AdionFA.Infrastructure.Common.Weka.Model;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 
 namespace AdionFA.Benchmark
@@ -9,41 +15,21 @@ namespace AdionFA.Benchmark
         public static void Main(string[] args)
         {
             BenchmarkRunner.Run<BacktestBenchmark>();
-            //BacktestExecutionUsingIEnumerable();
         }
 
-        private static List<int> _existingList = Enumerable.Repeat(2, 1000).ToList();
+        private static readonly IProjectDirectoryService _projectDirectoryService = new BenchmarkProjectDirectoryService();
+        private static readonly CrossingBuilderModel _crossingBuilder = new();
+        private static readonly string _projectName = "testCB";
+
 
         [Benchmark]
-        public static List<int> ListAddRange()
+        public void GetFiles()
         {
-            var newList = new List<int>();
-
-            newList.Clear();
-            newList.AddRange(_existingList);
-
-            return newList;
-        }
-
-        [Benchmark]
-        public static List<int> ListNew()
-        {
-            var newList = new List<int>(_existingList);
-            return newList;
-        }
-
-        [Benchmark]
-        public static List<int> ListForeachAdd()
-        {
-            var newList = new List<int>();
-
-            newList.Clear();
-            foreach (var item in _existingList)
+            _projectDirectoryService.GetFilesInPath(_projectName.ProjectCrossingBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
             {
-                newList.Add(item);
-            }
-
-            return newList;
+                var strategyNode = SerializerHelper.XMLDeSerializeObject<StrategyNodeModel>(file.FullName);
+                _crossingBuilder.WinningStrategyNodesUP.Add(strategyNode);
+            });
         }
 
         //    private readonly static AdionFADbContext _db = new();

@@ -48,7 +48,7 @@ namespace AdionFA.Benchmark
                     }
 
                     // Params Split
-                    if (divisions.Length == 2)
+                    if (divisions?.Length == 2)
                     {
                         var indicatorParams = divisions[0].Split("_");
 
