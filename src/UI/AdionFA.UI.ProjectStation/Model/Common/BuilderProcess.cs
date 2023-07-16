@@ -1,9 +1,9 @@
 ﻿using AdionFA.Infrastructure.Modules.Weka.Model;
 using AdionFA.Infrastructure.Weka.Model;
-using AdionFA.UI.Station.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Base;
 using System.Collections.ObjectModel;
 
-namespace AdionFA.UI.Station.Project.Model.Common
+namespace AdionFA.UI.ProjectStation.Model.Common
 {
     public class BuilderProcess : ViewModelBase
     {

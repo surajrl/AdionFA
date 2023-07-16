@@ -1,19 +1,18 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Module.Dashboard.Validators;
+﻿using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Model.MarketData;
+using AdionFA.UI.Module.Dashboard.Validators;
 using FluentValidation.Results;
 using System.Collections.Generic;
 
-namespace AdionFA.UI.Station.Module.Dashboard.Model
+namespace AdionFA.UI.Module.Dashboard.Model
 {
     public class UploadHistoricalDataModel : HistoricalDataVM, IModelValidator
     {
-        private string _filePathHistoricalData;
-
-        public string FilePathHistoricalData
+        private string _filepathHistoricalData;
+        public string FilepathHistoricalData
         {
-            get => _filePathHistoricalData;
-            set => SetProperty(ref _filePathHistoricalData, value);
+            get => _filepathHistoricalData;
+            set => SetProperty(ref _filepathHistoricalData, value);
         }
 
         public IList<HistoricalDataCandleSettingVM> HistoricalDataCandleSettings { get; set; }

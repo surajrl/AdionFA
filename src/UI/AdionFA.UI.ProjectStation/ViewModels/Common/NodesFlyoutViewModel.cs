@@ -2,9 +2,9 @@
 using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.Modules.Weka.Model;
 using AdionFA.Infrastructure.StrategyBuilder.Model;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Services;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Services;
 using DynamicData;
 using Prism.Commands;
 using System;
@@ -13,7 +13,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels.Common
+namespace AdionFA.UI.ProjectStation.ViewModels.Common
 {
     public class NodesFlyoutViewModel : ViewModelBase
     {

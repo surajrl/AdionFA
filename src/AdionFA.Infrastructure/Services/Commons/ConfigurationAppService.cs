@@ -1,6 +1,7 @@
-﻿using AdionFA.Application.Contract.Commons;
+﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities;
+using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
 using System;
@@ -13,9 +14,6 @@ namespace AdionFA.Application.Services.Commons
 {
     public class ConfigurationAppService : AppServiceBase, IConfigurationAppService
     {
-        private readonly string _ownerId = "0";
-        private readonly string _owner = "admin";
-
         private readonly IGenericRepository<Configuration> _configurationRepository;
 
         public ConfigurationAppService(IGenericRepository<Configuration> projectConfigurationRepository)
@@ -79,8 +77,8 @@ namespace AdionFA.Application.Services.Commons
 
                 var configuration = Mapper.Map<Configuration>(configurationDTO);
 
-                configuration.UpdatedById = _ownerId;
-                configuration.UpdatedByUserName = _owner;
+                configuration.UpdatedById = Id;
+                configuration.UpdatedByUserName = Username;
                 configuration.UpdatedOn = DateTime.UtcNow;
 
                 _configurationRepository.Update(configuration);

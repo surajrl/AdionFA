@@ -1,4 +1,4 @@
-﻿namespace AdionFA.UI.Station.Infrastructure.Contracts
+﻿namespace AdionFA.UI.Infrastructure.Contracts
 {
     public interface IFlyoutView
     {

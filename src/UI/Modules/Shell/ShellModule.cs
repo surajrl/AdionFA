@@ -1,11 +1,11 @@
-﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Module.Shell.Services;
-using AdionFA.UI.Station.Module.Shell.Views;
+﻿using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Module.Services;
+using AdionFA.UI.Module.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
 
-namespace AdionFA.UI.Station.Module.Shell
+namespace AdionFA.UI.Module
 {
     public class ShellModule : IModule
     {

@@ -1,23 +1,23 @@
-﻿using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Module.Dashboard.Model;
+﻿using AdionFA.Domain.Properties;
+using AdionFA.UI.Module.Dashboard.Model;
 using FluentValidation;
 
-namespace AdionFA.UI.Station.Module.Dashboard.Validators
+namespace AdionFA.UI.Module.Dashboard.Validators
 {
     public class UploadHistoricalDataVMValidator : AbstractValidator<UploadHistoricalDataModel>
     {
         public UploadHistoricalDataVMValidator()
         {
             RuleFor(model => model.MarketId).NotNull().NotEqual(0)
-                .WithMessage(string.Format(ValidationResources.IsRequired, CommonResources.Market));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.Market));
 
             RuleFor(model => model.SymbolId).NotNull()
-                .WithMessage(string.Format(ValidationResources.IsRequired, CommonResources.Symbols));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.Symbols));
 
             RuleFor(model => model.TimeframeId).NotNull()
-                .WithMessage(string.Format(ValidationResources.IsRequired, CommonResources.Timeframe));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.Timeframe));
 
-            RuleFor(model => model.FilePathHistoricalData).NotEmpty().NotNull().WithName(CommonResources.FilePath);
+            RuleFor(model => model.FilepathHistoricalData).NotEmpty().NotNull().WithName(Resources.Filepath);
         }
     }
 }

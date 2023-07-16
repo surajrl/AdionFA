@@ -1,12 +1,13 @@
-﻿using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.Enums.Model;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Module.Dashboard.Model;
-using AdionFA.UI.Station.Module.Dashboard.Services;
+﻿using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Model;
+using AdionFA.Domain.Properties;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Services;
+using AdionFA.UI.Module.Dashboard.Model;
+using AdionFA.UI.Module.Dashboard.Services;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
@@ -15,7 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
+namespace AdionFA.UI.Module.Dashboard.ViewModels
 {
     public class CreateProjectViewModel : ViewModelBase
     {
@@ -38,7 +39,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         });
 
-        public ICommand CreateProjectBtnCommand => new DelegateCommand(async () =>
+        public ICommand CreateProjectBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -57,7 +58,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 IsTransactionActive = true;
 
                 // Create / Update
-                var result = await _settingService.CreateProject(Project);
+                var result = _settingService.CreateProject(Project);
 
                 if (result)
                 {
@@ -68,7 +69,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                 MessageHelper.ShowMessage(this,
                     EntityTypeEnum.Project.GetMetadata().Description,
-                    result ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
+                    result
+                    ? Resources.SuccessEntitySave
+                    : Resources.FailEntitySave);
             }
             catch (Exception ex)
             {
@@ -79,16 +82,16 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private async void PopulateViewModel()
+        private void PopulateViewModel()
         {
             if (!IsTransactionActive)
             {
                 Project = new CreateProjectModel();
 
-                var config = await _settingService.GetConfiguration();
+                var config = _settingService.GetConfiguration();
                 Project.ConfigurationId = config.ConfigurationId;
 
-                var historicalData = await _settingService.GetAllHistoricalData();
+                var historicalData = _settingService.GetAllHistoricalData();
                 HistoricalData.Clear();
                 HistoricalData.AddRange(historicalData
                     .Select(c => new Metadata
@@ -99,10 +102,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }
 
-        // Bindable Model
+        // View Bindings
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -110,7 +112,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private CreateProjectModel _project;
-
         public CreateProjectModel Project
         {
             get => _project;

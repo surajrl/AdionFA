@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Directories.Services;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.UI.Station.Project.EventAggregator;
-using AdionFA.UI.Station.Project.ViewModels;
+using AdionFA.UI.ProjectStation.EventAggregator;
+using AdionFA.UI.ProjectStation.ViewModels;
 using Microsoft.Win32;
 using Prism.Events;
 using Prism.Ioc;
@@ -13,7 +13,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace AdionFA.UI.Station.Project.Views
+namespace AdionFA.UI.ProjectStation.Views
 {
     /// <summary>
     /// Interaction logic for ExtractorView.xaml

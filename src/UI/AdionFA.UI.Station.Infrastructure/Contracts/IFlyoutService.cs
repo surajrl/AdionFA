@@ -1,6 +1,6 @@
-﻿using AdionFA.UI.Station.Infrastructure.Services;
+﻿using AdionFA.UI.Infrastructure.Services;
 
-namespace AdionFA.UI.Station.Infrastructure.Contracts.Services
+namespace AdionFA.UI.Infrastructure.Contracts.Services
 {
     public interface IFlyoutService
     {

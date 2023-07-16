@@ -1,15 +1,14 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Project.Common.NodesFlyoutView"
+﻿<metro:Flyout x:Class="AdionFA.UI.ProjectStation.Common.NodesFlyoutView"
               xmlns:prism="http://prismlibrary.com/"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
               xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-              xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
-              xmlns:commonResources="clr-namespace:AdionFA.Infrastructure.I18n.Resources;assembly=AdionFA.Infrastructure.I18n"
+              xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
               xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-              xmlns:local="clr-namespace:AdionFA.UI.Station.Project.StrategyBuilder"
+              xmlns:local="clr-namespace:AdionFA.UI.ProjectStation.StrategyBuilder"
               mc:Ignorable="d"
               prism:ViewModelLocator.AutoWireViewModel="True"
               Position="Right"
@@ -118,7 +117,7 @@
 
                                                 <!--#region Total UP-->
                                                 <TextBlock Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.TotalUP}"
+                                                    <Run Text="Total UP"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding NodeData.TotalUP, StringFormat=N2}" />
@@ -127,7 +126,7 @@
                                                 <!--#region Total DOWN-->
                                                 <TextBlock Grid.Row="1"
                                                            Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.TotalDOWN}"
+                                                    <Run Text="Total DOWN"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding NodeData.TotalDOWN, StringFormat=N2}" />
@@ -136,7 +135,7 @@
                                                 <!--#region NTotals-->
                                                 <TextBlock Grid.Column="1"
                                                            Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.NTotals}"
+                                                    <Run Text="N Totals"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding NodeData.Total, StringFormat=N2}" />
@@ -146,7 +145,7 @@
                                                 <!--#region Ratio UP-->
                                                 <TextBlock Grid.Row="2"
                                                            Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.RatioUP}"
+                                                    <Run Text="Ratio UP"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding NodeData.RatioUP, StringFormat=N2}" />
@@ -155,7 +154,7 @@
                                                 <!--#region Ratio DOWN-->
                                                 <TextBlock Grid.Row="3"
                                                            Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.RatioDOWN}"
+                                                    <Run Text="Ratio DOWN"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding NodeData.RatioDOWN, StringFormat=N2}" />
@@ -165,7 +164,7 @@
                                                 <TextBlock Grid.Row="2"
                                                            Grid.Column="2"
                                                            Margin="{StaticResource ColumnMargin}">
-                                                    <Run Text="{x:Static commonResources:CommonResources.RatioMax}"
+                                                    <Run Text="Ratio Max"
                                                          FontWeight="SemiBold" />
                                                     <Run Text=":" />
                                                     <Run Text="{Binding NodeData.RatioMax, StringFormat=N2}" />

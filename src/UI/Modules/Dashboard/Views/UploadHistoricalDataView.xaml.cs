@@ -1,10 +1,10 @@
-﻿using AdionFA.UI.Station.Module.Dashboard.ViewModels;
+﻿using AdionFA.UI.Module.Dashboard.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Windows.Controls;
 
-namespace AdionFA.UI.Station.Module.Dashboard
+namespace AdionFA.UI.Module.Dashboard
 {
     /// <summary>
     /// Interaction logic for UploadMarketDataView.xaml

@@ -1,10 +1,10 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Common;
-using AdionFA.UI.Station.Module.Dashboard.Validators;
+﻿using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Model.Common;
+using AdionFA.UI.Module.Dashboard.Validators;
 using FluentValidation.Results;
 using System;
 
-namespace AdionFA.UI.Station.Module.Dashboard.Model
+namespace AdionFA.UI.Module.Dashboard.Model
 {
     public class ConfigurationModel : ConfigurationVM, IModelValidator
     {

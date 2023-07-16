@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<AnalysisLevel>latest-recommended</AnalysisLevel>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
@@ -15,11 +14,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.9" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="NetMQ" Version="4.0.1.11" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -27,17 +25,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Resources\Assets\**">
+		<Content Include="Assets\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="Resources\MetaTrader\**">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Resources\Weka\**">
+		<Content Include="Weka\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<None Update="AdionFA.db">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -51,8 +46,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\AdionFA.UI.Station.Infrastructure\AdionFA.UI.Infrastructure.csproj" />
-	  <ProjectReference Include="..\AdionFA.UI.Station.LookAndFeel\AdionFA.UI.LookAndFeel.csproj" />
+		<ProjectReference Include="..\AdionFA.UI.Station.Infrastructure\AdionFA.UI.Infrastructure.csproj" />
+		<ProjectReference Include="..\AdionFA.UI.Station.LookAndFeel\AdionFA.UI.LookAndFeel.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace AdionFA.UI.Station.Infrastructure
+﻿namespace AdionFA.UI.Infrastructure
 {
     public static class AppRegions
     {
@@ -7,7 +7,6 @@
         public const string CreateProjectView_SettingModule = "CreateProjectView_SettingModule";
         public const string ConfigurationView_SettingModule = "ConfigurationView_SettingModule";
         public const string HistoricalDataView_SettingModule = "HistoricalDataView_SettingModule";
-        public const string HistoricalDataMTView_SettingModule = "HistoricalDataViewMT_SettingModule";
         public const string UploadHistoricalDataView_SettingModule = "UploadHistoricalDataView_SettingModule";
         public const string DownloaHistoricalDataView_SettingModule = "DownloadHistoricalDataView_SettingModule";
     }

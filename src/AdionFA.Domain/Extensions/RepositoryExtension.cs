@@ -1,6 +1,6 @@
-﻿using AdionFA.Domain.Base;
-using AdionFA.Domain.Contracts.Bases;
+﻿using AdionFA.Domain.Contracts.Bases;
 using AdionFA.Domain.Contracts.Repositories;
+using AdionFA.Domain.Entities.Base;
 using System;
 
 namespace AdionFA.Domain.Extensions

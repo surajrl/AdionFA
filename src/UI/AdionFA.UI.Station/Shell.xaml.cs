@@ -1,9 +1,6 @@
-﻿using AdionFA.UI.Station.Infrastructure;
+﻿using AdionFA.UI.Infrastructure;
 using MahApps.Metro.Controls;
 using Prism.Regions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 
 namespace AdionFA.UI.Station
@@ -16,11 +13,11 @@ namespace AdionFA.UI.Station
         public Shell(IRegionManager regionManager)
         {
             InitializeComponent();
-            
+
             if (regionManager != null)
             {
-                SetRegionManager(regionManager, this.rightWindowCommandsRegion, FlyoutRegions.RightWindowCommandsRegion);
-                SetRegionManager(regionManager, this.flyoutsControlRegion, FlyoutRegions.FlyoutRegion);
+                SetRegionManager(regionManager, rightWindowCommandsRegion, FlyoutRegions.RightWindowCommandsRegion);
+                SetRegionManager(regionManager, flyoutsControlRegion, FlyoutRegions.FlyoutRegion);
             }
         }
 

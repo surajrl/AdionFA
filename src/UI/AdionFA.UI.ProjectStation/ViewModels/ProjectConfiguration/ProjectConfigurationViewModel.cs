@@ -1,15 +1,20 @@
-﻿using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.I18n.Enums;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.EventAggregator;
-using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Model.Configuration;
-using AdionFA.UI.Station.Project.Services;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Properties;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.TransferObject.MarketData;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Model.Base;
+using AdionFA.UI.Infrastructure.Model.MarketData;
+using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.EventAggregator;
+using AdionFA.UI.ProjectStation.Features;
+using AdionFA.UI.ProjectStation.Model.Configuration;
+using AdionFA.UI.ProjectStation.Services;
+using AutoMapper;
+using Ninject;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
@@ -18,39 +23,50 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class ProjectConfigurationViewModel : MenuItemViewModel
     {
+        private readonly IMapper _mapper;
+
+        private readonly IProjectAppService _projectService;
+        private readonly IMarketDataAppService _marketDataService;
+
         private readonly IAppProjectService _appProjectService;
-        private readonly IMarketDataServiceAgent _historicalDataService;
-        private readonly IProjectServiceAgent _projectService;
         private readonly IEventAggregator _eventAggregator;
 
         public ProjectConfigurationViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
-            _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
-            _historicalDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
 
+            _appProjectService = ContainerLocator.Current.Resolve<IAppProjectService>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             if (item == HamburgerMenuItems.ProjectConfigurationTrim)
             {
-                PopulateViewModel(ProcessArgs.ProjectId);
+                ProjectConfiguration = _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
+
+                ProjectConfiguration.Symbol = _mapper.Map<SymbolDTO, SymbolVM>(_marketDataService.GetSymbol(ProjectConfiguration.SymbolId));
+                ProjectConfiguration.Timeframe = _mapper.Map<TimeframeDTO, TimeframeVM>(_marketDataService.GetTimeframe(ProjectConfiguration.TimeframeId));
             }
         });
 
-        public ICommand WithoutSchedulesCommand => new DelegateCommand(async () =>
+        public ICommand WithoutSchedulesCommand => new DelegateCommand(() =>
         {
-            var config = await _appProjectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId, true);
+            var config = _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
             if (ProjectConfiguration.WithoutSchedule)
             {
                 ProjectConfiguration.FromTimeInSecondsEurope = _projectConfiguration.ToTimeInSecondsEurope =
@@ -68,9 +84,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public ICommand CrossingBuilderCommand => new DelegateCommand<HistoricalDataVM>(ProjectConfiguration.CrossingHistoricalData.Add);
-
-        public ICommand SaveBtnCommand => new DelegateCommand(async () =>
+        public ICommand SaveBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -87,7 +101,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                var response = await _appProjectService.UpdateProjectConfigurationAsync(ProjectConfiguration);
+                var response = _appProjectService.UpdateProjectConfiguration(ProjectConfiguration);
 
                 IsTransactionActive = false;
 
@@ -107,28 +121,28 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public ICommand RestoreConfigurationBtnCommand => new DelegateCommand(async () =>
+        public ICommand RestoreConfigurationBtnCommand => new DelegateCommand(() =>
         {
             try
             {
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                var result = await _projectService.RestoreProjectConfigurationAsync(ProcessArgs.ProjectId);
+                var result = _projectService.RestoreProjectConfiguration(ProcessArgs.ProjectId);
 
                 if (result?.IsSuccess ?? false)
                 {
-                    PopulateViewModel(ProcessArgs.ProjectId);
+                    ProjectConfiguration = _appProjectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
                 }
 
                 IsTransactionActive = false;
 
                 var msg = (result?.IsSuccess ?? false)
-                ? MessageResources.EntitySaveSuccess
-                : result?.Message ?? MessageResources.EntityErrorTransaction;
+                ? Resources.SuccessEntitySave
+                : result?.Message ?? Resources.FailEntitySave;
 
                 MessageHelper.ShowMessage(this,
-                    CommonResources.ProjectConfigurationRestore,
+                    Resources.RestoreProjectConfiguration,
                     msg);
             }
             catch (Exception ex)
@@ -144,35 +158,24 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public async void PopulateViewModel(int projectId)
-        {
-            ProjectConfiguration = await _appProjectService.GetProjectConfigurationAsync(projectId, true);
-
-            ProjectConfiguration.Timeframe = await _historicalDataService.GetTimeframeAsync(ProjectConfiguration.TimeframeId).ConfigureAwait(true);
-            ProjectConfiguration.Symbol = await _historicalDataService.GetSymbolAsync(ProjectConfiguration.SymbolId).ConfigureAwait(true);
-        }
-
         public void PropertyValidator(ResponseVM response, bool showDialogWithErrors = false, bool showMessageInControl = false)
         {
             var msg = (response?.IsSuccess ?? false)
-                ? MessageResources.EntitySaveSuccess
-                : response?.Message ?? MessageResources.EntityErrorTransaction;
+                ? Resources.SuccessEntitySave
+                : response?.Message ?? Resources.FailEntitySave;
 
-            switch (response.MessageResource)
+            if (!response.IsSuccess)
             {
-                case (int)MessageResourceEnum.CurrencyPairAndCurrencyPeriodMustBeSame:
-                    ProjectConfiguration.SetError(nameof(ProjectConfiguration.Symbol.SymbolId),
-                        ShowMessageControl(msg, showMessageInControl));
-                    ProjectConfiguration.SetError(nameof(ProjectConfiguration.Timeframe.TimeframeId),
-                        ShowMessageControl(msg, showMessageInControl));
-                    ProjectConfiguration.SetError(nameof(ProjectConfiguration.HistoricalDataId),
-                        ShowMessageControl(msg, showMessageInControl));
-                    break;
+                ProjectConfiguration.SetError(nameof(ProjectConfiguration.Symbol.SymbolId), ShowMessageControl(msg, showMessageInControl));
+                ProjectConfiguration.SetError(nameof(ProjectConfiguration.Timeframe.TimeframeId), ShowMessageControl(msg, showMessageInControl));
+                ProjectConfiguration.SetError(nameof(ProjectConfiguration.HistoricalDataId), ShowMessageControl(msg, showMessageInControl));
             }
 
             if (showDialogWithErrors)
             {
-                MessageHelper.ShowMessage(this, CommonResources.ProjectConfiguration, msg);
+                MessageHelper.ShowMessage(this,
+                    Resources.ProjectConfiguration,
+                    msg);
 
             }
 

@@ -1,66 +1,40 @@
-﻿using AdionFA.Infrastructure.Enums;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Module.Shell.AutoMapper;
-using AutoMapper;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.UI.Infrastructure.Model.Project;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace AdionFA.UI.Station.Module.Shell.Services
+namespace AdionFA.UI.Module.Services
 {
     public class ShellServiceShell : IShellServiceShell
     {
-        #region Services
+        private readonly IProjectAppService _projectService;
 
-        public IProjectServiceAgent ProjectService;
-
-        #endregion
-
-        #region AutoMapper
-
-        public readonly IMapper MapperShell;
-
-        #endregion
-
-        #region Ctor
-
-        public ShellServiceShell(
-            IProjectServiceAgent projectInfrastructureService)
+        public ShellServiceShell()
         {
-            ProjectService = projectInfrastructureService;
-
-            MapperShell = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMappingShellProfile());
-            }).CreateMapper();
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
         }
 
-        #endregion
-
-        #region Project
-
-        public async Task<List<Model.ProjectVM>> GetAllProjects()
+        public List<ProjectVM> GetAllProjects()
         {
             try
             {
-                var projects = await ProjectService.GetAllProjectAsync();
+                var projects = _projectService.GetAllProject();
                 var result = (from p in projects
                               let config = p.ProjectConfigurations.FirstOrDefault(c => c.EndDate == null)
                               let workspace = config?.WorkspacePath != null
                                     ? config?.WorkspacePath + "\\" + ProjectDirectoryEnum.Projects.GetDescription() + "\\" + p.ProjectName : null
-                              select new Model.ProjectVM
+                              select new ProjectVM
                               {
                                   ProjectId = p.ProjectId,
-                                  Name = p.ProjectName,
-                                  WorkspacePath = workspace ?? "...",
-                                  WorkspacePathCut = (workspace?.Length ?? 0) > 53 ? workspace.Substring(0, 50) + "..." : workspace ?? "...",
-                                  IsFavorite = config?.IsFavorite ?? false,
-                                  LastLoadOn = p.ProcessLastDate ?? DateTime.MinValue,
-                                  ProcessId = p.ProcessId,
-                                  CreateOn = p.CreatedOn ?? DateTime.MinValue,
-                                  UpdateOn = p.UpdatedOn ?? DateTime.MinValue
+                                  ProjectName = p.ProjectName,
+                                  CreatedOn = p.CreatedOn ?? DateTime.MinValue,
+                                  UpdatedOn = p.UpdatedOn ?? DateTime.MinValue
                               }).ToList();
                 return result;
             }
@@ -70,25 +44,5 @@ namespace AdionFA.UI.Station.Module.Shell.Services
                 throw;
             }
         }
-
-        #endregion
-
-        #region Shell module
-
-        public async Task<bool> PinnedProject(int projectId, bool isPinned)
-        {
-            try
-            {
-                var result = await ProjectService.PinnedProjectAsync(projectId, isPinned);
-                return result.IsSuccess;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
-        }
-
-        #endregion
     }
 }

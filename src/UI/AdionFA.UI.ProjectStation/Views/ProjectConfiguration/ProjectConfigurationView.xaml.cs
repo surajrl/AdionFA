@@ -1,9 +1,9 @@
-﻿using AdionFA.UI.Station.Project.ViewModels;
+﻿using AdionFA.UI.ProjectStation.ViewModels;
 using MahApps.Metro.Controls;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace AdionFA.UI.Station.Project.Views
+namespace AdionFA.UI.ProjectStation.Views
 {
     /// <summary>
     /// Interaction logic for ProjectSettingView.xaml
@@ -35,8 +35,7 @@ namespace AdionFA.UI.Station.Project.Views
 
         private void ProgressivenessToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            var toggleSwitch = sender as ToggleSwitch;
-            if (toggleSwitch != null)
+            if (sender is ToggleSwitch toggleSwitch)
             {
                 LabelRequiredProgressiveness =
                     DataContext != null && !((ProjectConfigurationViewModel)DataContext).ProjectConfiguration.IsProgressiveness

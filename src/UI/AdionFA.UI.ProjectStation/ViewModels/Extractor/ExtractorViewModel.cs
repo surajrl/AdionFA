@@ -1,10 +1,13 @@
-﻿using AdionFA.Infrastructure.Directories.Contracts;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.Features;
+using AdionFA.TransferObject.Project;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Model.Project;
+using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.Features;
+using AutoMapper;
 using Ninject;
 using Prism.Commands;
 using Prism.Ioc;
@@ -13,32 +16,38 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class ExtractorViewModel : MenuItemViewModel
     {
-        private readonly IProjectServiceAgent _projectService;
+        private readonly IMapper _mapper;
+        private readonly IProjectAppService _projectService;
         private readonly IProjectDirectoryService _projectDirectoryService;
 
         public ExtractorViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
             ExtractorTemplates = new();
         }
 
-        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
+        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             if (item == HamburgerMenuItems.ExtractorTrim)
             {
                 try
                 {
                     // Get the latest project configuration
-                    ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
+                    ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
 
                     ExtractorPath = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
                     ExtractorTemplates.Clear();

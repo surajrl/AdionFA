@@ -1,13 +1,16 @@
-﻿using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.Enums.Model;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Module.Dashboard.Model;
-using AdionFA.UI.Station.Module.Dashboard.Services;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Model;
+using AdionFA.Domain.Properties;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Services;
+using AdionFA.UI.Module.Dashboard.Model;
+using AdionFA.UI.Module.Dashboard.Services;
+using Ninject;
 using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
@@ -15,22 +18,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
+namespace AdionFA.UI.Module.Dashboard.ViewModels
 {
     public class ConfigurationViewModel : ViewModelBase
     {
         private readonly string EntityDescription = EntityTypeEnum.Configuration.GetMetadata().Description;
 
         private readonly ISettingService _settingService;
-        private readonly IMarketDataServiceAgent _marketDataService;
+        private readonly IMarketDataAppService _marketDataService;
 
         public ConfigurationViewModel(
             ISettingService settingService,
-            IMarketDataServiceAgent marketDataService,
             IApplicationCommands applicationCommands)
         {
             _settingService = settingService;
-            _marketDataService = marketDataService;
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
@@ -43,9 +45,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         });
 
-        public ICommand WithoutSchedulesCommand => new DelegateCommand(async () =>
+        public ICommand WithoutSchedulesCommand => new DelegateCommand(() =>
         {
-            var config = await _settingService.GetConfiguration();
+            var config = _settingService.GetConfiguration();
             if (Configuration.WithoutSchedule)
             {
                 Configuration.FromTimeInSecondsEurope = _Configuration.ToTimeInSecondsEurope =
@@ -63,7 +65,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         });
 
-        public ICommand SaveBtnCommand => new DelegateCommand(async () =>
+        public ICommand SaveBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -82,13 +84,16 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 IsTransactionActive = true;
 
                 // Update
-                var result = await _settingService.UpdateConfiguration(Configuration);
+
+                var result = _settingService.UpdateConfiguration(Configuration);
 
                 IsTransactionActive = false;
 
                 MessageHelper.ShowMessage(this,
                     EntityDescription,
-                    result ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
+                    result
+                    ? Resources.SuccessEntitySave
+                    : Resources.FailEntitySave);
             }
             catch (Exception ex)
             {
@@ -100,10 +105,10 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public async void PopulateViewModel()
+        public void PopulateViewModel()
         {
             Symbols.Clear();
-            var symbols = await _marketDataService.GetAllSymbolAsync().ConfigureAwait(true);
+            var symbols = _marketDataService.GetAllSymbol();
             Symbols.AddRange(symbols.Select(symbol => new Metadata
             {
                 Id = symbol.SymbolId,
@@ -111,14 +116,14 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }));
 
             Timeframes.Clear();
-            var timeframes = await _marketDataService.GetAllTimeframeAsync().ConfigureAwait(true);
+            var timeframes = _marketDataService.GetAllTimeframe();
             Timeframes.AddRange(timeframes.Select(timeframe => new Metadata
             {
                 Id = timeframe.TimeframeId,
                 Name = timeframe.Name
             }));
 
-            Configuration = await _settingService.GetConfiguration();
+            Configuration = _settingService.GetConfiguration();
         }
 
         // View Bindings

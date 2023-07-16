@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AdionFA.API.Contract\AdionFA.API.Contracts.csproj" />
     <ProjectReference Include="..\..\AdionFA.Application\AdionFA.Application.csproj" />
     <ProjectReference Include="..\..\AdionFA.Infrastructure\AdionFA.Infrastructure.csproj" />
     <ProjectReference Include="..\..\AdionFA.TransferObject\AdionFA.TransferObject.csproj" />

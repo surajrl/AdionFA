@@ -1,16 +1,14 @@
-﻿using AdionFA.Infrastructure.Directories.Contracts;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.Validators.FluentValidator;
-using AdionFA.Infrastructure.Core.IofCExt;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Contracts.Services;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Infrastructure.Services.AppServices;
-using AdionFA.UI.Station.Module.Dashboard;
-using AdionFA.UI.Station.Module.Shell;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Contracts.Services;
+using AdionFA.UI.Infrastructure.Services;
+using AdionFA.UI.Module;
+using AdionFA.UI.Module.Dashboard;
 using ControlzEx.Theming;
 using FluentValidation;
 using Ninject;
@@ -18,7 +16,6 @@ using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -48,10 +45,6 @@ namespace AdionFA.UI.Station
 
             // Infrastructure Services
 
-            containerRegistry.RegisterSingleton<IMarketDataServiceAgent, MarketDataServiceAgent>();
-            containerRegistry.RegisterSingleton<IProjectServiceAgent, ProjectServiceAgent>();
-            containerRegistry.RegisterSingleton<ISharedServiceAgent, SharedServiceAgent>();
-
             containerRegistry.RegisterInstance<IFlyoutService>(Container.Resolve<FlyoutService>());
             containerRegistry.RegisterInstance<IProcessService>(Container.Resolve<ProcessService>());
 
@@ -72,11 +65,6 @@ namespace AdionFA.UI.Station
             {
                 MessageBox.Show(e.ExceptionObject.ToString());
             });
-        }
-
-        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
@@ -100,8 +88,7 @@ namespace AdionFA.UI.Station
 
         protected override IModuleCatalog CreateModuleCatalog()
         {
-            ConfigurationModuleCatalog catalog = new();
-            return catalog;
+            return new ConfigurationModuleCatalog();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -115,15 +102,15 @@ namespace AdionFA.UI.Station
 
         protected override void OnInitialized()
         {
-            var settingService = ContainerLocator.Current.Resolve<ISharedServiceAgent>();
+            var settingService = IoC.Kernel.Get<IAppSettingAppService>();
             var directoryService = IoC.Kernel.Get<IProjectDirectoryService>();
 
             // Workspace
 
-            var workspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace);
-            if (Directory.Exists(workspace.Value))
+            var defaultWorkspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace);
+            if (Directory.Exists(defaultWorkspace.Value))
             {
-                ProjectDirectoryManager.DefaultWorkspace = workspace.Value;
+                ProjectDirectoryManager.DefaultWorkspace = defaultWorkspace.Value;
             }
 
             directoryService.CreateDefaultWorkspace();
@@ -131,25 +118,27 @@ namespace AdionFA.UI.Station
             // Theme
 
             var themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
-            ThemeManager.Current.ChangeThemeBaseColor(Application.Current, themeSetting?.Value ?? "Light");
+            ThemeManager.Current.ChangeThemeBaseColor(Current, themeSetting?.Value ?? "Light");
 
             var colorSetting = settingService.GetSetting((int)SettingEnum.Color);
-            ThemeManager.Current.ChangeThemeColorScheme(Application.Current, colorSetting?.Value ?? "Orange");
+            ThemeManager.Current.ChangeThemeColorScheme(Current, colorSetting?.Value ?? "Orange");
 
             // Culture
 
             var culturesAvailables = AppSettingsManager.Instance.Get<AppSettings>().Cultures?.Split(",");
 
-            IList<CultureInfo> cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures)
-                .Where(c => culturesAvailables.Any(ca => ca == c.ThreeLetterISOLanguageName)).ToList();
+            var cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures)
+                .Where(cultureInfo => culturesAvailables
+                .Any(available => available == cultureInfo.ThreeLetterISOLanguageName)).ToList();
 
             var cultureSetting = settingService.GetSetting((int)SettingEnum.Culture);
 
-            var Culture = cultures.FirstOrDefault(
-                c => c.ThreeLetterISOLanguageName == cultureSetting?.Value) ?? cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
+            var culture = cultures.FirstOrDefault(
+                cultureInfo => cultureInfo.ThreeLetterISOLanguageName == cultureSetting?.Value)
+                ?? cultures.FirstOrDefault(cultureInfo => cultureInfo.ThreeLetterISOLanguageName == "eng");
 
-            Thread.CurrentThread.CurrentCulture = Culture;
-            Thread.CurrentThread.CurrentUICulture = Culture;
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
 
             base.OnInitialized();
         }

@@ -1,6 +1,6 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
+﻿using AdionFA.UI.Infrastructure.Model.Base;
 
-namespace AdionFA.UI.Station.Infrastructure.Model.Common
+namespace AdionFA.UI.Infrastructure.Model.Common
 {
     public class SettingVM : ReferenceDataBaseVM
     {

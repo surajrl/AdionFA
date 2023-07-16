@@ -1,8 +1,8 @@
-﻿using AdionFA.UI.Station.Project.ViewModels;
+﻿using AdionFA.UI.ProjectStation.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace AdionFA.UI.Station.Project.Views
+namespace AdionFA.UI.ProjectStation.Views
 {
     /// <summary>
     /// Interaction logic for WekaDecisionTreesView.xaml

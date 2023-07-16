@@ -1,12 +1,12 @@
-﻿using AdionFA.UI.Station.Infrastructure.Contracts;
-using AdionFA.UI.Station.Infrastructure.Contracts.Services;
+﻿using AdionFA.UI.Infrastructure.Contracts;
+using AdionFA.UI.Infrastructure.Contracts.Services;
 using MahApps.Metro.Controls;
 using Prism.Commands;
 using Prism.Regions;
 using System.Linq;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Infrastructure.Services
+namespace AdionFA.UI.Infrastructure.Services
 {
     public class FlyoutModel
     {
@@ -34,7 +34,7 @@ namespace AdionFA.UI.Station.Infrastructure.Services
 
             if (region != null)
             {
-                if (region.Views.FirstOrDefault(v => v is IFlyoutView && ((IFlyoutView)v).FlyoutName.Equals(flyoutModel.Name)) is Flyout flyout)
+                if (region.Views.FirstOrDefault(v => v is IFlyoutView view && view.FlyoutName.Equals(flyoutModel.Name)) is Flyout flyout)
                 {
                     flyout.IsOpen = !flyout.IsOpen;
                 }

@@ -1,4 +1,4 @@
-﻿namespace AdionFA.UI.Station.Infrastructure.Model.Base
+﻿namespace AdionFA.UI.Infrastructure.Model.Base
 {
     public class ReferenceDataBaseVM : EntityBaseVM
     {

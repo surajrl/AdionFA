@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Project.ViewModels;
+﻿using AdionFA.UI.ProjectStation.ViewModels;
 using FluentValidation;
 
-namespace AdionFA.UI.Station.Project.Validators.StrategyBuilder
+namespace AdionFA.UI.ProjectStation.Validators.StrategyBuilder
 {
     public class StrategyBuilderValidator : AbstractValidator<StrategyBuilderViewModel>
     {

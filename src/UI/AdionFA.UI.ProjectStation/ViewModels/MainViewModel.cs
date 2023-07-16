@@ -1,31 +1,32 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Project.Features;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.ProjectStation.Features;
 using MahApps.Metro.IconPacks;
+using Ninject;
 using System.Collections.ObjectModel;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly IProjectServiceAgent _projectService;
+        private readonly IProjectAppService _projectService;
 
-        public MainViewModel(
-            IProjectServiceAgent appProjectService)
+        public MainViewModel()
         {
-            _projectService = appProjectService;
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
 
             CreateMenuItems();
             PopulateViewModel();
         }
 
-        public async void PopulateViewModel()
+        public void PopulateViewModel()
         {
             IsTransactionActive = false;
 
             ProjectName = "Loading...";
 
-            var project = await _projectService.GetProjectAsync(ProcessArgs.ProjectId, true);
+            var project = _projectService.GetProject(ProcessArgs.ProjectId, true);
             if (project != null)
             {
                 ProjectName = project.ProjectName;

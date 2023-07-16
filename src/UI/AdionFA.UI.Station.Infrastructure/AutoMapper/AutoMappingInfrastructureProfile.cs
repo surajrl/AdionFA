@@ -1,18 +1,16 @@
 ﻿using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
 using AdionFA.TransferObject.MarketData;
-using AdionFA.TransferObject.MetaTrader;
 using AdionFA.TransferObject.Project;
 
-using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Common;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
+using AdionFA.UI.Infrastructure.Model.Base;
+using AdionFA.UI.Infrastructure.Model.Common;
+using AdionFA.UI.Infrastructure.Model.MarketData;
+using AdionFA.UI.Infrastructure.Model.Project;
 
 using AutoMapper;
 
-namespace AdionFA.UI.Station.Infrastructure.AutoMapper
+namespace AdionFA.UI.Infrastructure.AutoMapper
 {
     public class AutoMappingInfrastructureProfile : Profile
     {
@@ -43,10 +41,6 @@ namespace AdionFA.UI.Station.Infrastructure.AutoMapper
             CreateMap<ProjectDTO, ProjectVM>().ReverseMap();
             CreateMap<ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
             CreateMap<ProjectScheduleConfigurationDTO, ProjectScheduleConfigurationVM>().ReverseMap();
-
-            // MetaTrader
-
-            CreateMap<ExpertAdvisorDTO, ExpertAdvisorVM>().ReverseMap();
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using AdionFA.UI.Infrastructure.Model.Project;
+using System.Collections.ObjectModel;
 
-namespace AdionFA.UI.Station.Module.Shell.Model
+namespace AdionFA.UI.Module.Model
 {
     public class ProjectHierarchicalVM
     {

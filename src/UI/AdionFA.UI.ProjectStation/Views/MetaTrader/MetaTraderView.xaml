@@ -1,16 +1,13 @@
-﻿<UserControl x:Class="AdionFA.UI.Station.Project.Views.MetaTraderView"
-             xmlns:prism="http://prismlibrary.com/"
+﻿<UserControl x:Class="AdionFA.UI.ProjectStation.Views.MetaTraderView"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:commonResources="clr-namespace:AdionFA.Infrastructure.I18n.Resources;assembly=AdionFA.Infrastructure.I18n"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
+             xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:AdionFA.UI.Station.Project.Views"
              dialog:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d"
              d:DesignHeight="450"
@@ -126,49 +123,30 @@
                   Header="Expert Advisor"
                   IsExpanded="False">
             <StackPanel Orientation="Horizontal">
-                <!--#region Response Port-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Magic Number: " />
-                    <TextBox Text="{Binding ExpertAdvisor.MagicNumber, UpdateSourceTrigger=PropertyChanged}"
-                             Width="100" />
+                    <Label Content="Expert Advisor Host" />
+                    <TextBox Text="{Binding ProjectConfiguration.ExpertAdvisorHost}"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             IsEnabled="False"
+                             Width="225" />
                 </StackPanel>
-                <!--#endregion-->
-                <!--#region Host-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Host: " />
-                    <TextBox Text="{Binding ExpertAdvisor.Host, UpdateSourceTrigger=PropertyChanged}"
-                             Width="100" />
+                    <Label Content="Expert Advisor Publisher Port" />
+                    <TextBox Text="{Binding ProjectConfiguration.ExpertAdvisorPublisherPort}"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             IsEnabled="False"
+                             Width="225" />
                 </StackPanel>
-                <!--#endregion-->
-                <!--#region Publisher Port-->
                 <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Publisher Port: " />
-                    <TextBox Text="{Binding ExpertAdvisor.PublisherPort, UpdateSourceTrigger=PropertyChanged}"
-                             Width="100" />
+                    <Label Content="Expert Advisor Response Port" />
+                    <TextBox Text="{Binding ProjectConfiguration.ExpertAdvisorResponsePort}"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             IsEnabled="False"
+                             Width="225" />
                 </StackPanel>
-                <!--#endregion-->
-                <!--#region Response Port-->
-                <StackPanel Margin="{StaticResource ColumnMargin}">
-                    <Label Content="Response Port: " />
-                    <TextBox Text="{Binding ExpertAdvisor.ResponsePort, UpdateSourceTrigger=PropertyChanged}"
-                             Width="100" />
-                </StackPanel>
-                <!--#endregion-->
-
-                <!--#region Save-->
-                <Button Width="80"
-                        Height="40"
-                        VerticalAlignment="Bottom"
-                        Margin="{StaticResource ColumnMargin}"
-                        Command="{Binding SaveEACommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="ContentSave"
-                                                    VerticalAlignment="Center"
-                                                    Width="14" />
-                        <Label Content="Save"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
             </StackPanel>
             <!--#endregion-->
         </Expander>
@@ -213,7 +191,7 @@
                             </StackPanel>
                         </Button>
                     </Grid>
-                    
+
                     <!--Clean Output-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button Command="{Binding CleanMessageOutputCommand}"
@@ -384,7 +362,7 @@
                 </Grid>
                 <!--#region Message Input-->
                 <metro:MetroHeader Margin="0, 0, 10, 0"
-                                   Header="{x:Static commonResources:CommonResources.MessageInput}">
+                                   Header="MessageInput">
                     <ListView ItemsSource="{Binding DataInput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
@@ -394,25 +372,25 @@
                                                 Header="Symbol" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth1, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding DateFormat}"
-                                                Header="{x:Static commonResources:CommonResources.Date}" />
+                                                Header="Date" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth2, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Open, StringFormat=N5}"
-                                                Header="{x:Static commonResources:CommonResources.Open}" />
+                                                Header="Open" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth3, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding High, StringFormat=N5}"
-                                                Header="{x:Static commonResources:CommonResources.High}" />
+                                                Header="High" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth4, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Low, StringFormat=N5}"
-                                                Header="{x:Static commonResources:CommonResources.Low}" />
+                                                Header="Low" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth5, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Close, StringFormat=N5}"
-                                                Header="{x:Static commonResources:CommonResources.Close}" />
+                                                Header="Close" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth6, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Volume}"
-                                                Header="{x:Static commonResources:CommonResources.Volume}" />
+                                                Header="Volume" />
                                 <GridViewColumn Width="{Binding ElementName=dummywidth7, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Spread}"
-                                                Header="{x:Static commonResources:CommonResources.Spread}" />
+                                                Header="Spread" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -438,26 +416,26 @@
                 </Grid>
                 <!--#region Message Output-->
                 <metro:MetroHeader Margin="10 0 0 0"
-                                   Header="{x:Static commonResources:CommonResources.MessageOutput}">
+                                   Header="Message Output">
                     <ListView ItemsSource="{Binding DataOutput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="{Binding ElementName=dummywidth10, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Id}"
-                                                Header="{x:Static commonResources:CommonResources.ID}" />
-                                
+                                                Header="ID" />
+
                                 <GridViewColumn Width="{Binding ElementName=dummywidth11, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding DateFormat}"
-                                                Header="{x:Static commonResources:CommonResources.Date}" />
-                                
+                                                Header="Date" />
+
                                 <GridViewColumn Width="{Binding ElementName=dummywidth12, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding OrderType}"
                                                 Header="Order Type" />
-                                
+
                                 <GridViewColumn Width="{Binding ElementName=dummywidth13, Path=ActualWidth}"
                                                 DisplayMemberBinding="{Binding Volume, StringFormat=N5}"
-                                                Header="{x:Static commonResources:CommonResources.Volume}" />
+                                                Header="Volume" />
                             </GridView>
                         </ListView.View>
                     </ListView>

@@ -1,4 +1,4 @@
-﻿using AdionFA.Domain.Base;
+﻿using AdionFA.Domain.Entities.Base;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,11 +19,9 @@ namespace AdionFA.Domain.Entities
         [ForeignKey(nameof(HistoricalDataId))]
         public HistoricalData HistoricalData { get; set; }
 
-        public bool IsFavorite { get; set; }
         public string WorkspacePath { get; set; }
 
         // Navigation
-        public ICollection<HistoricalData> CorssingHistoricalData { get; set; }
 
         public ICollection<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
     }

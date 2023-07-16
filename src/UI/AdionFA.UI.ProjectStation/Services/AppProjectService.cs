@@ -1,67 +1,62 @@
-﻿using AdionFA.Infrastructure.Enums;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.AutoMapper;
-using AdionFA.UI.Station.Project.Model.Configuration;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.Project;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Model.Base;
+using AdionFA.UI.ProjectStation.AutoMapper;
+using AdionFA.UI.ProjectStation.Model.Configuration;
 using AutoMapper;
+using Ninject;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace AdionFA.UI.Station.Project.Services
+namespace AdionFA.UI.ProjectStation.Services
 {
     public class AppProjectService : IAppProjectService
     {
-        private readonly IProjectServiceAgent _projectService;
+        private readonly IProjectAppService _projectService;
         private readonly IMapper _mapper;
 
-        public AppProjectService(
-            IProjectServiceAgent projectService)
+        public AppProjectService()
         {
-            _projectService = projectService;
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
 
             _mapper = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+                mc.AddProfile(new AutoMappingProjectStationProfile());
             }).CreateMapper();
         }
 
         // Project Configuration
 
-        public async Task<ProjectConfigurationModel> GetProjectConfigurationAsync(int projectId, bool includeGraph = false)
+        public ProjectConfigurationModel GetProjectConfiguration(int projectId, bool includeGraph = false)
         {
             try
             {
-                var config =
-                    await _projectService.GetProjectConfigurationAsync(projectId, includeGraph);
+                var projectConfigDTO = _projectService.GetProjectConfiguration(projectId, includeGraph);
 
-                var pcsModel =
-                    _mapper.Map<ProjectConfigurationVM, ProjectConfigurationModel>(config);
+                var projectConfigModel = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationModel>(projectConfigDTO);
 
-                var europa = config.ProjectScheduleConfigurations.FirstOrDefault(
-                    gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe
-                );
-                pcsModel.ProjectScheduleEuropeId = europa.ProjectScheduleConfigurationId;
-                pcsModel.FromTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.FromTimeInSeconds ?? 0);
-                pcsModel.ToTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.ToTimeInSeconds ?? 0);
+                var europa = projectConfigDTO.ProjectScheduleConfigurations.FirstOrDefault(projectScheduleConfig => projectScheduleConfig.MarketRegionId == (int)MarketRegionEnum.Europe);
+                projectConfigModel.ProjectScheduleEuropeId = europa.ProjectScheduleConfigurationId;
+                projectConfigModel.FromTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.FromTimeInSeconds ?? 0);
+                projectConfigModel.ToTimeInSecondsEurope = DateTime.MinValue.AddSeconds(europa.ToTimeInSeconds ?? 0);
 
-                var america = config.ProjectScheduleConfigurations.FirstOrDefault(
-                    gc => gc.MarketRegionId == (int)MarketRegionEnum.America
-                );
-                pcsModel.ProjectScheduleAmericaId = america.ProjectScheduleConfigurationId;
-                pcsModel.FromTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.FromTimeInSeconds ?? 0);
-                pcsModel.ToTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.ToTimeInSeconds ?? 0);
+                var america = projectConfigDTO.ProjectScheduleConfigurations.FirstOrDefault(projectScheduleConfig => projectScheduleConfig.MarketRegionId == (int)MarketRegionEnum.America);
+                projectConfigModel.ProjectScheduleAmericaId = america.ProjectScheduleConfigurationId;
+                projectConfigModel.FromTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.FromTimeInSeconds ?? 0);
+                projectConfigModel.ToTimeInSecondsAmerica = DateTime.MinValue.AddSeconds(america.ToTimeInSeconds ?? 0);
 
-                var asia = config.ProjectScheduleConfigurations.FirstOrDefault(
-                    gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia
-                );
-                pcsModel.ProjectScheduleAsiaId = asia.ProjectScheduleConfigurationId;
-                pcsModel.FromTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.FromTimeInSeconds ?? 0);
-                pcsModel.ToTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.ToTimeInSeconds ?? 0);
+                var asia = projectConfigDTO.ProjectScheduleConfigurations.FirstOrDefault(projectScheduleConfig => projectScheduleConfig.MarketRegionId == (int)MarketRegionEnum.Asia);
+                projectConfigModel.ProjectScheduleAsiaId = asia.ProjectScheduleConfigurationId;
+                projectConfigModel.FromTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.FromTimeInSeconds ?? 0);
+                projectConfigModel.ToTimeInSecondsAsia = DateTime.MinValue.AddSeconds(asia.ToTimeInSeconds ?? 0);
 
-                return pcsModel;
+                return projectConfigModel;
             }
             catch (Exception ex)
             {
@@ -70,33 +65,27 @@ namespace AdionFA.UI.Station.Project.Services
             }
         }
 
-        public async Task<ResponseVM> UpdateProjectConfigurationAsync(ProjectConfigurationModel projectConfiguration)
+        public ResponseVM UpdateProjectConfiguration(ProjectConfigurationModel projectConfiguration)
         {
             try
             {
-                var europa = projectConfiguration.ProjectScheduleConfigurations.FirstOrDefault(
-                        gc => gc.MarketRegionId == (int)MarketRegionEnum.Europe
-                    );
+                var europa = projectConfiguration.ProjectScheduleConfigurations.FirstOrDefault(projectScheduleConfig => projectScheduleConfig.MarketRegionId == (int)MarketRegionEnum.Europe);
                 europa.FromTimeInSeconds = projectConfiguration.FromTimeInSecondsEurope.Hour * 3600;
                 europa.ToTimeInSeconds = projectConfiguration.ToTimeInSecondsEurope.Hour * 3600;
 
-                var america = projectConfiguration.ProjectScheduleConfigurations.FirstOrDefault(
-                        gc => gc.MarketRegionId == (int)MarketRegionEnum.America
-                    );
+                var america = projectConfiguration.ProjectScheduleConfigurations.FirstOrDefault(projectScheduleConfig => projectScheduleConfig.MarketRegionId == (int)MarketRegionEnum.America);
                 america.FromTimeInSeconds = projectConfiguration.FromTimeInSecondsAmerica.Hour * 3600;
                 america.ToTimeInSeconds = projectConfiguration.ToTimeInSecondsAmerica.Hour * 3600;
 
-                var asia = projectConfiguration.ProjectScheduleConfigurations.FirstOrDefault(
-                        gc => gc.MarketRegionId == (int)MarketRegionEnum.Asia
-                    );
+                var asia = projectConfiguration.ProjectScheduleConfigurations.FirstOrDefault(projectScheduleConfig => projectScheduleConfig.MarketRegionId == (int)MarketRegionEnum.Asia);
                 asia.FromTimeInSeconds = projectConfiguration.FromTimeInSecondsAsia.Hour * 3600;
                 asia.ToTimeInSeconds = projectConfiguration.ToTimeInSecondsAsia.Hour * 3600;
 
-                var configVm = _mapper.Map<ProjectConfigurationVM, ProjectConfigurationModel>(projectConfiguration);
+                var projectConfigDTO = _mapper.Map<ProjectConfigurationModel, ProjectConfigurationDTO>(projectConfiguration);
 
-                var response = await _projectService.UpdateProjectConfigurationAsync(configVm);
+                var response = _projectService.UpdateProjectConfiguration(projectConfigDTO);
 
-                return response;
+                return _mapper.Map<ResponseDTO, ResponseVM>(response);
             }
             catch (Exception ex)
             {

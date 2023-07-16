@@ -1,4 +1,9 @@
-﻿using AdionFA.Infrastructure.CrossingBuilder.Contracts;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Model;
+using AdionFA.Domain.Properties;
+using AdionFA.Infrastructure.CrossingBuilder.Contracts;
 using AdionFA.Infrastructure.CrossingBuilder.Model;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Extractor.Contracts;
@@ -9,18 +14,15 @@ using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.Weka.Model;
 using AdionFA.Infrastructure.Weka.Services;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.Enums.Model;
 using AdionFA.TransferObject.Project;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.AutoMapper;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.EventAggregator;
-using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Model.Common;
-using AdionFA.UI.Station.Project.Validators.CrossingBuilder;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Model.Project;
+using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.EventAggregator;
+using AdionFA.UI.ProjectStation.Features;
+using AdionFA.UI.ProjectStation.Model.Common;
+using AdionFA.UI.ProjectStation.Validators.CrossingBuilder;
 using AutoMapper;
 using DynamicData;
 using MahApps.Metro.Controls.Dialogs;
@@ -40,7 +42,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class CrossingBuilderViewModel : MenuItemViewModel, IDisposable
     {
@@ -50,8 +52,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly ICrossingBuilderService _crossingBuilderService;
 
         private readonly IEventAggregator _eventAggregator;
-        private readonly IMarketDataServiceAgent _marketDataService;
-        private readonly IProjectServiceAgent _projectService;
+        private readonly IMarketDataAppService _marketDataService;
+        private readonly IProjectAppService _projectService;
 
         private readonly IMapper _mapper;
 
@@ -69,10 +71,10 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _strategyBuilderService = IoC.Kernel.Get<IStrategyBuilderService>();
             _crossingBuilderService = IoC.Kernel.Get<ICrossingBuilderService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
 
-            _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
@@ -80,7 +82,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _mapper = new MapperConfiguration(mapperConfiguration =>
             {
-                mapperConfiguration.AddProfile(new AutoMappingAppProjectProfile());
+                mapperConfiguration.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
 
             CrossingBuilderProcessesUP = new();
@@ -131,13 +133,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
             });
         }
 
-        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
+        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             if (item == HamburgerMenuItems.CrossingBuilderTrim)
             {
-                ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
+                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
 
-                var historicalData = await _marketDataService.GetAllHistoricalDataAsync().ConfigureAwait(true);
+                var historicalData = _marketDataService.GetAllHistoricalData();
                 CrossingHistoricalData.Clear();
                 CrossingHistoricalData.AddRange(historicalData.Where(hd => hd.HistoricalDataId != ProjectConfiguration.HistoricalDataId).Select(hd => new Metadata
                 {
@@ -200,7 +202,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public ICommand Reset => new DelegateCommand(async () =>
         {
             var reset = await MessageHelper.ShowMessageInput(this,
-                    "Crossing Builder",
+                    Resources.CrossingBuilder,
                     "This will reset the Strategy Nodes.\n"
                     + "Do you want to continue?").ConfigureAwait(true);
 
@@ -235,7 +237,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 ResetBuilderProcesses();
 
-                var mainHistoricalData = await _marketDataService.GetHistoricalDataAsync(ProjectConfiguration.HistoricalDataId.Value, true).ConfigureAwait(true);
+                var mainHistoricalData = _marketDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
                 var mainCandles = mainHistoricalData.HistoricalDataCandles.Select(candle => new Candle
                 {
                     Date = candle.StartDate,
@@ -250,7 +252,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 .OrderBy(d => d.Date)
                 .ThenBy(d => d.Time);
 
-                var crossingHistoricalData = await _marketDataService.GetHistoricalDataAsync(CrossingHistoricalDataId, true).ConfigureAwait(true);
+                var crossingHistoricalData = _marketDataService.GetHistoricalData(CrossingHistoricalDataId, true);
                 var crossingCandles = crossingHistoricalData.HistoricalDataCandles.Select(candle => new Candle
                 {
                     Date = candle.StartDate,
@@ -265,7 +267,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 .OrderBy(d => d.Date)
                 .ThenBy(d => d.Time);
 
-                var symbol = await _marketDataService.GetSymbolAsync(CrossingHistoricalDataId).ConfigureAwait(true);
+                var symbol = _marketDataService.GetSymbol(CrossingHistoricalDataId);
                 CrossingSymbolName = symbol.Name;
 
                 _processTask = Task.Factory.StartNew(() =>

@@ -117,10 +117,73 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AssemblyBuilder" xml:space="preserve">
+    <value>Assembly Builder</value>
+  </data>
+  <data name="AssemblyBuilderCompleted" xml:space="preserve">
+    <value>Assembly Builder Completed</value>
+  </data>
+  <data name="CrossingBuilder" xml:space="preserve">
+    <value>Crossing Builder</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="FailEntitySave" xml:space="preserve">
+    <value>Error saving</value>
+  </data>
+  <data name="Filepath" xml:space="preserve">
+    <value>Filepath</value>
+  </data>
+  <data name="HistoricalDataEmpty" xml:space="preserve">
+    <value>Historical data file is empty</value>
+  </data>
+  <data name="Market" xml:space="preserve">
+    <value>Market</value>
+  </data>
+  <data name="MustBeGreaterThanOneAndLessThanTow" xml:space="preserve">
+    <value>Must be greater than one and less than</value>
+  </data>
+  <data name="MustBeLessOneAndTwo" xml:space="preserve">
+    <value>Must be less than one</value>
+  </data>
   <data name="NotEmpty" xml:space="preserve">
-    <value>Is Required</value>
+    <value>Is required</value>
   </data>
   <data name="NotNull" xml:space="preserve">
     <value>Cannot be null</value>
+  </data>
+  <data name="NumberGreaterThan" xml:space="preserve">
+    <value>Number must be greater than</value>
+  </data>
+  <data name="ProjectConfiguration" xml:space="preserve">
+    <value>Project Configuration</value>
+  </data>
+  <data name="RestoreProjectConfiguration" xml:space="preserve">
+    <value>Restore Project Configuration</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="StrategyBuilder" xml:space="preserve">
+    <value>Strategy Builder</value>
+  </data>
+  <data name="StrategyBuilderCompleted" xml:space="preserve">
+    <value>Strategy Builder Completed</value>
+  </data>
+  <data name="SuccessEntitySave" xml:space="preserve">
+    <value>Saved successfully</value>
+  </data>
+  <data name="Symbol" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="Symbols" xml:space="preserve">
+    <value>Symbols</value>
+  </data>
+  <data name="Timeframe" xml:space="preserve">
+    <value>Timeframe</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
   </data>
 </root>

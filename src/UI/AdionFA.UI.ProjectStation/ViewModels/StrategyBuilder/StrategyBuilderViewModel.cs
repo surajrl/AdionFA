@@ -1,4 +1,8 @@
-﻿using AdionFA.Infrastructure.Directories.Contracts;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Properties;
+using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Extractor.Contracts;
 using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Helpers;
@@ -8,18 +12,15 @@ using AdionFA.Infrastructure.Modules.Weka.Model;
 using AdionFA.Infrastructure.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Weka.Services;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.TransferObject.Project;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.AutoMapper;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.EventAggregator;
-using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Model.Common;
-using AdionFA.UI.Station.Project.Validators.StrategyBuilder;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Model.Project;
+using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.EventAggregator;
+using AdionFA.UI.ProjectStation.Features;
+using AdionFA.UI.ProjectStation.Model.Common;
+using AdionFA.UI.ProjectStation.Validators.StrategyBuilder;
 using AutoMapper;
 using DynamicData;
 using MahApps.Metro.Controls.Dialogs;
@@ -39,7 +40,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class StrategyBuilderViewModel : MenuItemViewModel, IDisposable
     {
@@ -49,8 +50,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IExtractorService _extractorService;
         private readonly IStrategyBuilderService _strategyBuilderService;
 
-        private readonly IProjectServiceAgent _projectService;
-        private readonly IMarketDataServiceAgent _marketDataService;
+        private readonly IProjectAppService _projectService;
+        private readonly IMarketDataAppService _marketDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -62,12 +63,12 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public StrategyBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _strategyBuilderService = IoC.Kernel.Get<IStrategyBuilderService>();
 
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
@@ -88,7 +89,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _mapper = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
 
             _lock = new();
@@ -112,11 +113,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             ResetBuilderProcesses();
         }
 
-        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
+        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             if (item == HamburgerMenuItems.StrategyBuilderTrim)
             {
-                ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
+                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
             }
         });
 
@@ -209,7 +210,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Historical Data
 
-                var projectHistoricalData = await _marketDataService.GetHistoricalDataAsync(ProjectConfiguration.HistoricalDataId.Value, true);
+                var projectHistoricalData = _marketDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
                 var allProjectCandles = projectHistoricalData.HistoricalDataCandles
                 .Select(hdCandle => new Candle
                 {
@@ -259,12 +260,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(true);
 
-                var msgUP = StrategyBuilder.WinningNodesUP.Count > 0 ? $"{StrategyBuilder.WinningNodesUP.Count} Correlation UP Nodes Found." : "No Correlation UP Nodes Found.";
-                var msgDOWN = StrategyBuilder.WinningNodesDOWN.Count > 0 ? $"{StrategyBuilder.WinningNodesDOWN.Count} Correlation DOWN Nodes Found." : "No Correlation DOWN Nodes Found.";
+                var msgUP = StrategyBuilder.WinningNodesUP.Count > 0
+                ? $"{StrategyBuilder.WinningNodesUP.Count} UP Nodes Found"
+                : "No UP Nodes Found";
+
+                var msgDOWN = StrategyBuilder.WinningNodesDOWN.Count > 0
+                ? $"{StrategyBuilder.WinningNodesDOWN.Count} DOWN Nodes Found"
+                : "No DOWN Nodes Found";
 
                 MessageHelper.ShowMessage(this,
-                    CommonResources.StrategyBuilder,
-                    $"{MessageResources.StrategyBuilderCompleted}\n\n"
+                    Resources.StrategyBuilder,
+                    $"{Resources.StrategyBuilderCompleted}\n\n"
                     + $"{msgUP}\n"
                     + $"{msgDOWN}");
             }
@@ -497,7 +503,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             set => SetProperty(ref _strategyBuilderProcesses, value);
         }
 
-        // IDisposable Implementation
+        // IDisposable
 
         protected virtual void Dispose(bool disposing)
         {

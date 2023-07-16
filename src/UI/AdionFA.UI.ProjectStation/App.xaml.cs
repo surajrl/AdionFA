@@ -1,18 +1,18 @@
-﻿using AdionFA.Infrastructure.IofC;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Application.Services.Projects;
+using AdionFA.Domain.Enums;
+using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.Validators.FluentValidator;
-using AdionFA.Infrastructure.Core.IofCExt;
-using AdionFA.Infrastructure.Enums;
 using AdionFA.TransferObject.Project;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Contracts.Services;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Infrastructure.Services.AppServices;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.Services;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Contracts.Services;
+using AdionFA.UI.Infrastructure.Services;
+using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.Services;
 using ControlzEx.Theming;
 using FluentValidation;
+using Ninject;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
@@ -24,7 +24,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace AdionFA.UI.Station.Project
+namespace AdionFA.UI.ProjectStation
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -46,11 +46,6 @@ namespace AdionFA.UI.Station.Project
             containerRegistry.RegisterSingleton<IAppProjectCommands, AppProjectCommandsProxy>();
 
             // Infrastructure Services
-
-            containerRegistry.RegisterSingleton<ISharedServiceAgent, SharedServiceAgent>();
-            containerRegistry.RegisterSingleton<IServiceAgent, ServiceAgent>();
-            containerRegistry.RegisterSingleton<IProjectServiceAgent, ProjectServiceAgent>();
-            containerRegistry.RegisterSingleton<IMarketDataServiceAgent, MarketDataServiceAgent>();
 
             containerRegistry.RegisterInstance<IProcessService>(Container.Resolve<ProcessService>());
             containerRegistry.RegisterInstance<IFlyoutService>(Container.Resolve<FlyoutService>());
@@ -79,21 +74,20 @@ namespace AdionFA.UI.Station.Project
 
         protected override IModuleCatalog CreateModuleCatalog()
         {
-            ConfigurationModuleCatalog catalog = new();
-            return catalog;
+            return new ConfigurationModuleCatalog();
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             //var arg = e.Args[0];
-            var arg = $"1_AdionFA.UI.Station.Project_testCB";
+            var arg = $"1_AdionFA.UI.ProjectStation_test1";
 
             ProcessArgs.Args = arg;
             if (ProcessArgs.ProjectId > 0)
             {
                 base.OnStartup(e);
 
-                var settingService = FacadeService.SharedServiceAgent;
+                var settingService = IoC.Kernel.Get<IAppSettingAppService>();
                 ProjectDirectoryManager.DefaultWorkspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace)?.Value;
 
                 try
@@ -139,12 +133,12 @@ namespace AdionFA.UI.Station.Project
 
         public static string Args
         {
-            set => args = value.Split("_AdionFA.UI.Station.Project_");
+            set => args = value.Split("_AdionFA.UI.ProjectStation_");
         }
 
         public static int ProjectId => args.Length > 0 ? int.Parse(args[0], CultureInfo.InvariantCulture) : 0;
         public static string ProjectName => args[1] ?? string.Empty;
-        public static ProjectDTO Project => FacadeService.ProjectAPI.GetProject(ProjectId, true);
+        public static ProjectDTO Project => IoC.Kernel.Get<ProjectAppService>().GetProject(ProjectId, true);
 
         public static string DefaultWorkspace => Project?
             .ProjectConfigurations?

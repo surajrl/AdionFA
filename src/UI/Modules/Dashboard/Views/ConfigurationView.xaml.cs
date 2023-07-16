@@ -1,4 +1,4 @@
-﻿using AdionFA.UI.Station.Module.Dashboard.ViewModels;
+﻿using AdionFA.UI.Module.Dashboard.ViewModels;
 using MahApps.Metro.Controls;
 using System;
 using System.Globalization;
@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace AdionFA.UI.Station.Module.Dashboard
+namespace AdionFA.UI.Module.Dashboard
 {
     /// <summary>
     /// Interaction logic for ConfigurationView.xaml

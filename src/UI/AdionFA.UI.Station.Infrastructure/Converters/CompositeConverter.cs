@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace AdionFA.UI.Station.Infrastructure.Converters
+namespace AdionFA.UI.Infrastructure.Converters
 {
     [ContentProperty("Converters")]
     public class CompositeConverter : IValueConverter

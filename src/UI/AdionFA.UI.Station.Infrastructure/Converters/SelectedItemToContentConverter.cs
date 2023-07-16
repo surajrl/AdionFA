@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 
-namespace AdionFA.UI.Station.Infrastructure.Converters
+namespace AdionFA.UI.Infrastructure.Converters
 {
     public class SelectedItemToContentConverter : IMultiValueConverter
     {

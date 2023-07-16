@@ -1,20 +1,19 @@
-﻿<metro:MetroWindow x:Class="AdionFA.UI.Station.Project.Shell"
+﻿<metro:MetroWindow x:Class="AdionFA.UI.ProjectStation.Shell"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:prism="http://prismlibrary.com/"
                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-                   xmlns:projectcommands="clr-namespace:AdionFA.UI.Station.Project.Commands"
-                   xmlns:local="clr-namespace:AdionFA.UI.Station.Project"
-                   xmlns:vmodel="clr-namespace:AdionFA.UI.Station.Project.ViewModels"
-                   xmlns:views="clr-namespace:AdionFA.UI.Station.Project.Views"
+                   xmlns:projectcommands="clr-namespace:AdionFA.UI.ProjectStation.Commands"
+                   xmlns:vmodel="clr-namespace:AdionFA.UI.ProjectStation.ViewModels"
+                   xmlns:views="clr-namespace:AdionFA.UI.ProjectStation.Views"
                    prism:ViewModelLocator.AutoWireViewModel="True"
                    mc:Ignorable="d"
                    WindowStartupLocation="CenterScreen"
                    Title="Financial Automat Project"
                    WindowState="Maximized"
-                   Icon="Resources\Assets\logo.jpg">
+                   Icon="\Assets\logo.jpg">
 
     <!-- Flyouts -->
     <metro:MetroWindow.Flyouts>

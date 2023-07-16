@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
+﻿using AdionFA.UI.Infrastructure.Base;
 using System;
 
-namespace AdionFA.UI.Station.Infrastructure.Model.Base
+namespace AdionFA.UI.Infrastructure.Model.Base
 {
     public class EntityBaseVM : ViewModelBase
     {

@@ -1,15 +1,12 @@
-﻿<UserControl x:Class="AdionFA.UI.Station.Module.Dashboard.ConfigurationView"
+﻿<UserControl x:Class="AdionFA.UI.Module.Dashboard.ConfigurationView"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:commonResources="clr-namespace:AdionFA.Infrastructure.I18n.Resources;assembly=AdionFA.Infrastructure.I18n"
-             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:AdionFA.UI.Station.Module.Dashboard"
              xmlns:core="clr-namespace:System;assembly=mscorlib"
              prism:ViewModelLocator.AutoWireViewModel="True"
              dialog:DialogParticipation.Register="{Binding}"
@@ -75,10 +72,11 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!--General Information-->
-                <metro:MetroHeader Header="{x:Static commonResources:CommonResources.GeneralInformation}"
+                <metro:MetroHeader Header="General Information"
                                    Margin="0 10 0 10">
                     <!--#region Description-->
                     <StackPanel HorizontalAlignment="Left"
@@ -92,10 +90,10 @@
                 </metro:MetroHeader>
                 <!--#endregion-->
 
-                <!--Currency-->
+                <!--Symbols and Timeframe-->
                 <metro:MetroHeader Grid.Row="1"
                                    Margin="0 10 0 10"
-                                   Header="Currency">
+                                   Header="Strategy">
                     <StackPanel Orientation="Horizontal">
                         <!--#region Symbols-->
                         <StackPanel Margin="{StaticResource ColumnMargin}"
@@ -137,7 +135,7 @@
                         <StackPanel  Margin="{StaticResource ColumnMargin}"
                                      HorizontalAlignment="Left"
                                      MinWidth="{StaticResource ColumnWidth}">
-                            <CheckBox Content="{x:Static commonResources:CommonResources.WithoutSchedules}"
+                            <CheckBox Content="Without Schedules"
                                       IsChecked="{Binding Configuration.WithoutSchedule, Mode=TwoWay}"
                                       Command="{Binding WithoutSchedulesCommand}" />
                         </StackPanel>
@@ -147,7 +145,7 @@
                                     Orientation="Horizontal">
                             <!--#region Europe-->
                             <GroupBox Margin="{StaticResource ColumnMargin}"
-                                      Header="{x:Static commonResources:CommonResources.Europe}">
+                                      Header="Europe">
                                 <StackPanel Margin="{StaticResource ColumnMargin}">
                                     <Label Content="Start Time *" />
                                     <metro:TimePicker SelectedTimeFormat="Short"
@@ -166,7 +164,7 @@
                             <!--#endregion-->
                             <!--#region America-->
                             <GroupBox Margin="{StaticResource ColumnMargin}"
-                                      Header="{x:Static commonResources:CommonResources.America}">
+                                      Header="America">
                                 <StackPanel Margin="{StaticResource ColumnMargin}">
                                     <Label Content="Start Time *" />
                                     <metro:TimePicker SelectedTimeFormat="Short"
@@ -185,7 +183,7 @@
                             <!--#endregion-->
                             <!--#region Asia-->
                             <GroupBox Margin="{StaticResource ColumnMargin}"
-                                      Header="{x:Static commonResources:CommonResources.Asia}">
+                                      Header="Asia">
                                 <StackPanel Margin="{StaticResource ColumnMargin}">
                                     <Label Content="Start Time *" />
                                     <metro:TimePicker SelectedTimeFormat="Short"
@@ -209,7 +207,7 @@
 
                 <!--#region Extractor-->
                 <metro:MetroHeader Grid.Row="3"
-                                   Header="{x:Static commonResources:CommonResources.Extractor}"
+                                   Header="Extractor"
                                    Margin="0 10 0 10">
                     <!--#region Minimum Variation-->
                     <StackPanel Orientation="Horizontal">
@@ -226,9 +224,44 @@
                 </metro:MetroHeader>
                 <!--#endregion-->
 
-                <!--#region Weka-->
+                <!--#region MetaTrader-->
                 <metro:MetroHeader Grid.Row="4"
-                                   Header="{x:Static commonResources:CommonResources.Weka}"
+                                   Header="MetaTrader"
+                                   Margin="0 10 0 10">
+                    <!--#region Expert Advisor Host-->
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Expert Advisor Host *" />
+                            <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                     Text="{Binding Configuration.ExpertAdvisorHost, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region Expert Publisher Port-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Expert Publisher Port *" />
+                            <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                     Text="{Binding Configuration.ExpertAdvisorPublisherPort, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region Expert Response Port-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Expert Response Port *" />
+                            <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                     Text="{Binding Configuration.ExpertAdvisorResponsePort, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <!--#endregion-->
+                </metro:MetroHeader>
+                <!--#endregion-->
+
+                <!--#region Weka-->
+                <metro:MetroHeader Grid.Row="5"
+                                   Header="Weka"
                                    Margin="0 10 0 10">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -317,9 +350,9 @@
                 <!--#endregion-->
 
                 <!--#region Strategy Builder-->
-                <metro:MetroHeader Grid.Row="5"
+                <metro:MetroHeader Grid.Row="6"
                                    Margin="0 10 0 10"
-                                   Header="{x:Static commonResources:CommonResources.StrategyBuilder}">
+                                   Header="Strategy Builder">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -469,9 +502,9 @@
                 <!--#endregion-->
 
                 <!--#region Assembly Builder-->
-                <metro:MetroHeader Grid.Row="6"
+                <metro:MetroHeader Grid.Row="7"
                                    Margin="0, 10, 0, 10"
-                                   Header="{x:Static commonResources:CommonResources.AssemblyBuilder}">
+                                   Header="Assembly Builder">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />

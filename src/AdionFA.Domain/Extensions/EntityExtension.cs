@@ -1,4 +1,4 @@
-﻿using AdionFA.Domain.Base;
+﻿using AdionFA.Domain.Entities.Base;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 

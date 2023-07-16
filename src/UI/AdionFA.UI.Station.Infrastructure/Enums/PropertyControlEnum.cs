@@ -1,4 +1,4 @@
-﻿namespace AdionFA.UI.Station.Infrastructure.Enums
+﻿namespace AdionFA.UI.Infrastructure.Enums
 {
     public enum VisibilityPropertyEnum
     {

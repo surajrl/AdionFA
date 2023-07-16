@@ -25,21 +25,21 @@ namespace AdionFA.Infrastructure.Validators.FluentValidator
     {
         public static class FluentPlaceholders
         {
-            public static string PropertyName => "{PropertyName}";
-            public static string PropertyValue => "{PropertyValue}";
-            public static string ComparisonValue => "{ComparisonValue}";
-            public static string MinLength => "{MinLength}";
-            public static string MaxLength => "{MaxLength}";
-            public static string TotalLength => "{TotalLength}";
+            public static readonly string PropertyName = "{PropertyName}";
+            public static readonly string PropertyValue = "{PropertyValue}";
+            public static readonly string ComparisonValue = "{ComparisonValue}";
+            public static readonly string MinLength = "{MinLength}";
+            public static readonly string MaxLength = "{MaxLength}";
+            public static readonly string TotalLength = "{TotalLength}";
         }
 
         public static class BuiltInValidators
         {
-            public static string NotNull => "NotNullValidator";
-            public static string NotEmpty => "NotEmptyValidator";
-            public static string NotEqual => "NotEqualValidator";
-            public static string Equal => "EqualValidator";
-            public static string Length => "LengthValidator";
+            public static readonly string NotNull = "NotNullValidator";
+            public static readonly string NotEmpty = "NotEmptyValidator";
+            public static readonly string NotEqual = "NotEqualValidator";
+            public static readonly string Equal = "EqualValidator";
+            public static readonly string Length = "LengthValidator";
         }
     }
 }

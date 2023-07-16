@@ -1,7 +1,7 @@
-﻿using AdionFA.Infrastructure.Enums;
+﻿using AdionFA.Domain.Enums;
 using System;
 
-namespace AdionFA.UI.Station.Project.Model.MetaTrader
+namespace AdionFA.UI.ProjectStation.Model.MetaTrader
 {
     public class ZmqMsgModel
     {

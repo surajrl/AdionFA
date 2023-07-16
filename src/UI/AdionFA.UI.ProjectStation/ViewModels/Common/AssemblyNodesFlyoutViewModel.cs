@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Weka.Model;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Services;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Services;
 using DynamicData;
 using Prism.Commands;
 using System;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels.Common
+namespace AdionFA.UI.ProjectStation.ViewModels.Common
 {
     public class AssemblyNodesFlyoutViewModel : ViewModelBase
     {

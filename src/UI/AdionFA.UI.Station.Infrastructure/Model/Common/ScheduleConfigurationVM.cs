@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
+﻿using AdionFA.UI.Infrastructure.Model.Base;
+using AdionFA.UI.Infrastructure.Model.MarketData;
 
-namespace AdionFA.UI.Station.Infrastructure.Model.Common
+namespace AdionFA.UI.Infrastructure.Model.Common
 {
     public class ScheduleConfigurationVM : TimeSensitiveBaseVM
     {

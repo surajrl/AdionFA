@@ -1,9 +1,9 @@
-﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Contracts;
-using AdionFA.UI.Station.Project.ViewModels.Common;
+﻿using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Contracts;
+using AdionFA.UI.ProjectStation.ViewModels.Common;
 using MahApps.Metro.Controls;
 
-namespace AdionFA.UI.Station.Project.Common
+namespace AdionFA.UI.ProjectStation.Common
 {
     /// <summary>
     /// Interaction logic for AssemblyNodesFlyoutView.xaml

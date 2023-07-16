@@ -4,16 +4,40 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        WindowStyle="None" WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="450" Width="700" ResizeMode="NoResize">
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        Title="MainWindow"
+        Height="450"
+        Width="700"
+        ResizeMode="NoResize">
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="Assets\splash.jpg"/>
+            <ImageBrush ImageSource="Assets\splash.jpg" />
         </Grid.Background>
 
-        <Label Content="Financial Automat" Foreground="White" HorizontalAlignment="Left" Margin="154,68,0,0" VerticalAlignment="Top" FontSize="46" FontWeight="Bold"/>
-        <Label Content="Community 2020.0.1" Foreground="White" FontSize="16" HorizontalAlignment="Left" Margin="403,139,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.032,-1.464"/>
-        <Label Content="© 2020 Adion Team" HorizontalAlignment="Left" Margin="574,414,0,0" VerticalAlignment="Top"/>
-        <Image HorizontalAlignment="Left" Height="75" Margin="40,71,0,0" VerticalAlignment="Top" Width="92" Source="..\..\..\Utils\Assets\splash.jpg"/>
+        <Label Content="Financial Automat"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               Margin="154,68,0,0"
+               VerticalAlignment="Top"
+               FontSize="46"
+               FontWeight="Bold" />
+        <Label Content="Community 2020.0.1"
+               Foreground="White"
+               FontSize="16"
+               HorizontalAlignment="Left"
+               Margin="403,139,0,0"
+               VerticalAlignment="Top"
+               RenderTransformOrigin="-0.032,-1.464" />
+        <Label Content="© 2020 Adion Team"
+               HorizontalAlignment="Left"
+               Margin="574,414,0,0"
+               VerticalAlignment="Top" />
+        <Image HorizontalAlignment="Left"
+               Height="75"
+               Margin="40,71,0,0"
+               VerticalAlignment="Top"
+               Width="92"
+               Source="..\..\..\Utils\Assets\splash.jpg" />
     </Grid>
 </Window>

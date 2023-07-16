@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
+﻿using AdionFA.UI.Infrastructure.Base;
 using MahApps.Metro.Controls;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class MenuItemViewModel : ViewModelBase, IHamburgerMenuItemBase
     {

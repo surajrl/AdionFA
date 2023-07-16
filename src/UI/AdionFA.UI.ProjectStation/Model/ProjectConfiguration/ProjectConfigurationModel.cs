@@ -1,10 +1,10 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.Validators.ProjectConfiguration;
+﻿using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Model.Project;
+using AdionFA.UI.ProjectStation.Validators.ProjectConfiguration;
 using FluentValidation.Results;
 using System;
 
-namespace AdionFA.UI.Station.Project.Model.Configuration
+namespace AdionFA.UI.ProjectStation.Model.Configuration
 {
     public class ProjectConfigurationModel : ProjectConfigurationVM, IModelValidator
     {

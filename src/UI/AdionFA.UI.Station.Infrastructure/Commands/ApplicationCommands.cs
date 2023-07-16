@@ -1,6 +1,6 @@
 ﻿using Prism.Commands;
 
-namespace AdionFA.UI.Station.Infrastructure
+namespace AdionFA.UI.Infrastructure
 {
     public static class ApplicationCommands
     {

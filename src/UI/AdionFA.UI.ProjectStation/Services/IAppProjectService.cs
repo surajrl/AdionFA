@@ -1,15 +1,14 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
-using AdionFA.UI.Station.Project.Model.Configuration;
-using System.Threading.Tasks;
+﻿using AdionFA.UI.Infrastructure.Model.Base;
+using AdionFA.UI.ProjectStation.Model.Configuration;
 
-namespace AdionFA.UI.Station.Project.Services
+namespace AdionFA.UI.ProjectStation.Services
 {
     public interface IAppProjectService
     {
         // Project Configuration
 
-        Task<ProjectConfigurationModel> GetProjectConfigurationAsync(int projectId, bool includeGraph = false);
+        ProjectConfigurationModel GetProjectConfiguration(int projectId, bool includeGraph = false);
 
-        Task<ResponseVM> UpdateProjectConfigurationAsync(ProjectConfigurationModel projectConfiguration);
+        ResponseVM UpdateProjectConfiguration(ProjectConfigurationModel projectConfiguration);
     }
 }

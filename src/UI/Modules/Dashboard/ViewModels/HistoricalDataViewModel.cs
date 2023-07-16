@@ -1,100 +1,112 @@
-﻿using AdionFA.Domain.Enums;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
 using AdionFA.Domain.Helpers;
 using AdionFA.Domain.Model;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Module.Dashboard.Model;
-using AdionFA.UI.Station.Module.Dashboard.Services;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.TransferObject.MarketData;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Model.MarketData;
+using AdionFA.UI.Infrastructure.Services;
+using AutoMapper;
+using Ninject;
 using Prism.Commands;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
+namespace AdionFA.UI.Module.Dashboard.ViewModels
 {
     public class HistoricalDataViewModel : ViewModelBase
     {
-        private readonly ISettingService _settingService;
-        private readonly IMarketDataServiceAgent _historicalDataService;
+        private readonly IMapper _mapper;
 
-        public HistoricalDataViewModel(
-            ISettingService settingService,
-            IMarketDataServiceAgent historicalDataService,
-            IApplicationCommands applicationCommands)
+        private readonly IMarketDataAppService _marketDataService;
+
+        public HistoricalDataViewModel(IApplicationCommands applicationCommands)
         {
-            _settingService = settingService;
-            _historicalDataService = historicalDataService;
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
 
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
-
             applicationCommands.LoadHistoricalDataCommand.RegisterCommand(HistoricalDataFilterCommand);
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
+
+            Markets = new();
+            Symbols = new();
+            Timeframes = new();
+            HistoricalDataCandles = new();
         }
 
-        private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutHistoricalData))
             {
-                PopulateViewModel();
+                try
+                {
+                    SelectedMarketId = 0;
+                    SelectedTimeframeId = 0;
+                    SelectedSymbolId = 0;
+
+                    HistoricalDataCandles.Clear();
+
+                    if (!Markets.Any())
+                    {
+                        Markets.AddRange(EnumUtil.ToEnumerable<MarketEnum>());
+                    }
+
+                    Symbols.Clear();
+                    var symbols = _marketDataService.GetAllSymbol();
+                    symbols.ToList().ForEach(symbol =>
+                    {
+                        Symbols.Add(new Metadata { Name = symbol.Name, Id = symbol.SymbolId });
+                    });
+
+                    Timeframes.Clear();
+                    var timeframes = _marketDataService.GetAllTimeframe();
+                    timeframes.ToList().ForEach(timeframe =>
+                    {
+                        Timeframes.Add(new Metadata { Name = timeframe.Name, Id = timeframe.TimeframeId });
+                    });
+
+                    LoadHistoricalData();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message);
+                    throw;
+                }
             }
-        }
+        });
+
 
         public ICommand HistoricalDataFilterCommand => new DelegateCommand(LoadHistoricalData);
 
-        private async void PopulateViewModel()
-        {
-            try
-            {
-                Symbol ??= new();
-                Timeframe ??= new();
-
-                if (!Markets.Any())
-                {
-                    Markets.AddRange(EnumUtil.ToEnumerable<MarketEnum>());
-                }
-
-                Symbols?.Clear();
-                var symbols = await _historicalDataService.GetAllSymbolAsync().ConfigureAwait(true);
-                symbols.ToList().ForEach(Symbols.Add);
-
-                Timeframes?.Clear();
-                var timeframes = await _historicalDataService.GetAllTimeframeAsync().ConfigureAwait(true);
-                timeframes.ToList().ForEach(Timeframes.Add);
-
-                LoadHistoricalData();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
-        }
-
-        private async void LoadHistoricalData()
+        private void LoadHistoricalData()
         {
             try
             {
                 IsTransactionActive = true;
-                HistoricalDataDetails?.Clear();
 
-                if (Symbol == null || Timeframe == null)
+                if (SelectedMarketId <= 0 || SelectedSymbolId <= 0 || SelectedTimeframeId <= 0)
                 {
                     return;
                 }
 
-                var vm = await _settingService.GetHistoricalData(
-                                    MarketId ?? 0,
-                                    Symbol.SymbolId,
-                                    Timeframe.TimeframeId);
+                var historicalDataDTO = _marketDataService.GetHistoricalData(SelectedMarketId, SelectedSymbolId, SelectedTimeframeId);
 
-                HistoricalDataDetails = new ObservableCollection<HistoricalDataCandleSettingVM>(vm.HistoricalDataCandleSettings);
+                HistoricalDataCandles.Clear();
+                if (historicalDataDTO != null)
+                {
+                    HistoricalDataCandles.AddRange(_mapper.Map<IList<HistoricalDataCandleDTO>, IList<HistoricalDataCandleVM>>(historicalDataDTO.HistoricalDataCandles));
+                }
             }
             catch (Exception ex)
             {
@@ -109,48 +121,38 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
         // Bindable Model
 
-        private bool _istransactionActive;
-
+        private bool _isTransactionActive;
         public bool IsTransactionActive
         {
-            get => _istransactionActive;
-            set => SetProperty(ref _istransactionActive, value);
+            get => _isTransactionActive;
+            set => SetProperty(ref _isTransactionActive, value);
         }
 
-        private int? _marketId;
-
-        public int? MarketId
+        private int _selectedMarketId;
+        public int SelectedMarketId
         {
-            get => _marketId;
-            set => SetProperty(ref _marketId, value);
+            get => _selectedMarketId;
+            set => SetProperty(ref _selectedMarketId, value);
         }
 
-        private SymbolVM _symbol;
-
-        public SymbolVM Symbol
+        private int _selectedSymbolId;
+        public int SelectedSymbolId
         {
-            get => _symbol;
-            set => SetProperty(ref _symbol, value);
+            get => _selectedSymbolId;
+            set => SetProperty(ref _selectedSymbolId, value);
         }
 
-        private TimeframeVM _timeframe;
-
-        public TimeframeVM Timeframe
+        private int _selectedTimeframeId;
+        public int SelectedTimeframeId
         {
-            get => _timeframe;
-            set => SetProperty(ref _timeframe, value);
+            get => _selectedTimeframeId;
+            set => SetProperty(ref _selectedTimeframeId, value);
         }
 
-        private ObservableCollection<HistoricalDataCandleSettingVM> _historicalDataDetails;
+        public ObservableCollection<HistoricalDataCandleVM> HistoricalDataCandles { get; }
 
-        public ObservableCollection<HistoricalDataCandleSettingVM> HistoricalDataDetails
-        {
-            get => _historicalDataDetails;
-            set => SetProperty(ref _historicalDataDetails, value);
-        }
-
-        public ObservableCollection<Metadata> Markets { get; } = new ObservableCollection<Metadata>();
-        public ObservableCollection<SymbolVM> Symbols { get; } = new ObservableCollection<SymbolVM>();
-        public ObservableCollection<TimeframeVM> Timeframes { get; } = new ObservableCollection<TimeframeVM>();
+        public ObservableCollection<Metadata> Markets { get; }
+        public ObservableCollection<Metadata> Symbols { get; }
+        public ObservableCollection<Metadata> Timeframes { get; }
     }
 }

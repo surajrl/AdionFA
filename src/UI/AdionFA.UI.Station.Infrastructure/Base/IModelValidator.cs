@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace AdionFA.UI.Station.Infrastructure.Base
+namespace AdionFA.UI.Infrastructure.Base
 {
     public interface IModelValidator
     {

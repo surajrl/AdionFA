@@ -1,6 +1,7 @@
-﻿using AdionFA.Application.Contracts.Commons;
+﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities;
+using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
 using System;
@@ -14,7 +15,7 @@ namespace AdionFA.Application.Services.Commons
     {
         private readonly IGenericRepository<Setting> _settingRepository;
 
-        public AppSettingAppService(IGenericRepository<Setting> settingRepository) : base()
+        public AppSettingAppService(IGenericRepository<Setting> settingRepository)
         {
             _settingRepository = settingRepository;
         }

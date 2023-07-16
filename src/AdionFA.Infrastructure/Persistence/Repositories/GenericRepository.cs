@@ -1,16 +1,13 @@
-﻿using AdionFA.Domain.Base;
-using AdionFA.Domain.Contracts.Bases;
+﻿using AdionFA.Domain.Contracts.Bases;
 using AdionFA.Domain.Contracts.Repositories;
-using AdionFA.Infrastructure.Persistance.Contracts;
-using AdionFA.Infrastructure.Persistence.EFCore;
+using AdionFA.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace AdionFA.Infrastructure.Persistance.Repositories
+namespace AdionFA.Infrastructure.Persistence.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : EntityBase
     {
@@ -19,40 +16,28 @@ namespace AdionFA.Infrastructure.Persistance.Repositories
 
         private readonly DbContext _dbContext;
 
-        public GenericRepository(IUnitOfWork<AdionFADbContext> unitOfWork)
+        public GenericRepository(DbContext dbContext)
         {
-            _dbContext = ((UnitOfWork<AdionFADbContext>)unitOfWork).Context;
+            _dbContext = dbContext;
         }
 
-        public virtual void Create(TEntity entity, bool autoSave = true)
+        public virtual void Create(TEntity entity)
         {
-            try
-            {
-                entity.CreatedById = _id;
-                entity.CreatedByUserName = _username;
+            entity.CreatedById = _id;
+            entity.CreatedByUserName = _username;
+            entity.CreatedOn = DateTime.UtcNow;
 
-                entity.IsDeleted = false;
-                entity.CreatedOn = DateTime.UtcNow;
+            entity.IsDeleted = false;
 
-                _dbContext.Set<TEntity>().Add(entity);
+            _dbContext.Set<TEntity>().Add(entity);
 
-                if (autoSave)
-                {
-                    _dbContext.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            _dbContext.SaveChanges();
         }
 
-        public virtual void Update(TEntity entity, bool autoSave = true)
+        public virtual void Update(TEntity entity)
         {
             entity.UpdatedById = _id;
             entity.UpdatedByUserName = _username;
-
             entity.UpdatedOn = DateTime.UtcNow;
 
             var entry = _dbContext.Entry(entity);
@@ -69,10 +54,7 @@ namespace AdionFA.Infrastructure.Persistance.Repositories
                 _dbContext.Entry(entity).State = EntityState.Modified;
             }
 
-            if (autoSave)
-            {
-                _dbContext.SaveChanges();
-            }
+            _dbContext.SaveChanges();
         }
 
         public virtual void Delete(IEnumerable<TEntity> entities, bool softDelete = true)

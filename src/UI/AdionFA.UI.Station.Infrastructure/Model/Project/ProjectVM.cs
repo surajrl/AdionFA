@@ -1,8 +1,7 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
-using System;
+﻿using AdionFA.UI.Infrastructure.Model.Base;
 using System.Collections.Generic;
 
-namespace AdionFA.UI.Station.Infrastructure.Model.Project
+namespace AdionFA.UI.Infrastructure.Model.Project
 {
     public class ProjectVM : EntityBaseVM
     {
@@ -16,9 +15,5 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Project
         }
 
         public IList<ProjectConfigurationVM> ProjectConfigurations { get; set; }
-
-        public DateTime? ProcessLastDate { get; set; }
-
-        public long ProcessId { get; set; }
     }
 }

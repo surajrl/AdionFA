@@ -4,7 +4,7 @@ using Prism.Events;
 using Prism.Ioc;
 using Prism.Regions;
 
-namespace AdionFA.UI.Station.Infrastructure.Base
+namespace AdionFA.UI.Infrastructure.Base
 {
     public abstract class ViewModelBase : ValidatableBindableBase
     {
@@ -17,7 +17,6 @@ namespace AdionFA.UI.Station.Infrastructure.Base
         // Region Manager
 
         private IRegionManager _regionManager;
-
         public IRegionManager RegionManager
         {
             get => _regionManager;
@@ -27,7 +26,6 @@ namespace AdionFA.UI.Station.Infrastructure.Base
         // Event Aggregator
 
         private IEventAggregator _eventAggregator;
-
         public IEventAggregator EventAggregator
         {
             get => _eventAggregator;

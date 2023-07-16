@@ -1,28 +1,14 @@
-﻿using AdionFA.Infrastructure.Persistance.Contracts;
+﻿using AdionFA.Infrastructure.IofC;
 using AutoMapper;
 using Ninject;
-using System;
 
-namespace AdionFA.Application.Services
+namespace AdionFA.Infrastructure.Services
 {
     public class AppServiceBase
     {
-        [Inject]
-        public ITransaction Transactional { get; set; }
+        protected const string Username = "admin";
+        protected const string Id = "0";
 
-        [Inject]
-        public IMapper Mapper { get; set; }
-
-        // Data
-
-        public IDisposable Transaction<T>()
-        {
-            return Transactional.Transactional<T>();
-        }
-
-        public void Dispose()
-        {
-            Transactional.ReleaseDbContext();
-        }
+        protected static IMapper Mapper => IoC.Kernel.Get<IMapper>();
     }
 }

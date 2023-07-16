@@ -1,12 +1,12 @@
-﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Project.Common;
-using AdionFA.UI.Station.Project.StrategyBuilder;
-using AdionFA.UI.Station.Project.ViewModels;
+﻿using AdionFA.UI.Infrastructure;
+using AdionFA.UI.ProjectStation.Common;
+using AdionFA.UI.ProjectStation.StrategyBuilder;
+using AdionFA.UI.ProjectStation.ViewModels;
 using MahApps.Metro.Controls;
 using Prism.Regions;
 using System.Windows;
 
-namespace AdionFA.UI.Station.Project
+namespace AdionFA.UI.ProjectStation
 {
     /// <summary>
     /// Interaction logic for Shell.xaml
@@ -31,7 +31,6 @@ namespace AdionFA.UI.Station.Project
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(AssemblyNodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(StrategyNodesFlyoutView));
-
             }
         }
 

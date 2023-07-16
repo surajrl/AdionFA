@@ -1,9 +1,9 @@
-﻿using AdionFA.Application.Contracts.Projects;
-using AdionFA.Application.Services.Commons;
-using AdionFA.Application.Services.MarketData;
+﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities;
 using AdionFA.Domain.Extensions;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Project;
 using Ninject;
@@ -17,14 +17,8 @@ namespace AdionFA.Application.Services.Projects
 {
     public class ProjectAppService : AppServiceBase, IProjectAppService
     {
-        private readonly string _ownerId = "0";
-        private readonly string _owner = "admin";
-
-        [Inject]
-        public ConfigurationAppService ConfigurationService { get; set; }
-
-        [Inject]
-        public MarketDataAppService MarketDataService { get; set; }
+        private readonly IConfigurationAppService _configurationService;
+        private readonly IMarketDataAppService _marketDataService;
 
         private readonly IGenericRepository<Project> _projectRepository;
         private readonly IGenericRepository<ProjectConfiguration> _projectConfigurationRepository;
@@ -36,12 +30,14 @@ namespace AdionFA.Application.Services.Projects
             IGenericRepository<Configuration> configurationRepository,
             IGenericRepository<ProjectConfiguration> projectConfigurationRepository,
             IGenericRepository<ProjectScheduleConfiguration> projectScheduleConfigurationRepository)
-            : base()
         {
             _projectRepository = projectRepository;
             _configurationRepository = configurationRepository;
             _projectConfigurationRepository = projectConfigurationRepository;
             _projectScheduleConfigurationRepository = projectScheduleConfigurationRepository;
+
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _configurationService = IoC.Kernel.Get<IConfigurationAppService>();
         }
 
         // Project
@@ -71,8 +67,6 @@ namespace AdionFA.Application.Services.Projects
                 var includes = new List<Expression<Func<Project, dynamic>>> { };
                 if (includeGraph)
                 {
-                    includes.Add(p => p.ExpertAdvisors);
-
                     project = _projectRepository.FirstOrDefault(predicate, includes.ToArray());
 
                     var projectConfigurationDTO = GetProjectConfiguration(project.ProjectId, true);
@@ -103,9 +97,9 @@ namespace AdionFA.Application.Services.Projects
 
                 var project = Mapper.Map<Project>(projectDTO);
 
-                var pgc = ConfigurationService.GetConfiguration(configurationId);
+                var pgc = _configurationService.GetConfiguration(configurationId);
 
-                var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(pgc, marketDataId ?? 0);
+                var validation = SymbolAndTimeframeMustBeSameValidation(pgc, marketDataId ?? 0);
                 if (!validation.IsSuccess)
                 {
                     response.Message = validation.Message;
@@ -190,8 +184,8 @@ namespace AdionFA.Application.Services.Projects
                     StartDate = DateTime.UtcNow,
                     EndDate = null,
 
-                    CreatedById = _ownerId,
-                    CreatedByUserName = _owner,
+                    CreatedById = Id,
+                    CreatedByUserName = Username,
                     CreatedOn = DateTime.UtcNow,
                     IsDeleted = false,
                 };
@@ -210,8 +204,8 @@ namespace AdionFA.Application.Services.Projects
                             StartDate = DateTime.UtcNow,
                             EndDate = null,
 
-                            CreatedById = _ownerId,
-                            CreatedByUserName = _owner,
+                            CreatedById = Id,
+                            CreatedByUserName = Username,
                             CreatedOn = DateTime.UtcNow,
                             IsDeleted = false,
                         });
@@ -245,7 +239,7 @@ namespace AdionFA.Application.Services.Projects
                 {
                     var projectConfiguration = project.ProjectConfigurations.FirstOrDefault(pc => pc.EndDate == null);
 
-                    var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(Mapper.Map<ProjectConfigurationDTO>(projectConfiguration), projectConfiguration.HistoricalDataId ?? 0);
+                    var validation = SymbolAndTimeframeMustBeSameValidation(Mapper.Map<ProjectConfigurationDTO>(projectConfiguration), projectConfiguration.HistoricalDataId ?? 0);
                     if (!validation.IsSuccess)
                     {
                         response.Message = validation.Message;
@@ -310,7 +304,7 @@ namespace AdionFA.Application.Services.Projects
 
                 var projectConfiguration = Mapper.Map<ProjectConfiguration>(projectConfigurationDTO);
 
-                var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(projectConfigurationDTO, projectConfigurationDTO.HistoricalDataId ?? 0);
+                var validation = SymbolAndTimeframeMustBeSameValidation(projectConfigurationDTO, projectConfigurationDTO.HistoricalDataId ?? 0);
                 if (!validation.IsSuccess)
                 {
                     response.Message = validation.Message;
@@ -345,7 +339,7 @@ namespace AdionFA.Application.Services.Projects
                 {
                     var projectConfiguration = Mapper.Map<ProjectConfiguration>(projectConfigurationDTO);
 
-                    var validation = CurrencyPairAndCurrencyPeriodMustBeSameValidation(Mapper.Map<ProjectConfigurationDTO>(projectConfiguration), projectConfigurationDTO.HistoricalDataId ?? 0);
+                    var validation = SymbolAndTimeframeMustBeSameValidation(Mapper.Map<ProjectConfigurationDTO>(projectConfiguration), projectConfigurationDTO.HistoricalDataId ?? 0);
                     if (!validation.IsSuccess)
                     {
                         return validation;
@@ -478,8 +472,8 @@ namespace AdionFA.Application.Services.Projects
                                 StartDate = DateTime.UtcNow,
                                 EndDate = null,
 
-                                CreatedById = _ownerId,
-                                CreatedByUserName = _owner,
+                                CreatedById = Id,
+                                CreatedByUserName = Username,
                                 CreatedOn = DateTime.UtcNow,
                                 IsDeleted = false,
                             });
@@ -508,18 +502,21 @@ namespace AdionFA.Application.Services.Projects
             }
         }
 
-        private ResponseDTO CurrencyPairAndCurrencyPeriodMustBeSameValidation(ConfigurationBaseDTO configurationDTO, int marketDataId)
+        private ResponseDTO SymbolAndTimeframeMustBeSameValidation(ConfigurationBaseDTO configurationDTO, int marketDataId)
         {
             var response = new ResponseDTO { IsSuccess = true };
 
             if (configurationDTO != null && marketDataId > 0)
             {
-                var md = MarketDataService.GetHistoricalData(marketDataId);
+                var historicalData = _marketDataService.GetHistoricalData(marketDataId);
 
-                if (md != null)
+                if (historicalData != null)
                 {
-                    var validation = ProjectDTO.CurrencyPairAndCurrencyPeriodMustBeSameValidation(
-                    configurationDTO.SymbolId, configurationDTO.TimeframeId, md.SymbolId, md.TimeframeId);
+                    var validation = ProjectDTO.SymbolAndTimeframeMustBeSameValidation(
+                    configurationDTO.SymbolId,
+                    configurationDTO.TimeframeId,
+                    historicalData.SymbolId,
+                    historicalData.TimeframeId);
 
                     if (!validation.IsSuccess)
                     {

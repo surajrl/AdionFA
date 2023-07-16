@@ -23,19 +23,4 @@
     <ProjectReference Include="..\..\Controls\SearchBoxControl\AdionFA.UI.Controls.SearchBoxControl.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Resources\ShellResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ShellResources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\ShellResources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ShellResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>

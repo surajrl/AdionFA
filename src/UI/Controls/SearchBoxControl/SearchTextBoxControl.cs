@@ -131,8 +131,7 @@ namespace AdionFA.UI.Controls.SearchBoxControl
             });
 
             //Search////////////////////////////////////////////////////////////////////////////////////////////////
-            var iconBorder = GetTemplateChild("PART_SearchIconBorder") as Border;
-            if (iconBorder != null)
+            if (GetTemplateChild("PART_SearchIconBorder") is Border iconBorder)
             {
                 iconBorder.MouseLeftButtonDown += new MouseButtonEventHandler((object obj, MouseButtonEventArgs e) =>
                 {
@@ -173,8 +172,7 @@ namespace AdionFA.UI.Controls.SearchBoxControl
                 }
                 size = 15;
             }
-            var iconChoose = GetTemplateChild("FilterIcon") as Image;
-            if (iconChoose != null)
+            if (GetTemplateChild("FilterIcon") is Image iconChoose)
                 iconChoose.Width = iconChoose.Height = size;
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -217,12 +215,14 @@ namespace AdionFA.UI.Controls.SearchBoxControl
 
         private void RaiseSearchEvent()
         {
-            if (!string.IsNullOrEmpty(Text) && !listPreviousItem.Items.Contains(this.Text))
-                listPreviousItem.Items.Add(this.Text);
+            if (!string.IsNullOrEmpty(Text) && !listPreviousItem.Items.Contains(Text))
+                listPreviousItem.Items.Add(Text);
 
 
-            var args = new SearchEventArgs(SearchEvent);
-            args.Keyword = this.Text;
+            var args = new SearchEventArgs(SearchEvent)
+            {
+                Keyword = Text
+            };
             if (listSection != null)
             {
                 args.Sections = (List<string>)listSection.SelectedItems.Cast<string>().ToList();

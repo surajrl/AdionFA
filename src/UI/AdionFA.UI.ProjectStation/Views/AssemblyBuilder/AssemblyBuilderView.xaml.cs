@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace AdionFA.UI.Station.Project.Views
+namespace AdionFA.UI.ProjectStation.Views
 {
     /// <summary>
     /// Interaction logic for AssemblyBuilderView.xaml

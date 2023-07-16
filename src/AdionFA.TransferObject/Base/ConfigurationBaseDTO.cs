@@ -27,6 +27,12 @@ namespace AdionFA.TransferObject.Base
 
         public int ExtractorMinVariation { get; set; }
 
+        // MetaTrader
+
+        public string ExpertAdvisorHost { get; set; }
+        public string ExpertAdvisorResponsePort { get; set; }
+        public string ExpertAdvisorPublisherPort { get; set; }
+
         // Weka
 
         public int TotalInstanceWeka { get; set; }

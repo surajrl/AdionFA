@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 
-namespace AdionFA.UI.Station.Infrastructure.Extensions
+namespace AdionFA.UI.Infrastructure.Extensions
 {
     public static class ColorAssist
     {

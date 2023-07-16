@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Project.ViewModels;
+﻿using AdionFA.UI.ProjectStation.ViewModels;
 using FluentValidation;
 
-namespace AdionFA.UI.Station.Project.Validators.CrossingBuilder
+namespace AdionFA.UI.ProjectStation.Validators.CrossingBuilder
 {
     public class CrossingBuilderValidator : AbstractValidator<CrossingBuilderViewModel>
     {

@@ -1,13 +1,10 @@
-﻿using AdionFA.UI.Station.Module.Shell.Model;
+﻿using AdionFA.UI.Infrastructure.Model.Project;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace AdionFA.UI.Station.Module.Shell.Services
+namespace AdionFA.UI.Module.Services
 {
     public interface IShellServiceShell
     {
-        Task<List<ProjectVM>> GetAllProjects();
-
-        Task<bool> PinnedProject(int projectId, bool isPinned);
+        List<ProjectVM> GetAllProjects();
     }
 }

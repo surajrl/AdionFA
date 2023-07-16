@@ -1,37 +1,50 @@
-﻿using AdionFA.Domain.Enums;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
 using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Helpers;
+using AdionFA.Domain.Model;
+using AdionFA.Domain.Properties;
 using AdionFA.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Module.Dashboard.Model;
-using AdionFA.UI.Station.Module.Dashboard.Services;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.TransferObject.MarketData;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Model.MarketData;
+using AdionFA.UI.Infrastructure.Services;
+using AdionFA.UI.Module.Dashboard.Model;
+using AdionFA.UI.Module.Dashboard.Services;
+using AutoMapper;
+using Ninject;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
+namespace AdionFA.UI.Module.Dashboard.ViewModels
 {
     public class UploadHistoricalDataViewModel : ViewModelBase
     {
+        private readonly IMapper _mapper;
+
         private readonly ISettingService _settingService;
-        private readonly IMarketDataServiceAgent _marketDataService;
+        private readonly IMarketDataAppService _marketDataService;
 
         public UploadHistoricalDataViewModel(
             ISettingService settingService,
-            IMarketDataServiceAgent marketDataService,
             IApplicationCommands applicationCommands)
         {
             _settingService = settingService;
-            _marketDataService = marketDataService;
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
 
             FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
@@ -47,7 +60,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }
 
-        public DelegateCommand UploadBtnCommand => new DelegateCommand(async () =>
+        public DelegateCommand UploadBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -59,21 +72,23 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     IsTransactionActive = false;
 
                     MessageHelper.ShowMessages(this,
-                        EntityTypeEnum.MarketData.GetMetadata().Description,
+                        EntityTypeEnum.HistoricalData.GetMetadata().Description,
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
                 }
 
-                if (await CreateHistory())
+                if (CreateHistory())
                 {
-                    var result = await _settingService.CreateHistoricalData(UploadHistoricalData);
+                    var result = _settingService.CreateHistoricalData(UploadHistoricalData);
 
                     IsTransactionActive = false;
 
                     MessageHelper.ShowMessage(this,
-                        EntityTypeEnum.MarketData.GetMetadata().Description,
-                        result ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
+                        EntityTypeEnum.HistoricalData.GetMetadata().Description,
+                        result
+                        ? Resources.SuccessEntitySave
+                        : Resources.FailEntitySave);
 
                     PopulateViewModel();
 
@@ -95,11 +110,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private async Task<bool> CreateHistory()
+        private bool CreateHistory()
         {
             try
             {
-                var result = CandleHelper.GetHistoryCandles(UploadHistoricalData.FilePathHistoricalData).ToList();
+                var result = CandleHelper.GetHistoryCandles(UploadHistoricalData.FilepathHistoricalData).ToList();
 
                 if (result.Count > 0)
                 {
@@ -119,8 +134,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     });
 
                     var marketName = ((MarketEnum)UploadHistoricalData.MarketId).GetMetadata().Name;
-                    var symbol = await _marketDataService.GetSymbolAsync(UploadHistoricalData.SymbolId);
-                    var timeframe = await _marketDataService.GetTimeframeAsync(UploadHistoricalData.TimeframeId);
+                    var symbol = _marketDataService.GetSymbol(UploadHistoricalData.SymbolId);
+                    var timeframe = _marketDataService.GetTimeframe(UploadHistoricalData.TimeframeId);
 
                     var candlesOrdered = result.OrderByDescending(candle => candle.Date);
                     var firstCandleDate = candlesOrdered.LastOrDefault().Date;
@@ -137,8 +152,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 }
 
                 MessageHelper.ShowMessage(this,
-                EntityTypeEnum.MarketData.GetMetadata().Description,
-                MessageResources.MarketDataFileEmpty);
+                    EntityTypeEnum.HistoricalData.GetMetadata().Description,
+                    Resources.HistoricalDataEmpty);
 
                 return false;
             }
@@ -149,7 +164,7 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }
 
-        private async void PopulateViewModel()
+        private void PopulateViewModel()
         {
             if (!IsTransactionActive)
             {
@@ -160,33 +175,39 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
 
             if (!Markets.Any())
+            {
                 Markets.AddRange(EnumUtil.ToEnumerable<MarketEnum>());
+            }
 
             if (!Timeframes.Any())
             {
-                var timeframes = await _marketDataService.GetAllTimeframeAsync().ConfigureAwait(true);
-                timeframes.ToList().ForEach(Timeframes.Add);
+                var timeframes = _marketDataService.GetAllTimeframe();
+                timeframes.ToList().ForEach(timeframe =>
+                {
+                    Timeframes.Add(_mapper.Map<TimeframeDTO, TimeframeVM>(timeframe));
+                });
             }
 
             if (!Symbols.Any())
             {
-                var symbols = await _marketDataService.GetAllSymbolAsync().ConfigureAwait(true);
-                symbols.ToList().ForEach(Symbols.Add);
+                var symbols = _marketDataService.GetAllSymbol();
+                symbols.ToList().ForEach(symbol =>
+                {
+                    Symbols.Add(_mapper.Map<SymbolDTO, SymbolVM>(symbol));
+                });
             }
         }
 
         // Bindable Model
 
-        private bool istransactionActive;
-
+        private bool _isTransactionActive;
         public bool IsTransactionActive
         {
-            get => istransactionActive;
-            set => SetProperty(ref istransactionActive, value);
+            get => _isTransactionActive;
+            set => SetProperty(ref _isTransactionActive, value);
         }
 
         private UploadHistoricalDataModel _uploadHistoricalData;
-
         public UploadHistoricalDataModel UploadHistoricalData
         {
             get => _uploadHistoricalData;

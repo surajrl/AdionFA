@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Theme = ControlzEx.Theming.Theme;
 
-namespace AdionFA.UI.Station.Infrastructure.Themes
+namespace AdionFA.UI.Infrastructure.Themes
 {
     public static class MaterialDesignAssist
     {

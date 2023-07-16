@@ -1,9 +1,9 @@
-﻿using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Module.Dashboard.Validators;
+﻿using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Model.Project;
+using AdionFA.UI.Module.Dashboard.Validators;
 using FluentValidation.Results;
 
-namespace AdionFA.UI.Station.Module.Dashboard.Model
+namespace AdionFA.UI.Module.Dashboard.Model
 {
     public class CreateProjectModel : ProjectVM, IModelValidator
     {

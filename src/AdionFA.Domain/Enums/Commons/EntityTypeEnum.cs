@@ -7,13 +7,13 @@ namespace AdionFA.Domain.Enums
         [Metadata(codeKey: "SETT", nameKey: "Setting", descriptionKey: "Setting")]
         Setting = 1,
 
-        [Metadata(codeKey: "MKDT", nameKey: "MarketData", descriptionKey: "Market Data")]
-        MarketData = 400,
+        [Metadata(codeKey: "HD", nameKey: "HistoricalData", descriptionKey: "Historical Data")]
+        HistoricalData = 400,
 
-        [Metadata(codeKey: "PROJ", nameKey: "Project", descriptionKey: "Project")]
+        [Metadata(codeKey: "PROJECT", nameKey: "Project", descriptionKey: "Project")]
         Project = 500,
 
-        [Metadata(codeKey: "PROJCONFIG", nameKey: "ProjectConfiguration", descriptionKey: "Project Configuration")]
+        [Metadata(codeKey: "PROJECTCONFIG", nameKey: "ProjectConfiguration", descriptionKey: "Project Configuration")]
         ProjectConfiguration = 501,
 
         [Metadata(codeKey: "CONFIG", nameKey: "Configuration", descriptionKey: "Configuration")]

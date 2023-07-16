@@ -1,20 +1,27 @@
-﻿using AdionFA.Infrastructure.Helpers;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Helpers;
+using AdionFA.Domain.Model;
+using AdionFA.Domain.Properties;
+using AdionFA.Infrastructure.Helpers;
+using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.MetaTrader.Model;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.Enums.Model;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.MarketData;
-using AdionFA.UI.Station.Infrastructure.Services;
-using AdionFA.UI.Station.Module.Dashboard.Model;
-using AdionFA.UI.Station.Module.Dashboard.Services;
+using AdionFA.TransferObject.MarketData;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Model.MarketData;
+using AdionFA.UI.Infrastructure.Services;
+using AdionFA.UI.Module.Dashboard.Model;
+using AdionFA.UI.Module.Dashboard.Services;
+using AutoMapper;
 using DynamicData;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
+using Ninject;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
@@ -24,27 +31,29 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
+namespace AdionFA.UI.Module.Dashboard.ViewModels
 {
     public class DownloadHistoricalDataViewModel : ViewModelBase
     {
-        private readonly ISharedServiceAgent _sharedService;
-        private readonly IMarketDataServiceAgent _marketDataService;
+        private readonly IAppSettingAppService _appSettingService;
+        private readonly IMarketDataAppService _marketDataService;
         private readonly ISettingService _settingService;
+        private readonly IMapper _mapper;
 
-        public ICommand RefreshBtnCommand { get; }
 
         public DownloadHistoricalDataViewModel(
             IApplicationCommands applicationCommands,
-            ISettingService settingService,
-            IMarketDataServiceAgent marketDataService,
-            ISharedServiceAgent sharedService)
+            ISettingService settingService)
         {
-            _sharedService = sharedService;
             _settingService = settingService;
-            _marketDataService = marketDataService;
 
-            RefreshBtnCommand = new DelegateCommand(OnRefreshAsync, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _appSettingService = IoC.Kernel.Get<IAppSettingAppService>();
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
@@ -53,7 +62,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         {
             if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutDownloadHistoricalData))
             {
-                OnRefreshAsync();
+                Markets.Clear();
+                Timeframes.Clear();
+                Symbols.Clear();
 
                 DownloadHistoricalDataModel = new DownloadHistoricalDataModel()
                 {
@@ -68,6 +79,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
             try
             {
+                DownloadHistoricalDataModel.SymbolId = DownloadHistoricalDataModel.Symbol.SymbolId;
+                DownloadHistoricalDataModel.TimeframeId = DownloadHistoricalDataModel.Timeframe.TimeframeId;
+
                 var validator = DownloadHistoricalDataModel.Validate();
                 if (!validator.IsValid)
                 {
@@ -88,19 +102,16 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     DownloadHistoricalDataModel.Start.Value.Minute,
                     DownloadHistoricalDataModel.Start.Value.Second);
 
-                var symbol = await _marketDataService.GetSymbolAsync(DownloadHistoricalDataModel.SymbolId).ConfigureAwait(true);
-                var timeframe = await _marketDataService.GetTimeframeAsync(DownloadHistoricalDataModel.TimeframeId).ConfigureAwait(true);
-
-                var host = await _sharedService.GetSettingAsync((int)SettingEnum.Host).ConfigureAwait(true);
-                var port = await _sharedService.GetSettingAsync((int)SettingEnum.Port).ConfigureAwait(true);
+                var host = _appSettingService.GetSetting((int)SettingEnum.Host);
+                var port = _appSettingService.GetSetting((int)SettingEnum.Port);
 
                 using var requester = new RequestSocket($">tcp://{host.Value}:{port.Value}");
 
                 // Send request-----------------------------------------------------------------------------------------
                 var request = JsonConvert.SerializeObject(new ZmqDownloadHistoricalDataRequest
                 {
-                    Symbol = symbol.Name,
-                    Timeframe = (TimeframeEnum)int.Parse(timeframe.Value),
+                    Symbol = DownloadHistoricalDataModel.Symbol.Name,
+                    Timeframe = (TimeframeEnum)int.Parse(DownloadHistoricalDataModel.Timeframe.Value),
                     Start = modifiedStart,
                     End = DownloadHistoricalDataModel.End.Value,
                 });
@@ -127,17 +138,19 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     throw new Exception(json.Message);
                 }
 
-                DownloadHistoricalDataModel.FilePathHistoricalData = json.Data;
+                DownloadHistoricalDataModel.FilepathHistoricalData = json.Data;
 
-                if (await CreateHistory().ConfigureAwait(true))
+                if (CreateHistory())
                 {
-                    var result = await _settingService.CreateHistoricalData(DownloadHistoricalDataModel).ConfigureAwait(true);
+                    var result = _settingService.CreateHistoricalData(DownloadHistoricalDataModel);
 
                     IsTransactionActive = false;
 
                     MessageHelper.ShowMessage(this,
-                        EntityTypeEnum.MarketData.GetMetadata().Description,
-                        result ? MessageResources.EntitySaveSuccess : MessageResources.EntityErrorTransaction);
+                        EntityTypeEnum.HistoricalData.GetMetadata().Description,
+                        result
+                        ? Resources.SuccessEntitySave
+                        : Resources.FailEntitySave);
 
                     if (result)
                     {
@@ -157,18 +170,19 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private async void OnRefreshAsync()
+
+        public ICommand RefreshBtnCommand => new DelegateCommand(async () =>
         {
             if (!IsTransactionActive)
             {
                 IsTransactionActive = true;
 
-                Symbols.Clear();
-
                 try
                 {
-                    var host = await _sharedService.GetSettingAsync((int)SettingEnum.Host).ConfigureAwait(true);
-                    var port = await _sharedService.GetSettingAsync((int)SettingEnum.Port).ConfigureAwait(true);
+                    Symbols.Clear();
+
+                    var host = _appSettingService.GetSetting((int)SettingEnum.Host);
+                    var port = _appSettingService.GetSetting((int)SettingEnum.Port);
 
                     using var requester = new RequestSocket($">tcp://{host.Value}:{port.Value}");
 
@@ -191,10 +205,10 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     var json = JsonConvert.DeserializeObject<ZmqResponse>(response);
                     var symbolsReceived = json.Data.Split(',').ToList();
 
-                    symbolsReceived.ForEach(async symbol =>
+                    symbolsReceived.ForEach(symbol =>
                     {
-                        await _marketDataService.CreateSymbolAsync(new SymbolVM { Name = symbol, Code = symbol });
-                        Symbols.Add(await _marketDataService.GetSymbolAsync(symbol));
+                        _marketDataService.CreateSymbol(new SymbolDTO { Name = symbol, Code = symbol });
+                        Symbols.Add(_mapper.Map<SymbolDTO, SymbolVM>(_marketDataService.GetSymbol(symbol)));
                     });
 
                     if (!Markets.Any())
@@ -204,8 +218,11 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
 
                     if (!Timeframes.Any())
                     {
-                        var timeframes = await _marketDataService.GetAllTimeframeAsync().ConfigureAwait(true);
-                        timeframes.ToList().ForEach(Timeframes.Add);
+                        var timeframes = _marketDataService.GetAllTimeframe();
+                        timeframes.ToList().ForEach(timeframe =>
+                        {
+                            Timeframes.Add(_mapper.Map<TimeframeDTO, TimeframeVM>(timeframe));
+                        });
                     }
 
                     IsTransactionActive = false;
@@ -219,13 +236,13 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                     IsTransactionActive = false;
                 }
             }
-        }
+        });
 
-        private async Task<bool> CreateHistory()
+        private bool CreateHistory()
         {
             try
             {
-                var result = CandleHelper.GetHistoryCandles(DownloadHistoricalDataModel.FilePathHistoricalData).ToList();
+                var result = CandleHelper.GetHistoryCandles(DownloadHistoricalDataModel.FilepathHistoricalData).ToList();
 
                 if (result.Count > 0)
                 {
@@ -244,9 +261,9 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                         });
                     });
 
-                    string marketName = ((MarketEnum)DownloadHistoricalDataModel.MarketId).GetMetadata().Name;
-                    var symbol = await _marketDataService.GetSymbolAsync(DownloadHistoricalDataModel.SymbolId).ConfigureAwait(true);
-                    var timeframe = await _marketDataService.GetTimeframeAsync(DownloadHistoricalDataModel.TimeframeId).ConfigureAwait(true);
+                    var marketName = ((MarketEnum)DownloadHistoricalDataModel.MarketId).GetMetadata().Name;
+                    var symbol = _marketDataService.GetSymbol(DownloadHistoricalDataModel.SymbolId);
+                    var timeframe = _marketDataService.GetTimeframe(DownloadHistoricalDataModel.TimeframeId);
 
                     var candlesOrdered = result.OrderByDescending(candle => candle.Date);
                     var firstCandleDate = candlesOrdered.LastOrDefault().Date;
@@ -263,8 +280,8 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
                 }
 
                 MessageHelper.ShowMessage(this,
-                    EntityTypeEnum.MarketData.GetMetadata().Description,
-                    MessageResources.MarketDataFileEmpty);
+                    EntityTypeEnum.HistoricalData.GetMetadata().Description,
+                    Resources.HistoricalDataEmpty);
 
                 return false;
             }
@@ -278,7 +295,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         // View Bindings
 
         private bool _isTransactionActive;
-
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
@@ -286,7 +302,6 @@ namespace AdionFA.UI.Station.Module.Dashboard.ViewModels
         }
 
         private DownloadHistoricalDataModel _downloadHistoricalDataModel;
-
         public DownloadHistoricalDataModel DownloadHistoricalDataModel
         {
             get => _downloadHistoricalDataModel;

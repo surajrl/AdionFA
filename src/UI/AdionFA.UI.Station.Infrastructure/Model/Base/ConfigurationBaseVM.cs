@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.MarketData;
+﻿using AdionFA.UI.Infrastructure.Model.MarketData;
 using System;
 
-namespace AdionFA.UI.Station.Infrastructure.Model.Base
+namespace AdionFA.UI.Infrastructure.Model.Base
 {
     public class ConfigurationBaseVM : TimeSensitiveBaseVM
     {
@@ -81,6 +81,29 @@ namespace AdionFA.UI.Station.Infrastructure.Model.Base
             set => SetProperty(ref _extractorMinVariation, value);
         }
 
+        // MetaTrader
+
+        private string _expertAdvisorHost;
+        public string ExpertAdvisorHost
+        {
+            get => _expertAdvisorHost;
+            set => SetProperty(ref _expertAdvisorHost, value);
+        }
+
+        private string _expertAdvisorResponsePort;
+        public string ExpertAdvisorResponsePort
+        {
+            get => _expertAdvisorResponsePort;
+            set => SetProperty(ref _expertAdvisorResponsePort, value);
+        }
+
+
+        private string _expertAdvisorPublisherPort;
+        public string ExpertAdvisorPublisherPort
+        {
+            get => _expertAdvisorPublisherPort;
+            set => SetProperty(ref _expertAdvisorPublisherPort, value);
+        }
 
         // Weka
 

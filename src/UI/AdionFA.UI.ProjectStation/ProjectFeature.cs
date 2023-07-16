@@ -1,4 +1,4 @@
-﻿namespace AdionFA.UI.Station.Project.Features
+﻿namespace AdionFA.UI.ProjectStation.Features
 {
     public static class HamburgerMenuItems
     {

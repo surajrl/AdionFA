@@ -1,4 +1,4 @@
-﻿namespace AdionFA.UI.Station.Infrastructure.Contracts.Services
+﻿namespace AdionFA.UI.Infrastructure.Contracts.Services
 {
     public interface IProcessService
     {

@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Module.Dashboard.ViewModels;
+﻿using AdionFA.UI.Module.Dashboard.ViewModels;
 using System.Windows.Controls;
 
-namespace AdionFA.UI.Station.Module.Dashboard
+namespace AdionFA.UI.Module.Dashboard
 {
     /// <summary>
     /// Interaction logic for CreateProjectView.xaml

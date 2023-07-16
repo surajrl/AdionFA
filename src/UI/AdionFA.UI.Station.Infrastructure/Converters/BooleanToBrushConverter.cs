@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace AdionFA.UI.Station.Infrastructure.Converters
+namespace AdionFA.UI.Infrastructure.Converters
 {
     [ValueConversion(typeof(bool), typeof(SolidColorBrush))]
     public class BooleanToBrushConverter : IValueConverter

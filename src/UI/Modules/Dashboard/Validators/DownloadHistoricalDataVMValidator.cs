@@ -1,29 +1,27 @@
-﻿using FluentValidation;
+﻿using AdionFA.Domain.Properties;
+using AdionFA.UI.Module.Dashboard.Model;
+using FluentValidation;
 
-using AdionFA.UI.Station.Module.Dashboard.ViewModels;
-using AdionFA.UI.Station.Module.Dashboard.Model;
-using AdionFA.Infrastructure.I18n.Resources;
-
-namespace AdionFA.UI.Station.Module.Dashboard.Validators
+namespace AdionFA.UI.Module.Dashboard.Validators
 {
     public class DownloadHistoricalDataVMValidator : AbstractValidator<DownloadHistoricalDataModel>
     {
         public DownloadHistoricalDataVMValidator()
         {
             RuleFor(model => model.MarketId).NotNull().GreaterThan(0)
-                .WithMessage(string.Format(ValidationResources.IsRequired, "Market"));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.Market));
 
             RuleFor(model => model.SymbolId).NotNull().GreaterThan(0)
-                .WithMessage(string.Format(ValidationResources.IsRequired, "Symbol"));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.Symbol));
 
             RuleFor(model => model.TimeframeId).NotNull().GreaterThan(0)
-                .WithMessage(string.Format(ValidationResources.IsRequired, "Timeframe"));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.Timeframe));
 
             RuleFor(model => model.Start).NotNull()
-                .WithMessage(string.Format(ValidationResources.IsRequired, "Start Date"));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.StartDate));
 
             RuleFor(model => model.End).NotNull()
-                .WithMessage(string.Format(ValidationResources.IsRequired, "End Date"));
+                .WithMessage(string.Format(Resources.NotEmpty, Resources.EndDate));
         }
     }
 }

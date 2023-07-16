@@ -1,16 +1,21 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Module.Shell.Views.ShellAppSettingFlyout"
+﻿<metro:Flyout x:Class="AdionFA.UI.Module.Views.ShellAppSettingFlyout"
               xmlns:prism="http://prismlibrary.com/"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-              xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
+              xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-              xmlns:local="clr-namespace:AdionFA.UI.Station.Module.Shell.Views"
-              mc:Ignorable="d" 
-              d:DesignHeight="450" d:DesignWidth="800" Position="Left" IsPinned="False"
-              Theme="Adapt" CloseButtonIsCancel="True" IsModal="True" Width="300">
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              mc:Ignorable="d"
+              d:DesignHeight="450"
+              d:DesignWidth="800"
+              Position="Left"
+              IsPinned="False"
+              Theme="Adapt"
+              CloseButtonIsCancel="True"
+              IsModal="True"
+              Width="300">
     <Grid>
-        <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:FlyoutRegions.AppSettingRegion}"/>
+        <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:FlyoutRegions.AppSettingRegion}" />
     </Grid>
 </metro:Flyout>

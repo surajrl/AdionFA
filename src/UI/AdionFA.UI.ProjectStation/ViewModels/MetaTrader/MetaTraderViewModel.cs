@@ -1,21 +1,20 @@
-﻿using AdionFA.Infrastructure.Extractor.Model;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.MetaTrader.Contracts;
 using AdionFA.Infrastructure.MetaTrader.Model;
 using AdionFA.Infrastructure.Modules.Weka.Model;
 using AdionFA.Infrastructure.Weka.Model;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.I18n.Resources;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.MetaTrader;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.EventAggregator;
-using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Model.MetaTrader;
-using AdionFA.UI.Station.Project.Validators.MetaTrader;
+using AdionFA.TransferObject.Project;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Model.Project;
+using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.EventAggregator;
+using AdionFA.UI.ProjectStation.Features;
+using AdionFA.UI.ProjectStation.Model.MetaTrader;
+using AutoMapper;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
@@ -28,21 +27,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class MetaTraderViewModel : MenuItemViewModel, IDisposable
     {
-        private readonly ITradeService _tradeService;
+        private readonly IMapper _mapper;
 
-        private readonly IProjectServiceAgent _projectService;
-        private readonly IServiceAgent _serviceAgent;
-        private readonly IMarketDataServiceAgent _marketDataService;
+        private readonly ITradeService _tradeService;
+        private readonly IProjectAppService _projectService;
+        private readonly IMarketDataAppService _marketDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -60,17 +57,21 @@ namespace AdionFA.UI.Station.Project.ViewModels
             : base(mainViewModel)
         {
             _tradeService = IoC.Kernel.Get<ITradeService>();
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
 
-            _serviceAgent = ContainerLocator.Current.Resolve<IServiceAgent>();
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-            _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
             ContainerLocator.Current.Resolve<IApplicationCommands>().AddNodeToMetaTrader.RegisterCommand(AddNodeToMetaTrader);
             ContainerLocator.Current.Resolve<IApplicationCommands>().RemoveNodeFromMetaTrader.RegisterCommand(RemoveNodeFromMetaTrader);
 
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
 
             Nodes = new();
             DataInput = new();
@@ -81,27 +82,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
             _crossingSymbols = new();
         }
 
-        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
+        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             if (item == HamburgerMenuItems.MetaTraderTrim)
             {
-                try
-                {
-                    // TODO: MERGE EXPERT ADVISOR INTO PROJECT CONFIGURATION
-                    ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
-
-                    ExpertAdvisor = await _serviceAgent.GetExpertAdvisor(ProcessArgs.ProjectId);
-                    ExpertAdvisor ??= new();
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message);
-
-                    throw;
-                }
+                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId));
             }
         });
-
         public ICommand StopCommand => new DelegateCommand(() =>
         {
             _cancellationTokenSource.Cancel();
@@ -120,7 +107,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         }, () => IsTransactionActive)
             .ObservesProperty(() => IsTransactionActive);
 
-        public ICommand ProcessCommand => new DelegateCommand(async () =>
+        public ICommand ProcessCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -135,14 +122,14 @@ namespace AdionFA.UI.Station.Project.ViewModels
                     _crossingSymbols.Clear();
                     _currentCandles.Clear();
 
-                    var symbol = await _marketDataService.GetSymbolAsync(ProjectConfiguration.SymbolId).ConfigureAwait(true);
+                    var symbol = _marketDataService.GetSymbol(ProjectConfiguration.SymbolId);
                     _candles.Add(symbol.Name, new());
                     _mainSymbol = symbol.Name;
 
                     foreach (var crossingNode in StrategyNode.CrossingNodesData)
                     {
-                        var hd = await _marketDataService.GetHistoricalDataAsync(crossingNode.Item2, includeGraph: false).ConfigureAwait(true);
-                        symbol = await _marketDataService.GetSymbolAsync(hd.SymbolId).ConfigureAwait(true);
+                        var historicalData = _marketDataService.GetHistoricalData(crossingNode.Item2, includeGraph: false);
+                        symbol = _marketDataService.GetSymbol(historicalData.SymbolId);
                         _candles.Add(symbol.Name, new());
                         _crossingSymbols.Add(symbol.Name);
                     }
@@ -162,7 +149,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private void Subscriber()
         {
-            using var subscriber = new SubscriberSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.PublisherPort}");
+            using var subscriber = new SubscriberSocket($">tcp://{ProjectConfiguration.ExpertAdvisorHost}:{ProjectConfiguration.ExpertAdvisorPublisherPort}");
 
             try
             {
@@ -210,7 +197,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                                 Close = zmqModel.Close
                             });
 
-                            Application.Current.Dispatcher.Invoke(() => DataInput.Insert(0, zmqModel));
+                            System.Windows.Application.Current.Dispatcher.Invoke(() => DataInput.Insert(0, zmqModel));
                         }
                     }
                 }
@@ -320,7 +307,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
         private void Requester()
         {
-            using var requester = new RequestSocket($">tcp://{ExpertAdvisor.Host}:{ExpertAdvisor.ResponsePort}");
+            using var requester = new RequestSocket($">tcp://{ProjectConfiguration.ExpertAdvisorHost}:{ProjectConfiguration.ExpertAdvisorResponsePort}");
 
             try
             {
@@ -362,7 +349,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                     var response = JsonConvert.DeserializeObject<ZmqMsgRequestModel>(openOperationRep);
 
-                    Application.Current.Dispatcher.Invoke(() => DataOutput.Insert(0,
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => DataOutput.Insert(0,
                         new ZmqMsgModel
                         {
                             Id = DataOutput.Count + 1,
@@ -450,40 +437,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
             }
         });
 
-        public ICommand SaveEACommand => new DelegateCommand(async () =>
-        {
-            try
-            {
-                var validator = Validate(new ExpertAdvisorValidator());
-                if (!validator.IsValid)
-                {
-                    IsTransactionActive = false;
-                    MessageHelper.ShowMessages(this,
-                        "MetaTrader - Expert Advisor",
-                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
-
-                    return;
-                }
-
-                ExpertAdvisor.ProjectId = ProcessArgs.ProjectId;
-                ExpertAdvisor.Name = $"{ProcessArgs.ProjectName}.EA.{ExpertAdvisor.MagicNumber}";
-
-                var response = await _serviceAgent.UpdateExpertAdvisor(ExpertAdvisor);
-                MessageHelper.ShowMessage(this,
-                    "MetaTrader - Expert Advisor",
-                    response.IsSuccess
-                    ? MessageResources.EntitySaveSuccess
-                    : MessageResources.EntityErrorTransaction);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-
-                throw;
-            }
-        });
-
-        // Bindable Model
+        // View Bindings
 
         private bool _isTransactionActive;
         public bool IsTransactionActive
@@ -504,13 +458,6 @@ namespace AdionFA.UI.Station.Project.ViewModels
         {
             get => _projectConfiguration;
             set => SetProperty(ref _projectConfiguration, value);
-        }
-
-        private ExpertAdvisorVM _expertAdvisor;
-        public ExpertAdvisorVM ExpertAdvisor
-        {
-            get => _expertAdvisor;
-            set => SetProperty(ref _expertAdvisor, value);
         }
 
         private bool _testStrategyNode;

@@ -1,22 +1,24 @@
-﻿<metro:Flyout x:Class="AdionFA.UI.Station.Module.Shell.Views.ShellCreateProjectFlyout"
-             xmlns:prism="http://prismlibrary.com/"
-             xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
-             xmlns:commonResources="clr-namespace:AdionFA.Infrastructure.I18n.Resources;assembly=AdionFA.Infrastructure.I18n"
-             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:AdionFA.UI.Station.Module.Shell.Views"
-             mc:Ignorable="d" 
-             Position="Right" Theme="Adapt" Width="900" CloseButtonIsCancel="True"
-             Header="{x:Static commonResources:CommonResources.CreateProject}" IsModal="True">
+﻿<metro:Flyout x:Class="AdionFA.UI.Module.Views.ShellCreateProjectFlyout"
+              xmlns:prism="http://prismlibrary.com/"
+              xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
+              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:local="clr-namespace:AdionFA.UI.Module.Views"
+              mc:Ignorable="d"
+              Position="Right"
+              Theme="Adapt"
+              Width="900"
+              CloseButtonIsCancel="True"
+              Header="Create Project"
+              IsModal="True">
     <Grid>
-        <Expander Margin="0"
-                  Header="{x:Static commonResources:CommonResources.CreateProject}"
+        <Expander Header="Create Project"
                   IsExpanded="True">
-            <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:AppRegions.CreateProjectView_SettingModule}"/>
+            <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:AppRegions.CreateProjectView_SettingModule}" />
         </Expander>
     </Grid>
 </metro:Flyout>

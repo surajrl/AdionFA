@@ -1,4 +1,8 @@
-﻿using AdionFA.Infrastructure.AssemblyBuilder.Contracts;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Domain.Properties;
+using AdionFA.Infrastructure.AssemblyBuilder.Contracts;
 using AdionFA.Infrastructure.AssemblyBuilder.Model;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Extractor.Contracts;
@@ -10,17 +14,14 @@ using AdionFA.Infrastructure.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
 using AdionFA.Infrastructure.Weka.Services;
-using AdionFA.Infrastructure.Enums;
-using AdionFA.Infrastructure.I18n.Resources;
 using AdionFA.TransferObject.Project;
-using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Helpers;
-using AdionFA.UI.Station.Infrastructure.Model.Project;
-using AdionFA.UI.Station.Project.AutoMapper;
-using AdionFA.UI.Station.Project.Commands;
-using AdionFA.UI.Station.Project.EventAggregator;
-using AdionFA.UI.Station.Project.Features;
-using AdionFA.UI.Station.Project.Model.Common;
+using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Model.Project;
+using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.EventAggregator;
+using AdionFA.UI.ProjectStation.Features;
+using AdionFA.UI.ProjectStation.Model.Common;
 using AutoMapper;
 using DynamicData;
 using MahApps.Metro.Controls.Dialogs;
@@ -40,7 +41,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels
+namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class AssemblyBuilderViewModel : MenuItemViewModel, IDisposable
     {
@@ -51,8 +52,8 @@ namespace AdionFA.UI.Station.Project.ViewModels
         private readonly IStrategyBuilderService _strategyBuilderService;
         private readonly IExtractorService _extractorService;
 
-        private readonly IProjectServiceAgent _projectService;
-        private readonly IMarketDataServiceAgent _marketDataService;
+        private readonly IProjectAppService _projectService;
+        private readonly IMarketDataAppService _marketDataService;
         private readonly IEventAggregator _eventAggregator;
 
         private readonly ManualResetEventSlim _manualResetEventSlim;
@@ -63,13 +64,13 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public AssemblyBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
+            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _assemblyBuilderService = IoC.Kernel.Get<IAssemblyBuilderService>();
             _strategyBuilderService = IoC.Kernel.Get<IStrategyBuilderService>();
 
-            _projectService = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            _marketDataService = ContainerLocator.Current.Resolve<IMarketDataServiceAgent>();
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
@@ -105,7 +106,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
             _mapper = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new AutoMappingAppProjectProfile());
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
 
             AssemblyBuilderProcessesUP = new();
@@ -127,11 +128,11 @@ namespace AdionFA.UI.Station.Project.ViewModels
             ResetBuilderProcesses();
         }
 
-        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(async item =>
+        public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             if (item == HamburgerMenuItems.AssemblyBuilderTrim)
             {
-                ProjectConfiguration = await _projectService.GetProjectConfigurationAsync(ProcessArgs.ProjectId, true).ConfigureAwait(true);
+                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
             }
         });
 
@@ -193,7 +194,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
                 _cancellationTokenSource = new();
 
                 var deleteAll = await MessageHelper.ShowMessageInput(this,
-                    "Assembly Builder",
+                    Resources.AssemblyBuilder,
                     "Starting a new process will delete all the Assembly Nodes and Strategy Nodes.\n"
                     + "Do you want to continue?").ConfigureAwait(true);
 
@@ -210,7 +211,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 // Historical Data
 
-                var projectHistoricalData = await _marketDataService.GetHistoricalDataAsync(ProjectConfiguration.HistoricalDataId.Value, true);
+                var projectHistoricalData = _marketDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
                 var allProjectCandles = projectHistoricalData.HistoricalDataCandles.
                 Select(hdCandle => new Candle
                 {
@@ -284,12 +285,17 @@ namespace AdionFA.UI.Station.Project.ViewModels
 
                 _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(true);
 
-                var msgUP = AssemblyBuilder.WinningAssemblyNodesUP.Count > 0 ? $"{AssemblyBuilder.WinningAssemblyNodesUP.Count} UP Assembly Nodes Found." : "No UP Assembly Nodes Found.";
-                var msgDOWN = AssemblyBuilder.WinningAssemblyNodesDOWN.Count > 0 ? $"{AssemblyBuilder.WinningAssemblyNodesDOWN.Count} DOWN Assembly Nodes Found." : "No DOWN Assembly Nodes Found.";
+                var msgUP = AssemblyBuilder.WinningAssemblyNodesUP.Count > 0
+                ? $"{AssemblyBuilder.WinningAssemblyNodesUP.Count} UP Assembly Nodes Found"
+                : "No UP Assembly Nodes Found.";
+
+                var msgDOWN = AssemblyBuilder.WinningAssemblyNodesDOWN.Count > 0
+                ? $"{AssemblyBuilder.WinningAssemblyNodesDOWN.Count} DOWN Assembly Nodes Found"
+                : "No DOWN Assembly Nodes Found.";
 
                 MessageHelper.ShowMessage(this,
-                    CommonResources.AssemblyBuilder,
-                    $"{MessageResources.AssemblyBuilderCompleted}.\n\n" +
+                    Resources.AssemblyBuilder,
+                    $"{Resources.AssemblyBuilderCompleted}.\n\n" +
                     $"{msgUP}\n" +
                     $"{msgDOWN}");
             }
@@ -676,7 +682,7 @@ namespace AdionFA.UI.Station.Project.ViewModels
         public ObservableCollection<BuilderProcess> AssemblyBuilderProcessesUP { get; set; }
         public ObservableCollection<BuilderProcess> AssemblyBuilderProcessesDOWN { get; set; }
 
-        // IDisposable Implementation
+        // IDisposable
 
         protected virtual void Dispose(bool disposing)
         {

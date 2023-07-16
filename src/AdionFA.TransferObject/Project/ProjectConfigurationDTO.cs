@@ -14,8 +14,8 @@ namespace AdionFA.TransferObject.Project
         public int? HistoricalDataId { get; set; }
         public HistoricalDataDTO HistoricalData { get; set; }
 
-        public bool IsFavorite { get; set; }
         public string WorkspacePath { get; set; }
+
         public IList<ProjectScheduleConfigurationDTO> ProjectScheduleConfigurations { get; set; }
     }
 }

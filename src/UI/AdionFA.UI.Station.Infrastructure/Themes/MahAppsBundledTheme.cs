@@ -3,11 +3,11 @@ using System;
 using System.Windows;
 using Theme = ControlzEx.Theming.Theme;
 using MaterialDesignColors;
-using AdionFA.UI.Station.Infrastructure.Extensions;
+using AdionFA.UI.Infrastructure.Extensions;
 using ControlzEx.Theming;
 using System.Linq;
 
-namespace AdionFA.UI.Station.Infrastructure.Themes
+namespace AdionFA.UI.Infrastructure.Themes
 {
     public class MahAppsBundledTheme : BundledTheme
     {

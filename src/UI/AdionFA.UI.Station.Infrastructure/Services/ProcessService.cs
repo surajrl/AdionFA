@@ -1,13 +1,14 @@
-﻿using AdionFA.UI.Station.Infrastructure.Contracts.AppServices;
-using AdionFA.UI.Station.Infrastructure.Contracts.Services;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.UI.Infrastructure.Contracts.Services;
+using Ninject;
 using Prism.Commands;
-using Prism.Ioc;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Infrastructure.Services
+namespace AdionFA.UI.Infrastructure.Services
 {
     public class ProcessService : IProcessService
     {
@@ -23,22 +24,17 @@ namespace AdionFA.UI.Station.Infrastructure.Services
             applicationCommands.EndAllProcessProjectCommand.RegisterCommand(EndAllProcessProjectCommand);
         }
 
-        public async void StartProcessProject(int? projectId)
+        public void StartProcessProject(int? projectId)
         {
-            var service = ContainerLocator.Current.Resolve<IProjectServiceAgent>();
-            var shareService = ContainerLocator.Container.Resolve<ISharedServiceAgent>();
-
-            var project = await service.GetProjectAsync(projectId ?? 0);
+            var project = IoC.Kernel.Get<IProjectAppService>().GetProject(projectId ?? 0);
 
             if (project != null)
             {
-                var processes = Process.GetProcessesByName("AdionFA.UI.ProjectStation").ToList();
-                var st = new ProcessStartInfo
+                Process.Start(new ProcessStartInfo
                 {
                     FileName = "AdionFA.UI.ProjectStation.exe",
                     Arguments = $"{projectId}_AdionFA.UI.ProjectStation_{project.ProjectName}",
-                };
-                var process = Process.Start(st);
+                });
             }
         }
 

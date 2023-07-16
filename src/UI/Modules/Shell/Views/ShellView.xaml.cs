@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Module.Shell.ViewModels;
+﻿using AdionFA.UI.Module.ViewModels;
 using System.Windows.Controls;
 
-namespace AdionFA.UI.Station.Module.Shell
+namespace AdionFA.UI.Module
 {
     /// <summary>
     /// Interaction logic for ShellView.xaml

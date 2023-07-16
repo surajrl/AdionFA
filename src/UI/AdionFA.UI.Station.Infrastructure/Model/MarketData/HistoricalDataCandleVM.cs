@@ -1,7 +1,7 @@
-﻿using AdionFA.UI.Station.Infrastructure.Model.Base;
+﻿using AdionFA.UI.Infrastructure.Model.Base;
 using System;
 
-namespace AdionFA.UI.Station.Infrastructure.Model.MarketData
+namespace AdionFA.UI.Infrastructure.Model.MarketData
 {
     public class HistoricalDataCandleVM : EntityBaseVM
     {

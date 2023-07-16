@@ -1,7 +1,7 @@
 ﻿using Prism.Mvvm;
 using System.Windows.Media;
 
-namespace AdionFA.UI.Station.Module.Dashboard.Model
+namespace AdionFA.UI.Module.Dashboard.Model
 {
     public class ApplicationTheme : BindableBase
     {

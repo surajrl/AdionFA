@@ -1,6 +1,4 @@
 ﻿using AdionFA.TransferObject.Base;
-using AdionFA.TransferObject.MetaTrader;
-using System;
 using System.Collections.Generic;
 
 namespace AdionFA.TransferObject.Project
@@ -16,39 +14,31 @@ namespace AdionFA.TransferObject.Project
 
         public IList<ProjectConfigurationDTO> ProjectConfigurations { get; set; }
 
-        public ICollection<ExpertAdvisorDTO> ExpertAdvisors { get; set; }
-
-        // Not Mapped
-
-        public DateTime? ProcessLastDate { get; set; }
-
-        public long ProcessId { get; set; }
-
         // Validators
 
-        public static ResponseDTO CurrencyPairAndCurrencyPeriodMustBeSameValidation(
-            int cCurrencyPairId, int cCurrencyPeriodId,
-            int mdCurrencyPairId, int mdCurrencyPeriodId)
+        public static ResponseDTO SymbolAndTimeframeMustBeSameValidation(
+            int configSymbolId, int configTimeframeId,
+            int hdSymbolId, int hdTimeframeId)
         {
-            var vr = new ResponseDTO { IsSuccess = false };
+            var response = new ResponseDTO { IsSuccess = false };
 
-            if (cCurrencyPairId > 0 && cCurrencyPeriodId > 0 && mdCurrencyPairId > 0 && mdCurrencyPeriodId > 0)
+            if (configSymbolId > 0 && configTimeframeId > 0 && hdSymbolId > 0 && hdTimeframeId > 0)
             {
-                if (cCurrencyPairId != mdCurrencyPairId || cCurrencyPeriodId != mdCurrencyPeriodId)
+                if (configSymbolId != hdSymbolId || configTimeframeId != hdTimeframeId)
                 {
-                    vr.IsSuccess = false;
+                    response.IsSuccess = false;
                 }
                 else
                 {
-                    vr.IsSuccess = true;
+                    response.IsSuccess = true;
                 }
             }
             else
             {
-                vr.IsSuccess = false;
+                response.IsSuccess = false;
             }
 
-            return vr;
+            return response;
         }
     }
 }

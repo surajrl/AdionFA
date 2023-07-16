@@ -1,30 +1,17 @@
-﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Enums;
-using AdionFA.UI.Station.Module.Shell.Model;
-using AdionFA.UI.Station.Module.Shell.Services;
+﻿using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Enums;
+using AdionFA.UI.Module.Model;
 using Prism.Commands;
 using Prism.Ioc;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace AdionFA.UI.Station.Module.Shell.ViewModels
+namespace AdionFA.UI.Module.ViewModels
 {
     public class ProjectTreeViewModel : ViewModelBase
     {
-        #region Model
-
         public ProjectHierarchicalVM Hierarchy { get; }
-
-        #endregion
-
-        #region Ctor
-
-        public ProjectTreeViewModel()
-        {
-
-        }
 
         public ProjectTreeViewModel(ProjectHierarchicalVM project) : this(project, null)
         {
@@ -33,10 +20,9 @@ namespace AdionFA.UI.Station.Module.Shell.ViewModels
         public ProjectTreeViewModel(ProjectHierarchicalVM hierarchy, ProjectTreeViewModel parent)
         {
             Hierarchy = hierarchy;
-            _parent = parent;
-            _isPinned = Hierarchy?.Project?.IsFavorite ?? false;
+            Parent = parent;
             _isVisibility = VisibilityPropertyEnum.Visible.ToString();
-            //_isExpanded = true;
+
             if (Hierarchy.Projects != null)
             {
                 Children = new ObservableCollection<ProjectTreeViewModel>(
@@ -44,49 +30,26 @@ namespace AdionFA.UI.Station.Module.Shell.ViewModels
                          select new ProjectTreeViewModel(child, this))?.ToList<ProjectTreeViewModel>());
             }
 
-            Name = parent?.Name == "Root" ? hierarchy.Name : null;
+            Name = parent?.Name == "Root"
+                ? hierarchy.Name
+                : null;
         }
 
-        #endregion
-
-        #region Commands
-
-        public DelegateCommand CommandPin => new DelegateCommand(async () =>
-        {
-            IShellServiceShell projectService = ContainerLocator.Current.Resolve<IShellServiceShell>();
-            var pinnedResult = await projectService.PinnedProject(Hierarchy.Project.ProjectId, !IsPinned);
-            if (pinnedResult)
-            {
-                IsPinned = !IsPinned;
-                //ContainerLocator.Current.Resolve<IApplicationCommands>().PinnedProjectCommand.Execute(this);
-                ContainerLocator.Current.Resolve<IApplicationCommands>().LoadProjectHierarchyCommand.Execute(null);
-            }
-        });
-
-        public DelegateCommand ProjectStartCommand => new DelegateCommand(() =>
+        public DelegateCommand ProjectStartCommand => new(() =>
         {
             ContainerLocator.Current.Resolve<IApplicationCommands>().StartProcessProjectCommand.Execute(Hierarchy.Project.ProjectId);
         });
 
-        #endregion
+        // View Bindings
 
-        #region Bindable Model
-
-        string _isVisibility;
+        private string _isVisibility;
         public string IsVisibility
         {
             get => _isVisibility;
             set => SetProperty(ref _isVisibility, value);
         }
 
-        bool _isPinned;
-        public bool IsPinned
-        {
-            get => _isPinned;
-            set => SetProperty(ref _isPinned, value);
-        }
-
-        bool _isExpanded;
+        private bool _isExpanded;
         public bool IsExpanded
         {
             get => _isExpanded;
@@ -95,41 +58,23 @@ namespace AdionFA.UI.Station.Module.Shell.ViewModels
                 SetProperty<bool>(ref _isExpanded, value);
 
                 // Expand all the way up to the root.
-                if (_isExpanded && _parent != null)
-                    _parent.IsExpanded = true;
+                if (_isExpanded && Parent != null)
+                {
+                    Parent.IsExpanded = true;
+                }
             }
         }
 
-        string name;
+        private string name;
         public string Name
         {
             get => Parent?.Name == "Root" ? name : (Hierarchy?.Name ?? string.Empty);
             set => SetProperty(ref name, value);
         }
 
-        public DateTime LastLoadOn
-        {
-            get { return Hierarchy?.Project?.LastLoadOn ?? DateTime.MinValue; }
-        }
 
-        public string WorkspacePath
-        {
-            get { return Hierarchy?.Project?.WorkspacePath ?? string.Empty; }
-        }
-
-        public string WorkspacePathCut
-        {
-            get { return Hierarchy?.Project?.WorkspacePathCut ?? string.Empty; }
-        }
-
-        ProjectTreeViewModel _parent;
-        public ProjectTreeViewModel Parent
-        {
-            get => _parent;
-        }
+        public ProjectTreeViewModel Parent { get; set; }
 
         public ObservableCollection<ProjectTreeViewModel> Children { get; } = new ObservableCollection<ProjectTreeViewModel>();
-
-        #endregion
     }
 }

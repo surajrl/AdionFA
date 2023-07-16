@@ -42,8 +42,6 @@ namespace AdionFA.UI.Controls.SearchBoxControl
             RadioBoxStyle
         }
 
-        #region Properties
-
         ItemStyles extendedStyle;
         public ItemStyles ExtendedStyle
         {
@@ -54,7 +52,7 @@ namespace AdionFA.UI.Controls.SearchBoxControl
 
                 // load resources
                 var resDict = new ResourceDictionary();
-                resDict.Source = new Uri("pack://application:,,,/AdionFA.UI.Station.Controls.SearchBoxControl;component/Themes/ListBoxExt.xaml");
+                resDict.Source = new Uri("pack://application:,,,/AdionFA.UI.Controls.SearchBoxControl;component/Themes/ListBoxExt.xaml");
                 if (resDict.Source == null)
                     throw new SystemException();
 
@@ -73,10 +71,6 @@ namespace AdionFA.UI.Controls.SearchBoxControl
             }
         }
 
-        #endregion
-
-        #region Ctor
-
         static ListBoxExt()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ListBoxExt), new FrameworkPropertyMetadata(typeof(ListBoxExt)));
@@ -91,7 +85,5 @@ namespace AdionFA.UI.Controls.SearchBoxControl
         {
             ExtendedStyle = style;
         }
-
-        #endregion
     }
 }

@@ -1,8 +1,8 @@
-﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Contracts;
+﻿using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Contracts;
 using MahApps.Metro.Controls;
 
-namespace AdionFA.UI.Station.Module.Shell.Views
+namespace AdionFA.UI.Module.Views
 {
     /// <summary>
     /// Interaction logic for ShellDownloadMarketDataFlyout.xaml

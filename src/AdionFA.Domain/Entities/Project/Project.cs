@@ -1,5 +1,4 @@
-﻿using AdionFA.Domain.Base;
-using System;
+﻿using AdionFA.Domain.Entities.Base;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,14 +16,5 @@ namespace AdionFA.Domain.Entities
         // Navigation
 
         public ICollection<ProjectConfiguration> ProjectConfigurations { get; set; }
-        public ICollection<ExpertAdvisor> ExpertAdvisors { get; set; }
-
-        // Not Mapped
-
-        [NotMapped]
-        public DateTime? ProcessLastDate { get; set; }
-
-        [NotMapped]
-        public long ProcessId { get; set; }
     }
 }

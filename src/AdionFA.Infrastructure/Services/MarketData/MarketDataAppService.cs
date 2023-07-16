@@ -1,6 +1,7 @@
-﻿using AdionFA.Application.Contracts.MarketData;
+﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities;
+using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.MarketData;
 using System;
@@ -13,9 +14,6 @@ namespace AdionFA.Application.Services.MarketData
 {
     public class MarketDataAppService : AppServiceBase, IMarketDataAppService
     {
-        private readonly string _ownerId = "0";
-        private readonly string _owner = "admin";
-
         private readonly IGenericRepository<HistoricalData> _historicalDataRepository;
         private readonly IGenericRepository<HistoricalDataCandle> _historicalDataCandleRepository;
         private readonly IGenericRepository<Timeframe> _timeframeRepository;
@@ -80,12 +78,12 @@ namespace AdionFA.Application.Services.MarketData
             try
             {
                 var historicalData = _historicalDataRepository.GetAll(
-                    h =>
-                    h.MarketId == marketId &&
-                    h.SymbolId == symbolId &&
-                    h.TimeframeId == timeframeId &&
-                    h.EndDate == null,
-                    h => h.HistoricalDataCandles)
+                    hd =>
+                    hd.MarketId == marketId &&
+                    hd.SymbolId == symbolId &&
+                    hd.TimeframeId == timeframeId &&
+                    hd.EndDate == null,
+                    hd => hd.HistoricalDataCandles)
                     .FirstOrDefault();
 
                 return Mapper.Map<HistoricalDataDTO>(historicalData);
@@ -97,13 +95,16 @@ namespace AdionFA.Application.Services.MarketData
             }
         }
 
-        public ResponseDTO CreateHistoricalData(HistoricalDataDTO market)
+        public ResponseDTO CreateHistoricalData(HistoricalDataDTO historicalDataDTO)
         {
             try
             {
-                var response = new ResponseDTO { IsSuccess = false };
+                var response = new ResponseDTO
+                {
+                    IsSuccess = false
+                };
 
-                var historicalDataEntity = Mapper.Map<HistoricalData>(market);
+                var historicalDataEntity = Mapper.Map<HistoricalData>(historicalDataDTO);
 
                 var exisitinghHistoricalData = _historicalDataRepository.GetAll(
                     historicalData =>
@@ -126,10 +127,15 @@ namespace AdionFA.Application.Services.MarketData
                 foreach (var candle in historicalDataEntity.HistoricalDataCandles)
                 {
                     candle.IsDeleted = false;
-                    candle.CreatedById = _ownerId;
-                    candle.CreatedByUserName = _owner;
+                    candle.CreatedById = Id;
+                    candle.CreatedByUserName = Username;
                     candle.CreatedOn = DateTime.UtcNow;
                 }
+
+                // Set to null so that it does not try and create thema again
+                historicalDataEntity.Market = null;
+                historicalDataEntity.Symbol = null;
+                historicalDataEntity.Timeframe = null;
 
                 _historicalDataRepository.Create(historicalDataEntity);
 
@@ -171,8 +177,8 @@ namespace AdionFA.Application.Services.MarketData
                 foreach (var candle in historicalData.HistoricalDataCandles)
                 {
                     candle.IsDeleted = false;
-                    candle.CreatedById = _ownerId;
-                    candle.CreatedByUserName = _owner;
+                    candle.CreatedById = Id;
+                    candle.CreatedByUserName = Username;
                     candle.CreatedOn = DateTime.UtcNow;
                 }
 
@@ -235,18 +241,18 @@ namespace AdionFA.Application.Services.MarketData
                     IsSuccess = false,
                 };
 
-                var symbol = Mapper.Map<Symbol>(symbolDTO);
+                var symbolEntity = Mapper.Map<Symbol>(symbolDTO);
 
-                var all = _symbolRepository.GetAll(symbol => symbol.Name == symbol.Name);
-
+                // Check if the symbol already exists
+                var all = _symbolRepository.GetAll(symbol => symbolEntity.Name == symbol.Name);
                 if (all.Any())
                 {
                     return null;
                 }
 
-                _symbolRepository.Create(symbol);
+                _symbolRepository.Create(symbolEntity);
 
-                response.IsSuccess = symbol.SymbolId > 0;
+                response.IsSuccess = symbolEntity.SymbolId > 0;
 
                 return response;
             }

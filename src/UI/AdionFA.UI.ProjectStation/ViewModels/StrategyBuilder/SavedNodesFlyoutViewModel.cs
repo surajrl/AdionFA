@@ -4,9 +4,9 @@ using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.Modules.Weka.Model;
 using AdionFA.Infrastructure.Weka.Model;
-using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Base;
-using AdionFA.UI.Station.Infrastructure.Services;
+using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Services;
 using Ninject;
 using Prism.Commands;
 using System;
@@ -15,7 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 
-namespace AdionFA.UI.Station.Project.ViewModels.StrategyBuilder
+namespace AdionFA.UI.ProjectStation.ViewModels.StrategyBuilder
 {
     public class SavedNodesFlyoutViewModel : ViewModelBase
     {

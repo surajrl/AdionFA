@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace AdionFA.UI.Station.Infrastructure.Base
+namespace AdionFA.UI.Infrastructure.Base
 {
     public abstract class ValidatableBindableBase : BindableBase, INotifyDataErrorInfo
     {
-        private readonly Dictionary<string, List<string>> _errors = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, List<string>> _errors = new();
 
         //Set ValidatesOnNotifyDataErrors=True binding on the control.
         //Binding will call the GetErrors method of the INotifyDataErrorInfo when the property is set in the viewModel through view.
@@ -24,7 +24,9 @@ namespace AdionFA.UI.Station.Infrastructure.Base
         public void SetError(string propertyName, string errorMessage)
         {
             if (!_errors.ContainsKey(propertyName))
+            {
                 _errors.Add(propertyName, new List<string> { errorMessage });
+            }
 
             RaiseErrorsChanged(propertyName);
         }
@@ -36,7 +38,9 @@ namespace AdionFA.UI.Station.Infrastructure.Base
         public void ClearError(string propertyName)
         {
             if (_errors.ContainsKey(propertyName))
+            {
                 _errors.Remove(propertyName);
+            }
 
             RaiseErrorsChanged(propertyName);
         }
@@ -49,7 +53,9 @@ namespace AdionFA.UI.Station.Infrastructure.Base
             var errors = _errors.Select(error => error.Key).ToList();
 
             foreach (var propertyName in errors)
+            {
                 ClearError(propertyName);
+            }
         }
 
         /// <summary>
@@ -73,17 +79,17 @@ namespace AdionFA.UI.Station.Infrastructure.Base
         /// <returns></returns>
         public IEnumerable GetErrors(string propertyName)
         {
-            if (String.IsNullOrEmpty(propertyName) ||
-               !_errors.ContainsKey(propertyName)) return null;
+            if (string.IsNullOrEmpty(propertyName) || !_errors.ContainsKey(propertyName))
+            {
+                return null;
+            }
+
             return _errors[propertyName];
         }
 
         /// <summary>
         /// Gets a value that indicates the model has errors.
         /// </summary>
-        public bool HasErrors
-        {
-            get { return _errors.Any(x => x.Value != null && x.Value.Count > 0); }
-        }
+        public bool HasErrors => _errors.Any(x => x.Value != null && x.Value.Count > 0);
     }
 }

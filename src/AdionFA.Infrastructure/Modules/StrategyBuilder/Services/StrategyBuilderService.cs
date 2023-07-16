@@ -1,4 +1,4 @@
-﻿using AdionFA.Application.Contracts.MarketData;
+﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.AssemblyBuilder.Model;
 using AdionFA.Infrastructure.Directories.Contracts;

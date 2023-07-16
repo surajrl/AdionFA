@@ -1,9 +1,9 @@
-﻿using AdionFA.UI.Station.Infrastructure;
-using AdionFA.UI.Station.Infrastructure.Contracts;
-using AdionFA.UI.Station.Project.ViewModels.StrategyBuilder;
+﻿using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.Contracts;
+using AdionFA.UI.ProjectStation.ViewModels.StrategyBuilder;
 using MahApps.Metro.Controls;
 
-namespace AdionFA.UI.Station.Project.StrategyBuilder
+namespace AdionFA.UI.ProjectStation.StrategyBuilder
 {
     /// <summary>
     /// Interaction logic for SavedNodesFlyoutView.xaml

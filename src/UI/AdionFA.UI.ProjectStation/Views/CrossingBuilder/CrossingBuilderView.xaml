@@ -1,14 +1,12 @@
-﻿<UserControl x:Class="AdionFA.UI.Station.Project.Views.CrossingBuilderView"
+﻿<UserControl x:Class="AdionFA.UI.ProjectStation.Views.CrossingBuilderView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:AdionFA.UI.Station.Project.Views"
-             xmlns:infrastructure="clr-namespace:AdionFA.UI.Station.Infrastructure;assembly=AdionFA.UI.Station.Infrastructure"
+             xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:commonResources="clr-namespace:AdionFA.Infrastructure.I18n.Resources;assembly=AdionFA.Infrastructure.I18n"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              dialog:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d"
@@ -168,7 +166,7 @@
         <Expander Grid.Row="1"
                   Margin="0 10 0 10"
                   Style="{DynamicResource ControlExpanderStyle}"
-                  Header="{x:Static commonResources:CommonResources.Configuration}"
+                  Header="Configuration"
                   IsExpanded="True">
 
             <Grid>
