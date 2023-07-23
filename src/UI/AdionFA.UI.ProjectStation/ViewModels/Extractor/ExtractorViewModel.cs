@@ -21,14 +21,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
     public class ExtractorViewModel : MenuItemViewModel
     {
         private readonly IMapper _mapper;
-        private readonly IProjectAppService _projectService;
+        private readonly IProjectService _projectService;
         private readonly IProjectDirectoryService _projectDirectoryService;
 
         public ExtractorViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
-            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
 
             _mapper = new MapperConfiguration(mc =>
             {

@@ -1,5 +1,4 @@
 ﻿using AdionFA.UI.Infrastructure;
-using AdionFA.UI.Module.Services;
 using AdionFA.UI.Module.Views;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -11,13 +10,13 @@ namespace AdionFA.UI.Module
     {
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            IRegionManager regionManager = containerProvider.Resolve<IRegionManager>();
+            var regionManager = containerProvider.Resolve<IRegionManager>();
 
             regionManager?.RegisterViewWithRegion(AppRegions.ShellModule, typeof(ShellView));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.RightWindowCommandsRegion, typeof(ShellAppSettingWindowCommands));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellAppSettingFlyout));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellCreateProjectFlyout));
-            regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellConfigurationFlyout));
+            regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellGlobalConfigurationFlyout));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellHistoricalDataFlyout));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellUploadHistoricalDataFlyout));
             regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(ShellDownloadHistoricalDataFlyout));
@@ -25,7 +24,7 @@ namespace AdionFA.UI.Module
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IShellServiceShell, ShellServiceShell>();
+            // ...
         }
     }
 }

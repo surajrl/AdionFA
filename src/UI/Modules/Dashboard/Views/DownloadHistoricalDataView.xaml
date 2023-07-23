@@ -101,8 +101,7 @@
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
 
-        <Grid Grid.Row="0"
-              Grid.Column="6"
+        <Grid Grid.Column="6"
               VerticalAlignment="Center"
               HorizontalAlignment="Center">
             <Button Width="100"

@@ -50,8 +50,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private readonly IExtractorService _extractorService;
         private readonly IStrategyBuilderService _strategyBuilderService;
 
-        private readonly IProjectAppService _projectService;
-        private readonly IMarketDataAppService _marketDataService;
+        private readonly IProjectService _projectService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -63,8 +62,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         public StrategyBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
-            _projectService = IoC.Kernel.Get<IProjectAppService>();
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _strategyBuilderService = IoC.Kernel.Get<IStrategyBuilderService>();
@@ -81,7 +79,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 if (updated
                 && !IsTransactionActive
-                && StrategyBuilderProcesses.All(process => process.Message == BuilderProcessStatus.SBNotStarted.GetMetadata().Description))
+                && (StrategyBuilderProcesses.All(process => process.Message == BuilderProcessStatus.SBNotStarted.GetMetadata().Name)
+                || StrategyBuilderProcesses.All(process => process.Message.Contains(BuilderProcessStatus.Canceled.GetMetadata().Name))))
                 {
                     ResetBuilderProcesses();
                 }
@@ -127,10 +126,10 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             foreach (var process in StrategyBuilderProcesses)
             {
-                if (process.Message != BuilderProcessStatus.SBCompleted.GetMetadata().Description
-                && process.Message != BuilderProcessStatus.SBNotStarted.GetMetadata().Description)
+                if (process.Message != BuilderProcessStatus.SBCompleted.GetMetadata().Name
+                && process.Message != BuilderProcessStatus.SBNotStarted.GetMetadata().Name)
                 {
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
                     process.Message = $"{process.Message} - {stopped}";
                 }
             }
@@ -152,7 +151,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             _manualResetEventSlim.Set();
 
-            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
             foreach (var process in StrategyBuilderProcesses)
             {
                 process.Message = process.Message.Replace($" - {stopped}", string.Empty);
@@ -166,7 +165,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), isBackup: false);
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderNodesUPDirectory(), isBackup: false);
             // Delete Strategy Builder Extractions
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), "*.xml", isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
 
             StrategyBuilder.WinningNodesUP.Clear();
             StrategyBuilder.WinningNodesDOWN.Clear();
@@ -178,23 +177,18 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             try
             {
-                IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
-
-                _cancellationTokenSource = new();
-
                 var validator = Validate(new StrategyBuilderValidator());
                 if (!validator.IsValid)
                 {
                     MessageHelper.ShowMessages(this,
-                        EntityTypeEnum.StrategyBuilder.GetMetadata().Description,
+                        EntityTypeEnum.StrategyBuilder.GetMetadata().Name,
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
                 }
 
                 var deleteAll = await MessageHelper.ShowMessageInput(this,
-                    "Strategy Builder",
+                    Resources.StrategyBuilder,
                     "Starting a new process will delete all the Nodes, Assembly Nodes and Strategy Nodes.\n"
                     + "Do you want to continue?").ConfigureAwait(true);
 
@@ -203,6 +197,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     return;
                 }
 
+                IsTransactionActive = true;
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
+
+                _cancellationTokenSource = new();
+
                 DeleteStrategyBuilder();
 
                 _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Publish(false);
@@ -210,8 +209,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 // Historical Data
 
-                var projectHistoricalData = _marketDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
-                var allProjectCandles = projectHistoricalData.HistoricalDataCandles
+                var allProjectCandles = ProcessArgs.Project.HistoricalData.HistoricalDataCandles
                 .Select(hdCandle => new Candle
                 {
                     Date = hdCandle.StartDate,
@@ -240,7 +238,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 foreach (var process in StrategyBuilderProcesses)
                 {
-                    process.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Name;
                 }
 
                 await Task.Run(() =>
@@ -253,7 +251,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 foreach (var process in StrategyBuilderProcesses)
                 {
-                    process.Message = BuilderProcessStatus.SBCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.SBCompleted.GetMetadata().Name;
                 }
 
                 // Results Message
@@ -278,7 +276,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 foreach (var strategyBuilderProcess in StrategyBuilderProcesses)
                 {
-                    strategyBuilderProcess.Message = BuilderProcessStatus.Canceled.GetMetadata().Description;
+                    strategyBuilderProcess.Message = BuilderProcessStatus.Canceled.GetMetadata().Name;
                 }
             }
             catch (Exception ex)
@@ -308,7 +306,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 },
                 process =>
                 {
-                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Name;
 
                     var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
                     var extractionResult = _extractorService.DoExtraction(
@@ -316,7 +314,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         ProjectConfiguration.ToDateIS.Value,
                         indicators,
                         projectCandles.ToList(),
-                        ProjectConfiguration.TimeframeId,
+                        ProcessArgs.Project.HistoricalData.TimeframeId,
                         ProjectConfiguration.ExtractorMinVariation);
 
                     var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
@@ -330,7 +328,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                     process.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
                     process.ExtractionPath = ProcessArgs.ProjectName.ProjectStrategyBuilderExtractorWithoutScheduleDirectory($"{nameSignature}.{timeSignature}.csv");
-                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Name;
                 });
         }
 
@@ -345,7 +343,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 // Weka
 
-                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
 
                 var wekaApi = new WekaApiClient();
                 var responseWeka = wekaApi.GetREPTreeClassifier(
@@ -378,7 +376,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Name;
             }
 
             return backtestNodes;
@@ -405,13 +403,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     lock (_lock)
                     {
                         process.ExecutingBacktests++;
-                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
                     }
 
                     var winningNode = _strategyBuilderService.BuildBacktestOfNode(
                             node,
                             projectCandles,
-                            _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                            _mapper.Map<ProjectConfigurationDTO>(ProjectConfiguration),
+                            ProcessArgs.Project.HistoricalData.TimeframeId,
                             _manualResetEventSlim,
                             _cancellationTokenSource.Token);
 
@@ -427,8 +426,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         process.ProgressCounter++;
 
                         process.Message = process.CompletedBacktests == process.BacktestNodes.Count
-                        ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description
-                        : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name
+                        : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
                     }
                 });
         }
@@ -445,7 +444,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ExtractionTemplatePath = file.FullName,
                     ExtractionTemplateName = file.Name,
                     ExtractionName = file.Name,
-                    Message = BuilderProcessStatus.SBNotStarted.GetMetadata().Description,
+                    Message = BuilderProcessStatus.SBNotStarted.GetMetadata().Name,
                     Tree = new(),
                     BacktestNodes = new()
                 });

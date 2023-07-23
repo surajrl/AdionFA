@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AdionFA.Domain.Entities
 {
     [Table(nameof(ProjectScheduleConfiguration))]
-    public class ProjectScheduleConfiguration : TimeSensitiveBase
+    public class ProjectScheduleConfiguration : EntityBase
     {
         [Key]
         public int ProjectScheduleConfigurationId { get; set; }
@@ -14,11 +14,11 @@ namespace AdionFA.Domain.Entities
         [ForeignKey(nameof(ProjectConfigurationId))]
         public ProjectConfiguration ProjectConfiguration { get; set; }
 
-        public int? MarketRegionId { get; set; }
+        public int MarketRegionId { get; set; }
         [ForeignKey(nameof(MarketRegionId))]
         public MarketRegion MarketRegion { get; set; }
 
-        public int? FromTimeInSeconds { get; set; }
-        public int? ToTimeInSeconds { get; set; }
+        public int FromTimeInSeconds { get; set; }
+        public int ToTimeInSeconds { get; set; }
     }
 }

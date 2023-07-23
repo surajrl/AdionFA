@@ -21,7 +21,7 @@ namespace AdionFA.Infrastructure.Validators.FluentValidator
         }
     }
 
-    public static class FluentValidator
+    internal static class FluentValidator
     {
         public static class FluentPlaceholders
         {

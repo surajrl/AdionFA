@@ -4,9 +4,7 @@
     {
         void StartProcessProject(int? projectId);
 
-        void StartProcessWekaJava();
-
-        void EndAllProcessProject(bool? includeStation);
+        void StartProcessWeka();
 
         bool AnyProcessProject();
     }

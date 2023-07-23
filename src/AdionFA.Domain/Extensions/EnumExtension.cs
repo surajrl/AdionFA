@@ -1,5 +1,4 @@
 ﻿using AdionFA.Domain.Attributes;
-using AdionFA.Domain.Enums;
 using AdionFA.Domain.Model;
 using System;
 using System.ComponentModel;
@@ -21,7 +20,7 @@ namespace AdionFA.Domain.Extensions
                     var attr = (MetadataAttribute)Attribute.GetCustomAttribute(field, typeof(MetadataAttribute));
                     if (attr != null)
                     {
-                        return new Metadata(attr.Code, attr.Name, attr.Value, attr.Description, (int)field.GetValue(value));
+                        return new Metadata(attr.Code, attr.Name, attr.Value, (int)field.GetValue(value));
                     }
                 }
             }
@@ -48,47 +47,6 @@ namespace AdionFA.Domain.Extensions
             }
 
             return string.Empty;
-        }
-
-        public static long ToSeconds(this TimeframeEnum value)
-        {
-            long MinuteOnSeconds = 60;
-            var HourOnSecond = MinuteOnSeconds * 60;
-            var DayOnSecond = HourOnSecond * 24;
-            long time = 0;
-
-            switch (value)
-            {
-                case TimeframeEnum.MN1:
-                    time = DayOnSecond * 30;
-                    break;
-                case TimeframeEnum.W1:
-                    time = DayOnSecond * 7;
-                    break;
-                case TimeframeEnum.D1:
-                    time = 24 * HourOnSecond;
-                    break;
-                case TimeframeEnum.H4:
-                    time = 4 * HourOnSecond;
-                    break;
-                case TimeframeEnum.H1:
-                    time = HourOnSecond;
-                    break;
-                case TimeframeEnum.M30:
-                    time = 30 * MinuteOnSeconds;
-                    break;
-                case TimeframeEnum.M15:
-                    time = 15 * MinuteOnSeconds;
-                    break;
-                case TimeframeEnum.M5:
-                    time = 5 * MinuteOnSeconds;
-                    break;
-                case TimeframeEnum.M1:
-                    time = MinuteOnSeconds;
-                    break;
-            }
-
-            return time;
         }
     }
 }

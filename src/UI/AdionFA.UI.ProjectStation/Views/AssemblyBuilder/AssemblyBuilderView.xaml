@@ -158,10 +158,10 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal">
-                    <!--#region Transaction Target IS-->
+                    <!--#region Minimum Total Trades IS-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Transactions Target (IS)" />
-                        <TextBox Text="{Binding ProjectConfiguration.ABTransactionsTarget}"
+                        <Label Content="Minimum Total Trades (IS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.ABMinTotalTradesIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"

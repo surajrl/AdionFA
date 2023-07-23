@@ -12,21 +12,17 @@ namespace AdionFA.UI.Infrastructure.Services
 {
     public class ProcessService : IProcessService
     {
-        private ICommand StartProcessProjectCommand { get; set; }
-        private ICommand EndAllProcessProjectCommand { get; set; }
-
         public ProcessService(IApplicationCommands applicationCommands)
         {
             StartProcessProjectCommand = new DelegateCommand<int?>(StartProcessProject);
-            applicationCommands.StartProcessProjectCommand.RegisterCommand(StartProcessProjectCommand);
 
-            EndAllProcessProjectCommand = new DelegateCommand<bool?>(EndAllProcessProject);
-            applicationCommands.EndAllProcessProjectCommand.RegisterCommand(EndAllProcessProjectCommand);
+            applicationCommands.StartProcessProjectCommand.RegisterCommand(StartProcessProjectCommand);
         }
 
+        public ICommand StartProcessProjectCommand { get; set; }
         public void StartProcessProject(int? projectId)
         {
-            var project = IoC.Kernel.Get<IProjectAppService>().GetProject(projectId ?? 0);
+            var project = IoC.Kernel.Get<IProjectService>().GetProject(projectId ?? 0, false);
 
             if (project != null)
             {
@@ -38,7 +34,7 @@ namespace AdionFA.UI.Infrastructure.Services
             }
         }
 
-        public void StartProcessWekaJava()
+        public void StartProcessWeka()
         {
             var wekaProcessStartInfo = new ProcessStartInfo()
             {
@@ -48,17 +44,6 @@ namespace AdionFA.UI.Infrastructure.Services
             };
 
             Process.Start(wekaProcessStartInfo);
-        }
-
-        public void EndAllProcessProject(bool? includeStation)
-        {
-            var processesProject = Process.GetProcessesByName("AdionFA.UI.ProjectStation").ToList();
-            var processesStation = Process.GetProcessesByName("AdionFA.UI.Station").ToList();
-
-            ((includeStation ?? false) ? processesProject.Union(processesStation) : processesProject).ToList().ForEach(p =>
-            {
-                p.Kill();
-            });
         }
 
         public bool AnyProcessProject()

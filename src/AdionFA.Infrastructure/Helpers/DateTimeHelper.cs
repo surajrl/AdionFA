@@ -1,60 +1,54 @@
-﻿using AdionFA.Domain.Enums;
+﻿using AdionFA.Domain.Enums.Market;
 using System;
 
 namespace AdionFA.Infrastructure.Helpers
 {
     public static class DateTimeHelper
     {
-        public static DateTime BuildDateTime(int periodId, DateTime dt, long time, bool isTicks = false)
+        public static DateTime BuildDateTime(int timeframeId, DateTime date, long time)
         {
-            var ts = new TimeSpan(0, 0, 0, 0);
-            if (isTicks)
+            var timeSpan = new TimeSpan(0, 0, 0, 0);
+
+            switch (timeframeId)
             {
-                return dt.AddTicks(time);
+                case (int)TimeframeEnum.M1:
+                    timeSpan = new TimeSpan(0, 0, (int)time, 0);
+                    break;
+
+                case (int)TimeframeEnum.M5:
+                    timeSpan = new TimeSpan(0, 0, (int)time, 0);
+                    break;
+
+                case (int)TimeframeEnum.M15:
+                    timeSpan = new TimeSpan(0, 0, (int)time, 0);
+                    break;
+
+                case (int)TimeframeEnum.M30:
+                    timeSpan = new TimeSpan(0, 0, (int)time, 0);
+                    break;
+
+                case (int)TimeframeEnum.H1:
+                    timeSpan = new TimeSpan(0, (int)time, 0, 0);
+                    break;
+
+                case (int)TimeframeEnum.H4:
+                    timeSpan = new TimeSpan(0, (int)time, 0, 0);
+                    break;
+
+                case (int)TimeframeEnum.D1:
+                    timeSpan = new TimeSpan((int)time, 0, 0, 0);
+                    break;
+
+                case (int)TimeframeEnum.W1:
+                    timeSpan = new TimeSpan((int)time, 0, 0, 0);
+                    break;
+
+                case (int)TimeframeEnum.MN1:
+                    timeSpan = new TimeSpan((int)time, 0, 0, 0);
+                    break;
             }
-            else
-            {
-                switch (periodId)
-                {
-                    case (int)TimeframeEnum.M1:
-                        ts = new TimeSpan(0, 0, (int)time, 0);
-                        break;
 
-                    case (int)TimeframeEnum.M5:
-                        ts = new TimeSpan(0, 0, (int)time, 0);
-                        break;
-
-                    case (int)TimeframeEnum.M15:
-                        ts = new TimeSpan(0, 0, (int)time, 0);
-                        break;
-
-                    case (int)TimeframeEnum.M30:
-                        ts = new TimeSpan(0, 0, (int)time, 0);
-                        break;
-
-                    case (int)TimeframeEnum.H1:
-                        ts = new TimeSpan(0, (int)time, 0, 0);
-                        break;
-
-                    case (int)TimeframeEnum.H4:
-                        ts = new TimeSpan(0, (int)time, 0, 0);
-                        break;
-
-                    case (int)TimeframeEnum.D1:
-                        ts = new TimeSpan((int)time, 0, 0, 0);
-                        break;
-
-                    case (int)TimeframeEnum.W1:
-                        ts = new TimeSpan((int)time, 0, 0, 0);
-                        break;
-
-                    case (int)TimeframeEnum.MN1:
-                        ts = new TimeSpan((int)time, 0, 0, 0);
-                        break;
-                }
-
-                return dt.Add(ts);
-            }
+            return date.Add(timeSpan);
         }
     }
 }

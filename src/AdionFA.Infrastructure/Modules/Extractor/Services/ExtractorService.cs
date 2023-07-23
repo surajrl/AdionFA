@@ -1,4 +1,5 @@
-﻿using AdionFA.Domain.Enums;
+﻿using AdionFA.Domain.Attributes;
+using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.Extensions;
 using AdionFA.Infrastructure.Extractor.Contracts;
 using AdionFA.Infrastructure.Extractor.Mappers;
@@ -222,6 +223,7 @@ namespace AdionFA.Infrastructure.Extractor.Services
                     {
                         var indicatorParams = divisions[0].Split("_");
 
+                        // NOT PARSING THE LAST THREE ITEMS OF STOCHRSI
                         var indicatorName = indicatorParams[0].Replace(".", "_");
 
                         if (Enum.TryParse(indicatorName, out IndicatorEnum indicatorType))
@@ -849,7 +851,7 @@ namespace AdionFA.Infrastructure.Extractor.Services
                     var iCounter = 0;
                     foreach (var i in indicators)
                     {
-                        var properties = i.GetType().GetFilteredProperties<Attribute>();
+                        var properties = i.GetType().GetFilteredProperties<IgnoreReflectionAttribute>();
 
                         var parameters = string.Join("_", (from p in properties
                                                            where p.PropertyType.Name == typeof(int).Name || p.PropertyType.Name == typeof(double).Name

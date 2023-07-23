@@ -10,23 +10,23 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly IProjectAppService _projectService;
+        private readonly IProjectService _projectService;
 
         public MainViewModel()
         {
-            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
 
             CreateMenuItems();
             PopulateViewModel();
         }
 
-        public void PopulateViewModel()
+        private void PopulateViewModel()
         {
             IsTransactionActive = false;
 
             ProjectName = "Loading...";
 
-            var project = _projectService.GetProject(ProcessArgs.ProjectId, true);
+            var project = _projectService.GetProject(ProcessArgs.ProjectId, false);
             if (project != null)
             {
                 ProjectName = project.ProjectName;

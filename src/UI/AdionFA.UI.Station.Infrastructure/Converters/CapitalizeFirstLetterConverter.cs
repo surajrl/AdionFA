@@ -9,10 +9,9 @@ namespace AdionFA.UI.Infrastructure.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string)
+            if (value is string castValue)
             {
-                var castValue = (string)value;
-                return char.ToUpper(castValue[0]) + castValue.Substring(1);
+                return char.ToUpper(castValue[0]) + castValue[1..];
             }
             else
             {

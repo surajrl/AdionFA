@@ -20,12 +20,9 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Services
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
         }
 
-        public void LoadNewAssemblyBuilder(string projectName, AssemblyBuilderModel assemblyBuilder)
+        public AssemblyBuilderModel LoadNewAssemblyBuilder(string projectName)
         {
-            assemblyBuilder.WinningAssemblyNodesUP.Clear();
-            assemblyBuilder.WinningAssemblyNodesDOWN.Clear();
-            assemblyBuilder.ChildNodesUP.Clear();
-            assemblyBuilder.ChildNodesDOWN.Clear();
+            var assemblyBuilder = new AssemblyBuilderModel();
 
             // Get the Child Nodes UP
             _projectDirectoryService.GetFilesInPath(projectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
@@ -37,14 +34,13 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Services
             {
                 assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });
+
+            return assemblyBuilder;
         }
 
-        public void LoadExistingAssemblyBuilder(string projectName, AssemblyBuilderModel assemblyBuilder)
+        public AssemblyBuilderModel LoadExistingAssemblyBuilder(string projectName)
         {
-            assemblyBuilder.WinningAssemblyNodesUP.Clear();
-            assemblyBuilder.WinningAssemblyNodesDOWN.Clear();
-            assemblyBuilder.ChildNodesUP.Clear();
-            assemblyBuilder.ChildNodesDOWN.Clear();
+            var assemblyBuilder = new AssemblyBuilderModel();
 
             // Get the Assembly Nodes UP
             _projectDirectoryService.GetFilesInPath(projectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
@@ -67,6 +63,8 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Services
             {
                 assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });
+
+            return assemblyBuilder;
         }
     }
 }

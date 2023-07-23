@@ -37,24 +37,24 @@ namespace AdionFA.UI.Infrastructure.Base
         public ValidationResult Validate<T>(AbstractValidator<T> v) where T : ViewModelBase
         {
             ClearAllErrors();
-            var vr = v.Validate((T)this);
-            vr.Errors.ForEach(error =>
+            var validationResult = v.Validate((T)this);
+            validationResult.Errors.ForEach(error =>
             {
                 SetError(error.PropertyName, error.ErrorMessage);
             });
-            return vr;
+            return validationResult;
         }
 
         public ValidationResult Validate()
         {
             ClearAllErrors();
-            var vr = (this as IModelValidator).GetValidationResult();
-            vr.Errors.ForEach(error =>
+            var validationResult = (this as IModelValidator).GetValidationResult();
+            validationResult.Errors.ForEach(error =>
             {
                 SetError(error.PropertyName, error.ErrorMessage);
             });
 
-            return vr;
+            return validationResult;
         }
     }
 }

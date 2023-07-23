@@ -1,0 +1,515 @@
+﻿<UserControl x:Class="AdionFA.UI.Module.Dashboard.GlobalConfigurationView"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:core="clr-namespace:System;assembly=mscorlib"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             dialog:DialogParticipation.Register="{Binding}"
+             mc:Ignorable="d"
+             d:DesignHeight="1750"
+             d:DesignWidth="800"
+             x:Name="globalConfigurationView">
+
+    <UserControl.Resources>
+        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 0 15</Thickness>
+        <core:Double x:Key="ColumnWidth">275</core:Double>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.Resources>
+            <Style TargetType="metro:DateTimePicker">
+                <Setter Property="MinWidth"
+                        Value="200" />
+            </Style>
+            <Style TargetType="metro:TimePicker">
+                <Setter Property="MinWidth"
+                        Value="300" />
+            </Style>
+
+            <Style x:Key="ListViewItemContainerStyle"
+                   TargetType="ListBoxItem">
+                <Setter Property="Background"
+                        Value="Transparent" />
+                <Setter Property="BorderThickness"
+                        Value="0" />
+                <Setter Property="FocusVisualStyle"
+                        Value="{x:Null}" />
+                <Setter Property="Foreground"
+                        Value="Black" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected"
+                             Value="True">
+                        <Setter Property="BorderBrush"
+                                Value="Gray" />
+                        <Setter Property="BorderThickness"
+                                Value="0" />
+                        <Setter Property="Foreground"
+                                Value="Black" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+        
+        <!--#region Buttons-->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <!--#region Save Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80"
+                        Height="40"
+                        Command="{Binding SaveBtnCommand}">
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <iconPacks:FontAwesome Kind="SaveRegular"
+                                               Width="14" />
+                        <Label Content="Save"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+                <metro:ProgressRing IsActive="True"
+                                    Width="25"
+                                    Height="25"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+        </StackPanel>
+        <!--#endregion-->
+
+        <ScrollViewer Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--Schedule-->
+                <metro:MetroHeader Margin="0 10 0 10"
+                                   Header="Schedule">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--#region Without Schedule-->
+                        <StackPanel  Margin="{StaticResource ColumnMargin}"
+                                     HorizontalAlignment="Left"
+                                     MinWidth="{StaticResource ColumnWidth}">
+                            <CheckBox Content="Without Schedules"
+                                      IsChecked="{Binding GlobalConfiguration.WithoutSchedule, Mode=TwoWay}" />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region With Schedule-->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal">
+                            <ListView ItemsSource="{Binding GlobalConfiguration.GlobalScheduleConfigurations}"
+                                      ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                      IsEnabled="{Binding GlobalConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <GroupBox Margin="{StaticResource ColumnMargin}"
+                                                  Header="{Binding MarketRegion.Name}">
+                                            <StackPanel Margin="{StaticResource ColumnMargin}">
+                                                <Label Content="Start Time *" />
+                                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                                  SelectedDateTime="{Binding FromTimeInSeconds, Mode=TwoWay, Converter={StaticResource TimeInSecondsToDateTimeConverter}}"
+                                                                  Culture="(Default)" />
+                                                <Label Content="End Time *" />
+                                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                                  SelectedDateTime="{Binding ToTimeInSeconds, Mode=TwoWay, Converter={StaticResource TimeInSecondsToDateTimeConverter}}"
+                                                                  Culture="(Default)" />
+                                            </StackPanel>
+                                        </GroupBox>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <!--#endregion-->
+                        </StackPanel>
+                    </Grid>
+                </metro:MetroHeader>
+                <!--#endregion-->
+
+                <!--#region Extractor-->
+                <metro:MetroHeader Grid.Row="1"
+                                   Header="Extractor"
+                                   Margin="0 10 0 10">
+                    <!--#region Minimum Variation-->
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Minimum Variation *" />
+                            <metro:NumericUpDown NumericInputMode="Numbers"
+                                                 Minimum="0"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding GlobalConfiguration.ExtractorMinVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <!--#endregion-->
+                </metro:MetroHeader>
+                <!--#endregion-->
+
+                <!--#region MetaTrader-->
+                <metro:MetroHeader Grid.Row="2"
+                                   Header="MetaTrader"
+                                   Margin="0 10 0 10">
+                    <!--#region Expert Advisor Host-->
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Expert Advisor Host *" />
+                            <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                     Text="{Binding GlobalConfiguration.ExpertAdvisorHost, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region Expert Publisher Port-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Expert Publisher Port *" />
+                            <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                     Text="{Binding GlobalConfiguration.ExpertAdvisorPublisherPort, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region Expert Response Port-->
+                        <StackPanel Margin="{StaticResource ColumnMargin}"
+                                    MinWidth="{StaticResource ColumnWidth}">
+                            <Label Content="Expert Response Port *" />
+                            <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                     Text="{Binding GlobalConfiguration.ExpertAdvisorResponsePort, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <!--#endregion-->
+                </metro:MetroHeader>
+                <!--#endregion-->
+
+                <!--#region Weka-->
+                <metro:MetroHeader Grid.Row="3"
+                                   Header="Weka"
+                                   Margin="0 10 0 10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal">
+                            <!--#region Total Instances-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Total Instances *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.TotalInstanceWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region N Total-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="N Total *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.NTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Depth-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Maximum Depth *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.DepthWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Maximum Ratio-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Maximum Ratio *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.MaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal">
+                            <!--#region Minimal Seed-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Minimal Seed *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.MinimalSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Maximum Seed-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Maximum Seed *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.MaximumSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Decimals-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Decimals *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.TotalDecimalWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+                    </Grid>
+                </metro:MetroHeader>
+                <!--#endregion-->
+
+                <!--#region Strategy Builder-->
+                <metro:MetroHeader Grid.Row="4"
+                                   Margin="0 10 0 10"
+                                   Header="Strategy Builder">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--#region Target-->
+                        <StackPanel Orientation="Horizontal">
+                            <!--#region Winning Strategy UP Target-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Winning Strategy UP Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.SBWinningStrategyUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Winning Strategy DOWN Target-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Winning Strategy DOWN Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.SBWinningStrategyDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Transactions Target-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Total Trades Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.SBTotalTradesTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region Variation-->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal">
+                            <!--#region Maximum Success Rate Variation-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Maximum Success Rate Variation *" />
+                                <metro:NumericUpDown NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.SBMaxSuccessRateVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Progressiveness-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Activate Progressiveness" />
+                                <metro:ToggleSwitch Margin="0 -3"
+                                                    Toggled="ProgressivenessToggleSwitch_Toggled"
+                                                    IsOn="{Binding GlobalConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Progressiveness-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label IsEnabled="{Binding GlobalConfiguration.IsProgressiveness}">
+                                    <TextBlock>
+                                        <Run Text="Maximum Progressiveness Variation" />
+                                        <Run Text="{Binding ElementName=globalConfigurationView, Path=LabelRequiredProgressiveness}" />
+                                    </TextBlock>
+                                </Label>
+                                <metro:NumericUpDown IsEnabled="{Binding GlobalConfiguration.IsProgressiveness}"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.MaxProgressivenessVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Maximum Correlation Percent-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Maximum Correlation % *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.SBMaxCorrelationPercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region IS-->
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal">
+                            <!--#region Minimum Total Trades IS-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Minimum Total Trades (IS) *" />
+                                <metro:NumericUpDown Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     NumericInputMode="Numbers"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.SBMinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Minimum Success Rate Percent IS-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Minimum Success Rate % (IS) *" />
+                                <metro:NumericUpDown NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.SBMinSuccessRatePercentIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+                        <!--#endregion-->
+
+                        <!--#region OS-->
+                        <StackPanel Grid.Row="3"
+                                    Orientation="Horizontal">
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <!--#region Minimum Total Trades OS-->
+                                <Label Content="Minimum Total Trades (OS) *" />
+                                <metro:NumericUpDown NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.SBMinTotalTradesOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Minimum Success Rate Percent OS-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Minimum Success Rate % (OS) *" />
+                                <metro:NumericUpDown NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.SBMinSuccessRatePercentOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <!--#endregion-->
+                    </Grid>
+                </metro:MetroHeader>
+                <!--#endregion-->
+
+                <!--#region Assembly Builder-->
+                <metro:MetroHeader Grid.Row="5"
+                                   Margin="0, 10, 0, 10"
+                                   Header="Assembly Builder">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal">
+                            <!--#region Minimum Total Trades IS-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}">
+                                <Label Content="Minimum Total Trades (IS) *" />
+                                <metro:NumericUpDown NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.ABMinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                            <!--#region Minimum Success Rate Improvement Percent IS-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}"
+                                        Grid.Column="1">
+                                <Label Content="Minimum Success Rate Improvement (IS) % *" />
+                                <metro:NumericUpDown NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.ABMinImprovePercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+
+                        <!--#region Assembly Builder Weka-->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal">
+                            <!--#region AB Weka NTotals-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}"
+                                        Grid.Column="2">
+                                <Label Content="N Total" />
+                                <metro:NumericUpDown NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.ABWekaNTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+
+                            <!--#region AB Weka Max Ratio-->
+                            <StackPanel Margin="{StaticResource ColumnMargin}"
+                                        MinWidth="{StaticResource ColumnWidth}"
+                                        Grid.Column="3">
+                                <Label Content="Maximum Ratio" />
+                                <metro:NumericUpDown NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Minimum="0"
+                                                     Value="{Binding GlobalConfiguration.ABWekaMaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--#endregion-->
+                        </StackPanel>
+                    </Grid>
+                </metro:MetroHeader>
+                <!--#endregion-->
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

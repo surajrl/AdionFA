@@ -52,13 +52,12 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private readonly ICrossingBuilderService _crossingBuilderService;
 
         private readonly IEventAggregator _eventAggregator;
-        private readonly IMarketDataAppService _marketDataService;
-        private readonly IProjectAppService _projectService;
+        private readonly IMarketDataService _marketDataService;
+        private readonly IProjectService _projectService;
 
         private readonly IMapper _mapper;
 
         private Task _processTask;
-
         private readonly ManualResetEventSlim _manualResetEventSlim;
         private CancellationTokenSource _cancellationTokenSource;
         private readonly object _lock;
@@ -71,8 +70,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _strategyBuilderService = IoC.Kernel.Get<IStrategyBuilderService>();
             _crossingBuilderService = IoC.Kernel.Get<ICrossingBuilderService>();
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
-            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
@@ -95,8 +94,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _cancellationTokenSource = new();
             _manualResetEventSlim = new(true);
             _lock = new();
-
             _crossingBuilderService.LoadExistingCrossingBuilder(ProcessArgs.ProjectName, CrossingBuilder);
+
             if (CrossingBuilder.WinningStrategyNodesUP.Count == 0 && CrossingBuilder.WinningStrategyNodesDOWN.Count == 0)
             {
                 _crossingBuilderService.LoadNewCrossingBuilder(ProcessArgs.ProjectName, CrossingBuilder);
@@ -112,8 +111,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 if (updated
                 && !IsTransactionActive
-                && CrossingBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Description)
-                && CrossingBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Description))
+                && CrossingBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Name)
+                && CrossingBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Name))
                 {
                     ResetBuilderProcesses();
                 }
@@ -137,15 +136,18 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             if (item == HamburgerMenuItems.CrossingBuilderTrim)
             {
-                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
+                var projectConfiguration = _projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true);
+                ProjectConfiguration = _mapper.Map<ProjectConfigurationVM>(projectConfiguration);
 
-                var historicalData = _marketDataService.GetAllHistoricalData();
+                var historicalData = _marketDataService.GetAllHistoricalData(false);
                 CrossingHistoricalData.Clear();
-                CrossingHistoricalData.AddRange(historicalData.Where(hd => hd.HistoricalDataId != ProjectConfiguration.HistoricalDataId).Select(hd => new Metadata
-                {
-                    Id = hd.HistoricalDataId,
-                    Name = hd.Description
-                }));
+                CrossingHistoricalData.AddRange(historicalData
+                    .Where(historicalData => historicalData.HistoricalDataId != ProcessArgs.Project.HistoricalDataId)
+                    .Select(historicalData => new Metadata
+                    {
+                        Id = historicalData.HistoricalDataId,
+                        Name = historicalData.Description
+                    }));
             }
         });
 
@@ -157,17 +159,17 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             foreach ((var processUP, var processDOWN) in CrossingBuilderProcessesUP.Zip(CrossingBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
-                if (processUP.Message != BuilderProcessStatus.CBCompleted.GetMetadata().Description
-                    && processUP.Message != BuilderProcessStatus.CBNotStarted.GetMetadata().Description)
+                if (processUP.Message != BuilderProcessStatus.CBCompleted.GetMetadata().Name
+                    && processUP.Message != BuilderProcessStatus.CBNotStarted.GetMetadata().Name)
                 {
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
                     processUP.Message = $"{processUP.Message} - {stopped}";
                 }
 
-                if (processDOWN.Message != BuilderProcessStatus.CBCompleted.GetMetadata().Description
-                    && processDOWN.Message != BuilderProcessStatus.CBNotStarted.GetMetadata().Description)
+                if (processDOWN.Message != BuilderProcessStatus.CBCompleted.GetMetadata().Name
+                    && processDOWN.Message != BuilderProcessStatus.CBNotStarted.GetMetadata().Name)
                 {
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
                     processDOWN.Message = $"{processDOWN.Message} - {stopped}";
                 }
             }
@@ -189,7 +191,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             _manualResetEventSlim.Set();
 
-            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
             foreach ((var processUP, var processDOWN) in CrossingBuilderProcessesUP.Zip(CrossingBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
                 processUP.Message = $"{processUP.Message} - {stopped}";
@@ -218,6 +220,16 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand Process => new DelegateCommand(async () =>
         {
+            var validator = Validate(new CrossingBuilderValidator());
+            if (!validator.IsValid)
+            {
+                MessageHelper.ShowMessages(this,
+                    EntityTypeEnum.CrossingBuilder.GetMetadata().Name,
+                    validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+
+                return;
+            }
+
             try
             {
                 IsTransactionActive = true;
@@ -225,19 +237,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 _cancellationTokenSource = new();
 
-                var validator = Validate(new CrossingBuilderValidator());
-                if (!validator.IsValid)
-                {
-                    MessageHelper.ShowMessages(this,
-                        EntityTypeEnum.CrossingBuilder.GetMetadata().Description,
-                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
-
-                    return;
-                }
-
                 ResetBuilderProcesses();
 
-                var mainHistoricalData = _marketDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
+                var mainHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.Project.HistoricalDataId, true);
                 var mainCandles = mainHistoricalData.HistoricalDataCandles.Select(candle => new Candle
                 {
                     Date = candle.StartDate,
@@ -293,8 +295,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 foreach ((var processUP, var processDOWN) in CrossingBuilderProcessesUP.Zip(CrossingBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
-                    var canceled = BuilderProcessStatus.Canceled.GetMetadata().Description;
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+                    var canceled = BuilderProcessStatus.Canceled.GetMetadata().Name;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
 
                     processUP.Message = processUP.Message.Replace(stopped, canceled);
                     processDOWN.Message = processUP.Message.Replace(stopped, canceled);
@@ -329,7 +331,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 },
                 process =>
                 {
-                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Name;
 
                     var backtestOperations = process.PreviousStrategyNode.BacktestIS.BacktestOperations;
 
@@ -340,7 +342,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         backtestOperations.Last().Date,
                         indicators,
                         candles.ToList(),
-                        ProjectConfiguration.TimeframeId);
+                        ProcessArgs.Project.HistoricalData.TimeframeId);
 
                     var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
                                   let backtestOperation = backtestOperations.Where(operation => operation.Date == il._il.Interval)
@@ -379,7 +381,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                     process.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
                     process.ExtractionPath = ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv");
-                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Name;
                 });
         }
 
@@ -392,7 +394,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
 
                 var wekaApi = new WekaApiClient();
                 var responseWeka = wekaApi.GetREPTreeClassifier(
@@ -443,11 +445,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 if (process.BacktestStrategyNodes.Count == 0)
                 {
                     // No backtests to do
-                    process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name;
                 }
                 else
                 {
-                    process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Name;
                 }
             }
 
@@ -482,7 +484,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     lock (_lock)
                     {
                         process.ExecutingBacktests++;
-                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
                     }
 
                     var isWinningNode = _strategyBuilderService.BuildBacktestOfStrategyNode(
@@ -491,6 +493,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         process.PreviousStrategyNode.BacktestIS.BacktestOperations,
                         process.PreviousStrategyNode.BacktestOS.BacktestOperations,
                         _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                        ProcessArgs.Project.HistoricalData.TimeframeId,
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);
 
@@ -516,8 +519,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         process.ProgressCounter++;
 
                         process.Message = process.CompletedBacktests == process.BacktestStrategyNodes.Count
-                        ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description
-                        : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {process.ExecutingBacktests} Nodes";
+                        ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name
+                        : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
                     }
                 });
         }
@@ -538,7 +541,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         ExtractionTemplatePath = file.FullName,
                         ExtractionTemplateName = file.Name,
                         ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Description,
+                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
                         Tree = new(),
                         BacktestStrategyNodes = new(),
                         PreviousStrategyNode = strategyNode
@@ -551,7 +554,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         ExtractionTemplatePath = file.FullName,
                         ExtractionTemplateName = file.Name,
                         ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Description,
+                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
                         Tree = new(),
                         BacktestStrategyNodes = new(),
                         PreviousStrategyNode = strategyNode

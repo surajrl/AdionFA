@@ -4,19 +4,19 @@ namespace AdionFA.Domain.Enums
 {
     public enum MathOperatorEnum
     {
-        [Metadata("GreaterThanOrEqual", ">=", ">=", "GreaterThanOrEqual")]
+        [Metadata("GreaterThanOrEqual", ">=", ">=")]
         GreaterThanOrEqual = 0,
 
-        [Metadata("LessThanOrEqual", "<=", "<=", "LessThanOrEqual")]
+        [Metadata("LessThanOrEqual", "<=", "<=")]
         LessThanOrEqual = 1,
 
-        [Metadata("GreaterThan", ">", ">", "GreaterThan")]
+        [Metadata("GreaterThan", ">", ">")]
         GreaterThan = 2,
 
-        [Metadata("LessThan", "<", "<", "LessThan")]
+        [Metadata("LessThan", "<", "<")]
         LessThan = 3,
 
-        [Metadata("Equal", "=", "=", "Equal")]
+        [Metadata("Equal", "=", "=")]
         Equal = 4
     }
 }

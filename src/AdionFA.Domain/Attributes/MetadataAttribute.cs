@@ -12,15 +12,15 @@ namespace AdionFA.Domain.Attributes
             string codeKey = null,
             string nameKey = null,
             string valueKey = null,
-            string descriptionKey = null,
             Type resourceType = null)
         {
             _code = codeKey;
             _name = nameKey;
             _value = valueKey;
-            _description = descriptionKey;
 
-            _resource = resourceType != null ? new ResourceManager(resourceType) : null;
+            _resource = resourceType != null
+                ? new ResourceManager(resourceType)
+                : null;
         }
 
         private string _code;
@@ -50,17 +50,6 @@ namespace AdionFA.Domain.Attributes
                 return string.IsNullOrEmpty(value) ? $"{_value ?? ""}" : value;
             }
             set => _value = value;
-        }
-
-        private string _description;
-        public string Description
-        {
-            get
-            {
-                var description = _resource?.GetString(_description ?? "");
-                return string.IsNullOrEmpty(description) ? $"{_description ?? ""}" : description;
-            }
-            set => _description = value;
         }
     }
 }

@@ -14,7 +14,6 @@ using AdionFA.UI.Infrastructure.Helpers;
 using AdionFA.UI.Infrastructure.Model.MarketData;
 using AdionFA.UI.Infrastructure.Services;
 using AdionFA.UI.Module.Dashboard.Model;
-using AdionFA.UI.Module.Dashboard.Services;
 using AutoMapper;
 using Ninject;
 using Prism.Commands;
@@ -31,36 +30,30 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
     {
         private readonly IMapper _mapper;
 
-        private readonly ISettingService _settingService;
-        private readonly IMarketDataAppService _marketDataService;
+        private readonly IMarketDataService _marketDataService;
 
-        public UploadHistoricalDataViewModel(
-            ISettingService settingService,
-            IApplicationCommands applicationCommands)
+        public UploadHistoricalDataViewModel(IApplicationCommands applicationCommands)
         {
-            _settingService = settingService;
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
 
             _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
 
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
 
-        private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutUploadHistoricalData))
             {
                 PopulateViewModel();
             }
-        }
+        });
 
-        public DelegateCommand UploadBtnCommand => new DelegateCommand(() =>
+
+        public DelegateCommand UploadBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
@@ -72,7 +65,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     IsTransactionActive = false;
 
                     MessageHelper.ShowMessages(this,
-                        EntityTypeEnum.HistoricalData.GetMetadata().Description,
+                        EntityTypeEnum.HistoricalData.GetMetadata().Name,
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
@@ -80,19 +73,19 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 if (CreateHistory())
                 {
-                    var result = _settingService.CreateHistoricalData(UploadHistoricalData);
+                    var result = await _marketDataService.CreateHistoricalDataAsync(_mapper.Map<UploadHistoricalDataModel, HistoricalDataDTO>(UploadHistoricalData)).ConfigureAwait(true);
 
                     IsTransactionActive = false;
 
                     MessageHelper.ShowMessage(this,
-                        EntityTypeEnum.HistoricalData.GetMetadata().Description,
-                        result
+                        EntityTypeEnum.HistoricalData.GetMetadata().Name,
+                        result.IsSuccess
                         ? Resources.SuccessEntitySave
                         : Resources.FailEntitySave);
 
                     PopulateViewModel();
 
-                    if (result)
+                    if (result.IsSuccess)
                     {
                         ContainerLocator.Current.Resolve<IApplicationCommands>().LoadHistoricalDataCommand.Execute(null);
                     }
@@ -114,7 +107,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
         {
             try
             {
-                var result = CandleHelper.GetHistoryCandles(UploadHistoricalData.FilepathHistoricalData).ToList();
+                var result = CandleHelper.GetHistoryCandles(UploadHistoricalData.FilePathHistoricalData).ToList();
 
                 if (result.Count > 0)
                 {
@@ -133,7 +126,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                         });
                     });
 
-                    var marketName = ((MarketEnum)UploadHistoricalData.MarketId).GetMetadata().Name;
+                    var market = ((MarketEnum)UploadHistoricalData.MarketId).GetMetadata();
                     var symbol = _marketDataService.GetSymbol(UploadHistoricalData.SymbolId);
                     var timeframe = _marketDataService.GetTimeframe(UploadHistoricalData.TimeframeId);
 
@@ -142,17 +135,15 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     var lastCandleDate = candlesOrdered.FirstOrDefault().Date;
 
                     UploadHistoricalData.Description =
-                        $"{marketName}." +
-                        $"{symbol.Name}." +
-                        $"{timeframe.Code}." +
-                        $"{firstCandleDate:dd-MM-yyyy}." +
-                        $"{lastCandleDate:dd-MM-yyyy}";
+                        $"{market.Code}." +
+                        $"{symbol.Code}." +
+                        $"{timeframe.Code}";
 
                     return true;
                 }
 
                 MessageHelper.ShowMessage(this,
-                    EntityTypeEnum.HistoricalData.GetMetadata().Description,
+                    EntityTypeEnum.HistoricalData.GetMetadata().Name,
                     Resources.HistoricalDataEmpty);
 
                 return false;

@@ -4,49 +4,49 @@ namespace AdionFA.Domain.Enums
 {
     public enum BuilderProcessStatus
     {
-        [Metadata(descriptionKey: "Strategy Builder Not Started")]
+        [Metadata(Name = "Strategy Builder Not Started")]
         SBNotStarted = 0,
 
-        [Metadata(descriptionKey: "Assembly Builder Not Started")]
+        [Metadata(Name = "Assembly Builder Not Started")]
         ABNotStarted,
 
-        [Metadata(descriptionKey: "Correlation Builder Not Started")]
+        [Metadata(Name = "Correlation Builder Not Started")]
         CBNotStarted,
 
-        [Metadata(descriptionKey: "Executing Extraction")]
+        [Metadata(Name = "Executing Extraction")]
         ExecutingExtraction,
 
-        [Metadata(descriptionKey: "Extraction Completed")]
+        [Metadata(Name = "Extraction Completed")]
         ExtractionCompleted,
 
-        [Metadata(descriptionKey: "Executing Weka")]
+        [Metadata(Name = "Executing Weka")]
         ExecutingWeka,
 
-        [Metadata(descriptionKey: "Weka Completed")]
+        [Metadata(Name = "Weka Completed")]
         WekaCompleted,
 
-        [Metadata(descriptionKey: "Executing Backtest")]
+        [Metadata(Name = "Executing Backtest")]
         ExecutingBacktest,
 
-        [Metadata(descriptionKey: "Backtest Completed")]
+        [Metadata(Name = "Backtest Completed")]
         BacktestCompleted,
 
-        [Metadata(descriptionKey: "Executing Correlation Analysis")]
+        [Metadata(Name = "Executing Correlation Analysis")]
         ExecutingCorrelation,
 
-        [Metadata(descriptionKey: "Strategy Builder Completed")]
+        [Metadata(Name = "Strategy Builder Completed")]
         SBCompleted,
 
-        [Metadata(descriptionKey: "Assembly Builder Completed")]
+        [Metadata(Name = "Assembly Builder Completed")]
         ABCompleted,
 
-        [Metadata(descriptionKey: "Correlation Builder Completed")]
+        [Metadata(Name = "Correlation Builder Completed")]
         CBCompleted,
 
-        [Metadata(descriptionKey: "Stopped")]
+        [Metadata(Name = "Stopped")]
         Stopped,
 
-        [Metadata(descriptionKey: "Canceled")]
+        [Metadata(Name = "Canceled")]
         Canceled,
     }
 }

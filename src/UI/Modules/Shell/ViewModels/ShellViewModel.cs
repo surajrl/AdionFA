@@ -1,10 +1,16 @@
-﻿using AdionFA.Domain.Extensions;
+﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Helpers;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.AutoMapper;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Enums;
+using AdionFA.UI.Infrastructure.Model.Project;
 using AdionFA.UI.Module.Model;
-using AdionFA.UI.Module.Services;
+using AutoMapper;
+using Ninject;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -16,13 +22,17 @@ namespace AdionFA.UI.Module.ViewModels
 {
     public class ShellViewModel : ViewModelBase
     {
-        private readonly IShellServiceShell _shellService;
+        private readonly IMapper _mapper;
+        private readonly IProjectService _projectService;
 
-        public ShellViewModel(
-            IShellServiceShell shellServices,
-            IApplicationCommands applicationCommands)
+        public ShellViewModel(IApplicationCommands applicationCommands)
         {
-            _shellService = shellServices;
+            _projectService = IoC.Kernel.Get<IProjectService>();
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
 
             PopulateViewModel();
 
@@ -108,8 +118,13 @@ namespace AdionFA.UI.Module.ViewModels
                 Projects = new ObservableCollection<ProjectHierarchicalVM>()
             };
 
-            var projects = _shellService.GetAllProjects();
-            var projectsHierarchiacal = projects.Select(project => new ProjectHierarchicalVM { Project = project, Name = project.ProjectName });
+            var projects = _projectService.GetAllProject(false);
+            var projectsHierarchiacal = projects.Select(project => new ProjectHierarchicalVM
+            {
+                Project = _mapper.Map<ProjectDTO, ProjectVM>(project),
+                Name = project.ProjectName
+            });
+
             if (projects.Count > 0)
             {
                 var todayTime = DateTime.UtcNow;

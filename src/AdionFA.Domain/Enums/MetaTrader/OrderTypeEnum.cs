@@ -4,16 +4,16 @@ namespace AdionFA.Domain.Enums
 {
     public enum OrderTypeEnum
     {
-        [Metadata("BUY", "BUY", "ORDER_TYPE_BUY", "Market buy order")]
+        [Metadata("BUY", "BUY", "ORDER_TYPE_BUY")]
         Buy = 0,
 
-        [Metadata("SELL", "SELL", "ORDER_TYPE_SELL", "Market sell order")]
+        [Metadata("SELL", "SELL", "ORDER_TYPE_SELL")]
         Sell = 1,
 
-        [Metadata("CLOSE", "CLOSE", "ORDER_TYPE_CLOSE_BY", "Order to close a position by an opposite one")]
+        [Metadata("CLOSE", "CLOSE", "ORDER_TYPE_CLOSE_BY")]
         Close = 8,
 
-        [Metadata("NONE", "NONE", "ORDER_TYPE_NONE", "No operation")]
+        [Metadata("NONE", "NONE", "ORDER_TYPE_NONE")]
         None = 9
 
 

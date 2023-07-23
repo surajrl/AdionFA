@@ -2,26 +2,23 @@
 using AdionFA.UI.Infrastructure.Model.MarketData;
 using AdionFA.UI.Module.Dashboard.Validators;
 using FluentValidation.Results;
-using System.Collections.Generic;
 
 namespace AdionFA.UI.Module.Dashboard.Model
 {
     public class UploadHistoricalDataModel : HistoricalDataVM, IModelValidator
     {
-        private string _filepathHistoricalData;
-        public string FilepathHistoricalData
+        private string _filePathHistoricalData;
+        public string FilePathHistoricalData
         {
-            get => _filepathHistoricalData;
-            set => SetProperty(ref _filepathHistoricalData, value);
+            get => _filePathHistoricalData;
+            set => SetProperty(ref _filePathHistoricalData, value);
         }
-
-        public IList<HistoricalDataCandleSettingVM> HistoricalDataCandleSettings { get; set; }
 
         // Validation
 
         public ValidationResult GetValidationResult()
         {
-            UploadHistoricalDataVMValidator v = new();
+            UploadHistoricalDataModelValidator v = new();
             return v.Validate(this);
         }
     }

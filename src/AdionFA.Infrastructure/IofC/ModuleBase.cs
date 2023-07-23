@@ -12,7 +12,6 @@ using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Directories.Services;
 using AdionFA.Infrastructure.Extractor.Contracts;
 using AdionFA.Infrastructure.Extractor.Services;
-using AdionFA.Infrastructure.MediatR;
 using AdionFA.Infrastructure.MetaTrader.Contracts;
 using AdionFA.Infrastructure.MetaTrader.Services;
 using AdionFA.Infrastructure.Persistence;
@@ -22,11 +21,9 @@ using AdionFA.Infrastructure.StrategyBuilder.Services;
 using AdionFA.Infrastructure.Weka.Contracts;
 using AdionFA.Infrastructure.Weka.Services;
 using AutoMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ninject.Extensions.NamedScope;
 using Ninject.Modules;
-using System;
 
 namespace AdionFA.Infrastructure.IofC
 {
@@ -38,8 +35,6 @@ namespace AdionFA.Infrastructure.IofC
             {
                 mc.AddProfile(new AutoMappingDomainProfile());
             }).CreateMapper()).InSingletonScope();
-
-            Kernel.Bind(typeof(IMediator)).ToMethod(f => MediatRManager.BuildMediator(new WrappingWriter(Console.Out))).InSingletonScope();
 
             // Weka
 
@@ -61,10 +56,10 @@ namespace AdionFA.Infrastructure.IofC
 
             // Application
 
-            Kernel.Bind(typeof(IProjectAppService)).To(typeof(ProjectAppService));
-            Kernel.Bind(typeof(IMarketDataAppService)).To(typeof(MarketDataAppService));
-            Kernel.Bind(typeof(IConfigurationAppService)).To(typeof(ConfigurationAppService));
-            Kernel.Bind(typeof(IAppSettingAppService)).To(typeof(AppSettingAppService));
+            Kernel.Bind(typeof(IProjectService)).To(typeof(ProjectService));
+            Kernel.Bind(typeof(IMarketDataService)).To(typeof(MarketDataService));
+            Kernel.Bind(typeof(IGlobalConfigurationService)).To(typeof(GlobalConfigurationService));
+            Kernel.Bind(typeof(ISettingService)).To(typeof(SettingService));
         }
     }
 }

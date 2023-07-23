@@ -1,13 +1,17 @@
-﻿using AdionFA.Domain.Enums;
-using AdionFA.Domain.Extensions;
+﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Model;
 using AdionFA.Domain.Properties;
+using AdionFA.Infrastructure.IofC;
+using AdionFA.Infrastructure.Managements;
+using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure;
+using AdionFA.UI.Infrastructure.AutoMapper;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Helpers;
+using AdionFA.UI.Infrastructure.Model.Project;
 using AdionFA.UI.Infrastructure.Services;
-using AdionFA.UI.Module.Dashboard.Model;
-using AdionFA.UI.Module.Dashboard.Services;
+using AutoMapper;
+using Ninject;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
@@ -20,47 +24,67 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 {
     public class CreateProjectViewModel : ViewModelBase
     {
-        private readonly ISettingService _settingService;
+        private readonly IMapper _mapper;
 
-        public CreateProjectViewModel(
-            ISettingService settingService,
-            IApplicationCommands applicationCommands)
+        private readonly IMarketDataService _marketDataService;
+        private readonly IProjectService _projectService;
+
+        public CreateProjectViewModel(IApplicationCommands applicationCommands)
         {
-            _settingService = settingService;
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
+
+            _mapper = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMappingInfrastructureProfile());
+            }).CreateMapper();
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
 
-        private ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutCreateProject))
             {
-                PopulateViewModel();
+                if (!IsTransactionActive)
+                {
+                    Project = new();
+
+                    var allHistoricalDataDTO = _marketDataService.GetAllHistoricalData(false);
+
+                    HistoricalData.Clear();
+                    HistoricalData.AddRange(allHistoricalDataDTO
+                        .Select(historicalDataDTO => new Metadata
+                        {
+                            Id = historicalDataDTO.HistoricalDataId,
+                            Name = historicalDataDTO.Description
+                        }).ToList());
+                }
             }
         });
 
-        public ICommand CreateProjectBtnCommand => new DelegateCommand(() =>
+        public ICommand CreateProjectBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
-                var validator = Project.Validate();
-                if (!validator.IsValid)
+                var validationResult = Project.Validate();
+                if (!validationResult.IsValid)
                 {
-                    IsTransactionActive = false;
-
                     MessageHelper.ShowMessages(this,
-                        EntityTypeEnum.Project.GetMetadata().Description,
-                        validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
+                        Resources.CreateProject,
+                        validationResult.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
                 }
 
                 IsTransactionActive = true;
 
-                // Create / Update
-                var result = _settingService.CreateProject(Project);
+                Project.HistoricalDataId = SelectedHistoricalDataId;
+                Project.WorkspacePath = ProjectDirectoryManager.DefaultWorkspace;
 
-                if (result)
+                var responseDTO = await _projectService.CreateProjectAsync(_mapper.Map<ProjectDTO>(Project)).ConfigureAwait(false);
+
+                if (responseDTO.IsSuccess)
                 {
                     ContainerLocator.Current.Resolve<IApplicationCommands>().LoadProjectHierarchyCommand.Execute(null);
                 }
@@ -68,8 +92,8 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 IsTransactionActive = false;
 
                 MessageHelper.ShowMessage(this,
-                    EntityTypeEnum.Project.GetMetadata().Description,
-                    result
+                    Resources.CreateProject,
+                    responseDTO.IsSuccess
                     ? Resources.SuccessEntitySave
                     : Resources.FailEntitySave);
             }
@@ -82,26 +106,6 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private void PopulateViewModel()
-        {
-            if (!IsTransactionActive)
-            {
-                Project = new CreateProjectModel();
-
-                var config = _settingService.GetConfiguration();
-                Project.ConfigurationId = config.ConfigurationId;
-
-                var historicalData = _settingService.GetAllHistoricalData();
-                HistoricalData.Clear();
-                HistoricalData.AddRange(historicalData
-                    .Select(c => new Metadata
-                    {
-                        Id = c.HistoricalDataId,
-                        Name = $"{c.Description}"
-                    }).ToList());
-            }
-        }
-
         // View Bindings
 
         private bool _isTransactionActive;
@@ -111,11 +115,18 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             set => SetProperty(ref _isTransactionActive, value);
         }
 
-        private CreateProjectModel _project;
-        public CreateProjectModel Project
+        private ProjectVM _project;
+        public ProjectVM Project
         {
             get => _project;
             set => SetProperty(ref _project, value);
+        }
+
+        private int _selectedHistoricalDataId;
+        public int SelectedHistoricalDataId
+        {
+            get => _selectedHistoricalDataId;
+            set => SetProperty(ref _selectedHistoricalDataId, value);
         }
 
         public ObservableCollection<Metadata> HistoricalData { get; } = new ObservableCollection<Metadata>();

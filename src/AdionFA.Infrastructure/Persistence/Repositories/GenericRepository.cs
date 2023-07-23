@@ -1,17 +1,17 @@
-﻿using AdionFA.Domain.Contracts.Bases;
-using AdionFA.Domain.Contracts.Repositories;
+﻿using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace AdionFA.Infrastructure.Persistence.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : EntityBase
     {
-        private readonly string _id = "0";
+        private readonly string _id = "1111";
         private readonly string _username = "admin";
 
         private readonly DbContext _dbContext;
@@ -21,7 +21,7 @@ namespace AdionFA.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public virtual void Create(TEntity entity)
+        public virtual async Task CreateAsync(TEntity entity)
         {
             entity.CreatedById = _id;
             entity.CreatedByUserName = _username;
@@ -31,10 +31,10 @@ namespace AdionFA.Infrastructure.Persistence.Repositories
 
             _dbContext.Set<TEntity>().Add(entity);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public virtual void Update(TEntity entity)
+        public virtual async Task UpdateAsync(TEntity entity)
         {
             entity.UpdatedById = _id;
             entity.UpdatedByUserName = _username;
@@ -54,23 +54,23 @@ namespace AdionFA.Infrastructure.Persistence.Repositories
                 _dbContext.Entry(entity).State = EntityState.Modified;
             }
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public virtual void Delete(IEnumerable<TEntity> entities, bool softDelete = true)
+        public virtual async Task DeleteAsync(IEnumerable<TEntity> entities, bool softDelete)
         {
             foreach (var entity in entities)
             {
-                Delete(entity, softDelete);
+                await DeleteAsync(entity, softDelete);
             }
         }
 
-        public virtual void Delete(TEntity entity, bool softDelete = true)
+        public virtual async Task DeleteAsync(TEntity entity, bool softDelete)
         {
             if (softDelete)
             {
                 entity.IsDeleted = true;
-                Update(entity);
+                await UpdateAsync(entity).ConfigureAwait(false);
             }
             else
             {
@@ -82,8 +82,7 @@ namespace AdionFA.Infrastructure.Persistence.Repositories
 
         public virtual IQueryable<TEntity> GetAll()
         {
-            var query = _dbContext.Set<TEntity>().Where(e => e.IsDeleted == false);
-            return query;
+            return _dbContext.Set<TEntity>().Where(e => e.IsDeleted == false);
         }
 
         public virtual IQueryable<TEntity> GetAll(params Expression<Func<TEntity, dynamic>>[] includes)
@@ -136,18 +135,6 @@ namespace AdionFA.Infrastructure.Persistence.Repositories
             var query = GetAll(predicate, includes);
 
             return query.FirstOrDefault();
-        }
-
-        // Temporal Patterns
-
-        public TEntity LastTemporalRecord()
-        {
-            if (Activator.CreateInstance(typeof(TEntity)) is ITimeSensitive)
-            {
-                return FirstOrDefault(t => ((t as ITimeSensitive).EndDate ?? DateTime.MinValue) == DateTime.MinValue);
-            }
-
-            return null;
         }
     }
 }

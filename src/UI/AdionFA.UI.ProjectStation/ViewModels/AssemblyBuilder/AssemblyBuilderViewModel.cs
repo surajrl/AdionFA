@@ -25,7 +25,6 @@ using AdionFA.UI.ProjectStation.Model.Common;
 using AutoMapper;
 using DynamicData;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.CodeAnalysis;
 using Ninject;
 using Prism.Commands;
 using Prism.Events;
@@ -52,8 +51,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private readonly IStrategyBuilderService _strategyBuilderService;
         private readonly IExtractorService _extractorService;
 
-        private readonly IProjectAppService _projectService;
-        private readonly IMarketDataAppService _marketDataService;
+        private readonly IProjectService _projectService;
+        private readonly IMarketDataService _marketDataService;
         private readonly IEventAggregator _eventAggregator;
 
         private readonly ManualResetEventSlim _manualResetEventSlim;
@@ -64,8 +63,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         public AssemblyBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
-            _projectService = IoC.Kernel.Get<IProjectAppService>();
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _assemblyBuilderService = IoC.Kernel.Get<IAssemblyBuilderService>();
@@ -83,8 +82,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 if (updated
                 && !IsTransactionActive
-                && AssemblyBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
-                && AssemblyBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Description))
+                && AssemblyBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Name)
+                && AssemblyBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Name))
                 {
                     ResetBuilderProcesses();
                 }
@@ -95,7 +94,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 if (strategyBuilderCompleted)
                 {
                     DeleteAssemblyBuilder();
-                    _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+                    AssemblyBuilder = _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName);
                     ResetBuilderProcesses();
                 }
                 else
@@ -119,10 +118,10 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _manualResetEventSlim = new(true);
             _lock = new();
 
-            _assemblyBuilderService.LoadExistingAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+            AssemblyBuilder = _assemblyBuilderService.LoadExistingAssemblyBuilder(ProcessArgs.ProjectName);
             if (AssemblyBuilder.WinningAssemblyNodesUP.Count == 0 && AssemblyBuilder.WinningAssemblyNodesDOWN.Count == 0)
             {
-                _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+                AssemblyBuilder = _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName);
             }
 
             ResetBuilderProcesses();
@@ -142,17 +141,17 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
-                if (processUP.Message != BuilderProcessStatus.ABCompleted.GetMetadata().Description
-                    && processUP.Message != BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
+                if (processUP.Message != BuilderProcessStatus.ABCompleted.GetMetadata().Name
+                    && processUP.Message != BuilderProcessStatus.ABNotStarted.GetMetadata().Name)
                 {
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
                     processUP.Message = $"{processUP.Message} - {stopped}";
                 }
 
-                if (processDOWN.Message != BuilderProcessStatus.ABCompleted.GetMetadata().Description
-                    && processDOWN.Message != BuilderProcessStatus.ABNotStarted.GetMetadata().Description)
+                if (processDOWN.Message != BuilderProcessStatus.ABCompleted.GetMetadata().Name
+                    && processDOWN.Message != BuilderProcessStatus.ABNotStarted.GetMetadata().Name)
                 {
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
                     processDOWN.Message = $"{processDOWN.Message} - {stopped}";
                 }
             }
@@ -174,7 +173,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             _manualResetEventSlim.Set();
 
-            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
             foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
             {
                 processUP.Message = $"{processUP.Message} - {stopped}";
@@ -186,6 +185,16 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand Process => new DelegateCommand(async () =>
         {
+            var deleteAll = await MessageHelper.ShowMessageInput(this,
+                    Resources.AssemblyBuilder,
+                    "Starting a new process will delete all the Assembly Nodes and Strategy Nodes.\n"
+                    + "Do you want to continue?").ConfigureAwait(true);
+
+            if (deleteAll != MessageDialogResult.Affirmative)
+            {
+                return;
+            }
+
             try
             {
                 IsTransactionActive = true;
@@ -193,25 +202,15 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 _cancellationTokenSource = new();
 
-                var deleteAll = await MessageHelper.ShowMessageInput(this,
-                    Resources.AssemblyBuilder,
-                    "Starting a new process will delete all the Assembly Nodes and Strategy Nodes.\n"
-                    + "Do you want to continue?").ConfigureAwait(true);
-
-                if (deleteAll != MessageDialogResult.Affirmative)
-                {
-                    return;
-                }
-
                 DeleteAssemblyBuilder();
-                _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName, AssemblyBuilder);
+                AssemblyBuilder = _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName);
                 ResetBuilderProcesses();
 
                 _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(false);
 
                 // Historical Data
 
-                var projectHistoricalData = _marketDataService.GetHistoricalData(ProjectConfiguration.HistoricalDataId.Value, true);
+                var projectHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.Project.HistoricalDataId, true);
                 var allProjectCandles = projectHistoricalData.HistoricalDataCandles.
                 Select(hdCandle => new Candle
                 {
@@ -263,8 +262,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
-                    processUP.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
-                    processDOWN.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Description;
+                    processUP.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Name;
+                    processDOWN.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Name;
                 }
 
                 await Task.Run(() =>
@@ -277,8 +276,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
-                    processUP.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Description;
-                    processDOWN.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Description;
+                    processUP.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Name;
+                    processDOWN.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Name;
                 }
 
                 // Result Message
@@ -303,8 +302,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
                 {
-                    var canceled = BuilderProcessStatus.Canceled.GetMetadata().Description;
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Description;
+                    var canceled = BuilderProcessStatus.Canceled.GetMetadata().Name;
+                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
 
                     processUP.Message = processUP.Message.Replace(stopped, canceled);
                     processDOWN.Message = processUP.Message.Replace(stopped, canceled);
@@ -379,7 +378,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 },
                 process =>
                 {
-                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Name;
 
                     // Perfrom extraction
                     var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
@@ -388,7 +387,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         lastOperation,
                         indicators,
                         candles.ToList(),
-                        ProjectConfiguration.TimeframeId);
+                        ProcessArgs.Project.HistoricalData.TimeframeId);
 
                     // Filter the extraction for only the candles with backtest operations
                     var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
@@ -431,7 +430,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                     process.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
                     process.ExtractionPath = ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(label, $"{nameSignature}.{timeSignature}.csv");
-                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Description;
+                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Name;
                 });
         }
 
@@ -446,7 +445,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 // Weka 
 
-                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
 
                 var wekaApi = new WekaApiClient();
                 var responseWeka = wekaApi.GetREPTreeClassifier(
@@ -485,7 +484,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Description;
+                process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Name;
             }
 
             return backtestNodes;
@@ -533,13 +532,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     lock (_lock)
                     {
                         builderProcess.ExecutingBacktests++;
-                        builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {builderProcess.ExecutingBacktests} Nodes";
+                        builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {builderProcess.ExecutingBacktests} Nodes";
                     }
 
                     var winningNode = _strategyBuilderService.BuildBacktestOfAssemblyNode(
                         bactestingAssemblyNode,
                         projectCandles,
                         _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
+                        ProcessArgs.Project.HistoricalData.TimeframeId,
                         meanSuccessRatePercentIS,
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);
@@ -556,8 +556,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         builderProcess.ProgressCounter++;
 
                         builderProcess.Message = builderProcess.CompletedBacktests == builderProcess.BacktestAssemblyNodes.Count
-                        ? builderProcess.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Description
-                        : builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Description} of {builderProcess.ExecutingBacktests} Nodes";
+                        ? builderProcess.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name
+                        : builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {builderProcess.ExecutingBacktests} Nodes";
                     }
                 });
         }
@@ -575,7 +575,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ExtractionTemplatePath = file.FullName,
                     ExtractionTemplateName = file.Name,
                     ExtractionName = file.Name,
-                    Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Description,
+                    Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Name,
                     Tree = new(),
                     BacktestAssemblyNodes = new()
                 });
@@ -584,7 +584,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ExtractionTemplatePath = file.FullName,
                     ExtractionTemplateName = file.Name,
                     ExtractionName = file.Name,
-                    Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Description,
+                    Message = BuilderProcessStatus.ABNotStarted.GetMetadata().Name,
                     Tree = new(),
                     BacktestAssemblyNodes = new(),
                 });

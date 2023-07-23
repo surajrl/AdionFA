@@ -27,8 +27,8 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
     public class AppSettingViewModel : ViewModelBase
     {
         private readonly IProjectDirectoryService _projectDirectoryService;
-        private readonly IProjectAppService _projectService;
-        private readonly IAppSettingAppService _appSettingService;
+        private readonly IProjectService _projectService;
+        private readonly ISettingService _appSettingService;
 
         private readonly IProcessService _processService;
 
@@ -37,47 +37,78 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             IProcessService processService)
         {
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
-            _appSettingService = IoC.Kernel.Get<IAppSettingAppService>();
-            _projectService = IoC.Kernel.Get<IProjectAppService>();
+            _appSettingService = IoC.Kernel.Get<ISettingService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
 
             _processService = processService;
 
-            FlyoutCommand = new DelegateCommand<FlyoutModel>(ShowFlyout);
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
         }
 
-        private ICommand FlyoutCommand { get; set; }
-
-        public void ShowFlyout(FlyoutModel flyoutModel)
+        public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
         {
             if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutAppSetting))
             {
-                PopulateViewModel();
-            }
-        }
+                Themes = ThemeManager.Current.BaseColors.Select(a => new ApplicationTheme
+                {
+                    Name = a,
+                }).ToList();
 
-        public DelegateCommand UploadDefaultWorkspaceBtnCommand => new(() =>
+                Colors = ThemeManager.Current.ColorSchemes.Select(a => new AccentColor
+                {
+                    Name = a
+                }).ToList();
+
+                var culturesAvailables = AppSettingsManager.Instance.Get<AppSettings>().Cultures?.Split(",");
+
+                Cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures)
+                    .Where(c => culturesAvailables.Any(ca => ca == c.ThreeLetterISOLanguageName)).ToList();
+
+                var themeSetting = _appSettingService.GetSetting((int)SettingEnum.Theme);
+                SelectedTheme = themeSetting != null
+                    ? Themes.FirstOrDefault(th => th.Name == themeSetting.Value)
+                    : Themes.FirstOrDefault();
+
+                var colorSetting = _appSettingService.GetSetting((int)SettingEnum.Color);
+                SelectedColor = colorSetting != null
+                    ? Colors.FirstOrDefault(ac => ac.Name == colorSetting.Value)
+                    : Colors.FirstOrDefault();
+
+                var cultureSetting = _appSettingService.GetSetting((int)SettingEnum.Culture);
+                SelectedCulture = cultureSetting != null
+                    ? Cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == cultureSetting.Value)
+                    : Cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
+
+                DefaultWorkspace = _appSettingService.GetSetting((int)SettingEnum.DefaultWorkspace).Value;
+
+                Host = _appSettingService.GetSetting((int)SettingEnum.Host).Value;
+                Port = _appSettingService.GetSetting((int)SettingEnum.Port).Value;
+
+            }
+        });
+
+        public ICommand UploadDefaultWorkspaceBtnCommand => new DelegateCommand(async () =>
         {
             try
             {
                 if (!_processService.AnyProcessProject())
                 {
-                    var result = _appSettingService.UpdateAppSetting(new SettingDTO
+                    var result = await _appSettingService.UpdateSettingAsync(new SettingDTO
                     {
                         SettingId = (int)SettingEnum.DefaultWorkspace,
                         Name = SettingEnum.DefaultWorkspace.GetMetadata().Name,
                         Value = DefaultWorkspace
-                    });
+                    }).ConfigureAwait(true);
 
                     if (result.IsSuccess)
                     {
                         if (_projectDirectoryService.CreateDefaultWorkspace())
                         {
-                            var projects = _projectService.GetAllProject();
+                            var projects = _projectService.GetAllProject(false);
 
-                            foreach (var p in projects)
+                            foreach (var project in projects)
                             {
-                                _projectDirectoryService.CreateDefaultProjectWorkspace(p.ProjectName);
+                                _projectDirectoryService.CreateDefaultProjectWorkspace(project.ProjectName);
                             }
 
                             MessageHelper.ShowMessage(this,
@@ -89,7 +120,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 else
                 {
                     MessageHelper.ShowMessage(this,
-                        EntityTypeEnum.Setting.GetMetadata().Description,
+                        EntityTypeEnum.Setting.GetMetadata().Name,
                         "Close all running projects to run the operation.");
                 }
             }
@@ -99,43 +130,6 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 throw;
             }
         });
-
-        private void PopulateViewModel()
-        {
-            Themes = ThemeManager.Current.BaseColors.Select(a => new ApplicationTheme
-            {
-                Name = a,
-            }).ToList();
-
-            Colors = ThemeManager.Current.ColorSchemes.Select(a => new AccentColor
-            {
-                Name = a
-            }).ToList();
-
-            var culturesAvailables = AppSettingsManager.Instance.Get<AppSettings>().Cultures?.Split(",");
-            Cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures)
-                .Where(c => culturesAvailables.Any(ca => ca == c.ThreeLetterISOLanguageName)).ToList();
-
-            var themeSetting = _appSettingService.GetSetting((int)SettingEnum.Theme);
-            SelectedTheme = themeSetting != null
-                ? Themes.FirstOrDefault(th => th.Name == themeSetting.Value)
-                : Themes.FirstOrDefault();
-
-            var colorSetting = _appSettingService.GetSetting((int)SettingEnum.Color);
-            SelectedColor = colorSetting != null
-                ? Colors.FirstOrDefault(ac => ac.Name == colorSetting.Value)
-                : Colors.FirstOrDefault();
-
-            var cultureSetting = _appSettingService.GetSetting((int)SettingEnum.Culture);
-            SelectedCulture = cultureSetting != null
-                ? Cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == cultureSetting.Value)
-                : Cultures.FirstOrDefault(c => c.ThreeLetterISOLanguageName == "eng");
-
-            DefaultWorkspace = _appSettingService.GetSetting((int)SettingEnum.DefaultWorkspace).Value;
-
-            Host = _appSettingService.GetSetting((int)SettingEnum.Host).Value;
-            Port = _appSettingService.GetSetting((int)SettingEnum.Port).Value;
-        }
 
         // View Binding
 
@@ -171,7 +165,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     Thread.CurrentThread.CurrentCulture = SelectedCulture;
                     Thread.CurrentThread.CurrentUICulture = SelectedCulture;
 
-                    _appSettingService.UpdateAppSetting(new SettingDTO
+                    _appSettingService.UpdateSettingAsync(new SettingDTO
                     {
                         SettingId = (int)SettingEnum.Culture,
                         Name = SettingEnum.Culture.GetMetadata().Name,
@@ -190,7 +184,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 if (SetProperty(ref _selectedTheme, value) && value != null)
                 {
                     ThemeManager.Current.ChangeThemeBaseColor(System.Windows.Application.Current, value.Name);
-                    _appSettingService.UpdateAppSetting(new SettingDTO
+                    _appSettingService.UpdateSettingAsync(new SettingDTO
                     {
                         SettingId = (int)SettingEnum.Theme,
                         Name = SettingEnum.Theme.GetMetadata().Name,
@@ -209,7 +203,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 if (SetProperty(ref _selectedColor, value) && value != null)
                 {
                     ThemeManager.Current.ChangeThemeColorScheme(System.Windows.Application.Current, value.Name);
-                    _appSettingService.UpdateAppSetting(new SettingDTO
+                    _appSettingService.UpdateSettingAsync(new SettingDTO
                     {
                         SettingId = (int)SettingEnum.Color,
                         Name = SettingEnum.Color.GetMetadata().Name,
@@ -234,7 +228,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             {
                 if (SetProperty(ref _host, value))
                 {
-                    _appSettingService.UpdateAppSetting(new SettingDTO
+                    _appSettingService.UpdateSettingAsync(new SettingDTO
                     {
                         SettingId = (int)SettingEnum.Host,
                         Name = SettingEnum.Host.GetMetadata().Name,
@@ -252,7 +246,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             {
                 if (SetProperty(ref _port, value))
                 {
-                    _appSettingService.UpdateAppSetting(new SettingDTO
+                    _appSettingService.UpdateSettingAsync(new SettingDTO
                     {
                         SettingId = (int)SettingEnum.Port,
                         Name = SettingEnum.Port.GetMetadata().Name,

@@ -532,14 +532,14 @@
                         <!--#region IS-->
                         <StackPanel Grid.Row="2"
                                     Orientation="Horizontal">
-                            <!--#region Minimum Transactions IS-->
+                            <!--#region Minimum Total Trades IS-->
                             <StackPanel Margin="{StaticResource ColumnMargin}"
                                         MinWidth="{StaticResource ColumnWidth}">
-                                <Label Content="Minimum Transactions (IS) *" />
+                                <Label Content="Minimum Total Trades (IS) *" />
                                 <metro:NumericUpDown Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                      NumericInputMode="Numbers"
                                                      Minimum="0"
-                                                     Value="{Binding ProjectConfiguration.SBMinTransactionsIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding ProjectConfiguration.SBMinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
                             <!--#region Minimum Success Rate Percent IS-->
@@ -560,12 +560,12 @@
                                     Orientation="Horizontal">
                             <StackPanel Margin="{StaticResource ColumnMargin}"
                                         MinWidth="{StaticResource ColumnWidth}">
-                                <!--#region Minimum Transactions OS-->
-                                <Label Content="Minimum Transactions (OS) *" />
+                                <!--#region Minimum Total Trades OS-->
+                                <Label Content="Minimum Total Trades (OS) *" />
                                 <metro:NumericUpDown NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                      Minimum="0"
-                                                     Value="{Binding ProjectConfiguration.SBMinTransactionsOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding ProjectConfiguration.SBMinTotalTradesOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
                             <!--#region Minimum Success Rate Percent OS-->
@@ -594,14 +594,14 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Orientation="Horizontal">
-                            <!--#region Transactions Target IS-->
+                            <!--#region Minimum Total Trades IS-->
                             <StackPanel Margin="{StaticResource ColumnMargin}"
                                         MinWidth="{StaticResource ColumnWidth}">
-                                <Label Content="Transactions Target (IS) *" />
+                                <Label Content="Minimum Total Trades (IS) *" />
                                 <metro:NumericUpDown NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                      Minimum="0"
-                                                     Value="{Binding ProjectConfiguration.ABTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding ProjectConfiguration.ABMinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
                             <!--#region Minimum Success Rate Improvement Percent IS-->

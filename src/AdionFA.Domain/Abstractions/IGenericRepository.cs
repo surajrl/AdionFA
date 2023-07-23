@@ -3,15 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace AdionFA.Domain.Contracts.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : EntityBase
     {
-        void Create(TEntity entity);
-        void Update(TEntity entity);
-        void Delete(IEnumerable<TEntity> entities, bool softDelete = true);
-        void Delete(TEntity entity, bool softDelete = true);
+        Task CreateAsync(TEntity entity);
+        Task UpdateAsync(TEntity entity);
+        Task DeleteAsync(IEnumerable<TEntity> entities, bool softDelete);
+        Task DeleteAsync(TEntity entity, bool softDelete);
 
         IQueryable<TEntity> GetAll();
         IQueryable<TEntity> GetAll(params Expression<Func<TEntity, dynamic>>[] includes);
@@ -21,7 +22,5 @@ namespace AdionFA.Domain.Contracts.Repositories
 
         TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
         TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, dynamic>>[] includes);
-
-        TEntity LastTemporalRecord();
     }
 }

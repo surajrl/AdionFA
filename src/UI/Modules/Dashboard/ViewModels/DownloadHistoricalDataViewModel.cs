@@ -1,5 +1,6 @@
 ﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Enums;
+using AdionFA.Domain.Enums.Market;
 using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Helpers;
 using AdionFA.Domain.Model;
@@ -15,7 +16,6 @@ using AdionFA.UI.Infrastructure.Helpers;
 using AdionFA.UI.Infrastructure.Model.MarketData;
 using AdionFA.UI.Infrastructure.Services;
 using AdionFA.UI.Module.Dashboard.Model;
-using AdionFA.UI.Module.Dashboard.Services;
 using AutoMapper;
 using DynamicData;
 using NetMQ;
@@ -35,20 +35,15 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 {
     public class DownloadHistoricalDataViewModel : ViewModelBase
     {
-        private readonly IAppSettingAppService _appSettingService;
-        private readonly IMarketDataAppService _marketDataService;
-        private readonly ISettingService _settingService;
         private readonly IMapper _mapper;
 
+        private readonly ISettingService _appSettingService;
+        private readonly IMarketDataService _marketDataService;
 
-        public DownloadHistoricalDataViewModel(
-            IApplicationCommands applicationCommands,
-            ISettingService settingService)
+        public DownloadHistoricalDataViewModel(IApplicationCommands applicationCommands)
         {
-            _settingService = settingService;
-
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
-            _appSettingService = IoC.Kernel.Get<IAppSettingAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
+            _appSettingService = IoC.Kernel.Get<ISettingService>();
 
             _mapper = new MapperConfiguration(mc =>
             {
@@ -94,7 +89,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     return;
                 }
 
-                DateTime modifiedStart = new(
+                var modifiedStart = new DateTime(
                     DownloadHistoricalDataModel.Start.Value.Year - 3,
                     DownloadHistoricalDataModel.Start.Value.Month,
                     DownloadHistoricalDataModel.Start.Value.Day,
@@ -142,17 +137,17 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 if (CreateHistory())
                 {
-                    var result = _settingService.CreateHistoricalData(DownloadHistoricalDataModel);
+                    var responseDTO = await Task.Run(async () => await _marketDataService.CreateHistoricalDataAsync(_mapper.Map<DownloadHistoricalDataModel, HistoricalDataDTO>(DownloadHistoricalDataModel)).ConfigureAwait(true));
 
                     IsTransactionActive = false;
 
                     MessageHelper.ShowMessage(this,
-                        EntityTypeEnum.HistoricalData.GetMetadata().Description,
-                        result
+                        EntityTypeEnum.HistoricalData.GetMetadata().Name,
+                        responseDTO.IsSuccess
                         ? Resources.SuccessEntitySave
                         : Resources.FailEntitySave);
 
-                    if (result)
+                    if (responseDTO.IsSuccess)
                     {
                         ContainerLocator.Current.Resolve<IApplicationCommands>().LoadHistoricalDataCommand.Execute(null);
                     }
@@ -205,9 +200,9 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     var json = JsonConvert.DeserializeObject<ZmqResponse>(response);
                     var symbolsReceived = json.Data.Split(',').ToList();
 
-                    symbolsReceived.ForEach(symbol =>
+                    symbolsReceived.ForEach(async symbol =>
                     {
-                        _marketDataService.CreateSymbol(new SymbolDTO { Name = symbol, Code = symbol });
+                        await _marketDataService.CreateSymbolAsync(new SymbolDTO { Name = symbol, Code = symbol }).ConfigureAwait(true);
                         Symbols.Add(_mapper.Map<SymbolDTO, SymbolVM>(_marketDataService.GetSymbol(symbol)));
                     });
 
@@ -242,11 +237,11 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
         {
             try
             {
-                var result = CandleHelper.GetHistoryCandles(DownloadHistoricalDataModel.FilepathHistoricalData).ToList();
+                var candles = CandleHelper.GetHistoryCandles(DownloadHistoricalDataModel.FilepathHistoricalData).ToList();
 
-                if (result.Count > 0)
+                if (candles.Count > 0)
                 {
-                    result.ForEach(candle =>
+                    candles.ForEach(candle =>
                     {
                         DownloadHistoricalDataModel.HistoricalDataCandles.Add(new HistoricalDataCandleVM
                         {
@@ -261,26 +256,24 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                         });
                     });
 
-                    var marketName = ((MarketEnum)DownloadHistoricalDataModel.MarketId).GetMetadata().Name;
+                    var market = ((MarketEnum)DownloadHistoricalDataModel.MarketId).GetMetadata();
                     var symbol = _marketDataService.GetSymbol(DownloadHistoricalDataModel.SymbolId);
                     var timeframe = _marketDataService.GetTimeframe(DownloadHistoricalDataModel.TimeframeId);
 
-                    var candlesOrdered = result.OrderByDescending(candle => candle.Date);
+                    var candlesOrdered = candles.OrderByDescending(candle => candle.Date);
                     var firstCandleDate = candlesOrdered.LastOrDefault().Date;
                     var lastCandleDate = candlesOrdered.FirstOrDefault().Date;
 
                     DownloadHistoricalDataModel.Description =
-                        $"{marketName}." +
-                        $"{symbol.Name}." +
-                        $"{timeframe.Code}." +
-                        $"{firstCandleDate:dd-MM-yyyy}." +
-                        $"{lastCandleDate:dd-MM-yyyy}";
+                        $"{market.Code}." +
+                        $"{symbol.Code}." +
+                        $"{timeframe.Code}";
 
                     return true;
                 }
 
                 MessageHelper.ShowMessage(this,
-                    EntityTypeEnum.HistoricalData.GetMetadata().Description,
+                    EntityTypeEnum.HistoricalData.GetMetadata().Name,
                     Resources.HistoricalDataEmpty);
 
                 return false;

@@ -12,8 +12,7 @@ namespace AdionFA.UI.Infrastructure.Converters
     {
         public List<IValueConverter> Converters { get; } = new List<IValueConverter>();
 
-        public object Convert(object value, Type targetType,
-            object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == DependencyProperty.UnsetValue)
             {
@@ -22,14 +21,17 @@ namespace AdionFA.UI.Infrastructure.Converters
             foreach (var converter in Converters)
             {
                 value = converter.Convert(value, targetType, parameter, culture);
-                if (value == Binding.DoNothing) return Binding.DoNothing;
+                if (value == Binding.DoNothing)
+                {
+                    return Binding.DoNothing;
+                }
             }
             return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

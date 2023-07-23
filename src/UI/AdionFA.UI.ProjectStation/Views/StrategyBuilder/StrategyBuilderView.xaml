@@ -314,20 +314,20 @@
 
                 <StackPanel Grid.Row="4"
                             Orientation="Horizontal">
-                    <!--#region Minimum Transactions IS-->
+                    <!--#region Minimum Total Trades IS-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Transactions (IS)" />
-                        <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsIS}"
+                        <Label Content="Minimum Total Trades (IS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinTotalTradesIS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"
                                  Width="225" />
                     </StackPanel>
                     <!--#endregion-->
-                    <!--#region Min Transaction Count OS-->
+                    <!--#region Minimum Total Trades OS-->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Transactions (OS)" />
-                        <TextBox Text="{Binding ProjectConfiguration.SBMinTransactionsOS}"
+                        <Label Content="Minimum Total Trades (OS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinTotalTradesOS}"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  IsEnabled="False"

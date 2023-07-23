@@ -5,7 +5,7 @@
         public const string ShellModule = "ShellModule";
 
         public const string CreateProjectView_SettingModule = "CreateProjectView_SettingModule";
-        public const string ConfigurationView_SettingModule = "ConfigurationView_SettingModule";
+        public const string GlobalConfigurationView_SettingModule = "GlobalConfigurationView_SettingModule";
         public const string HistoricalDataView_SettingModule = "HistoricalDataView_SettingModule";
         public const string UploadHistoricalDataView_SettingModule = "UploadHistoricalDataView_SettingModule";
         public const string DownloaHistoricalDataView_SettingModule = "DownloadHistoricalDataView_SettingModule";
@@ -26,12 +26,12 @@
 
         public const string FlyoutAppSetting = "FlyoutAppSetting";
         public const string FlyoutCreateProject = "FlyoutCreateProject";
-        public const string FlyoutConfiguration = "FlyoutConfiguration";
+        public const string FlyoutGlobalConfiguration = "FlyoutGlobalConfiguration";
         public const string FlyoutHistoricalData = "FlyoutHistoricalData";
         public const string FlyoutUploadHistoricalData = "FlyoutUploadHistoricalData";
         public const string FlyoutDownloadHistoricalData = "FlyoutDownloadHistoricalData";
 
-        // Project
+        // ProjectStation
 
         // Strategy Builder
 

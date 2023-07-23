@@ -123,6 +123,9 @@
   <data name="AssemblyBuilderCompleted" xml:space="preserve">
     <value>Assembly Builder Completed</value>
   </data>
+  <data name="CreateProject" xml:space="preserve">
+    <value>Create Project</value>
+  </data>
   <data name="CrossingBuilder" xml:space="preserve">
     <value>Crossing Builder</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="Filepath" xml:space="preserve">
     <value>Filepath</value>
+  </data>
+  <data name="GlobalConfiguration" xml:space="preserve">
+    <value>Global Configuration</value>
   </data>
   <data name="HistoricalDataEmpty" xml:space="preserve">
     <value>Historical data file is empty</value>
@@ -155,6 +161,9 @@
   </data>
   <data name="NumberGreaterThan" xml:space="preserve">
     <value>Number must be greater than</value>
+  </data>
+  <data name="NumberGreaterThanOrEqualTo" xml:space="preserve">
+    <value>Must be greater than or equal to</value>
   </data>
   <data name="ProjectConfiguration" xml:space="preserve">
     <value>Project Configuration</value>

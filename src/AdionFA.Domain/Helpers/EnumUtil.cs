@@ -1,5 +1,4 @@
-﻿using AdionFA.Domain.Enums;
-using AdionFA.Domain.Extensions;
+﻿using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Model;
 using System;
 using System.Collections.Generic;
@@ -33,24 +32,6 @@ namespace AdionFA.Domain.Helpers
             }
 
             return result.AsEnumerable();
-        }
-
-        public static TimeframeEnum GetTimeframeEnum(int code)
-        {
-            var result = code switch
-            {
-                1 => TimeframeEnum.M1,
-                5 => TimeframeEnum.M5,
-                15 => TimeframeEnum.M15,
-                30 => TimeframeEnum.M30,
-                16385 => TimeframeEnum.H1,
-                16388 => TimeframeEnum.H4,
-                16408 => TimeframeEnum.D1,
-                32769 => TimeframeEnum.W1,
-                49153 => TimeframeEnum.M1,
-                _ => TimeframeEnum.D1,
-            };
-            return result;
         }
     }
 }

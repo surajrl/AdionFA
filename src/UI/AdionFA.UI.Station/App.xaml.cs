@@ -97,12 +97,12 @@ namespace AdionFA.UI.Station
 
             ContainerLocator.Current.Resolve<IApplicationCommands>().EndAllProcessProjectCommand.Execute(false);
 
-            ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
+            ContainerLocator.Current.Resolve<IProcessService>().StartProcessWeka();
         }
 
         protected override void OnInitialized()
         {
-            var settingService = IoC.Kernel.Get<IAppSettingAppService>();
+            var settingService = IoC.Kernel.Get<ISettingService>();
             var directoryService = IoC.Kernel.Get<IProjectDirectoryService>();
 
             // Workspace

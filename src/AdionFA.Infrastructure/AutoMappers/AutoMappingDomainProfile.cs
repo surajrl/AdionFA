@@ -14,8 +14,8 @@ namespace AdionFA.Infrastructure.AutoMappers
             // Common
 
             CreateMap<Setting, SettingDTO>().ReverseMap();
-            CreateMap<Configuration, ConfigurationDTO>().ReverseMap();
-            CreateMap<ScheduleConfiguration, ScheduleConfigurationDTO>().ReverseMap();
+            CreateMap<GlobalConfiguration, GlobalConfigurationDTO>().ReverseMap();
+            CreateMap<GlobalScheduleConfiguration, GlobalScheduleConfigurationDTO>().ReverseMap();
 
             // Market
 
@@ -29,8 +29,6 @@ namespace AdionFA.Infrastructure.AutoMappers
             // Project
 
             CreateMap<Project, ProjectDTO>().ReverseMap();
-            CreateMap<ProjectConfiguration, ProjectConfigurationDTO>().ReverseMap();
-            CreateMap<ProjectScheduleConfiguration, ProjectScheduleConfigurationDTO>().ReverseMap();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AdionFA.Domain.Enums;
+using AdionFA.Domain.Enums.Market;
 using System;
 
 namespace AdionFA.Infrastructure.MetaTrader.Model
@@ -13,7 +14,7 @@ namespace AdionFA.Infrastructure.MetaTrader.Model
 
     public class ZmqDownloadHistoricalDataRequest
     {
-        public string CMD => "DHD";
+        public string CMD { get; } = "DHD";
         public string Symbol { get; set; }
         public TimeframeEnum Timeframe { get; set; }
         public DateTime Start { get; set; }
@@ -22,7 +23,7 @@ namespace AdionFA.Infrastructure.MetaTrader.Model
 
     public class ZmqLoadSymbolListRequest
     {
-        public string CMD => "LSL";
+        public string CMD { get; } = "LSL";
     }
 
     public class ZmqResponse

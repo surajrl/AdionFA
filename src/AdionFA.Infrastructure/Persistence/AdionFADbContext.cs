@@ -1,5 +1,6 @@
 ﻿using AdionFA.Domain.Entities;
 using AdionFA.Domain.Enums;
+using AdionFA.Domain.Enums.Market;
 using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Model;
 using AdionFA.Infrastructure.Managements;
@@ -52,6 +53,7 @@ namespace AdionFA.Infrastructure.Persistence
                         // Reference Data Base
 
                         Code = meta.Code,
+                        Name = meta.Name,
                         Value = meta.Value,
 
                         // Entity Base
@@ -66,24 +68,30 @@ namespace AdionFA.Infrastructure.Persistence
 
             // Symbol
 
-            modelBuilder.Entity<Symbol>().HasData(
-                new Symbol
-                {
-                    SymbolId = 1,
+            foreach (var symbol in Enum.GetValues(typeof(SymbolEnum)))
+            {
+                var meta = (Metadata)methodInfo.Invoke(symbol, new object[] { symbol });
+                modelBuilder.Entity<Symbol>().HasData(
+                    new Symbol
+                    {
+                        SymbolId = (int)symbol,
 
-                    // Reference Data Base
+                        // Reference Data Base
 
-                    Code = "EURUSD",
-                    Name = "EURUSD",
-                    Description = "Euro vs US Dollar",
+                        Code = meta.Code,
+                        Name = meta.Name,
+                        Value = meta.Value,
 
-                    // Entity Base
+                        // Entity Base
 
-                    IsDeleted = false,
-                    CreatedById = userId,
-                    CreatedByUserName = username,
-                    CreatedOn = DateTime.UtcNow,
-                });
+                        CreatedById = userId,
+                        CreatedByUserName = username,
+                        CreatedOn = DateTime.UtcNow,
+
+                        IsDeleted = false,
+                    }
+                );
+            }
 
             // Timeframe
 
@@ -100,7 +108,6 @@ namespace AdionFA.Infrastructure.Persistence
                         Code = meta.Code,
                         Name = meta.Name,
                         Value = meta.Value,
-                        Description = meta.Description,
 
                         // Entity Base
 
@@ -126,7 +133,6 @@ namespace AdionFA.Infrastructure.Persistence
 
                         Code = meta.Code,
                         Name = meta.Name,
-                        Description = meta.Description,
 
                         // Entity Base
 
@@ -152,7 +158,6 @@ namespace AdionFA.Infrastructure.Persistence
 
                         Code = meta.Code,
                         Name = meta.Name,
-                        Description = meta.Description,
 
                         // Entity Base
 
@@ -164,11 +169,11 @@ namespace AdionFA.Infrastructure.Persistence
                 );
             }
 
-            // Configuration
+            // Global Configuration
 
-            modelBuilder.Entity<Configuration>().HasData(new Configuration
+            modelBuilder.Entity<GlobalConfiguration>().HasData(new GlobalConfiguration
             {
-                ConfigurationId = 1,
+                GlobalConfigurationId = 1,
 
                 // Period
 
@@ -180,14 +185,15 @@ namespace AdionFA.Infrastructure.Persistence
 
                 WithoutSchedule = true,
 
-                // Historical Data Information
-
-                SymbolId = 1,
-                TimeframeId = (int)TimeframeEnum.H1,
-
                 // Extractor
 
                 ExtractorMinVariation = 50,
+
+                // MetaTrader
+
+                ExpertAdvisorHost = null,
+                ExpertAdvisorPublisherPort = null,
+                ExpertAdvisorResponsePort = null,
 
                 // Weka
 
@@ -201,10 +207,10 @@ namespace AdionFA.Infrastructure.Persistence
 
                 // Strategy Builder
 
-                SBMinTransactionsIS = 300,
+                SBMinTotalTradesIS = 300,
                 SBMinSuccessRatePercentIS = 55,
 
-                SBMinTransactionsOS = 100,
+                SBMinTotalTradesOS = 100,
                 SBMinSuccessRatePercentOS = 55,
 
                 SBMaxSuccessRateVariation = 4,
@@ -216,39 +222,34 @@ namespace AdionFA.Infrastructure.Persistence
 
                 SBWinningStrategyDOWNTarget = 6,
                 SBWinningStrategyUPTarget = 6,
-                SBTransactionsTarget = 300,
+                SBTotalTradesTarget = 300,
 
                 // Assembly Builder
 
-                ABTransactionsTarget = 600,
+                ABMinTotalTradesIS = 300,
                 ABMinImprovePercent = 5,
-                ABWekaMaxRatioTree = 2,
-                ABWekaNTotalTree = 500,
-
-                // Time Sensitive Base
-
-                StartDate = DateTime.UtcNow,
-                EndDate = null,
-                Description = "Default Configuration",
+                ABWekaMaxRatioTree = (decimal)1.5,
+                ABWekaNTotalTree = 300,
 
                 // Entity Base
 
-                IsDeleted = false,
                 CreatedById = userId,
                 CreatedByUserName = username,
                 CreatedOn = DateTime.UtcNow,
+
+                IsDeleted = false,
             });
 
             // Schedule Configuration
 
-            modelBuilder.Entity<ScheduleConfiguration>().HasData(
-                new ScheduleConfiguration
+            modelBuilder.Entity<GlobalScheduleConfiguration>().HasData(
+                new GlobalScheduleConfiguration
                 {
-                    ScheduleConfigurationId = 1,
+                    GlobalScheduleConfigurationId = 1,
 
                     // Configuration
 
-                    ConfigurationId = 1,
+                    GlobalConfigurationId = 1,
 
                     // Market Region
 
@@ -257,26 +258,21 @@ namespace AdionFA.Infrastructure.Persistence
                     FromTimeInSeconds = 54000,
                     ToTimeInSeconds = 82800,
 
-                    // Time Sensitive Base
-
-                    StartDate = DateTime.UtcNow,
-                    EndDate = null,
-                    Description = "Default Schedule America",
-
                     // Entity Base
 
-                    IsDeleted = false,
                     CreatedById = userId,
                     CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
+
+                    IsDeleted = false,
                 },
-                new ScheduleConfiguration
+                new GlobalScheduleConfiguration
                 {
-                    ScheduleConfigurationId = 2,
+                    GlobalScheduleConfigurationId = 2,
 
                     // Configuration
 
-                    ConfigurationId = 1,
+                    GlobalConfigurationId = 1,
 
                     // Market Region
 
@@ -285,46 +281,35 @@ namespace AdionFA.Infrastructure.Persistence
                     FromTimeInSeconds = 32400,
                     ToTimeInSeconds = 64800,
 
-                    // Time Sensitive Base
-
-                    StartDate = DateTime.UtcNow,
-                    EndDate = null,
-                    Description = "Default Schedule Europe",
-
                     // Entity Base
 
-                    IsDeleted = false,
                     CreatedById = userId,
                     CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
+
+                    IsDeleted = false,
                 },
-                new ScheduleConfiguration
+                new GlobalScheduleConfiguration
                 {
-                    ScheduleConfigurationId = 3,
+                    GlobalScheduleConfigurationId = 3,
 
                     // Configuration
 
-                    ConfigurationId = 1,
+                    GlobalConfigurationId = 1,
 
                     // Market Region
 
                     MarketRegionId = (int)MarketRegionEnum.Asia,
-
                     FromTimeInSeconds = 3600,
                     ToTimeInSeconds = 32400,
 
-                    // Time Sensitive Base
-
-                    StartDate = DateTime.UtcNow,
-                    EndDate = null,
-                    Description = "Default Schedule Asia",
-
                     // Entity Base
 
-                    IsDeleted = false,
                     CreatedById = userId,
                     CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
+
+                    IsDeleted = false,
                 }
             );
         }
@@ -334,8 +319,8 @@ namespace AdionFA.Infrastructure.Persistence
         // Common
 
         public DbSet<Setting> Settings { get; set; }
-        public DbSet<Configuration> Configurations { get; set; }
-        public DbSet<ScheduleConfiguration> ScheduleConfigurations { get; set; }
+        public DbSet<GlobalConfiguration> Configurations { get; set; }
+        public DbSet<GlobalScheduleConfiguration> ScheduleConfigurations { get; set; }
 
         // Market Data
 
@@ -350,7 +335,5 @@ namespace AdionFA.Infrastructure.Persistence
         // Project
 
         public DbSet<Project> Projects { get; set; }
-        public DbSet<ProjectConfiguration> ProjectConfigurations { get; set; }
-        public DbSet<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
     }
 }

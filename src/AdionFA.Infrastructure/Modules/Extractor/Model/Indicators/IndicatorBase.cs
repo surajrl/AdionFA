@@ -1,4 +1,5 @@
-﻿using AdionFA.Domain.Enums;
+﻿using AdionFA.Domain.Attributes;
+using AdionFA.Domain.Enums;
 using System;
 
 namespace AdionFA.Infrastructure.Extractor.Model
@@ -8,9 +9,13 @@ namespace AdionFA.Infrastructure.Extractor.Model
         public string Name => Type != null ? Enum.GetName(typeof(IndicatorEnum), Type) : "";
         public IndicatorEnum? Type { get; set; }
 
+        [IgnoreReflection]
         public int OutBegIdx { get; set; }
+        [IgnoreReflection]
         public int OutNBElement { get; set; }
+        [IgnoreReflection]
         public MathOperatorEnum? Operator { get; set; }
+        [IgnoreReflection]
         public double Value { get; set; }
 
         public IntervalLabel[] IntervalLabels { get; set; }

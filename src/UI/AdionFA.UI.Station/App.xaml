@@ -5,6 +5,7 @@
              xmlns:prism="http://prismlibrary.com/">
     <Application.Resources>
         <ResourceDictionary>
+            
             <ResourceDictionary.MergedDictionaries>
                 <!--LookAndFeel-->
                 <ResourceDictionary Source="/AdionFA.UI.LookAndFeel;component/LookAndFeel.xaml" />
@@ -18,6 +19,7 @@
             <converter:EqualityToBooleanConverter x:Key="EqualityToBooleanConverter" />
             <converter:IntToBooleanConverter x:Key="IntToBooleanConverter" />
             <converter:CommandParameterFlyoutConverter x:Key="CommandParameterFlyoutConverter" />
+            <converter:TimeInSecondsToDateTimeConverter x:Key="TimeInSecondsToDateTimeConverter" />
 
             <converter:CompositeConverter x:Key="InverseBooleanToVisibilityConverter">
                 <converter:InverseBooleanConverter />

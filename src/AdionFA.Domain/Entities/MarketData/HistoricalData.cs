@@ -6,10 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AdionFA.Domain.Entities
 {
     [Table(nameof(HistoricalData))]
-    public class HistoricalData : TimeSensitiveBase
+    public class HistoricalData : EntityBase
     {
         [Key]
         public int HistoricalDataId { get; set; }
+
+        public string Description { get; set; }
 
         public int MarketId { get; set; }
         [ForeignKey(nameof(MarketId))]

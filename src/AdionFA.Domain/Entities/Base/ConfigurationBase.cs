@@ -1,9 +1,8 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AdionFA.Domain.Entities.Base
 {
-    public class ConfigurationBase : TimeSensitiveBase
+    public abstract class ConfigurationBase : EntityBase
     {
         // Period
 
@@ -13,23 +12,19 @@ namespace AdionFA.Domain.Entities.Base
         public DateTime? FromDateOS { get; set; }
         public DateTime? ToDateOS { get; set; }
 
+        // Schedule
+
         public bool WithoutSchedule { get; set; }
-
-        // Historical Data Information
-
-        public int SymbolId { get; set; }
-
-        [ForeignKey(nameof(SymbolId))]
-        public Symbol Symbol { get; set; }
-
-        public int TimeframeId { get; set; }
-
-        [ForeignKey(nameof(TimeframeId))]
-        public Timeframe Timeframe { get; set; }
 
         // Extractor
 
         public int ExtractorMinVariation { get; set; }
+
+        // MetaTrader
+
+        public string ExpertAdvisorHost { get; set; }
+        public string ExpertAdvisorResponsePort { get; set; }
+        public string ExpertAdvisorPublisherPort { get; set; }
 
         // Weka
 
@@ -41,18 +36,12 @@ namespace AdionFA.Domain.Entities.Base
         public decimal MaxRatioTree { get; set; }
         public decimal NTotalTree { get; set; }
 
-        // MetaTrader
-
-        public string ExpertAdvisorHost { get; set; }
-        public string ExpertAdvisorResponsePort { get; set; }
-        public string ExpertAdvisorPublisherPort { get; set; }
-
         // Strategy Builder
 
-        public int SBMinTransactionsIS { get; set; }
+        public int SBMinTotalTradesIS { get; set; }
         public decimal SBMinSuccessRatePercentIS { get; set; }
 
-        public int SBMinTransactionsOS { get; set; }
+        public int SBMinTotalTradesOS { get; set; }
         public decimal SBMinSuccessRatePercentOS { get; set; }
 
         public decimal SBMaxSuccessRateVariation { get; set; }
@@ -64,13 +53,74 @@ namespace AdionFA.Domain.Entities.Base
 
         public int SBWinningStrategyUPTarget { get; set; }
         public int SBWinningStrategyDOWNTarget { get; set; }
-        public int SBTransactionsTarget { get; set; }
+        public int SBTotalTradesTarget { get; set; }
 
         // Assembly Builder
 
-        public int ABTransactionsTarget { get; set; }
+        public int ABMinTotalTradesIS { get; set; }
         public decimal ABMinImprovePercent { get; set; }
         public decimal ABWekaMaxRatioTree { get; set; }
         public decimal ABWekaNTotalTree { get; set; }
+
+        public void RestoreConfiguration()
+        {
+            // Period
+
+            FromDateIS = null;
+            ToDateIS = null;
+
+            FromDateOS = null;
+            ToDateOS = null;
+
+            // Schedule 
+
+            WithoutSchedule = true;
+
+            // Extractor
+
+            ExtractorMinVariation = 50;
+
+            // MetaTrader
+
+            ExpertAdvisorHost = null;
+            ExpertAdvisorPublisherPort = null;
+            ExpertAdvisorResponsePort = null;
+
+            // Weka
+
+            TotalInstanceWeka = 1;
+            DepthWeka = 6;
+            TotalDecimalWeka = 5;
+            MinimalSeed = 100;
+            MaximumSeed = 1000000;
+            MaxRatioTree = (decimal)1.5;
+            NTotalTree = 300;
+
+            // Strategy Builder
+
+            SBMinTotalTradesIS = 300;
+            SBMinSuccessRatePercentIS = 55;
+
+            SBMinTotalTradesOS = 100;
+            SBMinSuccessRatePercentOS = 55;
+
+            SBMaxSuccessRateVariation = 5;
+
+            MaxProgressivenessVariation = 2;
+            IsProgressiveness = false;
+
+            SBMaxCorrelationPercent = 2;
+
+            SBWinningStrategyDOWNTarget = 6;
+            SBWinningStrategyUPTarget = 6;
+            SBTotalTradesTarget = 300;
+
+            // Assembly Builder
+
+            ABMinTotalTradesIS = 300;
+            ABMinImprovePercent = 5;
+            ABWekaMaxRatioTree = (decimal)1.5;
+            ABWekaNTotalTree = 300;
+        }
     }
 }

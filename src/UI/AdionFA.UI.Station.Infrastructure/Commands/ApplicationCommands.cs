@@ -4,20 +4,20 @@ namespace AdionFA.UI.Infrastructure
 {
     public static class ApplicationCommands
     {
-        public static CompositeCommand LoadedProjectCommand = new();
-        public static CompositeCommand PinnedProjectCommand = new();
+        public static CompositeCommand LoadedProjectCommand { get; } = new();
+        public static CompositeCommand PinnedProjectCommand { get; } = new();
 
-        public static CompositeCommand StartProcessProjectCommand = new();
-        public static CompositeCommand EndAllProcessProjectCommand = new();
+        public static CompositeCommand StartProcessProjectCommand { get; } = new();
+        public static CompositeCommand EndAllProcessProjectCommand { get; } = new();
 
-        public static CompositeCommand ShowFlyoutCommand = new();
-        public static CompositeCommand LoadProjectHierarchyCommand = new();
-        public static CompositeCommand LoadHistoricalDataCommand = new();
+        public static CompositeCommand ShowFlyoutCommand { get; } = new();
+        public static CompositeCommand LoadProjectHierarchyCommand { get; } = new();
+        public static CompositeCommand LoadHistoricalDataCommand { get; } = new();
 
-        public static CompositeCommand SaveNodeCommand = new();
-        public static CompositeCommand DeleteNodeCommand = new();
-        public static CompositeCommand AddNodeToMetaTrader = new();
-        public static CompositeCommand RemoveNodeFromMetaTrader = new();
+        public static CompositeCommand SaveNodeCommand { get; } = new();
+        public static CompositeCommand DeleteNodeCommand { get; } = new();
+        public static CompositeCommand AddNodeToMetaTrader { get; } = new();
+        public static CompositeCommand RemoveNodeFromMetaTrader { get; } = new();
     }
 
     public interface IApplicationCommands

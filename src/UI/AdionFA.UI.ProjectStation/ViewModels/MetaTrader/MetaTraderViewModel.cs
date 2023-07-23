@@ -38,8 +38,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private readonly IMapper _mapper;
 
         private readonly ITradeService _tradeService;
-        private readonly IProjectAppService _projectService;
-        private readonly IMarketDataAppService _marketDataService;
+        private readonly IProjectService _projectService;
+        private readonly IMarketDataService _marketDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -57,8 +57,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             : base(mainViewModel)
         {
             _tradeService = IoC.Kernel.Get<ITradeService>();
-            _projectService = IoC.Kernel.Get<IProjectAppService>();
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _projectService = IoC.Kernel.Get<IProjectService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
@@ -86,7 +86,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             if (item == HamburgerMenuItems.MetaTraderTrim)
             {
-                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId));
+                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
             }
         });
         public ICommand StopCommand => new DelegateCommand(() =>
@@ -122,7 +122,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     _crossingSymbols.Clear();
                     _currentCandles.Clear();
 
-                    var symbol = _marketDataService.GetSymbol(ProjectConfiguration.SymbolId);
+                    var symbol = _marketDataService.GetSymbol(ProcessArgs.Project.HistoricalData.SymbolId);
                     _candles.Add(symbol.Name, new());
                     _mainSymbol = symbol.Name;
 

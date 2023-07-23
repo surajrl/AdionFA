@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace AdionFA.TransferObject.MarketData
 {
-    public class HistoricalDataDTO : TimeSensitiveBaseDTO
+    public class HistoricalDataDTO : EntityBaseDTO
     {
         public int HistoricalDataId { get; set; }
+
+        public string Description { get; set; }
 
         public int MarketId { get; set; }
         public MarketDTO Market { get; set; }

@@ -3,7 +3,7 @@ using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Modules.Weka.Model;
 using AdionFA.Infrastructure.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
-using AdionFA.TransferObject.Project;
+using AdionFA.TransferObject.Base;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -28,14 +28,16 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Contracts
         bool BuildBacktestOfNode(
             NodeModel backtestingNode,
             IEnumerable<Candle> candles,
-            ProjectConfigurationDTO projectConfiguration,
+            ConfigurationBaseDTO configuration,
+            int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
 
         bool BuildBacktestOfAssemblyNode(
             AssemblyNodeModel backtestingNode,
             IEnumerable<Candle> candles,
-            ProjectConfigurationDTO projectConfiguration,
+            ConfigurationBaseDTO configuration,
+            int timeframeId,
             double meanSuccessRatePercentIS,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
@@ -45,7 +47,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Contracts
             IEnumerable<Candle> mainCandles,
             IEnumerable<BacktestOperationModel> backtestOperationsIS,
             IEnumerable<BacktestOperationModel> backtestOperationsOS,
-            ProjectConfigurationDTO projectConfiguration,
+            ConfigurationBaseDTO configuration,
+            int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
     }

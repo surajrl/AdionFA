@@ -19,7 +19,7 @@ namespace AdionFA.UI.Infrastructure.Converters
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            return targetTypes.Select(t => Binding.DoNothing).ToArray();
+            return targetTypes.Select(type => Binding.DoNothing).ToArray();
         }
     }
 }

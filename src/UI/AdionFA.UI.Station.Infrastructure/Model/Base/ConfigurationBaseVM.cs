@@ -1,9 +1,8 @@
-﻿using AdionFA.UI.Infrastructure.Model.MarketData;
-using System;
+﻿using System;
 
 namespace AdionFA.UI.Infrastructure.Model.Base
 {
-    public class ConfigurationBaseVM : TimeSensitiveBaseVM
+    public class ConfigurationBaseVM : EntityBaseVM
     {
         // Period
 
@@ -35,41 +34,13 @@ namespace AdionFA.UI.Infrastructure.Model.Base
             set => SetProperty(ref _toDateOS, value);
         }
 
+        // Schedule
+
         private bool _withoutSchedule;
         public bool WithoutSchedule
         {
             get => _withoutSchedule;
             set => SetProperty(ref _withoutSchedule, value);
-        }
-
-        // Historical Data Information
-
-        private int _symbolId;
-        public int SymbolId
-        {
-            get => _symbolId;
-            set => SetProperty(ref _symbolId, value);
-        }
-
-        private SymbolVM _symbol;
-        public SymbolVM Symbol
-        {
-            get => _symbol;
-            set => SetProperty(ref _symbol, value);
-        }
-
-        private int _timeframeId;
-        public int TimeframeId
-        {
-            get => _timeframeId;
-            set => SetProperty(ref _timeframeId, value);
-        }
-
-        private TimeframeVM _timeframe;
-        public TimeframeVM Timeframe
-        {
-            get => _timeframe;
-            set => SetProperty(ref _timeframe, value);
         }
 
         // Extractor
@@ -158,11 +129,11 @@ namespace AdionFA.UI.Infrastructure.Model.Base
 
         // Strategy Builder
 
-        private int _sbMinTransactionsIS;
-        public int SBMinTransactionsIS
+        private int _sbMinTotalTradesIS;
+        public int SBMinTotalTradesIS
         {
-            get => _sbMinTransactionsIS;
-            set => SetProperty(ref _sbMinTransactionsIS, value);
+            get => _sbMinTotalTradesIS;
+            set => SetProperty(ref _sbMinTotalTradesIS, value);
         }
 
         private decimal _sbMinSuccessRatePercentIS;
@@ -172,11 +143,11 @@ namespace AdionFA.UI.Infrastructure.Model.Base
             set => SetProperty(ref _sbMinSuccessRatePercentIS, value);
         }
 
-        private int _sbMinTransactionsOS;
-        public int SBMinTransactionsOS
+        private int _sbMinTotalTradesOS;
+        public int SBMinTotalTradesOS
         {
-            get => _sbMinTransactionsOS;
-            set => SetProperty(ref _sbMinTransactionsOS, value);
+            get => _sbMinTotalTradesOS;
+            set => SetProperty(ref _sbMinTotalTradesOS, value);
         }
 
         private decimal _sbMinSuccessRatePercentOS;
@@ -228,21 +199,21 @@ namespace AdionFA.UI.Infrastructure.Model.Base
             set => SetProperty(ref _sbWinningStrategyDOWNTarget, value);
         }
 
-        private int _sbTransactionsTarget;
-        public int SBTransactionsTarget
+        private int _sbTotalTradesTarget;
+        public int SBTotalTradesTarget
         {
-            get => _sbTransactionsTarget;
-            set => SetProperty(ref _sbTransactionsTarget, value);
+            get => _sbTotalTradesTarget;
+            set => SetProperty(ref _sbTotalTradesTarget, value);
         }
 
 
         // Assembly Builder
 
-        private int _abTransactionsTarget;
-        public int ABTransactionsTarget
+        private int _abMinTotalTradesIS;
+        public int ABMinTotalTradesIS
         {
-            get => _abTransactionsTarget;
-            set => SetProperty(ref _abTransactionsTarget, value);
+            get => _abMinTotalTradesIS;
+            set => SetProperty(ref _abMinTotalTradesIS, value);
         }
 
         private decimal _abMinImprovePercent;

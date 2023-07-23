@@ -25,11 +25,11 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
     {
         private readonly IMapper _mapper;
 
-        private readonly IMarketDataAppService _marketDataService;
+        private readonly IMarketDataService _marketDataService;
 
         public HistoricalDataViewModel(IApplicationCommands applicationCommands)
         {
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
             applicationCommands.LoadHistoricalDataCommand.RegisterCommand(HistoricalDataFilterCommand);
@@ -86,7 +86,6 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
         });
 
-
         public ICommand HistoricalDataFilterCommand => new DelegateCommand(LoadHistoricalData);
 
         private void LoadHistoricalData()
@@ -100,7 +99,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     return;
                 }
 
-                var historicalDataDTO = _marketDataService.GetHistoricalData(SelectedMarketId, SelectedSymbolId, SelectedTimeframeId);
+                var historicalDataDTO = _marketDataService.GetHistoricalData(SelectedMarketId, SelectedSymbolId, SelectedTimeframeId, true);
 
                 HistoricalDataCandles.Clear();
                 if (historicalDataDTO != null)
@@ -119,7 +118,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
         }
 
-        // Bindable Model
+        // View Bindings
 
         private bool _isTransactionActive;
         public bool IsTransactionActive

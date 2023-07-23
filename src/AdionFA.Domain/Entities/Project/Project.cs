@@ -1,5 +1,4 @@
 ﻿using AdionFA.Domain.Entities.Base;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,8 +12,12 @@ namespace AdionFA.Domain.Entities
 
         public string ProjectName { get; set; }
 
-        // Navigation
+        public string WorkspacePath { get; set; }
 
-        public ICollection<ProjectConfiguration> ProjectConfigurations { get; set; }
+        public int HistoricalDataId { get; set; }
+        [ForeignKey(nameof(HistoricalDataId))]
+        public HistoricalData HistoricalData { get; set; }
+
+        public ProjectConfiguration ProjectConfiguration { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AdionFA.Application.Contracts;
-using AdionFA.Application.Services.Projects;
 using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
@@ -9,7 +8,6 @@ using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Contracts.Services;
 using AdionFA.UI.Infrastructure.Services;
 using AdionFA.UI.ProjectStation.Commands;
-using AdionFA.UI.ProjectStation.Services;
 using ControlzEx.Theming;
 using FluentValidation;
 using Ninject;
@@ -50,10 +48,6 @@ namespace AdionFA.UI.ProjectStation
             containerRegistry.RegisterInstance<IProcessService>(Container.Resolve<ProcessService>());
             containerRegistry.RegisterInstance<IFlyoutService>(Container.Resolve<FlyoutService>());
 
-            // Application Services
-
-            containerRegistry.RegisterSingleton<IAppProjectService, AppProjectService>();
-
             // FluentValidation
 
             ValidatorOptions.Global.LanguageManager = new FluentValidatorLanguageManager();
@@ -82,13 +76,14 @@ namespace AdionFA.UI.ProjectStation
             //var arg = e.Args[0];
             var arg = $"1_AdionFA.UI.ProjectStation_test1";
 
-            ProcessArgs.Args = arg;
+            ProcessArgs.Args = arg.Split("_AdionFA.UI.ProjectStation_");
             if (ProcessArgs.ProjectId > 0)
             {
                 base.OnStartup(e);
 
-                var settingService = IoC.Kernel.Get<IAppSettingAppService>();
-                ProjectDirectoryManager.DefaultWorkspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace)?.Value;
+                var settingService = IoC.Kernel.Get<ISettingService>();
+                var defaultWorkspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace);
+                ProjectDirectoryManager.DefaultWorkspace = defaultWorkspace.Value;
 
                 try
                 {
@@ -111,7 +106,7 @@ namespace AdionFA.UI.ProjectStation
                     Thread.CurrentThread.CurrentCulture = culture;
                     Thread.CurrentThread.CurrentUICulture = culture;
 
-                    ContainerLocator.Current.Resolve<IProcessService>().StartProcessWekaJava();
+                    ContainerLocator.Current.Resolve<IProcessService>().StartProcessWeka();
                 }
                 catch (Exception ex)
                 {
@@ -129,20 +124,9 @@ namespace AdionFA.UI.ProjectStation
 
     public static class ProcessArgs
     {
-        private static string[] args;
-
-        public static string Args
-        {
-            set => args = value.Split("_AdionFA.UI.ProjectStation_");
-        }
-
-        public static int ProjectId => args.Length > 0 ? int.Parse(args[0], CultureInfo.InvariantCulture) : 0;
-        public static string ProjectName => args[1] ?? string.Empty;
-        public static ProjectDTO Project => IoC.Kernel.Get<ProjectAppService>().GetProject(ProjectId, true);
-
-        public static string DefaultWorkspace => Project?
-            .ProjectConfigurations?
-            .FirstOrDefault(x => x.EndDate == null)?
-            .WorkspacePath ?? string.Empty;
+        public static string[] Args { get; set; }
+        public static ProjectDTO Project => IoC.Kernel.Get<IProjectService>().GetProject(ProjectId, true);
+        public static int ProjectId => Args.Length > 0 ? int.Parse(Args[0], CultureInfo.InvariantCulture) : 0;
+        public static string ProjectName => Args[1] ?? string.Empty;
     }
 }

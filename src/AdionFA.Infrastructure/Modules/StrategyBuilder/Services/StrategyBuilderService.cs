@@ -11,7 +11,7 @@ using AdionFA.Infrastructure.Modules.Weka.Model;
 using AdionFA.Infrastructure.StrategyBuilder.Contracts;
 using AdionFA.Infrastructure.StrategyBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
-using AdionFA.TransferObject.Project;
+using AdionFA.TransferObject.Base;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -27,13 +27,13 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
 
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IExtractorService _extractorService;
-        private readonly IMarketDataAppService _marketDataService;
+        private readonly IMarketDataService _marketDataService;
 
         public StrategyBuilderService()
         {
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
-            _marketDataService = IoC.Kernel.Get<IMarketDataAppService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
         }
 
         // Correlation
@@ -204,7 +204,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
         public bool BuildBacktestOfNode(
             NodeModel node,
             IEnumerable<Candle> candles,
-            ProjectConfigurationDTO projectConfiguration,
+            ConfigurationBaseDTO configuration,
+            int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
@@ -214,9 +215,9 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
 
                 node.BacktestOS = Backtest(
                     EntityTypeEnum.StrategyBuilder,
-                    projectConfiguration.FromDateOS.Value,
-                    projectConfiguration.ToDateOS.Value,
-                    projectConfiguration.TimeframeId,
+                    configuration.FromDateOS.Value,
+                    configuration.ToDateOS.Value,
+                    timeframeId,
                     node.NodeData,
                     null,
                     candles,
@@ -226,8 +227,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
                 // Backtest OS Pass Conditions
 
                 node.WinningStrategy =
-                    node.BacktestOS.WinningTrades >= projectConfiguration.SBMinTransactionsOS
-                    && node.BacktestOS.SuccessRatePercent >= (double)projectConfiguration.SBMinSuccessRatePercentOS;
+                    node.BacktestOS.WinningTrades >= configuration.SBMinTotalTradesIS
+                    && node.BacktestOS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentOS;
 
                 if (!node.WinningStrategy)
                 {
@@ -238,9 +239,9 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
 
                 node.BacktestIS = Backtest(
                     EntityTypeEnum.StrategyBuilder,
-                    projectConfiguration.FromDateIS.Value,
-                    projectConfiguration.ToDateIS.Value,
-                    projectConfiguration.TimeframeId,
+                    configuration.FromDateIS.Value,
+                    configuration.ToDateIS.Value,
+                    timeframeId,
                     node.NodeData,
                     null,
                     candles,
@@ -250,8 +251,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
                 // Backtest IS Pass Conditions
 
                 node.WinningStrategy =
-                     node.BacktestIS.WinningTrades >= projectConfiguration.SBMinTransactionsIS
-                     && node.BacktestIS.SuccessRatePercent >= (double)projectConfiguration.SBMinSuccessRatePercentIS;
+                     node.BacktestIS.WinningTrades >= configuration.SBMinTotalTradesIS
+                     && node.BacktestIS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentIS;
 
                 if (!node.WinningStrategy)
                 {
@@ -261,8 +262,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
                 // Winning Strategy Conditions
 
                 node.WinningStrategy =
-                    node.SuccessRateVariation <= (double)projectConfiguration.SBMaxSuccessRateVariation
-                    && (!projectConfiguration.IsProgressiveness || node.ProgressivenessVariation <= (double)projectConfiguration.MaxProgressivenessVariation);
+                    node.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
+                    && (!configuration.IsProgressiveness || node.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
 
                 return node.WinningStrategy;
             }
@@ -276,7 +277,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
         public bool BuildBacktestOfAssemblyNode(
             AssemblyNodeModel assemblyNode,
             IEnumerable<Candle> candles,
-            ProjectConfigurationDTO projectConfiguration,
+            ConfigurationBaseDTO configuration,
+            int timeframeId,
             double meanSuccessRatePercentIS,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
@@ -285,9 +287,9 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
 
             assemblyNode.BacktestIS = Backtest(
                 EntityTypeEnum.AssemblyBuilder,
-                projectConfiguration.FromDateIS.Value,
-                projectConfiguration.ToDateIS.Value,
-                projectConfiguration.TimeframeId,
+                configuration.FromDateIS.Value,
+                configuration.ToDateIS.Value,
+                timeframeId,
                 assemblyNode.ParentNodeData,
                 assemblyNode.ChildNodesData,
                 candles,
@@ -297,8 +299,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
             // IS Winning Conditions
 
             assemblyNode.WinningStrategy =
-                (assemblyNode.BacktestIS.SuccessRatePercent - meanSuccessRatePercentIS) >= (double)projectConfiguration.ABMinImprovePercent
-                && assemblyNode.BacktestIS.TotalTrades >= projectConfiguration.ABTransactionsTarget;
+                (assemblyNode.BacktestIS.SuccessRatePercent - meanSuccessRatePercentIS) >= (double)configuration.ABMinImprovePercent
+                && assemblyNode.BacktestIS.TotalTrades >= configuration.ABMinTotalTradesIS;
 
             if (!assemblyNode.WinningStrategy)
             {
@@ -309,9 +311,9 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
 
             assemblyNode.BacktestOS = Backtest(
                 EntityTypeEnum.AssemblyBuilder,
-                projectConfiguration.FromDateOS.Value,
-                projectConfiguration.ToDateOS.Value,
-                projectConfiguration.TimeframeId,
+                configuration.FromDateOS.Value,
+                configuration.ToDateOS.Value,
+                timeframeId,
                 assemblyNode.ParentNodeData,
                 assemblyNode.ChildNodesData,
                 candles,
@@ -321,8 +323,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
             // Winning Conditions
 
             assemblyNode.WinningStrategy =
-                assemblyNode.SuccessRateVariation <= (double)projectConfiguration.SBMaxSuccessRateVariation
-                && (!projectConfiguration.IsProgressiveness || assemblyNode.ProgressivenessVariation <= (double)projectConfiguration.MaxProgressivenessVariation);
+                assemblyNode.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
+                && (!configuration.IsProgressiveness || assemblyNode.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
 
             return assemblyNode.WinningStrategy;
         }
@@ -332,7 +334,8 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
             IEnumerable<Candle> mainCandles,
             IEnumerable<BacktestOperationModel> backtestOperationsIS,
             IEnumerable<BacktestOperationModel> backtestOperationsOS,
-            ProjectConfigurationDTO projectConfiguration,
+            ConfigurationBaseDTO configuration,
+            int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
@@ -344,9 +347,9 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
                     strategyNode,
                     mainCandles,
                     backtestOperationsOS,
-                    projectConfiguration.FromDateOS.Value,
-                    projectConfiguration.ToDateOS.Value,
-                    projectConfiguration.TimeframeId,
+                    configuration.FromDateOS.Value,
+                    configuration.ToDateOS.Value,
+                    timeframeId,
                     manualResetEvent,
                     cancellationToken);
 
@@ -361,9 +364,9 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
                     strategyNode,
                     mainCandles,
                     backtestOperationsIS,
-                    projectConfiguration.FromDateIS.Value,
-                    projectConfiguration.ToDateIS.Value,
-                    projectConfiguration.TimeframeId,
+                    configuration.FromDateIS.Value,
+                    configuration.ToDateIS.Value,
+                    timeframeId,
                     manualResetEvent,
                     cancellationToken);
 
@@ -411,23 +414,22 @@ namespace AdionFA.Infrastructure.StrategyBuilder.Services
             foreach (var crossingNode in strategyNode.CrossingNodesData)
             {
                 // TODO: REMOVE THIS SO IT DOES NOT CALL THE MARKET DATA SERVICE
-                var candles = _marketDataService
-                            .GetHistoricalData(crossingNode.Item2, true)
-                            .HistoricalDataCandles.Select(candle => new Candle
-                            {
-                                Date = candle.StartDate,
-                                Time = candle.StartTime,
+                var historicalDataDTO = _marketDataService.GetHistoricalData(crossingNode.Item2, true);
 
-                                Open = candle.Open,
-                                High = candle.High,
-                                Low = candle.Low,
-                                Close = candle.Close,
+                var candles = historicalDataDTO.HistoricalDataCandles.Select(candle => new Candle
+                {
+                    Date = candle.StartDate,
+                    Time = candle.StartTime,
 
-                                Volume = candle.Volume,
-                                Spread = candle.Spread
-                            })
-                            .OrderBy(d => d.Date)
-                            .ThenBy(d => d.Time);
+                    Open = candle.Open,
+                    High = candle.High,
+                    Low = candle.Low,
+                    Close = candle.Close,
+
+                    Volume = candle.Volume,
+                    Spread = candle.Spread
+                }).OrderBy(d => d.Date)
+                .ThenBy(d => d.Time);
 
                 var range = candles.Where(candle =>
                 {

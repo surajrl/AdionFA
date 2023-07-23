@@ -79,6 +79,15 @@ namespace AdionFA.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Project.
+        /// </summary>
+        public static string CreateProject {
+            get {
+                return ResourceManager.GetString("CreateProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crossing Builder.
         /// </summary>
         public static string CrossingBuilder {
@@ -111,6 +120,15 @@ namespace AdionFA.Domain.Properties {
         public static string Filepath {
             get {
                 return ResourceManager.GetString("Filepath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global Configuration.
+        /// </summary>
+        public static string GlobalConfiguration {
+            get {
+                return ResourceManager.GetString("GlobalConfiguration", resourceCulture);
             }
         }
         
@@ -174,6 +192,15 @@ namespace AdionFA.Domain.Properties {
         public static string NumberGreaterThan {
             get {
                 return ResourceManager.GetString("NumberGreaterThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must be greater than or equal to.
+        /// </summary>
+        public static string NumberGreaterThanOrEqualTo {
+            get {
+                return ResourceManager.GetString("NumberGreaterThanOrEqualTo", resourceCulture);
             }
         }
         

@@ -3,9 +3,16 @@ using System.Collections.Generic;
 
 namespace AdionFA.UI.Infrastructure.Model.MarketData
 {
-    public class HistoricalDataVM : TimeSensitiveBaseVM
+    public class HistoricalDataVM : EntityBaseVM
     {
         public int HistoricalDataId { get; set; }
+
+        private string _description;
+        public string Description
+        {
+            get => _description;
+            set => SetProperty(ref _description, value);
+        }
 
         public MarketVM Market { get; set; }
         private int _marketId;

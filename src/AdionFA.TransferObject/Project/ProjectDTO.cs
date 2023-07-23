@@ -1,5 +1,5 @@
 ﻿using AdionFA.TransferObject.Base;
-using System.Collections.Generic;
+using AdionFA.TransferObject.MarketData;
 
 namespace AdionFA.TransferObject.Project
 {
@@ -9,36 +9,11 @@ namespace AdionFA.TransferObject.Project
 
         public string ProjectName { get; set; }
 
+        public string WorkspacePath { get; set; }
 
-        // Navigation
+        public int HistoricalDataId { get; set; }
+        public HistoricalDataDTO HistoricalData { get; set; }
 
-        public IList<ProjectConfigurationDTO> ProjectConfigurations { get; set; }
-
-        // Validators
-
-        public static ResponseDTO SymbolAndTimeframeMustBeSameValidation(
-            int configSymbolId, int configTimeframeId,
-            int hdSymbolId, int hdTimeframeId)
-        {
-            var response = new ResponseDTO { IsSuccess = false };
-
-            if (configSymbolId > 0 && configTimeframeId > 0 && hdSymbolId > 0 && hdTimeframeId > 0)
-            {
-                if (configSymbolId != hdSymbolId || configTimeframeId != hdTimeframeId)
-                {
-                    response.IsSuccess = false;
-                }
-                else
-                {
-                    response.IsSuccess = true;
-                }
-            }
-            else
-            {
-                response.IsSuccess = false;
-            }
-
-            return response;
-        }
+        public ProjectConfigurationDTO ProjectConfiguration { get; set; }
     }
 }

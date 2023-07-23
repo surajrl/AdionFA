@@ -5,27 +5,27 @@ namespace AdionFA.UI.Module.Dashboard.Model
 {
     public class ApplicationTheme : BindableBase
     {
-        private string name;
+        private string _name;
         public string Name
         {
-            get { return name; }
-            set { this.SetProperty<string>(ref this.name, value); }
+            get => _name;
+            set => SetProperty(ref _name, value);
         }
 
 
-        private Brush colorBrush;
+        private Brush _colorBrush;
         public Brush ColorBrush
         {
-            get { return colorBrush; }
-            set { this.SetProperty<Brush>(ref this.colorBrush, value); }
+            get => _colorBrush;
+            set => SetProperty(ref _colorBrush, value);
         }
 
 
-        private Brush borderColorBrush;
+        private Brush _borderColorBrush;
         public Brush BorderColorBrush
         {
-            get { return borderColorBrush; }
-            set { this.SetProperty<Brush>(ref this.borderColorBrush, value); }
+            get => _borderColorBrush;
+            set => SetProperty(ref _borderColorBrush, value);
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using AdionFA.TransferObject.MarketData;
-using System;
+﻿using System;
 
 namespace AdionFA.TransferObject.Base
 {
-    public class ConfigurationBaseDTO : TimeSensitiveBaseDTO
+    public class ConfigurationBaseDTO : EntityBaseDTO
     {
         // Period
 
@@ -13,15 +12,9 @@ namespace AdionFA.TransferObject.Base
         public DateTime? FromDateOS { get; set; }
         public DateTime? ToDateOS { get; set; }
 
+        // Schedule
+
         public bool WithoutSchedule { get; set; }
-
-        // Historical Data Information
-
-        public int SymbolId { get; set; }
-        public SymbolDTO Symbol { get; set; }
-
-        public int TimeframeId { get; set; }
-        public TimeframeDTO Timeframe { get; set; }
 
         // Extractor
 
@@ -45,10 +38,10 @@ namespace AdionFA.TransferObject.Base
 
         // Strategy Builder
 
-        public int SBMinTransactionsIS { get; set; } // TODO: Change property name to SBMinWinningTradesIS for clarity
+        public int SBMinTotalTradesIS { get; set; }
         public decimal SBMinSuccessRatePercentIS { get; set; }
 
-        public int SBMinTransactionsOS { get; set; } // TODO: Change property name to SBMinWinningTradesOS for clarity
+        public int SBMinTotalTradesOS { get; set; }
         public decimal SBMinSuccessRatePercentOS { get; set; }
 
         public decimal SBMaxSuccessRateVariation { get; set; }
@@ -60,11 +53,11 @@ namespace AdionFA.TransferObject.Base
 
         public int SBWinningStrategyUPTarget { get; set; }
         public int SBWinningStrategyDOWNTarget { get; set; }
-        public int SBTransactionsTarget { get; set; }
+        public int SBTotalTradesTarget { get; set; }
 
         // Assembly Builder
 
-        public int ABTransactionsTarget { get; set; }
+        public int ABMinTotalTradesIS { get; set; }
         public decimal ABMinImprovePercent { get; set; }
         public decimal ABWekaMaxRatioTree { get; set; }
         public decimal ABWekaNTotalTree { get; set; }

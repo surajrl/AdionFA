@@ -35,7 +35,7 @@ namespace AdionFA.UI.ProjectStation.Views
 
         private void ProgressivenessToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (sender is ToggleSwitch toggleSwitch)
+            if (sender is ToggleSwitch)
             {
                 LabelRequiredProgressiveness =
                     DataContext != null && !((ProjectConfigurationViewModel)DataContext).ProjectConfiguration.IsProgressiveness
