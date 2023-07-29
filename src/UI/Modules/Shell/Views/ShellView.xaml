@@ -1,7 +1,5 @@
 ﻿<UserControl x:Class="AdionFA.UI.Module.ShellView"
              xmlns:prism="http://prismlibrary.com/"
-             xmlns:searchTextBoxControl="clr-namespace:AdionFA.UI.Controls.SearchBoxControl;assembly=AdionFA.UI.Controls.SearchBoxControl"
-             xmlns:model="clr-namespace:AdionFA.UI.Module.Model"
              xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -14,258 +12,28 @@
              d:DesignHeight="450"
              d:DesignWidth="800">
 
-    <Grid Margin="45,20">
-        <Grid.RowDefinitions>
-            <RowDefinition MaxHeight="85" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!--#region Sidebar Right-->
-
-        <!--#region Search Control-->
-        <StackPanel>
-            <Label Content="Open Recent"
-                   Grid.Column="1"
-                   FontSize="16" />
-            <searchTextBoxControl:SearchTextBoxControl Padding="7"
-                                                       Margin="0, 10"
-                                                       Name="searchTextBox"
-                                                       Text="{Binding SearchableText, Mode=TwoWay}"
-                                                       SectionsSelected="{Binding SectionsSelected, Mode=TwoWay}"
-                                                       SectionsList="{Binding HistoricalTimeGrouping}">
-                <behaviors:Interaction.Triggers>
-                    <behaviors:EventTrigger SourceName="searchTextBox"
-                                            EventName="OnSearch">
-                        <behaviors:InvokeCommandAction Command="{Binding FilterProjectHierarchyCommand}"
-                                                       CommandParameter="{Binding ElementName=searchTextBox, Path=Text}" />
-                    </behaviors:EventTrigger>
-                </behaviors:Interaction.Triggers>
-            </searchTextBoxControl:SearchTextBoxControl>
-        </StackPanel>
-        <!--#endregion-->
-
-        <!--#region Tree-->
-        <TreeView Name="projectTreeView"
-                  ItemsSource="{Binding ProjectHierarchy}"
-                  Grid.Row="1">
-
-            <TreeView.Resources>
-                <Style TargetType="{x:Type TreeView}"
-                       BasedOn="{StaticResource MahApps.Styles.TreeView}">
-                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                            Value="Hidden" />
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver"
-                                 Value="True">
-                            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                                    Value="Visible" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-
-                <Style x:Key="ExpandCollapseToggleStyle"
-                       TargetType="{x:Type ToggleButton}">
-                    <Setter Property="Focusable"
-                            Value="False" />
-                    <Setter Property="Width"
-                            Value="19" />
-                    <Setter Property="Height"
-                            Value="13" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                <Border Width="19"
-                                        Height="13"
-                                        Background="Transparent">
-                                    <Border Width="9"
-                                            Height="9"
-                                            SnapsToDevicePixels="true"
-                                            BorderBrush="#FF7898B5"
-                                            BorderThickness="1"
-                                            CornerRadius="1">
-                                        <Border.Background>
-                                            <LinearGradientBrush EndPoint="1,1"
-                                                                 StartPoint="0,0">
-                                                <GradientStop Color="White"
-                                                              Offset=".2" />
-                                                <GradientStop Color="#FFC0B7A6"
-                                                              Offset="1" />
-                                            </LinearGradientBrush>
-                                        </Border.Background>
-                                        <Path x:Name="ExpandPath"
-                                              Fill="Black"
-                                              Margin="1,1,1,1"
-                                              Data="M 0 2 L 0 3 L 2 3 L 2 5 L 3 5 L 3 3 L 5 3 L 5 2 L 3 2 L 3 0 L 2 0 L 2 2 Z" />
-                                    </Border>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsChecked"
-                                             Value="True">
-                                        <Setter Property="Data"
-                                                TargetName="ExpandPath"
-                                                Value="M 0 2 L 0 3 L 5 3 L 5 2 Z" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-
-                <Style TargetType="{x:Type TreeViewItem}"
-                       BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
-                    <Setter Property="Visibility"
-                            Value="{Binding IsVisibility}" />
-                    <Setter Property="Focusable"
-                            Value="False" />
-                    <Setter Property="IsExpanded"
-                            Value="{Binding IsExpanded}" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type TreeViewItem}">
-                                <Grid x:Name="aaa">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition MaxWidth="15" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-
-                                    <ToggleButton x:Name="Expander"
-                                                  ClickMode="Press"
-                                                  Style="{StaticResource ExpandCollapseToggleStyle}"
-                                                  IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" />
-
-                                    <Border x:Name="Bd"
-                                            Grid.ColumnSpan="3"
-                                            Margin="25,0"
-                                            SnapsToDevicePixels="true"
-                                            Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter x:Name="PART_Header"
-                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                          ContentSource="Header" />
-                                    </Border>
-                                    <ItemsPresenter x:Name="ItemsHost"
-                                                    Grid.ColumnSpan="3"
-                                                    Grid.Row="1" />
-                                </Grid>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsExpanded"
-                                             Value="false">
-                                        <Setter Property="Visibility"
-                                                TargetName="ItemsHost"
-                                                Value="Collapsed" />
-                                    </Trigger>
-                                    <Trigger Property="HasItems"
-                                             Value="false">
-                                        <Setter Property="Visibility"
-                                                TargetName="Expander"
-                                                Value="Hidden" />
-                                    </Trigger>
-                                    <MultiTrigger>
-                                        <MultiTrigger.Conditions>
-                                            <Condition Property="HasItems"
-                                                       Value="False" />
-                                            <Condition Property="IsMouseOver"
-                                                       Value="True" />
-                                        </MultiTrigger.Conditions>
-                                        <Setter Property="Background"
-                                                Value="{DynamicResource MahApps.Brushes.Accent4}" />
-                                    </MultiTrigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-
-                <DataTemplate x:Key="fff"
-                              x:Name="fff"
-                              DataType="{x:Type model:ProjectHierarchicalVM}">
-                    <Grid Margin="10,15,0,10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35" />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.ColumnSpan="2"
-                                    Orientation="Horizontal">
-                            <TextBlock x:Name="ProjectNameTextBlock"
-                                       Text="{Binding Name}"
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       VerticalAlignment="Center">
-                                <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding ProjectStartCommand}"
-                                                  MouseAction="LeftClick" />
-                                </TextBlock.InputBindings>
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver"
-                                                     Value="True">
-                                                <Setter Property="Cursor"
-                                                        Value="Hand" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2"
-                                    Margin="0,0,10,0"
-                                    Orientation="Horizontal"
-                                    HorizontalAlignment="Right">
-                            <Button x:Name="ProjectPinBtn"
-                                    VerticalAlignment="Top"
-                                    Style="{StaticResource CommandButtonStyle}">
-                                <iconPacks:PackIconMaterial x:Name="PinIcon"
-                                                            Kind="Pin"
-                                                            ToolTip="Pin On"
-                                                            Foreground="{DynamicResource MahApps.Brushes.Accent4}"
-                                                            Width="15"
-                                                            Height="15" />
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-                    <DataTemplate.Triggers>
-                        <Trigger SourceName="PinIcon"
-                                 Property="IsMouseOver"
-                                 Value="True">
-                            <Setter TargetName="PinIcon"
-                                    Property="Foreground"
-                                    Value="Black" />
-                            <Setter TargetName="PinIcon"
-                                    Property="Cursor"
-                                    Value="Hand" />
-                        </Trigger>
-                    </DataTemplate.Triggers>
-                </DataTemplate>
-            </TreeView.Resources>
-
+        <!--#region Projects-->
+        <TreeView ItemsSource="{Binding AllProjects}"
+                  Margin="10">
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}"
-                                          ItemTemplate="{StaticResource fff}">
-                    <TextBlock Text="{Binding Name}"
+                <DataTemplate>
+                    <TextBlock Text="{Binding ProjectName}"
                                FontSize="14"
                                FontWeight="SemiBold"
-                               Margin="5,0,0,0" />
-                </HierarchicalDataTemplate>
+                               VerticalAlignment="Center">
+                        <TextBlock.InputBindings>
+                            <MouseBinding Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.ProjectStartCommand}"
+                                          CommandParameter="{Binding ProjectId}"
+                                          MouseAction="LeftClick" />
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                </DataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
         <!--#endregion-->

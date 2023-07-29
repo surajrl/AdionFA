@@ -34,6 +34,29 @@
                 <Setter Property="MinWidth"
                         Value="300" />
             </Style>
+
+            <Style x:Key="ListViewItemContainerStyle"
+                   TargetType="ListBoxItem">
+                <Setter Property="Background"
+                        Value="Transparent" />
+                <Setter Property="BorderThickness"
+                        Value="0" />
+                <Setter Property="FocusVisualStyle"
+                        Value="{x:Null}" />
+                <Setter Property="Foreground"
+                        Value="Black" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected"
+                             Value="True">
+                        <Setter Property="BorderBrush"
+                                Value="Gray" />
+                        <Setter Property="BorderThickness"
+                                Value="0" />
+                        <Setter Property="Foreground"
+                                Value="Black" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </Grid.Resources>
 
         <!--#region Buttons-->
@@ -92,35 +115,17 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!--General Information-->
                 <metro:MetroHeader Header="General Information"
                                    Margin="0 10 0 10">
-                    <!--#region Description-->
-                    <StackPanel HorizontalAlignment="Left"
-                                Margin="{StaticResource ColumnMargin}"
-                                MinWidth="{StaticResource ColumnWidth}">
-                        <Label Content="Description *" />
-                        <TextBox Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                 Text="{Binding ProjectConfiguration.Description, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                    </StackPanel>
-                    <!--#endregion-->
-                </metro:MetroHeader>
-                <!--#endregion-->
-
-                <!--Symbols and Timeframe-->
-                <metro:MetroHeader Grid.Row="1"
-                                   Margin="0 10 0 10"
-                                   Header="Strategy">
                     <StackPanel Orientation="Horizontal">
                         <!--#region Historical Data-->
                         <StackPanel Margin="{StaticResource ColumnMargin}"
                                     MinWidth="{StaticResource ColumnWidth}">
                             <Label Content="Historical Data" />
-                            <TextBox Text="{Binding ProjectConfiguration.HistoricalDataName, Mode=OneWay}"
+                            <TextBox Text="{Binding ProjectConfiguration.Project.HistoricalData.Description, Mode=OneWay}"
                                      IsReadOnly="True"
                                      Focusable="False"
                                      IsEnabled="False" />
@@ -130,7 +135,7 @@
                         <StackPanel Margin="{StaticResource ColumnMargin}"
                                     MinWidth="{StaticResource ColumnWidth}">
                             <Label Content="Symbol" />
-                            <TextBox Text="{Binding ProjectConfiguration.Symbol.Name, Mode=OneWay}"
+                            <TextBox Text="{Binding ProjectConfiguration.Project.HistoricalData.Symbol.Name, Mode=OneWay}"
                                      IsReadOnly="True"
                                      Focusable="False"
                                      IsEnabled="False" />
@@ -140,7 +145,7 @@
                         <StackPanel Margin="{StaticResource ColumnMargin}"
                                     MinWidth="{StaticResource ColumnWidth}">
                             <Label Content="Timeframe" />
-                            <TextBox Text="{Binding ProjectConfiguration.Timeframe.Name, Mode=OneWay}"
+                            <TextBox Text="{Binding ProjectConfiguration.Project.HistoricalData.Timeframe.Name, Mode=OneWay}"
                                      IsReadOnly="True"
                                      Focusable="False"
                                      IsEnabled="False" />
@@ -151,7 +156,7 @@
                 <!--#endregion-->
 
                 <!--Schedule-->
-                <metro:MetroHeader Grid.Row="2"
+                <metro:MetroHeader Grid.Row="1"
                                    Margin="0 10 0 10"
                                    Header="Schedule">
                     <Grid>
@@ -165,69 +170,39 @@
                                      HorizontalAlignment="Left"
                                      MinWidth="{StaticResource ColumnWidth}">
                             <CheckBox Content="Without Schedules"
-                                      IsChecked="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                      Command="{Binding WithoutSchedulesCommand}" />
+                                      IsChecked="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}" />
                         </StackPanel>
                         <!--#endregion-->
+
                         <!--#region With Schedule-->
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal">
-                            <!--#region Europe-->
-                            <GroupBox Margin="{StaticResource ColumnMargin}"
-                                      Header="Europe">
-                                <StackPanel Margin="{StaticResource ColumnMargin}">
-                                    <Label Content="Start Time *" />
-                                    <metro:TimePicker SelectedTimeFormat="Short"
-                                                      IsEnabled="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                      IsReadOnly="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                      SelectedDateTime="{Binding ProjectConfiguration.FromTimeInSecondsEurope, Mode=TwoWay}"
-                                                      Culture="(Default)" />
-                                    <Label Content="End Time *" />
-                                    <metro:TimePicker SelectedTimeFormat="Short"
-                                                      IsEnabled="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                      IsReadOnly="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                      SelectedDateTime="{Binding ProjectConfiguration.ToTimeInSecondsEurope, Mode=TwoWay}"
-                                                      Culture="(Default)" />
-                                </StackPanel>
-                            </GroupBox>
-                            <!--#endregion-->
-                            <!--#region America-->
-                            <GroupBox Margin="{StaticResource ColumnMargin}"
-                                      Header="America">
-                                <StackPanel Margin="{StaticResource ColumnMargin}">
-                                    <Label Content="Start Time *" />
-                                    <metro:TimePicker SelectedTimeFormat="Short"
-                                                      IsEnabled="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                      IsReadOnly="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                      SelectedDateTime="{Binding ProjectConfiguration.FromTimeInSecondsAmerica, Mode=TwoWay}"
-                                                      Culture="(Default)" />
-                                    <Label Content="End Time *" />
-                                    <metro:TimePicker SelectedTimeFormat="Short"
-                                                      IsEnabled="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                      IsReadOnly="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                      SelectedDateTime="{Binding ProjectConfiguration.ToTimeInSecondsAmerica, Mode=TwoWay}"
-                                                      Culture="(Default)" />
-                                </StackPanel>
-                            </GroupBox>
-                            <!--#endregion-->
-                            <!--#region Asia-->
-                            <GroupBox Margin="{StaticResource ColumnMargin}"
-                                      Header="Asia">
-                                <StackPanel Margin="{StaticResource ColumnMargin}">
-                                    <Label Content="Start Time *" />
-                                    <metro:TimePicker SelectedTimeFormat="Short"
-                                                      IsEnabled="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                      IsReadOnly="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                      SelectedDateTime="{Binding ProjectConfiguration.FromTimeInSecondsAsia, Mode=TwoWay}"
-                                                      Culture="(Default)" />
-                                    <Label Content="End Time *" />
-                                    <metro:TimePicker SelectedTimeFormat="Short"
-                                                      IsEnabled="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"
-                                                      IsReadOnly="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay}"
-                                                      SelectedDateTime="{Binding ProjectConfiguration.ToTimeInSecondsAsia, Mode=TwoWay}"
-                                                      Culture="(Default)" />
-                                </StackPanel>
-                            </GroupBox>
+                            <ListView ItemsSource="{Binding ProjectConfiguration.ProjectScheduleConfigurations}"
+                                      ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                      IsEnabled="{Binding ProjectConfiguration.WithoutSchedule, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <GroupBox Margin="{StaticResource ColumnMargin}"
+                                                  Header="{Binding MarketRegion.Name}">
+                                            <StackPanel Margin="{StaticResource ColumnMargin}">
+                                                <Label Content="Start Time *" />
+                                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                                  SelectedDateTime="{Binding FromTimeInSeconds, Mode=TwoWay, Converter={StaticResource TimeInSecondsToDateTimeConverter}}"
+                                                                  Culture="(Default)" />
+                                                <Label Content="End Time *" />
+                                                <metro:TimePicker SelectedTimeFormat="Short"
+                                                                  SelectedDateTime="{Binding ToTimeInSeconds, Mode=TwoWay, Converter={StaticResource TimeInSecondsToDateTimeConverter}}"
+                                                                  Culture="(Default)" />
+                                            </StackPanel>
+                                        </GroupBox>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                             <!--#endregion-->
                         </StackPanel>
                     </Grid>
@@ -235,7 +210,7 @@
                 <!--#endregion-->
 
                 <!--#region Extractor-->
-                <metro:MetroHeader Grid.Row="3"
+                <metro:MetroHeader Grid.Row="2"
                                    Header="Extractor"
                                    Margin="0 10 0 10">
                     <Grid>
@@ -307,7 +282,7 @@
                 <!--#endregion-->
 
                 <!--#region MetaTrader-->
-                <metro:MetroHeader Grid.Row="4"
+                <metro:MetroHeader Grid.Row="3"
                                    Header="MetaTrader"
                                    Margin="0 10 0 10">
                     <!--#region Expert Advisor Host-->
@@ -340,9 +315,9 @@
                     <!--#endregion-->
                 </metro:MetroHeader>
                 <!--#endregion-->
-                
+
                 <!--#region Weka-->
-                <metro:MetroHeader Grid.Row="5"
+                <metro:MetroHeader Grid.Row="4"
                                    Header="Weka"
                                    Margin="0 10 0 10">
                     <Grid>
@@ -432,7 +407,7 @@
                 <!--#endregion-->
 
                 <!--#region Strategy Builder-->
-                <metro:MetroHeader Grid.Row="6"
+                <metro:MetroHeader Grid.Row="5"
                                    Margin="0 10 0 10"
                                    Header="Strategy Builder">
                     <Grid>
@@ -468,11 +443,11 @@
                             <!--#region Transactions Target-->
                             <StackPanel Margin="{StaticResource ColumnMargin}"
                                         MinWidth="{StaticResource ColumnWidth}">
-                                <Label Content="Transactions Target *" />
+                                <Label Content="Total Trades Target *" />
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding ProjectConfiguration.SBTransactionsTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding ProjectConfiguration.SBTotalTradesTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
                         </StackPanel>
@@ -584,7 +559,7 @@
                 <!--#endregion-->
 
                 <!--#region Assembly Builder-->
-                <metro:MetroHeader Grid.Row="7"
+                <metro:MetroHeader Grid.Row="6"
                                    Margin="0, 10, 0, 10"
                                    Header="Assembly Builder">
                     <Grid>

@@ -1,0 +1,595 @@
+﻿<UserControl x:Class="AdionFA.UI.ProjectStation.Views.NodeBuilderView"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             dialog:DialogParticipation.Register="{Binding}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+
+        <Style TargetType="Button"
+               x:Key="DisableBorderRarioBtn">
+            <Setter Property="Padding"
+                    Value="5,0,5,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="0,2,2,0"
+                                BorderBrush="{StaticResource MahApps.Brushes.Button.Border}"
+                                BorderThickness="0,1,1,1">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush EndPoint="0.5,1"
+                                                             StartPoint="0.5,0">
+                                            <GradientStop Color="#FF5BB75B"
+                                                          Offset="0" />
+                                            <GradientStop Color="#FF398239"
+                                                          Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Cursor"
+                                        Value="Hand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="Body_Content_DataGrid_Centering"
+               TargetType="{x:Type DataGridCell}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <!--#region Stop Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80"
+                        Height="40"
+                        Command="{Binding Stop}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="PauseCircleSolid"
+                                               Width="14" />
+                        <Label Content="Stop"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <!--#endregion-->
+            <!--#region Cancel Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80"
+                        Height="40"
+                        Command="{Binding Cancel}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="StopCircleSolid"
+                                               Width="14" />
+                        <Label Content="Cancel"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <!--#endregion-->
+            <!--#region Continue Button-->
+            <Grid Margin="0 20 10 0">
+                <Button Width="80"
+                        Height="40"
+                        Command="{Binding Continue}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="PlayCircleSolid"
+                                               Width="14" />
+                        <Label Content="Continue"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <!--#endregion-->
+            <!--#region Process Button-->
+            <Grid Margin="0 20 0 0">
+                <Button Width="80"
+                        Height="40"
+                        IsEnabled="{Binding CanExecute}"
+                        Command="{Binding Process}">
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <iconPacks:FontAwesome Kind="PlaySolid"
+                                               Width="14" />
+                        <Label Content="Process"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+                <metro:ProgressRing IsActive="True"
+                                    Width="25"
+                                    Height="25"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+            <!--#endregion-->
+        </StackPanel>
+
+        <!--#region Configuration-->
+        <Expander Grid.Row="1"
+                  Margin="0 10 0 10"
+                  Style="{DynamicResource ControlExpanderStyle}"
+                  Header="Configuration"
+                  IsExpanded="False">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <!--#region Total Instance Weka-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Instances" />
+                        <TextBox Text="{Binding ProjectConfiguration.TotalInstanceWeka}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region N Total Tree-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="N Total" />
+                        <TextBox Text="{Binding ProjectConfiguration.NTotalTree}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Depth Weka-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Depth" />
+                        <TextBox Text="{Binding ProjectConfiguration.DepthWeka}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Max Ratio Tree-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Ratio" />
+                        <TextBox Text="{Binding ProjectConfiguration.MaxRatioTree}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal">
+                    <!--#region Minimal Seed-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimal Seed" />
+                        <TextBox Text="{Binding ProjectConfiguration.MinimalSeed}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Maximum Seed-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Seed" />
+                        <TextBox Text="{Binding ProjectConfiguration.MaximumSeed}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Total Decimal Weka-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Decimals" />
+                        <TextBox Text="{Binding ProjectConfiguration.TotalDecimalWeka}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
+                    <!--#region Winning Strategy Total UP-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Winning Strategy UP Target" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyUPTarget}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Winning Strategy Total DOWN-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Winning Strategy DOWN Target" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBWinningStrategyDOWNTarget}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Transaction Target-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Trades Target" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBTotalTradesTarget}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <StackPanel Grid.Row="3"
+                            Orientation="Horizontal">
+                    <!--#region Variation Transaction-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Success Rate Variation" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMaxSuccessRateVariation}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Is Progressiveness-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Activate Progressiveness" />
+                        <metro:ToggleSwitch Margin="0 -3"
+                                            IsEnabled="False"
+                                            IsOn="{Binding ProjectConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <!--#region Progressiveness-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Progressiveness Variation" />
+                        <TextBox Text="{Binding ProjectConfiguration.MaxProgressivenessVariation}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Maximum Correlation Percent-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Correlation %" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <StackPanel Grid.Row="4"
+                            Orientation="Horizontal">
+                    <!--#region Minimum Total Trades IS-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Total Trades (IS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinTotalTradesIS}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Minimum Total Trades OS-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Total Trades (OS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinTotalTradesOS}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <StackPanel Grid.Row="5"
+                            Orientation="Horizontal">
+                    <!--#region Minimum Success Rate Percent IS-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate % (IS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentIS}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region Minimum Success Rate Percent IS-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate % (OS)" />
+                        <TextBox Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentOS}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+            </Grid>
+        </Expander>
+        <!--#endregion-->
+
+        <!--#region Node Builder-->
+        <metro:MetroHeader Grid.Row="2"
+                           Header="Node Builder">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!--#region Saved Nodes & Correlation Nodes Buttons-->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left">
+                    <!--#region Saved Nodes-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button x:Name="savedNodesBtn"
+                                Width="120"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconFontAwesome Kind="DatabaseSolid"
+                                                               VerticalAlignment="Center"
+                                                               Width="14" />
+                                <Label Content="Saved Nodes"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="savedNodesBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSavedNodes}" />
+                                            </MultiBinding>
+                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                    </behaviors:InvokeCommandAction>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                    <!--#region Correlation Nodes Button-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button x:Name="correlationNodesBtn"
+                                Width="120"
+                                Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconFontAwesome Kind="TrophySolid"
+                                                               VerticalAlignment="Center"
+                                                               Width="14" />
+                                <Label Content="Winning Nodes"
+                                       FontSize="11" />
+                            </StackPanel>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger SourceName="correlationNodesBtn"
+                                                        EventName="Click">
+                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                        <behaviors:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                                <Binding Path="StrategyBuilder" />
+                                            </MultiBinding>
+                                        </behaviors:InvokeCommandAction.CommandParameter>
+                                    </behaviors:InvokeCommandAction>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <!--#region Maximum Parallelism Configuration-->
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="{StaticResource ColumnMargin}"
+                            Orientation="Horizontal">
+                    <Label Content="Maximum Parallelism" />
+                    <TextBox Text="{Binding MaxParallelism}"
+                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}" />
+                </StackPanel>
+                <!--#endregion-->
+            </Grid>
+        </metro:MetroHeader>
+        <!--#endregion-->
+
+        <!--#region Strategy Builder Process-->
+        <DataGrid Grid.Row="3"
+                  Margin="0, 10, 0, 0"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding StrategyBuilderProcesses}">
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                 Color="White" />
+            </DataGrid.Resources>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness"
+                            Value="0" />
+                    <Setter Property="FocusVisualStyle"
+                            Value="{x:Null}" />
+                    <Setter Property="Foreground"
+                            Value="Black" />
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="BorderThickness"
+                            Value="0" />
+                    <Setter Property="FocusVisualStyle"
+                            Value="{x:Null}" />
+                    <Setter Property="Foreground"
+                            Value="Black" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected"
+                                 Value="True">
+                            <Setter Property="BorderBrush"
+                                    Value="Gray" />
+                            <Setter Property="BorderThickness"
+                                    Value="0" />
+                            <Setter Property="Foreground"
+                                    Value="Black" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            <!--#region Extraction-->
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Extraction">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label Margin="5"
+                                   Content="{Binding ExtractionName}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!--#endregion-->
+                <!--#region Tree Outputs-->
+                <DataGridTemplateColumn Header="Tree Outputs"
+                                        Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Expander Style="{StaticResource ControlExpanderStyle}"
+                                      IsEnabled="{Binding BacktestNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}">
+                                <Expander.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Margin="5"
+                                                   Text="{Binding Message}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Margin="5"
+                                                   HorizontalAlignment="Right">
+                                            <Run Text="Completed - " />
+                                            <Run Text="{Binding CompletedBacktests}"
+                                                 FontWeight="SemiBold" />
+                                            <Run Text="/" />
+                                            <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                 FontWeight="SemiBold" />
+                                        </TextBlock>
+                                    </Grid>
+                                </Expander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button x:Name="viewNodeDetailBtn"
+                                            Margin="{StaticResource ColumnMargin}">
+                                        <Button.Content>
+                                            <iconPacks:PackIconMaterial Kind="FileTreeOutline"
+                                                                        Width="12"
+                                                                        Height="12" />
+                                        </Button.Content>
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger SourceName="viewNodeDetailBtn"
+                                                                    EventName="Click">
+                                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                                            <Binding Path="BacktestNodes" />
+                                                        </MultiBinding>
+                                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                                </behaviors:InvokeCommandAction>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+                                    <Grid Grid.Column="1"
+                                          Margin="{StaticResource ColumnMargin}">
+                                        <metro:MetroProgressBar Height="20"
+                                                                VerticalAlignment="Center"
+                                                                Background="Transparent"
+                                                                Foreground="CadetBlue"
+                                                                Minimum="0"
+                                                                Maximum="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                                Value="{Binding ProgressCounter}" />
+                                        <TextBlock Grid.Column="2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                                                    <Run Text="Completed" />
+                                                                    <Run Text=" - " />
+                                                                    <Run Text="{Binding ProgressCounter}"
+                                                                         FontWeight="SemiBold" />
+                                                                    <Run Text="/" />
+                                                                    <Run Text="{Binding BacktestNodes.Count, Mode=OneWay}"
+                                                                         FontWeight="SemiBold" />
+                                        </TextBlock>
+                                    </Grid>
+                                </Grid>
+                            </Expander>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Label Content="Strategy Builder Process is Empty"
+                   Visibility="{Binding StrategyBuilderProcesses.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
+        </StackPanel>
+        <!--#endregion-->
+    </Grid>
+</UserControl>

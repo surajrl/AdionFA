@@ -51,7 +51,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ToolTip = $"Open {HamburgerMenuItems.Extractor}"
                 },
 
-                new StrategyBuilderViewModel(this)
+                new NodeBuilderViewModel(this)
                 {
                     Icon = new PackIconMaterial()
                     {
@@ -59,9 +59,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         Width = 20,
                         Height = 20
                     },
-                    Label = HamburgerMenuItems.StrategyBuilder,
-                    Name = HamburgerMenuItems.StrategyBuilder.Replace(" ", string.Empty),
-                    ToolTip = $"Open {HamburgerMenuItems.StrategyBuilder}"
+                    Label = HamburgerMenuItems.NodeBuilder,
+                    Name = HamburgerMenuItems.NodeBuilder.Replace(" ", string.Empty),
+                    ToolTip = $"Open {HamburgerMenuItems.NodeBuilder}"
                 },
 
                 new AssemblyBuilderViewModel(this)

@@ -87,7 +87,7 @@
                                           DisplayMemberPath="Name"
                                           SelectedValuePath="Id"
                                           Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                          SelectedValue="{Binding Project.ProjectConfiguration.HistoricalDataId, Mode=TwoWay}">
+                                          SelectedValue="{Binding Project.HistoricalDataId, Mode=TwoWay}">
                                 </ComboBox>
                             </StackPanel>
                         </StackPanel>

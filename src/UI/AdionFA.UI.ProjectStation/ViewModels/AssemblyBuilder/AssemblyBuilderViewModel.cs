@@ -10,8 +10,8 @@ using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.StrategyBuilder.Model;
+using AdionFA.Infrastructure.NodeBuilder.Contracts;
+using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
 using AdionFA.Infrastructure.Weka.Services;
 using AdionFA.TransferObject.Project;
@@ -48,7 +48,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IAssemblyBuilderService _assemblyBuilderService;
-        private readonly IStrategyBuilderService _strategyBuilderService;
+        private readonly INodeBuilderService _nodeBuilderService;
         private readonly IExtractorService _extractorService;
 
         private readonly IProjectService _projectService;
@@ -68,7 +68,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _assemblyBuilderService = IoC.Kernel.Get<IAssemblyBuilderService>();
-            _strategyBuilderService = IoC.Kernel.Get<IStrategyBuilderService>();
+            _nodeBuilderService = IoC.Kernel.Get<INodeBuilderService>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
@@ -89,7 +89,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 }
             });
 
-            _eventAggregator.GetEvent<StrategyBuilderCompletedEvent>().Subscribe(strategyBuilderCompleted =>
+            _eventAggregator.GetEvent<NodeBuilderCompletedEvent>().Subscribe(strategyBuilderCompleted =>
             {
                 if (strategyBuilderCompleted)
                 {
@@ -268,7 +268,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 await Task.Run(() =>
                 {
-                    _strategyBuilderService.Correlation(
+                    _nodeBuilderService.Correlation(
                         ProcessArgs.ProjectName,
                         AssemblyBuilder,
                         ProjectConfiguration.SBMaxCorrelationPercent);
@@ -535,7 +535,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {builderProcess.ExecutingBacktests} Nodes";
                     }
 
-                    var winningNode = _strategyBuilderService.BuildBacktestOfAssemblyNode(
+                    var winningNode = _nodeBuilderService.BuildBacktestOfAssemblyNode(
                         bactestingAssemblyNode,
                         projectCandles,
                         _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),

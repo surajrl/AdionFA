@@ -50,7 +50,7 @@ namespace AdionFA.UI.ProjectStation.Model.Common
             set => SetProperty(ref _tree, value);
         }
 
-        public ObservableCollection<NodeModel> BacktestNodes { get; set; }  // Used for Strategy Builder
+        public ObservableCollection<NodeModel> BacktestNodes { get; set; }  // Used for Node Builder
         public ObservableCollection<AssemblyNodeModel> BacktestAssemblyNodes { get; set; } // Used for Assembly Builder
         public ObservableCollection<StrategyNodeModel> BacktestStrategyNodes { get; set; } // Used for Crossing Builder
         public StrategyNodeModel PreviousStrategyNode { get; set; } // Used for Crossing Builder

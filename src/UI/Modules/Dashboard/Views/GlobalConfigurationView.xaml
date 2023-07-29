@@ -293,10 +293,10 @@
                 </metro:MetroHeader>
                 <!--#endregion-->
 
-                <!--#region Strategy Builder-->
+                <!--#region Node Builder-->
                 <metro:MetroHeader Grid.Row="4"
                                    Margin="0 10 0 10"
-                                   Header="Strategy Builder">
+                                   Header="Node Builder">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -307,20 +307,20 @@
 
                         <!--#region Target-->
                         <StackPanel Orientation="Horizontal">
-                            <!--#region Winning Strategy UP Target-->
+                            <!--#region Winning Nodes UP Target-->
                             <StackPanel Margin="{StaticResource ColumnMargin}"
                                         MinWidth="{StaticResource ColumnWidth}">
-                                <Label Content="Winning Strategy UP Target *" />
+                                <Label Content="Winning Nodes UP Target *" />
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                      Value="{Binding GlobalConfiguration.SBWinningStrategyUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                             <!--#endregion-->
-                            <!--#region Winning Strategy DOWN Target-->
+                            <!--#region Winning Nodes DOWN Target-->
                             <StackPanel Margin="{StaticResource ColumnMargin}"
                                         MinWidth="{StaticResource ColumnWidth}">
-                                <Label Content="Winning Strategy DOWN Target *" />
+                                <Label Content="Winning Nodes DOWN Target *" />
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"

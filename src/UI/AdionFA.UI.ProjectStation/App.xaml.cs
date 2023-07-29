@@ -2,7 +2,6 @@
 using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Validators.FluentValidator;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Contracts.Services;
@@ -50,7 +49,7 @@ namespace AdionFA.UI.ProjectStation
 
             // FluentValidation
 
-            ValidatorOptions.Global.LanguageManager = new FluentValidatorLanguageManager();
+            ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
 
             // Global Exception
 
@@ -73,8 +72,7 @@ namespace AdionFA.UI.ProjectStation
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            //var arg = e.Args[0];
-            var arg = $"1_AdionFA.UI.ProjectStation_test1";
+            var arg = e.Args[0];
 
             ProcessArgs.Args = arg.Split("_AdionFA.UI.ProjectStation_");
             if (ProcessArgs.ProjectId > 0)

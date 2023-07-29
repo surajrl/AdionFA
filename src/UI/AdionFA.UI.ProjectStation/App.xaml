@@ -16,6 +16,7 @@
             <converter:IntToBooleanConverter x:Key="IntToBooleanConverter" />
             <converter:CommandParameterFlyoutConverter x:Key="CommandParameterFlyoutConverter" />
             <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
+            <converter:TimeInSecondsToDateTimeConverter x:Key="TimeInSecondsToDateTimeConverter" />
 
             <converter:CompositeConverter x:Key="InverseBooleanToVisibilityConverter">
                 <converter:InverseBooleanConverter />

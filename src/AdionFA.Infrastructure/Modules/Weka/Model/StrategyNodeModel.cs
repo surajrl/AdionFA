@@ -1,5 +1,5 @@
 ﻿using AdionFA.Infrastructure.Helpers;
-using AdionFA.Infrastructure.StrategyBuilder.Model;
+using AdionFA.Infrastructure.NodeBuilder.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

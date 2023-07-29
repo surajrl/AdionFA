@@ -1,64 +1,52 @@
 ﻿using AdionFA.Application.Contracts;
-using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities;
+using AdionFA.Infrastructure.Persistence;
 using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
-using System;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdionFA.Application.Services.Commons
 {
     public class GlobalConfigurationService : AppServiceBase, IGlobalConfigurationService
     {
-        private readonly IGenericRepository<GlobalConfiguration> _globalConfigurationRepository;
-
-        public GlobalConfigurationService(IGenericRepository<GlobalConfiguration> projectConfigurationRepository)
+        public GlobalConfigurationService()
             : base()
         {
-            _globalConfigurationRepository = projectConfigurationRepository;
         }
 
         public GlobalConfigurationDTO GetGlobalConfiguration()
         {
-            try
-            {
-                var globalConfiguration = _globalConfigurationRepository.FirstOrDefault(
-                    null,
-                    globalConfiguration => globalConfiguration.GlobalScheduleConfigurations);
+            using var dbContext = new AdionFADbContext();
 
-                return Mapper.Map<GlobalConfigurationDTO>(globalConfiguration);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            var globalConfiguration = dbContext.Set<GlobalConfiguration>()
+                .Where(e => !e.IsDeleted)
+                .Include(e => e.GlobalScheduleConfigurations)
+                    .ThenInclude(e => e.MarketRegion)
+                .FirstOrDefault();
+
+            return Mapper.Map<GlobalConfigurationDTO>(globalConfiguration);
         }
 
         public async Task<ResponseDTO> UpdateGlobalConfigurationAsync(GlobalConfigurationDTO globalConfigurationDTO)
         {
-            try
+            using var dbContext = new AdionFADbContext();
+
+            var response = new ResponseDTO
             {
-                var response = new ResponseDTO
-                {
-                    IsSuccess = false
-                };
+                IsSuccess = false
+            };
 
-                var globalConfiguration = Mapper.Map<GlobalConfiguration>(globalConfigurationDTO);
+            var globalConfiguration = Mapper.Map<GlobalConfiguration>(globalConfigurationDTO);
 
-                await _globalConfigurationRepository.UpdateAsync(globalConfiguration).ConfigureAwait(false);
+            dbContext.Set<GlobalConfiguration>().Update(globalConfiguration);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                response.IsSuccess = true;
+            response.IsSuccess = true;
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            return response;
         }
     }
 }

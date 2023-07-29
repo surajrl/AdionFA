@@ -2,7 +2,6 @@
 using AdionFA.Domain.Model;
 using AdionFA.Domain.Properties;
 using AdionFA.Infrastructure.IofC;
-using AdionFA.Infrastructure.Managements;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.AutoMapper;
@@ -79,9 +78,6 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 IsTransactionActive = true;
 
-                Project.HistoricalDataId = SelectedHistoricalDataId;
-                Project.WorkspacePath = ProjectDirectoryManager.DefaultWorkspace;
-
                 var responseDTO = await _projectService.CreateProjectAsync(_mapper.Map<ProjectDTO>(Project)).ConfigureAwait(false);
 
                 if (responseDTO.IsSuccess)
@@ -120,13 +116,6 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
         {
             get => _project;
             set => SetProperty(ref _project, value);
-        }
-
-        private int _selectedHistoricalDataId;
-        public int SelectedHistoricalDataId
-        {
-            get => _selectedHistoricalDataId;
-            set => SetProperty(ref _selectedHistoricalDataId, value);
         }
 
         public ObservableCollection<Metadata> HistoricalData { get; } = new ObservableCollection<Metadata>();

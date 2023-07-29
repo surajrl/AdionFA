@@ -25,12 +25,12 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Services
             var assemblyBuilder = new AssemblyBuilderModel();
 
             // Get the Child Nodes UP
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
             {
                 assemblyBuilder.ChildNodesUP.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });
             // Get the Child Nodes DOWN
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml").ToList().ForEach(file =>
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesDOWNDirectory(), "*.xml").ToList().ForEach(file =>
             {
                 assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });
@@ -54,12 +54,12 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Services
             });
 
             // Get the Child Nodes UP
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectStrategyBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesUPDirectory(), "*.xml").ToList().ForEach(file =>
             {
                 assemblyBuilder.ChildNodesUP.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });
             // Get the Child Nodes DOWN
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectStrategyBuilderNodesDOWNDirectory(), "*.xml").ToList().ForEach(file =>
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesDOWNDirectory(), "*.xml").ToList().ForEach(file =>
             {
                 assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
             });

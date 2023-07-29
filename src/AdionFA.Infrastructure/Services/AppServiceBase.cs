@@ -7,8 +7,8 @@ namespace AdionFA.Infrastructure.Services
     public class AppServiceBase
     {
         protected const string Username = "admin";
-        protected const string Id = "0";
+        protected const string Id = "1111";
 
-        protected static IMapper Mapper => IoC.Kernel.Get<IMapper>();
+        protected IMapper Mapper => IoC.Kernel.Get<IMapper>();
     }
 }

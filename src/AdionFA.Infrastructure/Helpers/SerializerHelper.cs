@@ -96,8 +96,8 @@ namespace AdionFA.Infrastructure.Helpers
             {
                 case EntityTypeEnum.StrategyBuilder:
                     directory = node.NodeData.Label.ToLower() == "up"
-                        ? projectName.ProjectStrategyBuilderNodesUPDirectory()
-                        : projectName.ProjectStrategyBuilderNodesDOWNDirectory();
+                        ? projectName.ProjectNodeBuilderNodesUPDirectory()
+                        : projectName.ProjectNodeBuilderNodesDOWNDirectory();
                     break;
 
                 case EntityTypeEnum.AssemblyBuilder:

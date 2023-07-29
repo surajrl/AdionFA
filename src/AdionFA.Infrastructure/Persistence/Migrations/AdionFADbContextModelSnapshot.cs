@@ -151,7 +151,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             ABWekaNTotalTree = 300m,
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1885),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(905),
                             DepthWeka = 6,
                             ExtractorMinVariation = 50,
                             IsDeleted = false,
@@ -229,7 +229,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             GlobalScheduleConfigurationId = 1,
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1924),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(943),
                             FromTimeInSeconds = 54000,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -241,7 +241,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             GlobalScheduleConfigurationId = 2,
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1927),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(946),
                             FromTimeInSeconds = 32400,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -253,7 +253,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             GlobalScheduleConfigurationId = 3,
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1929),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(948),
                             FromTimeInSeconds = 3600,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -420,7 +420,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Forex",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1311),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(267),
                             IsDeleted = false,
                             Name = "Forex"
                         });
@@ -473,7 +473,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "America",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1513),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(540),
                             IsDeleted = false,
                             Name = "America"
                         },
@@ -483,7 +483,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Europe",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1708),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(702),
                             IsDeleted = false,
                             Name = "Europe"
                         },
@@ -493,7 +493,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Asia",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1833),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(846),
                             IsDeleted = false,
                             Name = "Asia"
                         });
@@ -771,7 +771,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Culture",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(8688),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7084),
                             IsDeleted = false,
                             Name = "Culture",
                             Value = "eng"
@@ -782,7 +782,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Theme",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(8883),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7297),
                             IsDeleted = false,
                             Name = "Theme",
                             Value = "Light"
@@ -793,7 +793,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Color",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(9022),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7456),
                             IsDeleted = false,
                             Name = "Color",
                             Value = "Orange"
@@ -804,7 +804,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "DefaultWorkspace",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(9171),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7627),
                             IsDeleted = false,
                             Name = "DefaultWorkspace",
                             Value = ""
@@ -815,7 +815,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Host",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(9306),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7855),
                             IsDeleted = false,
                             Name = "Host",
                             Value = "192.168.50.137"
@@ -826,7 +826,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "Port",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(9446),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8029),
                             IsDeleted = false,
                             Name = "Port",
                             Value = "5555"
@@ -880,7 +880,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "EURUSD",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(9661),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8304),
                             IsDeleted = false,
                             Name = "EURUSD",
                             Value = ""
@@ -934,7 +934,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "M1",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 202, DateTimeKind.Utc).AddTicks(9980),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8605),
                             IsDeleted = false,
                             Name = "1 Minute",
                             Value = "1"
@@ -945,7 +945,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "M5",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(128),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8780),
                             IsDeleted = false,
                             Name = "5 Minutes",
                             Value = "5"
@@ -956,7 +956,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "M15",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(258),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8998),
                             IsDeleted = false,
                             Name = "15 Minutes",
                             Value = "15"
@@ -967,7 +967,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "M30",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(391),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9165),
                             IsDeleted = false,
                             Name = "30 Minutes",
                             Value = "30"
@@ -978,7 +978,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "H1",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(518),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9321),
                             IsDeleted = false,
                             Name = "1 Hour",
                             Value = "16385"
@@ -989,7 +989,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "H4",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(712),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9489),
                             IsDeleted = false,
                             Name = "4 Hours",
                             Value = "16388"
@@ -1000,7 +1000,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "D1",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(847),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9637),
                             IsDeleted = false,
                             Name = "Daily",
                             Value = "16408"
@@ -1011,7 +1011,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "W1",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(976),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9789),
                             IsDeleted = false,
                             Name = "Weekly",
                             Value = "32769"
@@ -1022,7 +1022,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             Code = "MN1",
                             CreatedById = "0",
                             CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 23, 16, 17, 25, 203, DateTimeKind.Utc).AddTicks(1116),
+                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9956),
                             IsDeleted = false,
                             Name = "Monthly",
                             Value = "49153"

@@ -15,7 +15,7 @@ namespace AdionFA.UI.Infrastructure.Model.Common
 
         public ValidationResult GetValidationResult()
         {
-            GlobalConfigurationVMValidator v = new();
+            var v = new GlobalConfigurationVMValidator();
             return v.Validate(this);
         }
     }

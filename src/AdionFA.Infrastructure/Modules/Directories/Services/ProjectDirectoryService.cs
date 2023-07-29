@@ -106,15 +106,15 @@ namespace AdionFA.Infrastructure.Directories.Services
 
                         di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectName));
 
-                        // Strategy Builder
+                        // Node Builder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription(), projectName));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorWithoutSchedule.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorWithoutSchedule.GetDescription(), projectName));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Europe.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
+                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
 
                         // Assembly Builder
 

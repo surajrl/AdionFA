@@ -24,26 +24,21 @@ namespace AdionFA.UI.Infrastructure.Services
         {
             var project = IoC.Kernel.Get<IProjectService>().GetProject(projectId ?? 0, false);
 
-            if (project != null)
+            Process.Start(new ProcessStartInfo
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "AdionFA.UI.ProjectStation.exe",
-                    Arguments = $"{projectId}_AdionFA.UI.ProjectStation_{project.ProjectName}",
-                });
-            }
+                FileName = "AdionFA.UI.ProjectStation.exe",
+                Arguments = $"{projectId}_AdionFA.UI.ProjectStation_{project.ProjectName}",
+            });
         }
 
         public void StartProcessWeka()
         {
-            var wekaProcessStartInfo = new ProcessStartInfo()
+            Process.Start(new ProcessStartInfo()
             {
                 FileName = "java.exe",
                 Arguments = "-jar " + Directory.GetCurrentDirectory() + "\\Weka\\AdionFA.WekaLibrary-0.0.1-SNAPSHOT.jar",
                 CreateNoWindow = true
-            };
-
-            Process.Start(wekaProcessStartInfo);
+            });
         }
 
         public bool AnyProcessProject()

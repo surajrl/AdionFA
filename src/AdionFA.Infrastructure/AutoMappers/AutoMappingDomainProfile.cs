@@ -22,13 +22,15 @@ namespace AdionFA.Infrastructure.AutoMappers
             CreateMap<Symbol, SymbolDTO>().ReverseMap();
             CreateMap<Timeframe, TimeframeDTO>().ReverseMap();
             CreateMap<Market, MarketDTO>().ReverseMap();
+            CreateMap<MarketRegion, MarketRegionDTO>().ReverseMap();
             CreateMap<HistoricalData, HistoricalDataDTO>().ReverseMap();
             CreateMap<HistoricalDataCandle, HistoricalDataCandleDTO>().ReverseMap();
-            CreateMap<MarketRegion, MarketRegionDTO>().ReverseMap();
 
             // Project
 
             CreateMap<Project, ProjectDTO>().ReverseMap();
+            CreateMap<ProjectConfiguration, ProjectConfigurationDTO>().ReverseMap();
+            CreateMap<ProjectScheduleConfiguration, ProjectScheduleConfigurationDTO>().ReverseMap();
         }
     }
 }

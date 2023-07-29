@@ -11,7 +11,7 @@ using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.StrategyBuilder.Contracts;
+using AdionFA.Infrastructure.NodeBuilder.Contracts;
 using AdionFA.Infrastructure.Weka.Model;
 using AdionFA.Infrastructure.Weka.Services;
 using AdionFA.TransferObject.Project;
@@ -48,7 +48,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
     {
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IExtractorService _extractorService;
-        private readonly IStrategyBuilderService _strategyBuilderService;
+        private readonly INodeBuilderService _nodeBuilderService;
         private readonly ICrossingBuilderService _crossingBuilderService;
 
         private readonly IEventAggregator _eventAggregator;
@@ -68,7 +68,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
-            _strategyBuilderService = IoC.Kernel.Get<IStrategyBuilderService>();
+            _nodeBuilderService = IoC.Kernel.Get<INodeBuilderService>();
             _crossingBuilderService = IoC.Kernel.Get<ICrossingBuilderService>();
             _marketDataService = IoC.Kernel.Get<IMarketDataService>();
             _projectService = IoC.Kernel.Get<IProjectService>();
@@ -487,7 +487,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
                     }
 
-                    var isWinningNode = _strategyBuilderService.BuildBacktestOfStrategyNode(
+                    var isWinningNode = _nodeBuilderService.BuildBacktestOfStrategyNode(
                         backtestingNode,
                         mainCandles,
                         process.PreviousStrategyNode.BacktestIS.BacktestOperations,

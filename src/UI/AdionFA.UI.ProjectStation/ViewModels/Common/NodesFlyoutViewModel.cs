@@ -1,7 +1,7 @@
 ﻿using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.Modules.Weka.Model;
-using AdionFA.Infrastructure.StrategyBuilder.Model;
+using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;
@@ -40,9 +40,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
                         Nodes.Add(list);
                         break;
 
-                    case StrategyBuilderModel strategyBuilder:
-                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).WinningNodesUP);
-                        Nodes.Add(((StrategyBuilderModel)flyout.ModelOne).WinningNodesDOWN);
+                    case NodeBuilderModel strategyBuilder:
+                        Nodes.Add(((NodeBuilderModel)flyout.ModelOne).WinningNodesUP);
+                        Nodes.Add(((NodeBuilderModel)flyout.ModelOne).WinningNodesDOWN);
                         break;
 
                     case NodeModel node:
@@ -54,7 +54,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
 
         public static ICommand SaveNodeCommand => new DelegateCommand<NodeModel>(node =>
         {
-            var directory = ProcessArgs.ProjectName.ProjectStrategyBuilderNodesDirectory();
+            var directory = ProcessArgs.ProjectName.ProjectNodeBuilderNodesDirectory();
             var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
 
             SerializerHelper.XMLSerializeObject(node, string.Format(CultureInfo.InvariantCulture, @"{0}\{1}", directory, filename));

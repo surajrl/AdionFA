@@ -7,14 +7,11 @@ namespace AdionFA.UI.Infrastructure.Validators
     {
         public ProjectVMValidator()
         {
-            RuleFor(m => m.ProjectName).NotNull().NotEmpty();
-
-            RuleFor(m => m.WorkspacePath).NotNull().NotEmpty();
+            RuleFor(m => m.ProjectName).NotNull().NotEmpty()
+                .WithMessage(m => "Enter a Project Name");
 
             RuleFor(m => m.HistoricalDataId).GreaterThan(0)
                 .WithMessage(m => "Select Historical Data");
-
-            RuleFor(m => m.ProjectConfiguration).NotNull();
         }
     }
 }

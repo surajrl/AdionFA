@@ -19,14 +19,10 @@ namespace AdionFA.Infrastructure.Persistence
             _connectionString = AppSettingsManager.Instance.Get<AppSettings>().DefaultConnection;
         }
 
-        public AdionFADbContext(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(_connectionString);
+            optionsBuilder.EnableSensitiveDataLogging(true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,7 +31,7 @@ namespace AdionFA.Infrastructure.Persistence
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            var userId = "0";
+            var userId = "1111";
             var username = "admin";
 
             var methodInfo = typeof(EnumExtension).GetMethod("GetMetadata");
@@ -205,7 +201,7 @@ namespace AdionFA.Infrastructure.Persistence
                 MaxRatioTree = (decimal)1.5,
                 NTotalTree = 300,
 
-                // Strategy Builder
+                // Node Builder
 
                 SBMinTotalTradesIS = 300,
                 SBMinSuccessRatePercentIS = 55,
@@ -319,8 +315,8 @@ namespace AdionFA.Infrastructure.Persistence
         // Common
 
         public DbSet<Setting> Settings { get; set; }
-        public DbSet<GlobalConfiguration> Configurations { get; set; }
-        public DbSet<GlobalScheduleConfiguration> ScheduleConfigurations { get; set; }
+        public DbSet<GlobalConfiguration> GlobalConfigurations { get; set; }
+        public DbSet<GlobalScheduleConfiguration> GlobalScheduleConfigurations { get; set; }
 
         // Market Data
 
@@ -335,5 +331,7 @@ namespace AdionFA.Infrastructure.Persistence
         // Project
 
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectConfiguration> ProjectConfigurations { get; set; }
+        public DbSet<ProjectScheduleConfiguration> ProjectScheduleConfigurations { get; set; }
     }
 }

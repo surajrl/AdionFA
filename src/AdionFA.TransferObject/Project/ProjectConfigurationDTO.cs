@@ -5,6 +5,10 @@ namespace AdionFA.TransferObject.Project
 {
     public class ProjectConfigurationDTO : ConfigurationBaseDTO
     {
+        public ProjectConfigurationDTO()
+        {
+        }
+
         public ProjectConfigurationDTO(ConfigurationBaseDTO configurationBaseDTO)
         {
             // Period

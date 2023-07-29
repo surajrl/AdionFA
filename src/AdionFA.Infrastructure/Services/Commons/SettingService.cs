@@ -1,61 +1,47 @@
 ﻿using AdionFA.Application.Contracts;
-using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities;
+using AdionFA.Infrastructure.Persistence;
 using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
-using System;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdionFA.Application.Services.Commons
 {
     public class SettingService : AppServiceBase, ISettingService
     {
-        private readonly IGenericRepository<Setting> _settingRepository;
-
-        public SettingService(IGenericRepository<Setting> settingRepository)
+        public SettingService()
+            : base()
         {
-            _settingRepository = settingRepository;
         }
 
         public SettingDTO GetSetting(int settingId)
         {
-            try
-            {
-                var setting = _settingRepository.FirstOrDefault(setting => setting.SettingId == settingId);
+            using var dbContext = new AdionFADbContext();
 
-                return Mapper.Map<SettingDTO>(setting);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            var setting = dbContext.Set<Setting>().FirstOrDefault(e => e.SettingId == settingId && !e.IsDeleted);
+
+            return Mapper.Map<SettingDTO>(setting);
         }
 
         public async Task<ResponseDTO> UpdateSettingAsync(SettingDTO settingDTO)
         {
-            try
+            using var dbContext = new AdionFADbContext();
+
+            var response = new ResponseDTO
             {
-                var response = new ResponseDTO
-                {
-                    IsSuccess = false
-                };
+                IsSuccess = false
+            };
 
-                var setting = Mapper.Map<Setting>(settingDTO);
+            var setting = Mapper.Map<Setting>(settingDTO);
 
-                await _settingRepository.UpdateAsync(setting).ConfigureAwait(false);
+            dbContext.Set<Setting>().Update(setting);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                response.IsSuccess = true;
+            response.IsSuccess = true;
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            return response;
         }
     }
 }

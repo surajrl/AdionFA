@@ -1,4 +1,4 @@
-﻿using AdionFA.Infrastructure.StrategyBuilder.Model;
+﻿using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
 using System;
 using System.Collections.Generic;

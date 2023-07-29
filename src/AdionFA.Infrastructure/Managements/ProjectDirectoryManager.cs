@@ -28,71 +28,69 @@ namespace AdionFA.Infrastructure.Managements
                 string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectNameFolder));
         }
 
-        // Strategy Builder
+        // Node Builder
 
-        // Strategy Builder Extractor
+        // Extractor
 
-        public static string ProjectStrategyBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string withFileName = null)
+        public static string ProjectNodeBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string withFileName = null)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder))
+                string.Format(ProjectDirectoryEnum.NodeBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"
                 : string.Empty);
         }
 
-        public static string ProjectStrategyBuilderExtractorEuropeDirectory(this string projectNameFolder, string withFileName = null)
+        public static string ProjectNodeBuilderExtractorEuropeDirectory(this string projectNameFolder, string withFileName = null)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Europe.GetMetadata().Name))
+                string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Europe.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"
                 : string.Empty);
         }
 
-        public static string ProjectStrategyBuilderExtractorAmericaDirectory(this string projectNameFolder, string withFileName = null)
+        public static string ProjectNodeBuilderExtractorAmericaDirectory(this string projectNameFolder, string withFileName = null)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.America.GetMetadata().Name))
+                string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.America.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"
                 : string.Empty);
         }
 
-        public static string ProjectStrategyBuilderExtractorAsiaDirectory(this string projectNameFolder, string withFileName = null)
+        public static string ProjectNodeBuilderExtractorAsiaDirectory(this string projectNameFolder, string withFileName = null)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Asia.GetMetadata().Name))
+                string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Asia.GetMetadata().Name))
                 + (!string.IsNullOrWhiteSpace(withFileName)
                 ? @$"\{withFileName}"
                 : string.Empty);
         }
 
-        // Strategy Builder Nodes
-
-        public static string ProjectStrategyBuilderNodesDirectory(this string projectNameFolder)
+        public static string ProjectNodeBuilderNodesDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodes.GetDescription(), projectNameFolder));
+                string.Format(ProjectDirectoryEnum.NodeBuilderNodes.GetDescription(), projectNameFolder));
         }
 
-        public static string ProjectStrategyBuilderNodesUPDirectory(this string projectNameFolder)
+        public static string ProjectNodeBuilderNodesUPDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}",
                 ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesUP.GetDescription(), projectNameFolder));
+                string.Format(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription(), projectNameFolder));
         }
 
-        public static string ProjectStrategyBuilderNodesDOWNDirectory(this string projectNameFolder)
+        public static string ProjectNodeBuilderNodesDOWNDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}",
                 ProjectsDirectoryBase(),
-                string.Format(ProjectDirectoryEnum.StrategyBuilderNodesDOWN.GetDescription(), projectNameFolder));
+                string.Format(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription(), projectNameFolder));
         }
 
         // Assembly Builder
 
-        // Assembly Builder Extractor
+        // Extractor
 
         public static string ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string label, string withFileName = null)
         {

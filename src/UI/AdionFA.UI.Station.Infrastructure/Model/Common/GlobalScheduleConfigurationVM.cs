@@ -1,9 +1,12 @@
-﻿using AdionFA.UI.Infrastructure.Model.Base;
+﻿using AdionFA.UI.Infrastructure.Base;
+using AdionFA.UI.Infrastructure.Model.Base;
 using AdionFA.UI.Infrastructure.Model.MarketData;
+using AdionFA.UI.Infrastructure.Validators;
+using FluentValidation.Results;
 
 namespace AdionFA.UI.Infrastructure.Model.Common
 {
-    public class GlobalScheduleConfigurationVM : EntityBaseVM
+    public class GlobalScheduleConfigurationVM : EntityBaseVM, IModelValidator
     {
         public int GlobalScheduleConfigurationId { get; set; }
 
@@ -15,5 +18,13 @@ namespace AdionFA.UI.Infrastructure.Model.Common
 
         public int FromTimeInSeconds { get; set; }
         public int ToTimeInSeconds { get; set; }
+
+        // Validation
+
+        public ValidationResult GetValidationResult()
+        {
+            var v = new GlobalScheduleConfigurationVMValidator();
+            return v.Validate(this);
+        }
     }
 }

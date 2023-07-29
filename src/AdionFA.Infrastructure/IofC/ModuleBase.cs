@@ -2,7 +2,6 @@
 using AdionFA.Application.Services.Commons;
 using AdionFA.Application.Services.MarketData;
 using AdionFA.Application.Services.Projects;
-using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Infrastructure.AssemblyBuilder.Contracts;
 using AdionFA.Infrastructure.AssemblyBuilder.Services;
 using AdionFA.Infrastructure.AutoMappers;
@@ -14,15 +13,11 @@ using AdionFA.Infrastructure.Extractor.Contracts;
 using AdionFA.Infrastructure.Extractor.Services;
 using AdionFA.Infrastructure.MetaTrader.Contracts;
 using AdionFA.Infrastructure.MetaTrader.Services;
-using AdionFA.Infrastructure.Persistence;
-using AdionFA.Infrastructure.Persistence.Repositories;
-using AdionFA.Infrastructure.StrategyBuilder.Contracts;
-using AdionFA.Infrastructure.StrategyBuilder.Services;
+using AdionFA.Infrastructure.NodeBuilder.Contracts;
+using AdionFA.Infrastructure.NodeBuilder.Services;
 using AdionFA.Infrastructure.Weka.Contracts;
 using AdionFA.Infrastructure.Weka.Services;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Ninject.Extensions.NamedScope;
 using Ninject.Modules;
 
 namespace AdionFA.Infrastructure.IofC
@@ -40,16 +35,11 @@ namespace AdionFA.Infrastructure.IofC
 
             Kernel.Bind(typeof(IWekaApiClient)).To(typeof(WekaApiClient)).InSingletonScope();
 
-            // Database
-
-            Kernel.Bind(typeof(DbContext)).To(typeof(AdionFADbContext)).InParentScope();
-            Kernel.Bind(typeof(IGenericRepository<>)).To(typeof(GenericRepository<>));
-
             // Services
 
             Kernel.Bind<IProjectDirectoryService>().To<ProjectDirectoryService>();
             Kernel.Bind<IExtractorService>().To<ExtractorService>();
-            Kernel.Bind<IStrategyBuilderService>().To<StrategyBuilderService>();
+            Kernel.Bind<INodeBuilderService>().To<NodeBuilderService>();
             Kernel.Bind<IAssemblyBuilderService>().To<AssemblyBuilderService>();
             Kernel.Bind<ICrossingBuilderService>().To<CrossingBuilderService>();
             Kernel.Bind<ITradeService>().To<TradeService>();

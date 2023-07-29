@@ -29,16 +29,18 @@ namespace AdionFA.UI.Infrastructure.AutoMapper
 
             // Market Data
 
+            CreateMap<MarketDTO, MarketVM>().ReverseMap();
             CreateMap<SymbolDTO, SymbolVM>().ReverseMap();
             CreateMap<TimeframeDTO, TimeframeVM>().ReverseMap();
-            CreateMap<MarketDTO, MarketVM>().ReverseMap();
+            CreateMap<MarketRegionDTO, MarketRegionVM>().ReverseMap();
             CreateMap<HistoricalDataDTO, HistoricalDataVM>().ReverseMap();
             CreateMap<HistoricalDataCandleDTO, HistoricalDataCandleVM>().ReverseMap();
-            CreateMap<MarketRegionDTO, MarketRegionVM>().ReverseMap();
 
             // Project
 
             CreateMap<ProjectDTO, ProjectVM>().ReverseMap();
+            CreateMap<ProjectConfigurationDTO, ProjectConfigurationVM>().ReverseMap();
+            CreateMap<ProjectScheduleConfigurationDTO, ProjectScheduleConfigurationVM>().ReverseMap();
         }
     }
 }

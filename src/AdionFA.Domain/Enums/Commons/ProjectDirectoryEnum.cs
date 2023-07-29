@@ -16,25 +16,25 @@ namespace AdionFA.Domain.Enums
         [Description(@"{0}\ExtractorTemplates")]
         ExtractorTemplate = 120,
 
-        // Strategy Builder
+        // Node Builder
 
-        [Description(@"{0}\StrategyBuilder")]
-        StrategyBuilder = 210,
+        [Description(@"{0}\NodeBuilder")]
+        NodeBuilder = 210,
 
-        [Description(@"{0}\StrategyBuilder\Nodes")]
-        StrategyBuilderNodes = 220,
+        [Description(@"{0}\NodeBuilder\Nodes")]
+        NodeBuilderNodes = 220,
 
-        [Description(@"{0}\StrategyBuilder\Nodes\UP")]
-        StrategyBuilderNodesUP = 230,
+        [Description(@"{0}\NodeBuilder\Nodes\UP")]
+        NodeBuilderNodesUP = 230,
 
-        [Description(@"{0}\StrategyBuilder\Nodes\DOWN")]
-        StrategyBuilderNodesDOWN = 240,
+        [Description(@"{0}\NodeBuilder\Nodes\DOWN")]
+        NodeBuilderNodesDOWN = 240,
 
-        [Description(@"{0}\StrategyBuilder\Extractions\{1}")]
-        StrategyBuilderExtractorMarket = 250,
+        [Description(@"{0}\NodeBuilder\Extractions\{1}")]
+        NodeBuilderExtractorMarket = 250,
 
-        [Description(@"{0}\StrategyBuilder\Extractions\WithoutSchedule")]
-        StrategyBuilderExtractorWithoutSchedule = 260,
+        [Description(@"{0}\NodeBuilder\Extractions\WithoutSchedule")]
+        NodeBuilderExtractorWithoutSchedule = 260,
 
         // Assembly Builder
 
@@ -62,7 +62,7 @@ namespace AdionFA.Domain.Enums
         [Description(@"{0}\AssemblyBuilder\Nodes\DOWN")]
         AssemblyBuilderNodesDOWN = 380,
 
-        // Crossing Builder
+        // Strategy Builder
 
         [Description(@"{0}\CrossingBuilder")]
         CrossingBuilder = 410,

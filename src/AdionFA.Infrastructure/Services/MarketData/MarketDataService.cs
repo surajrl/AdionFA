@@ -1,269 +1,200 @@
 ﻿using AdionFA.Application.Contracts;
-using AdionFA.Domain.Contracts.Repositories;
 using AdionFA.Domain.Entities;
+using AdionFA.Infrastructure.Extensions;
+using AdionFA.Infrastructure.Persistence;
 using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.MarketData;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace AdionFA.Application.Services.MarketData
 {
     public class MarketDataService : AppServiceBase, IMarketDataService
     {
-        private readonly IGenericRepository<HistoricalData> _historicalDataRepository;
-        private readonly IGenericRepository<Timeframe> _timeframeRepository;
-        private readonly IGenericRepository<Symbol> _symbolRepository;
-
-        public MarketDataService(
-            IGenericRepository<HistoricalData> historicalDataRepository,
-            IGenericRepository<Timeframe> timeframeRepository,
-            IGenericRepository<Symbol> symbolRepository)
+        public MarketDataService()
             : base()
         {
-            _historicalDataRepository = historicalDataRepository;
-            _timeframeRepository = timeframeRepository;
-            _symbolRepository = symbolRepository;
         }
 
         // Historical Data
 
         public IList<HistoricalDataDTO> GetAllHistoricalData(bool includeGraph)
         {
-            try
-            {
-                Expression<Func<HistoricalData, bool>> predicate = historicalData => !historicalData.IsDeleted;
-                Expression<Func<HistoricalData, dynamic>>[] includes = {
-                    historicalData => historicalData.Market,
-                    historicalData => historicalData.Symbol,
-                    historicalData => historicalData.Timeframe,
-                    historicalData => historicalData.HistoricalDataCandles,
-                };
+            using var dbContext = new AdionFADbContext();
 
-                var allHistoricalData = _historicalDataRepository.GetAll(predicate, includeGraph
-                    ? includes
-                    : null);
+            var allHistoricalData = new List<HistoricalData>();
 
-                return Mapper.Map<IList<HistoricalDataDTO>>(allHistoricalData);
-            }
-            catch (Exception ex)
+            if (includeGraph)
             {
-                Trace.TraceError(ex.Message);
-                throw;
+                allHistoricalData = dbContext.Set<HistoricalData>()
+                    .Where(e => !e.IsDeleted)
+                    .IncludeMultiple(
+                    e => e.Market,
+                    e => e.Symbol,
+                    e => e.Timeframe,
+                    e => e.HistoricalDataCandles)
+                    .ToList();
             }
+            else
+            {
+                allHistoricalData = dbContext.Set<HistoricalData>()
+                    .Where(e => !e.IsDeleted)
+                    .ToList();
+            }
+
+            return Mapper.Map<IList<HistoricalDataDTO>>(allHistoricalData);
         }
 
         public HistoricalDataDTO GetHistoricalData(int historicalDataId, bool includeGraph)
         {
-            try
-            {
-                var historicalData = includeGraph
-                    ? _historicalDataRepository.FirstOrDefault(
-                        hd =>
-                        hd.HistoricalDataId == historicalDataId,
-                        historicalData => historicalData.Market,
-                        historicalData => historicalData.Symbol,
-                        historicalData => historicalData.Timeframe,
-                        historicalData => historicalData.HistoricalDataCandles)
-                    : _historicalDataRepository.FirstOrDefault(
-                        hd =>
-                        hd.HistoricalDataId == historicalDataId);
+            using var dbContext = new AdionFADbContext();
 
-                return Mapper.Map<HistoricalDataDTO>(historicalData);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            var historicalData = includeGraph
+                ? dbContext.Set<HistoricalData>()
+                .Where(e => e.HistoricalDataId == historicalDataId && !e.IsDeleted)
+                .IncludeMultiple(e => e.Market, e => e.Symbol, e => e.Timeframe, e => e.HistoricalDataCandles)
+                .FirstOrDefault()
+                : dbContext.Set<HistoricalData>()
+                .Where(e => e.HistoricalDataId == historicalDataId && !e.IsDeleted)
+                .FirstOrDefault();
+
+            return Mapper.Map<HistoricalDataDTO>(historicalData);
         }
 
         public HistoricalDataDTO GetHistoricalData(int marketId, int symbolId, int timeframeId, bool includeGraph)
         {
-            try
-            {
-                var historicalData = includeGraph
-                    ?
-                    _historicalDataRepository.FirstOrDefault(
-                        hd =>
-                        hd.MarketId == marketId
-                        && hd.SymbolId == symbolId
-                        && hd.TimeframeId == timeframeId)
-                    : _historicalDataRepository.FirstOrDefault(
-                        hd =>
-                        hd.MarketId == marketId
-                        && hd.SymbolId == symbolId
-                        && hd.TimeframeId == timeframeId,
-                        historicalData => historicalData.Market,
-                        historicalData => historicalData.Symbol,
-                        historicalData => historicalData.Timeframe,
-                        historicalData => historicalData.HistoricalDataCandles);
+            using var dbContext = new AdionFADbContext();
+            var historicalData = includeGraph
 
-                return Mapper.Map<HistoricalDataDTO>(historicalData);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+                ? dbContext.Set<HistoricalData>()
+                .Where(e => e.MarketId == marketId && e.SymbolId == symbolId && e.TimeframeId == timeframeId && !e.IsDeleted)
+                .IncludeMultiple(e => e.Market, e => e.Symbol, e => e.Timeframe, e => e.HistoricalDataCandles)
+                .FirstOrDefault()
+                : dbContext.Set<HistoricalData>()
+                .Where(e => e.MarketId == marketId && e.SymbolId == symbolId && e.TimeframeId == timeframeId && !e.IsDeleted)
+                .FirstOrDefault();
+
+            return Mapper.Map<HistoricalDataDTO>(historicalData);
         }
 
         public async Task<ResponseDTO> CreateHistoricalDataAsync(HistoricalDataDTO historicalDataDTO)
         {
-            try
+            using var dbContext = new AdionFADbContext();
+            var responseDTO = new ResponseDTO
             {
-                var responseDTO = new ResponseDTO
+                IsSuccess = false
+            };
+
+            var isCreated = dbContext.Set<HistoricalData>()
+                .Any(e => e.MarketId == historicalDataDTO.MarketId
+                && e.SymbolId == historicalDataDTO.SymbolId
+                && e.TimeframeId == historicalDataDTO.TimeframeId
+                && !e.IsDeleted);
+
+            // Soft delete historical data records with the same market, timeframe and symbol
+            if (isCreated)
+            {
+                var existing = dbContext.Set<HistoricalData>()
+                    .Where(e => e.MarketId == historicalDataDTO.MarketId
+                    && e.SymbolId == historicalDataDTO.SymbolId
+                    && e.TimeframeId == historicalDataDTO.TimeframeId
+                    && !e.IsDeleted)
+                    .ToList();
+
+                foreach (var hd in existing)
                 {
-                    IsSuccess = false
-                };
-
-                var historicalData = Mapper.Map<HistoricalData>(historicalDataDTO);
-
-                var existingHistoricalDatas = _historicalDataRepository.GetAll(
-                    historicalData =>
-                    historicalData.MarketId == historicalData.MarketId
-                    && historicalData.TimeframeId == historicalData.TimeframeId
-                    && historicalData.SymbolId == historicalData.SymbolId,
-                    historicalData => historicalData.HistoricalDataCandles);
-
-                // Soft delete historical data records with the same market, timeframe and symbol
-                if (existingHistoricalDatas.Any())
-                {
-                    foreach (var existingHistoricalData in existingHistoricalDatas)
-                    {
-                        await _historicalDataRepository.DeleteAsync(existingHistoricalData, true);
-                    }
+                    hd.UpdatedOn = DateTime.UtcNow;
+                    hd.IsDeleted = true;
                 }
 
-                foreach (var candle in historicalData.HistoricalDataCandles)
-                {
-                    candle.CreatedById = Id;
-                    candle.CreatedByUserName = Username;
-                    candle.CreatedOn = DateTime.UtcNow;
-
-                    candle.IsDeleted = false;
-                }
-
-                // Set to null so that it does not try and create them again
-                historicalData.Market = null;
-                historicalData.Symbol = null;
-                historicalData.Timeframe = null;
-
-                await _historicalDataRepository.CreateAsync(historicalData).ConfigureAwait(false);
-
-                responseDTO.IsSuccess = historicalData.HistoricalDataId > 0;
-
-                return responseDTO;
+                dbContext.Set<HistoricalData>().UpdateRange(existing);
             }
-            catch (Exception ex)
+
+            var historicalData = Mapper.Map<HistoricalData>(historicalDataDTO);
+
+            foreach (var candle in historicalData.HistoricalDataCandles)
             {
-                Trace.TraceError(ex.Message);
-                throw;
+                candle.CreatedById = Id;
+                candle.CreatedByUserName = Username;
+                candle.CreatedOn = DateTime.UtcNow;
+
+                candle.IsDeleted = false;
             }
+
+            // Set to null so that it does not try and create them again
+            historicalData.Market = null;
+            historicalData.Symbol = null;
+            historicalData.Timeframe = null;
+
+            dbContext.Set<HistoricalData>().Add(historicalData);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            responseDTO.IsSuccess = historicalData.HistoricalDataId > 0;
+
+            return responseDTO;
         }
 
         // Timeframe
 
         public IList<TimeframeDTO> GetAllTimeframe()
         {
-            try
-            {
-                return Mapper.Map<IList<TimeframeDTO>>(_timeframeRepository.GetAll());
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            using var dbContext = new AdionFADbContext();
+            return Mapper.Map<IList<TimeframeDTO>>(dbContext.Set<Timeframe>().Where(e => !e.IsDeleted));
         }
 
         public TimeframeDTO GetTimeframe(int timeframeId)
         {
-            try
-            {
-                return Mapper.Map<TimeframeDTO>(_timeframeRepository.FirstOrDefault(timeframe => timeframe.TimeframeId == timeframeId));
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            using var dbContext = new AdionFADbContext();
+            return Mapper.Map<TimeframeDTO>(dbContext.Set<Timeframe>().FirstOrDefault(e => e.TimeframeId == timeframeId && !e.IsDeleted));
         }
 
         // Symbol
 
         public async Task<ResponseDTO> CreateSymbolAsync(SymbolDTO symbolDTO)
         {
-            try
+            using var dbContext = new AdionFADbContext();
+
+            var response = new ResponseDTO
             {
-                var response = new ResponseDTO
-                {
-                    IsSuccess = false,
-                };
+                IsSuccess = false,
+            };
 
-                var symbolEntity = Mapper.Map<Symbol>(symbolDTO);
+            var symbol = Mapper.Map<Symbol>(symbolDTO);
 
-                // Check if the symbol already exists
-                if (_symbolRepository.GetAll(symbol => symbolEntity.Name == symbol.Name).Any())
-                {
-                    response.IsSuccess = true;
-                    return response;
-                }
-
-                await _symbolRepository.CreateAsync(symbolEntity).ConfigureAwait(false);
-
-                response.IsSuccess = symbolEntity.SymbolId > 0;
-
+            // Check if the symbol already exists
+            if (dbContext.Set<Symbol>().Any(e => e.SymbolId == symbol.SymbolId && !e.IsDeleted))
+            {
+                response.IsSuccess = true;
                 return response;
             }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+
+            dbContext.Set<Symbol>().Add(symbol);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            response.IsSuccess = symbol.SymbolId > 0;
+
+            return response;
         }
 
         public IList<SymbolDTO> GetAllSymbol()
         {
-            try
-            {
-                return Mapper.Map<IList<SymbolDTO>>(_symbolRepository.GetAll());
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            using var dbContext = new AdionFADbContext();
+            return Mapper.Map<IList<SymbolDTO>>(dbContext.Set<Symbol>().Where(e => !e.IsDeleted));
         }
 
         public SymbolDTO GetSymbol(int symbolId)
         {
-            try
-            {
-                return Mapper.Map<SymbolDTO>(_symbolRepository.FirstOrDefault(symbol => symbol.SymbolId == symbolId));
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            using var dbContext = new AdionFADbContext();
+            return Mapper.Map<SymbolDTO>(dbContext.Set<Symbol>().FirstOrDefault(e => e.SymbolId == symbolId && !e.IsDeleted));
         }
 
         public SymbolDTO GetSymbol(string symbolName)
         {
-            try
-            {
-                return Mapper.Map<SymbolDTO>(_symbolRepository.FirstOrDefault(symbol => symbol.Name == symbolName));
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                throw;
-            }
+            using var dbContext = new AdionFADbContext();
+            return Mapper.Map<SymbolDTO>(dbContext.Set<Symbol>().FirstOrDefault(e => e.Name == symbolName && !e.IsDeleted));
         }
     }
 }

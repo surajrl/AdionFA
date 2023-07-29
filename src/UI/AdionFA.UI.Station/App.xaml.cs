@@ -3,7 +3,6 @@ using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Validators.FluentValidator;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Contracts.Services;
 using AdionFA.UI.Infrastructure.Services;
@@ -50,7 +49,6 @@ namespace AdionFA.UI.Station
 
             // Fluent Validation
 
-            ValidatorOptions.Global.LanguageManager = new FluentValidatorLanguageManager();
             ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
 
             // Global Exception

@@ -57,8 +57,8 @@
                 <views:ExtractorView DataContext="{Binding}" />
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vmodel:StrategyBuilderViewModel}">
-                <views:StrategyBuilderView DataContext="{Binding}" />
+            <DataTemplate DataType="{x:Type vmodel:NodeBuilderViewModel}">
+                <views:NodeBuilderView DataContext="{Binding}" />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vmodel:AssemblyBuilderViewModel}">

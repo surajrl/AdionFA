@@ -62,7 +62,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 if (!validator.IsValid)
                 {
                     MessageHelper.ShowMessages(this,
-                        EntityTypeEnum.StrategyBuilder.GetMetadata().Name,
+                        EntityTypeEnum.ProjectConfiguration.GetMetadata().Name,
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
                     return;
