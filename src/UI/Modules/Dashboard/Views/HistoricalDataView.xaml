@@ -1,0 +1,183 @@
+﻿<UserControl x:Class="AdionFA.UI.Module.Dashboard.HistoricalDataView"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 25 15</Thickness>
+    </UserControl.Resources>
+
+    <Grid Margin="10 0 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid HorizontalAlignment="Right"
+              Margin="0 0 10 0">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="UploadHistoricalDataBtn"
+                        Width="120"
+                        Height="40"
+                        IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                        Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}"
+                        HorizontalAlignment="Right">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutUploadHistoricalData}" />
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="PlusSolid"
+                                               Width="14" />
+                        <Label Content="Upload"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="DownloadHistoricalData"
+                        Width="120"
+                        Height="40"
+                        Margin="10, 0, 10, 0"
+                        IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                        Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}"
+                        HorizontalAlignment="Right">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                            <Binding  Source="{x:Static infrastructure:FlyoutRegions.FlyoutDownloadHistoricalData}" />
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Kind="DownloadSolid"
+                                               Width="14" />
+                        <Label Content="Download"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Column="0"
+                    Margin="{StaticResource ColumnMargin}"
+                    Orientation="Horizontal">
+
+            <!-- Market ComboBox -->
+            <StackPanel Margin="{StaticResource ControlMargin}">
+                <Label Content="Market" />
+                <ComboBox x:Name="MarketFilterCb"
+                          ItemsSource="{Binding Markets}"
+                          MinWidth="225"
+                          IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Id"
+                          SelectedValue="{Binding SelectedMarketId, Mode=TwoWay}">
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger SourceName="MarketFilterCb"
+                                                EventName="SelectionChanged">
+                            <behaviors:InvokeCommandAction Command="{Binding HistoricalDataFilterCommand}" />
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </ComboBox>
+            </StackPanel>
+
+            <!-- Symbol ComboBox -->
+            <StackPanel Margin="{StaticResource ControlMargin}">
+                <Label Content="Symbols" />
+                <ComboBox x:Name="SymbolFilterCb"
+                          ItemsSource="{Binding Symbols}"
+                          MinWidth="225"
+                          IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Id"
+                          SelectedValue="{Binding SelectedSymbolId, Mode=TwoWay}">
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger SourceName="SymbolFilterCb"
+                                                EventName="SelectionChanged">
+                            <behaviors:InvokeCommandAction Command="{Binding HistoricalDataFilterCommand}" />
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </ComboBox>
+            </StackPanel>
+
+            <!-- Timeframe ComboBox -->
+            <StackPanel Margin="{StaticResource ControlMargin}">
+                <Label Content="Timeframe" />
+                <ComboBox x:Name="TimeframeFilterCb"
+                          ItemsSource="{Binding Timeframes}"
+                          MinWidth="225"
+                          IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Id"
+                          SelectedValue="{Binding SelectedTimeframeId, Mode=TwoWay}">
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger SourceName="TimeframeFilterCb"
+                                                EventName="SelectionChanged">
+                            <behaviors:InvokeCommandAction Command="{Binding HistoricalDataFilterCommand}" />
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  Grid.Column="1"
+                  Margin="10"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding HistoricalDataCandles}"
+                  RowHeaderWidth="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding StartDate}"
+                                    Header="Start Date" />
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding StartTime}"
+                                    Header="Start Time" />
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding Open}"
+                                    Header="Open" />
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding High}"
+                                    Header="High" />
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding Low}"
+                                    Header="Low" />
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding Close}"
+                                    Header="Close" />
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding Volume}"
+                                    Header="Volume" />
+                <DataGridTextColumn Width="1*"
+                                    Binding="{Binding Spread}"
+                                    Header="Spread" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <metro:MetroProgressBar Grid.Row="1"
+                                IsIndeterminate="True"
+                                Width="250"
+                                Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Label Content="Historical Data is Empty"
+                   Visibility="{Binding HistoricalDataCandles.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

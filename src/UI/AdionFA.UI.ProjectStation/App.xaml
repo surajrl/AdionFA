@@ -1,0 +1,35 @@
+﻿<prism:PrismApplication x:Class="AdionFA.UI.ProjectStation.App"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:converter="clr-namespace:AdionFA.UI.Infrastructure.Converters;assembly=AdionFA.UI.Infrastructure"
+                        xmlns:prism="http://prismlibrary.com/">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--LookAndFeel-->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/AdionFA.UI.LookAndFeel;component/LookAndFeel.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--Converters-->
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converter:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <converter:IntToBooleanConverter x:Key="IntToBooleanConverter" />
+            <converter:CommandParameterFlyoutConverter x:Key="CommandParameterFlyoutConverter" />
+            <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
+            <converter:TimeInSecondsToDateTimeConverter x:Key="TimeInSecondsToDateTimeConverter" />
+            <converter:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+
+            <converter:CompositeConverter x:Key="InverseBooleanToVisibilityConverter">
+                <converter:InverseBooleanConverter />
+                <BooleanToVisibilityConverter />
+            </converter:CompositeConverter>
+
+            <converter:CompositeConverter x:Key="LabelDataEmptyVisibilityConverter">
+                <converter:IntToBooleanConverter />
+                <converter:InverseBooleanConverter />
+                <BooleanToVisibilityConverter />
+            </converter:CompositeConverter>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</prism:PrismApplication>

@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<LangVersion>preview</LangVersion>
+		<UseWindowsForms>true</UseWindowsForms>
+		<StartWorkingDirectory>$(MSBuildProjectDirectory)</StartWorkingDirectory>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OutputPath>$(SolutionDir)$(Configuration)\</OutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="NetMQ" Version="4.0.1.12" />
+		<PackageReference Include="Serilog" Version="3.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Assets\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Weka\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\..\AdionFA.Infrastructure\AdionFA.db">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Content Include="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\AdionFA.UI.Station.Infrastructure\AdionFA.UI.Infrastructure.csproj" />
+		<ProjectReference Include="..\AdionFA.UI.Station.LookAndFeel\AdionFA.UI.LookAndFeel.csproj" />
+	</ItemGroup>
+
+</Project>

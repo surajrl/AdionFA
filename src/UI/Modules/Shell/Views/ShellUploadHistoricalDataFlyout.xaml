@@ -1,0 +1,22 @@
+﻿<metro:Flyout x:Class="AdionFA.UI.Module.Views.ShellUploadHistoricalDataFlyout"
+              xmlns:prism="http://prismlibrary.com/"
+              xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
+              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              mc:Ignorable="d"
+              Position="Right"
+              Theme="Adapt"
+              Width="770"
+              CloseButtonIsCancel="True"
+              Header="Upload Historical Data"
+              IsModal="True">
+    <Grid>
+        <Expander Header="Upload Historical Data"
+                  IsExpanded="True">
+            <ContentControl prism:RegionManager.RegionName="{x:Static infrastructure:AppRegions.UploadHistoricalDataView_SettingModule}" />
+        </Expander>
+    </Grid>
+</metro:Flyout>

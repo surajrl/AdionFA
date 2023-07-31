@@ -17,8 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Common\AdionFA.Infrastructure.Common.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core.IofC\AdionFA.Infrastructure.Core.IofC.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Core\AdionFA.Infrastructure.Core.csproj" />
     <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.Enum\AdionFA.Infrastructure.Enum.csproj" />
     <ProjectReference Include="..\..\Infrastructure\AdionFA.Infrastructure.I18n\AdionFA.Infrastructure.I18n.csproj" />
     <ProjectReference Include="..\..\UI\Station\AdionFA.UI.Station.Project\AdionFA.UI.Station.Project.csproj" />

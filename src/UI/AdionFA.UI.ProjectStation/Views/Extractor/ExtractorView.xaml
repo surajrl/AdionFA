@@ -1,0 +1,213 @@
+﻿<UserControl x:Class="AdionFA.UI.ProjectStation.Views.ExtractorView"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:resources="clr-namespace:AdionFA.Domain.Properties;assembly=AdionFA.Domain"
+             dialog:DialogParticipation.Register="{Binding}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+
+        <Style TargetType="Button"
+               x:Key="DisableBorderRarioBtn">
+            <Setter Property="Padding"
+                    Value="5,0,5,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="0,2,2,0"
+                                BorderBrush="{StaticResource MahApps.Brushes.Button.Border}"
+                                BorderThickness="0,1,1,1">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush EndPoint="0.5,1"
+                                                             StartPoint="0.5,0">
+                                            <GradientStop Color="#FF5BB75B"
+                                                          Offset="0" />
+                                            <GradientStop Color="#FF398239"
+                                                          Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Cursor"
+                                        Value="Hand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--#region Configuration-->
+        <Expander Grid.Row="1"
+                  Margin="0 10 0 10"
+                  Style="{DynamicResource ControlExpanderStyle}"
+                  Header="Configuration"
+                  IsExpanded="False">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <!--#region Variation-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Variation" />
+                        <TextBox Text="{Binding ProjectConfiguration.ExtractorMinVariation}"
+                                 IsReadOnly="True"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 Width="225" />
+                    </StackPanel>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal">
+                    <!--#region Extractor Path-->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Extractor Templates Path" />
+                        <TextBox IsReadOnly="True"
+                                 Focusable="False"
+                                 MinWidth="700"
+                                 IsEnabled="False"
+                                 Text="{Binding ExtractorPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <!--#endregion-->
+                    <!--#region openExtractorPathBtn-->
+                    <Button VerticalAlignment="Bottom"
+                            Width="40"
+                            Height="40"
+                            IsEnabled="{Binding CanExecute}"
+                            Click="openExtractorPathBtn_Click">
+                        <iconPacks:FontAwesome Kind="FolderOpenSolid"
+                                               Width="14" />
+                    </Button>
+                    <!--#endregion-->
+                </StackPanel>
+            </Grid>
+        </Expander>
+        <!--#endregion-->
+
+        <!--#region Extractor-->
+        <metro:MetroHeader Grid.Row="2"
+                           Header="Extractor">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel HorizontalAlignment="Left"
+                            Orientation="Horizontal">
+                    <!--#region StartDate-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Start Time (IS)" />
+                        <metro:DateTimePicker SelectedTimeFormat="Short"
+                                              Culture="(Default)"
+                                              Width="225"
+                                              IsEnabled="False"
+                                              Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                              SelectedDateTime="{Binding ProjectConfiguration.FromDateIS, Mode=TwoWay}" />
+                    </Grid>
+                    <!--#endregion-->
+
+                    <!--#region EndDate-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Start Time (OS)" />
+                        <metro:DateTimePicker SelectedTimeFormat="Short"
+                                              Culture="(Default)"
+                                              Width="225"
+                                              IsEnabled="False"
+                                              Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                              SelectedDateTime="{Binding ProjectConfiguration.ToDateIS, Mode=TwoWay}" />
+                    </Grid>
+                    <!--#endregion-->
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right">
+                    <!--#region addTemplateBtn-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button Width="80"
+                                Height="40"
+                                Click="addTemplateBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:FontAwesome Kind="PlusSolid"
+                                                       Width="14" />
+                                <Label Content="Add"
+                                       FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <!--#endregion-->
+                    <!--#region replaceTemplateBtn-->
+                    <Grid Margin="{StaticResource ColumnMargin}">
+                        <Button Width="80"
+                                Height="40"
+                                IsEnabled="{Binding CanExecute}"
+                                Click="replaceTemplateBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:FontAwesome Kind="UploadSolid"
+                                                       Width="14" />
+                                <Label Content="Replace"
+                                       FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                        <!--#endregion-->
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </metro:MetroHeader>
+        <!--#endregion-->
+
+        <!--#region Grid-->
+        <DataGrid Grid.Row="3"
+                  Margin="0, 10, 0, 0"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding ExtractorTemplates}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path=.}"
+                                    Header="Template Name" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <Label Content="Extractor Process is Empty"
+                   Visibility="{Binding ExtractorTemplates.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
+        </StackPanel>
+        <!--#endregion-->
+    </Grid>
+</UserControl>
