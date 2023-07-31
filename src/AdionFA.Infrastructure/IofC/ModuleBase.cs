@@ -18,7 +18,10 @@ using AdionFA.Infrastructure.NodeBuilder.Services;
 using AdionFA.Infrastructure.Weka.Contracts;
 using AdionFA.Infrastructure.Weka.Services;
 using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
+using Serilog;
+using System.IO;
 
 namespace AdionFA.Infrastructure.IofC
 {
@@ -30,6 +33,18 @@ namespace AdionFA.Infrastructure.IofC
             {
                 mc.AddProfile(new AutoMappingDomainProfile());
             }).CreateMapper()).InSingletonScope();
+
+            // Serilog
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            Kernel.Bind<ILogger>().ToMethod(x => new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger())
+                .InSingletonScope();
 
             // Weka
 

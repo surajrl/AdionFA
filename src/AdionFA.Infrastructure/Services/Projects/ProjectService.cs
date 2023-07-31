@@ -1,26 +1,28 @@
 ﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Entities;
+using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.IofC;
-using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.Persistence;
 using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Project;
 using Microsoft.EntityFrameworkCore;
 using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AdionFA.Application.Services.Projects
 {
     public class ProjectService : AppServiceBase, IProjectService
     {
+        private readonly ISettingService _settingService;
         private readonly IProjectDirectoryService _projectDirectoryService;
 
         public ProjectService()
         {
+            _settingService = IoC.Kernel.Get<ISettingService>();
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
         }
 
@@ -28,6 +30,8 @@ namespace AdionFA.Application.Services.Projects
 
         public IList<ProjectDTO> GetAllProject(bool includeGraph)
         {
+            Logger.Information("ProjectService.GetAllProject() :: Call.");
+
             using var dbContext = new AdionFADbContext();
 
             var allProject = new List<Project>();
@@ -35,7 +39,7 @@ namespace AdionFA.Application.Services.Projects
             if (includeGraph)
             {
                 allProject = dbContext.Set<Project>()
-                    .Where(e => e.IsDeleted == false)
+                    .Where(e => !e.IsDeleted)
                     .Include(e => e.ProjectConfiguration)
                         .ThenInclude(e => e.ProjectScheduleConfigurations)
                             .ThenInclude(e => e.MarketRegion)
@@ -50,7 +54,7 @@ namespace AdionFA.Application.Services.Projects
             else
             {
                 allProject = dbContext.Set<Project>()
-                    .Where(e => e.IsDeleted == false)
+                    .Where(e => !e.IsDeleted)
                     .ToList();
             }
 
@@ -59,6 +63,8 @@ namespace AdionFA.Application.Services.Projects
 
         public ProjectDTO GetProject(int projectId, bool includeGraph)
         {
+            Logger.Information("ProjectService.GetProject() :: Call.");
+
             using var dbContext = new AdionFADbContext();
 
             Project project = new();
@@ -66,7 +72,7 @@ namespace AdionFA.Application.Services.Projects
             if (includeGraph)
             {
                 project = dbContext.Set<Project>()
-                    .Where(e => e.ProjectId == projectId)
+                    .Where(e => e.ProjectId == projectId && !e.IsDeleted)
                     .Include(e => e.ProjectConfiguration)
                         .ThenInclude(e => e.ProjectScheduleConfigurations)
                             .ThenInclude(e => e.MarketRegion)
@@ -81,14 +87,16 @@ namespace AdionFA.Application.Services.Projects
             else
             {
                 project = dbContext.Set<Project>()
-                    .FirstOrDefault(e => e.ProjectId == projectId);
+                    .FirstOrDefault(e => e.ProjectId == projectId && !e.IsDeleted);
             }
 
             return Mapper.Map<ProjectDTO>(project);
         }
 
-        public async Task<ResponseDTO> CreateProjectAsync(ProjectDTO projectDTO)
+        public ResponseDTO CreateProject(ProjectDTO projectDTO)
         {
+            Logger.Information("ProjectService.CreateProject() :: Call.");
+
             using var dbContext = new AdionFADbContext();
 
             var responseDTO = new ResponseDTO
@@ -96,11 +104,10 @@ namespace AdionFA.Application.Services.Projects
                 IsSuccess = false
             };
 
-
             var project = Mapper.Map<Project>(projectDTO);
 
             // Assign the workspace path
-            project.WorkspacePath = ProjectDirectoryManager.DefaultDirectory();
+            project.WorkspacePath = _settingService.GetSetting((int)SettingEnum.DefaultWorkspace).Value;
 
             // Create project configuration from the global configuration
             var globalConfiguration = dbContext.Set<GlobalConfiguration>()
@@ -111,6 +118,8 @@ namespace AdionFA.Application.Services.Projects
 
             project.ProjectConfiguration = new ProjectConfiguration
             {
+                // ProjectId set automatically
+
                 // Period
 
                 FromDateIS = globalConfiguration.FromDateIS,
@@ -167,22 +176,42 @@ namespace AdionFA.Application.Services.Projects
                 ABWekaMaxRatioTree = globalConfiguration.ABWekaMaxRatioTree,
                 ABWekaNTotalTree = globalConfiguration.ABWekaNTotalTree,
 
-                ProjectScheduleConfigurations = new List<ProjectScheduleConfiguration>()
+                // Schedule Configuration
+
+                ProjectScheduleConfigurations = new List<ProjectScheduleConfiguration>(),
+
+                // Entity Base
+
+                CreatedOn = DateTime.UtcNow,
+                IsDeleted = false,
             };
 
             foreach (var globalScheduleConfig in globalConfiguration.GlobalScheduleConfigurations)
             {
                 project.ProjectConfiguration.ProjectScheduleConfigurations.Add(new ProjectScheduleConfiguration
                 {
+                    // ProjectConfigurationId set automatically
+
                     MarketRegionId = globalScheduleConfig.MarketRegionId,
 
                     FromTimeInSeconds = globalScheduleConfig.FromTimeInSeconds,
-                    ToTimeInSeconds = globalScheduleConfig.ToTimeInSeconds
+                    ToTimeInSeconds = globalScheduleConfig.ToTimeInSeconds,
+
+                    CreatedOn = DateTime.UtcNow,
+                    IsDeleted = false
                 });
             }
 
-            dbContext.Add(project);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            // Add
+
+            project.CreatedOn = DateTime.UtcNow;
+            project.IsDeleted = false;
+
+            dbContext.Set<Project>().Add(project);
+            Logger.Information("ProjectService.CreateProject() :: dbContext.Set<Project>().Add().");
+
+            dbContext.SaveChanges();
+            Logger.Information("ProjectService.CreateProject() :: dbContext.SaveChanges().");
 
             responseDTO.IsSuccess = project.ProjectId > 0;
 
@@ -200,6 +229,8 @@ namespace AdionFA.Application.Services.Projects
 
         public ProjectConfigurationDTO GetProjectConfiguration(int projectId, bool includeGraph)
         {
+            Logger.Information("ProjectService.GetProjectConfiguration() :: Call.");
+
             using var dbContext = new AdionFADbContext();
 
             ProjectConfiguration projectConfiguration;
@@ -207,7 +238,7 @@ namespace AdionFA.Application.Services.Projects
             if (includeGraph)
             {
                 projectConfiguration = dbContext.Set<ProjectConfiguration>()
-                    .Where(e => e.ProjectId == projectId)
+                    .Where(e => e.ProjectId == projectId && !e.IsDeleted)
                     .Include(e => e.ProjectScheduleConfigurations)
                         .ThenInclude(e => e.MarketRegion)
                     .Include(e => e.Project)
@@ -223,14 +254,17 @@ namespace AdionFA.Application.Services.Projects
             }
             else
             {
-                projectConfiguration = dbContext.Set<ProjectConfiguration>().FirstOrDefault(e => e.ProjectId == projectId);
+                projectConfiguration = dbContext.Set<ProjectConfiguration>()
+                    .FirstOrDefault(e => e.ProjectId == projectId && !e.IsDeleted);
             }
 
             return Mapper.Map<ProjectConfigurationDTO>(projectConfiguration);
         }
 
-        public async Task<ResponseDTO> UpdateProjectConfigurationAsync(ProjectConfigurationDTO updatedProjectConfiguration)
+        public ResponseDTO UpdateProjectConfiguration(ProjectConfigurationDTO projectConfigurationDTO)
         {
+            Logger.Information("ProjectService.UpdateProjectConfiguration() :: Call.");
+
             using var dbContext = new AdionFADbContext();
 
             var response = new ResponseDTO
@@ -238,16 +272,26 @@ namespace AdionFA.Application.Services.Projects
                 IsSuccess = false
             };
 
-            dbContext.Set<ProjectConfiguration>().Update(Mapper.Map<ProjectConfiguration>(updatedProjectConfiguration));
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            var projectConfiguration = Mapper.Map<ProjectConfiguration>(projectConfigurationDTO);
+
+            // Update
+
+            projectConfiguration.UpdatedOn = DateTime.UtcNow;
+            dbContext.Set<ProjectConfiguration>().Update(projectConfiguration);
+            Logger.Information("ProjectService.UpdateProjectConfiguration() :: dbContext.Set<ProjectConfiguration>().Update().");
+
+            dbContext.SaveChanges();
+            Logger.Information("ProjectService.UpdateProjectConfiguration() :: dbContext.SaveChanges().");
 
             response.IsSuccess = true;
 
             return response;
         }
 
-        public async Task<ResponseDTO> RestoreProjectConfigurationAsync(int projectId)
+        public ResponseDTO RestoreProjectConfiguration(int projectId)
         {
+            Logger.Information("ProjectService.RestoreProjectConfiguration() :: Call.");
+
             using var dbContext = new AdionFADbContext();
 
             var response = new ResponseDTO
@@ -257,10 +301,18 @@ namespace AdionFA.Application.Services.Projects
 
             var projectConfiguration = dbContext.Set<ProjectConfiguration>().FirstOrDefault(e => e.ProjectId == projectId);
 
+            // Restore
+
             projectConfiguration.RestoreConfiguration();
 
+            // Update
+
+            projectConfiguration.UpdatedOn = DateTime.UtcNow;
             dbContext.Set<ProjectConfiguration>().Update(projectConfiguration);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            Logger.Information("ProjectService.RestoreProjectConfiguration() :: dbContext.Set<ProjectConfiguration>().Update().");
+
+            dbContext.SaveChanges();
+            Logger.Information("ProjectService.RestoreProjectConfiguration() :: dbContext.SaveChanges().");
 
             response.IsSuccess = true;
 

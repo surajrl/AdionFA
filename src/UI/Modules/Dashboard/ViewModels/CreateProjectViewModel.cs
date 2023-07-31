@@ -62,7 +62,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
         });
 
-        public ICommand CreateProjectBtnCommand => new DelegateCommand(async () =>
+        public ICommand CreateProjectBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -78,7 +78,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 IsTransactionActive = true;
 
-                var responseDTO = await _projectService.CreateProjectAsync(_mapper.Map<ProjectDTO>(Project)).ConfigureAwait(false);
+                var responseDTO = _projectService.CreateProject(_mapper.Map<ProjectDTO>(Project));
 
                 if (responseDTO.IsSuccess)
                 {

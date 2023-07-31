@@ -14,6 +14,7 @@ using Ninject;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
+using Serilog;
 using System;
 using System.Globalization;
 using System.IO;
@@ -57,6 +58,7 @@ namespace AdionFA.UI.Station
             {
                 e.Handled = true;
                 MessageBox.Show(e.Exception.Message);
+                IoC.Kernel.Get<ILogger>().Error($"{e.Exception.Message} :: {e.Exception.StackTrace}.");
             };
 
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler((object sender, UnhandledExceptionEventArgs e) =>
@@ -93,8 +95,9 @@ namespace AdionFA.UI.Station
         {
             base.OnStartup(e);
 
-            ContainerLocator.Current.Resolve<IApplicationCommands>().EndAllProcessProjectCommand.Execute(false);
+            IoC.Kernel.Get<ILogger>().Information("App.OnStartup() :: AdionFA.UI.Station");
 
+            ContainerLocator.Current.Resolve<IApplicationCommands>().EndAllProcessProjectCommand.Execute(false);
             ContainerLocator.Current.Resolve<IProcessService>().StartProcessWeka();
         }
 

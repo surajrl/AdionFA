@@ -289,6 +289,7 @@
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assemblyNodesUP"
                                 Width="215"
+                                IsEnabled="{Binding AssemblyBuilder.WinningAssemblyNodesUP.Count, Converter={StaticResource IntToBooleanConverter}}"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="GraphOutline"
@@ -318,6 +319,7 @@
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assemblyNodesDOWN"
                                 Width="215"
+                                IsEnabled="{Binding AssemblyBuilder.WinningAssemblyNodesDOWN.Count, Converter={StaticResource IntToBooleanConverter}}"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="GraphOutline"

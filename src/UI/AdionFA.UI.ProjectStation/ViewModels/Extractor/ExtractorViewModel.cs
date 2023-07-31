@@ -6,10 +6,12 @@ using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure.AutoMapper;
 using AdionFA.UI.Infrastructure.Model.Project;
 using AdionFA.UI.ProjectStation.Commands;
+using AdionFA.UI.ProjectStation.EventAggregator;
 using AdionFA.UI.ProjectStation.Features;
 using AutoMapper;
 using Ninject;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Ioc;
 using System;
 using System.Collections.ObjectModel;
@@ -21,6 +23,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
     public class ExtractorViewModel : MenuItemViewModel
     {
         private readonly IMapper _mapper;
+
+        private readonly IEventAggregator _eventAggregator;
+
         private readonly IProjectService _projectService;
         private readonly IProjectDirectoryService _projectDirectoryService;
 
@@ -34,6 +39,10 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
+
+            _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
+
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(canExecute => CanExecute = canExecute);
 
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
@@ -66,6 +75,13 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         });
 
         // View Bindings
+
+        private bool _canExecute;
+        public bool CanExecute
+        {
+            get => _canExecute;
+            set => SetProperty(ref _canExecute, value);
+        }
 
         private ProjectConfigurationVM _projectConfiguration;
         public ProjectConfigurationVM ProjectConfiguration

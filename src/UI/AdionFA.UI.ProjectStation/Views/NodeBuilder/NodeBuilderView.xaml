@@ -421,7 +421,7 @@
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                <Binding Path="StrategyBuilder" />
+                                                <Binding Path="NodeBuilder" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
@@ -452,7 +452,7 @@
                   Margin="0, 10, 0, 0"
                   IsReadOnly="True"
                   AutoGenerateColumns="False"
-                  ItemsSource="{Binding StrategyBuilderProcesses}">
+                  ItemsSource="{Binding NodeBuilderProcesses}">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                  Color="White" />
@@ -588,7 +588,7 @@
                     VerticalAlignment="Center"
                     Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Label Content="Strategy Builder Process is Empty"
-                   Visibility="{Binding StrategyBuilderProcesses.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
+                   Visibility="{Binding NodeBuilderProcesses.Count, Converter={StaticResource LabelDataEmptyVisibilityConverter}}" />
         </StackPanel>
         <!--#endregion-->
     </Grid>

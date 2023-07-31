@@ -68,17 +68,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <!-- Refresh and Download Buttons -->
-        <Grid Grid.Row="0"
-              Grid.Column="4"
+        <Grid  Grid.Column="4"
               VerticalAlignment="Center"
               HorizontalAlignment="Center">
             <Button Width="100"
@@ -170,7 +169,8 @@
                                 <ComboBox ItemsSource="{Binding Symbols}"
                                           MinWidth="150"
                                           DisplayMemberPath="Name"
-                                          SelectedValue="{Binding DownloadHistoricalDataModel.Symbol, Mode=TwoWay}"
+                                          SelectedValuePath="Id"
+                                          SelectedValue="{Binding DownloadHistoricalDataModel.SymbolId, Mode=TwoWay}"
                                           Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                                 </ComboBox>
                             </StackPanel>
@@ -186,7 +186,8 @@
                                 <ComboBox ItemsSource="{Binding Timeframes}"
                                           MinWidth="150"
                                           DisplayMemberPath="Name"
-                                          SelectedValue="{Binding DownloadHistoricalDataModel.Timeframe, Mode=TwoWay}"
+                                          SelectedValuePath="Id"
+                                          SelectedValue="{Binding DownloadHistoricalDataModel.TimeframeId, Mode=TwoWay}"
                                           Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                                 </ComboBox>
                             </StackPanel>

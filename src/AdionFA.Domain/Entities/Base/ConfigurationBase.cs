@@ -76,6 +76,12 @@ namespace AdionFA.Domain.Entities.Base
 
             WithoutSchedule = true;
 
+            // MetaTrader
+
+            ExpertAdvisorHost = "192.168.50.137";
+            ExpertAdvisorPublisherPort = "5551";
+            ExpertAdvisorResponsePort = "5550";
+
             // Extractor
 
             ExtractorMinVariation = 50;

@@ -48,7 +48,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private Task _subscriberTask;
 
-        private readonly Dictionary<string, List<Candle>> _candles;
+        private readonly Dictionary<string, List<Candle>> _completeCandles;
         private readonly Dictionary<string, Candle> _currentCandles;
         private string _mainSymbol;
         private readonly List<string> _crossingSymbols;
@@ -77,7 +77,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             DataInput = new();
             DataOutput = new();
 
-            _candles = new();
+            _completeCandles = new();
             _currentCandles = new();
             _crossingSymbols = new();
         }
@@ -118,21 +118,32 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 if (TestStrategyNode)
                 {
-                    _candles.Clear();
+                    _completeCandles.Clear();
                     _crossingSymbols.Clear();
                     _currentCandles.Clear();
 
-                    var symbol = _marketDataService.GetSymbol(ProcessArgs.Project.HistoricalData.SymbolId);
-                    _candles.Add(symbol.Name, new());
+                    var symbol = _marketDataService.GetSymbol(ProcessArgs.SymbolId);
+
+                    _completeCandles.Add(symbol.Name, new());
                     _mainSymbol = symbol.Name;
 
                     foreach (var crossingNode in StrategyNode.CrossingNodesData)
                     {
                         var historicalData = _marketDataService.GetHistoricalData(crossingNode.Item2, includeGraph: false);
                         symbol = _marketDataService.GetSymbol(historicalData.SymbolId);
-                        _candles.Add(symbol.Name, new());
+                        _completeCandles.Add(symbol.Name, new());
                         _crossingSymbols.Add(symbol.Name);
                     }
+                }
+                else
+                {
+                    _completeCandles.Clear();
+                    _currentCandles.Clear();
+
+                    var symbol = _marketDataService.GetSymbol(ProcessArgs.SymbolId);
+
+                    _completeCandles.Add(symbol.Name, new());
+                    _mainSymbol = symbol.Name;
                 }
 
                 _subscriberTask = Task.Factory.StartNew(Subscriber);
@@ -141,11 +152,17 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 Trace.TraceError(ex.Message);
             }
-        }, () => !IsTransactionActive && (TestNodes || TestAssemblyNode || TestStrategyNode))
+        }, () => !IsTransactionActive
+        && (TestNodes && Nodes.Count > 0
+        || TestAssemblyNode && AssemblyNode != null
+        || TestStrategyNode && StrategyNode != null))
             .ObservesProperty(() => IsTransactionActive)
             .ObservesProperty(() => TestNodes)
             .ObservesProperty(() => TestAssemblyNode)
-            .ObservesProperty(() => TestStrategyNode);
+            .ObservesProperty(() => TestStrategyNode)
+            .ObservesProperty(() => Nodes.Count)
+            .ObservesProperty(() => AssemblyNode)
+            .ObservesProperty(() => StrategyNode);
 
         private void Subscriber()
         {
@@ -187,7 +204,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         }
                         else
                         {
-                            _candles[zmqModel.Symbol].Add(new Candle
+                            _completeCandles[zmqModel.Symbol].Add(new Candle
                             {
                                 Date = zmqModel.Date.AddSeconds((long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds),
                                 Time = (long)TimeSpan.Parse(zmqModel.Time, CultureInfo.InvariantCulture).TotalSeconds,
@@ -219,7 +236,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 var isTrade = _tradeService.IsTrade(
                     node.NodeData.Node,
-                    _candles[_mainSymbol],
+                    _completeCandles[_mainSymbol],
                     _currentCandles[_mainSymbol]);
 
                 if (isTrade)
@@ -236,7 +253,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             // Test for parent node
             var isTrade = _tradeService.IsTrade(
                 AssemblyNode.ParentNodeData.Node,
-                _candles[_mainSymbol],
+                _completeCandles[_mainSymbol],
                 _currentCandles[_mainSymbol]);
 
             if (!isTrade)
@@ -249,7 +266,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 isTrade = _tradeService.IsTrade(
                     childNode.Node,
-                    _candles[_mainSymbol],
+                    _completeCandles[_mainSymbol],
                     _currentCandles[_mainSymbol]);
 
                 if (isTrade)
@@ -266,7 +283,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             // Test parent node
             var isTrade = _tradeService.IsTrade(
                 StrategyNode.ParentNodeData.Node,
-                _candles[_mainSymbol],
+                _completeCandles[_mainSymbol],
                 _currentCandles[_mainSymbol]);
 
             if (!isTrade)
@@ -279,7 +296,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 isTrade = _tradeService.IsTrade(
                     StrategyNode.CrossingNodesData[idx].Item1.Node,
-                    _candles[_crossingSymbols[idx]],
+                    _completeCandles[_crossingSymbols[idx]],
                     _currentCandles[_crossingSymbols[idx]]);
 
                 if (!isTrade)
@@ -293,7 +310,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 isTrade = _tradeService.IsTrade(
                     childNode.Node,
-                    _candles[_mainSymbol],
+                    _completeCandles[_mainSymbol],
                     _currentCandles[_mainSymbol]);
 
                 if (isTrade)
@@ -400,17 +417,17 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is NodeModel singleNode)
+            if (item is NodeModel node)
             {
-                if (Nodes.IndexOf(singleNode) == -1)
+                if (Nodes.IndexOf(node) == -1)
                 {
-                    Nodes.Add(singleNode);
+                    Nodes.Add(node);
                 }
             }
 
-            if (item is AssemblyNodeModel assembledNode)
+            if (item is AssemblyNodeModel assemblyNode)
             {
-                AssemblyNode = assembledNode;
+                AssemblyNode = assemblyNode;
             }
 
             if (item is StrategyNodeModel strategyNode)
@@ -421,12 +438,12 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is NodeModel singleNode)
+            if (item is NodeModel node)
             {
-                Nodes.Remove(singleNode);
+                Nodes.Remove(node);
             }
 
-            if (item is AssemblyNodeModel assembledNode)
+            if (item is AssemblyNodeModel assemblyNode)
             {
                 AssemblyNode = null;
             }
@@ -503,7 +520,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         }
 
         public ObservableCollection<ZmqMsgModel> DataInput { get; set; }
-
         public ObservableCollection<ZmqMsgModel> DataOutput { get; set; }
 
         // IDisposable

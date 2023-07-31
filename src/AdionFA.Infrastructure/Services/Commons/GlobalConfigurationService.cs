@@ -5,6 +5,7 @@ using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,8 +42,12 @@ namespace AdionFA.Application.Services.Commons
 
             var globalConfiguration = Mapper.Map<GlobalConfiguration>(globalConfigurationDTO);
 
+            // Update
+
+            globalConfiguration.UpdatedOn = DateTime.UtcNow;
+
             dbContext.Set<GlobalConfiguration>().Update(globalConfiguration);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            var r = await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             response.IsSuccess = true;
 

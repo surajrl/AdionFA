@@ -3,8 +3,12 @@ using AdionFA.Domain.Enums;
 using AdionFA.Domain.Enums.Market;
 using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Model;
+using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Ninject;
+using Serilog;
 using System;
 using System.Reflection;
 
@@ -22,7 +26,11 @@ namespace AdionFA.Infrastructure.Persistence
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(_connectionString);
-            optionsBuilder.EnableSensitiveDataLogging(true);
+            optionsBuilder.LogTo(
+                IoC.Kernel.Get<ILogger>().Information,
+                options: DbContextLoggerOptions.None)
+                .EnableSensitiveDataLogging();
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,9 +38,6 @@ namespace AdionFA.Infrastructure.Persistence
             // Entity Configuration
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-            var userId = "1111";
-            var username = "admin";
 
             var methodInfo = typeof(EnumExtension).GetMethod("GetMetadata");
 
@@ -54,10 +59,8 @@ namespace AdionFA.Infrastructure.Persistence
 
                         // Entity Base
 
-                        IsDeleted = false,
-                        CreatedById = userId,
-                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
+                        IsDeleted = false,
                     }
                 );
             }
@@ -80,10 +83,7 @@ namespace AdionFA.Infrastructure.Persistence
 
                         // Entity Base
 
-                        CreatedById = userId,
-                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
-
                         IsDeleted = false,
                     }
                 );
@@ -107,10 +107,8 @@ namespace AdionFA.Infrastructure.Persistence
 
                         // Entity Base
 
-                        IsDeleted = false,
-                        CreatedById = userId,
-                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
+                        IsDeleted = false,
                     }
                 );
             }
@@ -132,10 +130,8 @@ namespace AdionFA.Infrastructure.Persistence
 
                         // Entity Base
 
-                        IsDeleted = false,
-                        CreatedById = userId,
-                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
+                        IsDeleted = false,
                     }
                 );
             }
@@ -157,10 +153,8 @@ namespace AdionFA.Infrastructure.Persistence
 
                         // Entity Base
 
-                        IsDeleted = false,
-                        CreatedById = userId,
-                        CreatedByUserName = username,
                         CreatedOn = DateTime.UtcNow,
+                        IsDeleted = false,
                     }
                 );
             }
@@ -179,17 +173,19 @@ namespace AdionFA.Infrastructure.Persistence
                 FromDateOS = null,
                 ToDateOS = null,
 
+                // Schedule
+
                 WithoutSchedule = true,
+
+                // MetaTrader
+
+                ExpertAdvisorHost = "192.168.50.137",
+                ExpertAdvisorPublisherPort = "5551",
+                ExpertAdvisorResponsePort = "5550",
 
                 // Extractor
 
                 ExtractorMinVariation = 50,
-
-                // MetaTrader
-
-                ExpertAdvisorHost = null,
-                ExpertAdvisorPublisherPort = null,
-                ExpertAdvisorResponsePort = null,
 
                 // Weka
 
@@ -229,10 +225,7 @@ namespace AdionFA.Infrastructure.Persistence
 
                 // Entity Base
 
-                CreatedById = userId,
-                CreatedByUserName = username,
                 CreatedOn = DateTime.UtcNow,
-
                 IsDeleted = false,
             });
 
@@ -256,10 +249,7 @@ namespace AdionFA.Infrastructure.Persistence
 
                     // Entity Base
 
-                    CreatedById = userId,
-                    CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
-
                     IsDeleted = false,
                 },
                 new GlobalScheduleConfiguration
@@ -279,10 +269,7 @@ namespace AdionFA.Infrastructure.Persistence
 
                     // Entity Base
 
-                    CreatedById = userId,
-                    CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
-
                     IsDeleted = false,
                 },
                 new GlobalScheduleConfiguration
@@ -301,10 +288,7 @@ namespace AdionFA.Infrastructure.Persistence
 
                     // Entity Base
 
-                    CreatedById = userId,
-                    CreatedByUserName = username,
                     CreatedOn = DateTime.UtcNow,
-
                     IsDeleted = false,
                 }
             );

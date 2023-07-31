@@ -2,7 +2,6 @@
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;
-using DynamicData;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -30,11 +29,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
                 switch (flyout.ModelOne)
                 {
                     case ObservableCollection<AssemblyNodeModel> collection:
-                        AssemblyNodes.Add(collection);
+                        AssemblyNodes.AddRange(collection);
                         break;
 
                     case List<AssemblyNodeModel> list:
-                        AssemblyNodes.Add(list);
+                        AssemblyNodes.AddRange(list);
                         break;
 
                     case AssemblyNodeModel assembledNode:

@@ -1,14 +1,19 @@
 ﻿using AdionFA.Infrastructure.IofC;
 using AutoMapper;
 using Ninject;
+using Serilog;
 
 namespace AdionFA.Infrastructure.Services
 {
     public class AppServiceBase
     {
-        protected const string Username = "admin";
-        protected const string Id = "1111";
+        public AppServiceBase()
+        {
+            Logger = IoC.Kernel.Get<ILogger>();
+            Mapper = IoC.Kernel.Get<IMapper>();
+        }
 
-        protected IMapper Mapper => IoC.Kernel.Get<IMapper>();
+        protected ILogger Logger { get; }
+        protected IMapper Mapper { get; }
     }
 }

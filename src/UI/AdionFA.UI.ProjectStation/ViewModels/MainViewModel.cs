@@ -4,20 +4,25 @@ using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.ProjectStation.Features;
 using MahApps.Metro.IconPacks;
 using Ninject;
+using Serilog;
 using System.Collections.ObjectModel;
 
 namespace AdionFA.UI.ProjectStation.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private readonly ILogger _logger;
         private readonly IProjectService _projectService;
 
         public MainViewModel()
         {
+            _logger = IoC.Kernel.Get<ILogger>();
             _projectService = IoC.Kernel.Get<IProjectService>();
 
             CreateMenuItems();
             PopulateViewModel();
+
+            _logger.Information("MainViewModel :: ctor()");
         }
 
         private void PopulateViewModel()

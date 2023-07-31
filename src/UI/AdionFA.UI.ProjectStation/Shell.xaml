@@ -13,7 +13,7 @@
                    WindowStartupLocation="CenterScreen"
                    Title="Financial Automat Project"
                    WindowState="Maximized"
-                   Icon="\Assets\logo.jpg">
+                   Icon="Assets\logo.jpg">
 
     <!-- Flyouts -->
     <metro:MetroWindow.Flyouts>
@@ -31,8 +31,7 @@
                         <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type metro:HamburgerMenu}}, Path=CompactPaneLength}" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <ContentControl Grid.Column="0"
-                                    IsEnabled="False"
+                    <ContentControl IsEnabled="False"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Content="{Binding Icon}"

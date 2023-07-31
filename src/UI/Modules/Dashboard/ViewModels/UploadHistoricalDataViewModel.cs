@@ -53,7 +53,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
         });
 
 
-        public DelegateCommand UploadBtnCommand => new DelegateCommand(async () =>
+        public DelegateCommand UploadBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -73,7 +73,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 if (CreateHistory())
                 {
-                    var result = await _marketDataService.CreateHistoricalDataAsync(_mapper.Map<UploadHistoricalDataModel, HistoricalDataDTO>(UploadHistoricalData)).ConfigureAwait(true);
+                    var result = _marketDataService.CreateHistoricalData(_mapper.Map<UploadHistoricalDataModel, HistoricalDataDTO>(UploadHistoricalData));
 
                     IsTransactionActive = false;
 

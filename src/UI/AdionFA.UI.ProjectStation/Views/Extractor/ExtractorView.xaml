@@ -101,11 +101,12 @@
                                  IsEnabled="False"
                                  Text="{Binding ExtractorPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
-                    <!--#region openExtractorPathBtn-->
                     <!--#endregion-->
+                    <!--#region openExtractorPathBtn-->
                     <Button VerticalAlignment="Bottom"
                             Width="40"
                             Height="40"
+                            IsEnabled="{Binding CanExecute}"
                             Click="openExtractorPathBtn_Click">
                         <iconPacks:FontAwesome Kind="FolderOpenSolid"
                                                Width="14" />
@@ -173,6 +174,7 @@
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button Width="80"
                                 Height="40"
+                                IsEnabled="{Binding CanExecute}"
                                 Click="replaceTemplateBtn_Click">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:FontAwesome Kind="UploadSolid"

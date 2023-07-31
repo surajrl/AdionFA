@@ -5,7 +5,6 @@ using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;
-using DynamicData;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -33,16 +32,16 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
                 switch (flyout.ModelOne)
                 {
                     case ObservableCollection<NodeModel> collection:
-                        Nodes.Add(collection);
+                        Nodes.AddRange(collection);
                         break;
 
                     case List<NodeModel> list:
-                        Nodes.Add(list);
+                        Nodes.AddRange(list);
                         break;
 
                     case NodeBuilderModel strategyBuilder:
-                        Nodes.Add(((NodeBuilderModel)flyout.ModelOne).WinningNodesUP);
-                        Nodes.Add(((NodeBuilderModel)flyout.ModelOne).WinningNodesDOWN);
+                        Nodes.AddRange(((NodeBuilderModel)flyout.ModelOne).WinningNodesUP);
+                        Nodes.AddRange(((NodeBuilderModel)flyout.ModelOne).WinningNodesDOWN);
                         break;
 
                     case NodeModel node:

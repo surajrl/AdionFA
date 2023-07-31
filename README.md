@@ -4,6 +4,7 @@ Adion Financial Automat
 
 ## TODO
 
-### Tests
-
-- Creating a Project
+- Unit tests
+- Improve project dashboard on Station
+- Use TreeView to display nodes
+- Set the Winning Nodes to true

@@ -54,7 +54,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
         });
 
-        public ICommand SaveBtnCommand => new DelegateCommand(async () =>
+        public ICommand SaveBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -71,7 +71,13 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                await _projectService.UpdateProjectConfigurationAsync(_mapper.Map<ProjectConfigurationDTO>(ProjectConfiguration)).ConfigureAwait(true);
+                var responseDTO = _projectService.UpdateProjectConfiguration(_mapper.Map<ProjectConfigurationDTO>(ProjectConfiguration));
+
+                MessageHelper.ShowMessage(this,
+                Resources.ProjectConfiguration,
+                responseDTO.IsSuccess
+                ? Resources.SuccessEntitySave
+                : Resources.FailEntitySave);
             }
             catch (Exception ex)
             {
@@ -85,14 +91,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        public ICommand RestoreConfigurationBtnCommand => new DelegateCommand(async () =>
+        public ICommand RestoreConfigurationBtnCommand => new DelegateCommand(() =>
         {
             try
             {
                 IsTransactionActive = true;
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
-                var responseDTO = await _projectService.RestoreProjectConfigurationAsync(ProcessArgs.ProjectId).ConfigureAwait(true);
+                var responseDTO = _projectService.RestoreProjectConfiguration(ProcessArgs.ProjectId);
 
                 if (responseDTO.IsSuccess)
                 {

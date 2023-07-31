@@ -35,12 +35,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("ABWekaNTotalTree")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -125,12 +119,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("TotalInstanceWeka")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
@@ -149,10 +137,11 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                             ABMinTotalTradesIS = 300,
                             ABWekaMaxRatioTree = 1.5m,
                             ABWekaNTotalTree = 300m,
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(905),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5739),
                             DepthWeka = 6,
+                            ExpertAdvisorHost = "192.168.50.137",
+                            ExpertAdvisorPublisherPort = "5551",
+                            ExpertAdvisorResponsePort = "5550",
                             ExtractorMinVariation = 50,
                             IsDeleted = false,
                             IsProgressiveness = false,
@@ -182,12 +171,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -206,12 +189,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("ToTimeInSeconds")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
@@ -227,9 +204,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         new
                         {
                             GlobalScheduleConfigurationId = 1,
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(943),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5766),
                             FromTimeInSeconds = 54000,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -239,9 +214,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         new
                         {
                             GlobalScheduleConfigurationId = 2,
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(946),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5771),
                             FromTimeInSeconds = 32400,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -251,9 +224,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         new
                         {
                             GlobalScheduleConfigurationId = 3,
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(948),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5773),
                             FromTimeInSeconds = 3600,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -267,12 +238,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("HistoricalDataId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
@@ -291,12 +256,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
 
                     b.Property<int>("TimeframeId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
@@ -320,12 +279,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
 
                     b.Property<double>("Close")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
@@ -354,12 +307,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<long>("StartTime")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
@@ -382,12 +329,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -395,12 +336,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -418,9 +353,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketId = 1,
                             Code = "Forex",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(267),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5171),
                             IsDeleted = false,
                             Name = "Forex"
                         });
@@ -435,12 +368,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -448,12 +375,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -471,9 +392,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketRegionId = 1,
                             Code = "America",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(540),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5407),
                             IsDeleted = false,
                             Name = "America"
                         },
@@ -481,9 +400,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketRegionId = 2,
                             Code = "Europe",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(702),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5561),
                             IsDeleted = false,
                             Name = "Europe"
                         },
@@ -491,9 +408,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketRegionId = 3,
                             Code = "Asia",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 512, DateTimeKind.Utc).AddTicks(846),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5694),
                             IsDeleted = false,
                             Name = "Asia"
                         });
@@ -505,12 +420,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -521,12 +430,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ProjectName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -563,12 +466,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("ABWekaNTotalTree")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -656,12 +553,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("TotalInstanceWeka")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
@@ -682,12 +573,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -705,12 +590,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
 
                     b.Property<int>("ToTimeInSeconds")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
@@ -733,12 +612,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -746,12 +619,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -769,9 +636,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 1,
                             Code = "Culture",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7084),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2497),
                             IsDeleted = false,
                             Name = "Culture",
                             Value = "eng"
@@ -780,9 +645,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 2,
                             Code = "Theme",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7297),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2690),
                             IsDeleted = false,
                             Name = "Theme",
                             Value = "Light"
@@ -791,9 +654,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 3,
                             Code = "Color",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7456),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2831),
                             IsDeleted = false,
                             Name = "Color",
                             Value = "Orange"
@@ -802,9 +663,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 4,
                             Code = "DefaultWorkspace",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7627),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2982),
                             IsDeleted = false,
                             Name = "DefaultWorkspace",
                             Value = ""
@@ -813,9 +672,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 5,
                             Code = "Host",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(7855),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3126),
                             IsDeleted = false,
                             Name = "Host",
                             Value = "192.168.50.137"
@@ -824,9 +681,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 6,
                             Code = "Port",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8029),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3273),
                             IsDeleted = false,
                             Name = "Port",
                             Value = "5555"
@@ -842,12 +697,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -855,12 +704,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -878,9 +721,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SymbolId = 1,
                             Code = "EURUSD",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8304),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3522),
                             IsDeleted = false,
                             Name = "EURUSD",
                             Value = ""
@@ -896,12 +737,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedByUserName")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
@@ -909,12 +744,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedByUserName")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -932,9 +761,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 1,
                             Code = "M1",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8605),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3800),
                             IsDeleted = false,
                             Name = "1 Minute",
                             Value = "1"
@@ -943,9 +770,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 2,
                             Code = "M5",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8780),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3955),
                             IsDeleted = false,
                             Name = "5 Minutes",
                             Value = "5"
@@ -954,9 +779,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 3,
                             Code = "M15",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(8998),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4094),
                             IsDeleted = false,
                             Name = "15 Minutes",
                             Value = "15"
@@ -965,9 +788,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 4,
                             Code = "M30",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9165),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4239),
                             IsDeleted = false,
                             Name = "30 Minutes",
                             Value = "30"
@@ -976,9 +797,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 5,
                             Code = "H1",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9321),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4387),
                             IsDeleted = false,
                             Name = "1 Hour",
                             Value = "16385"
@@ -987,9 +806,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 6,
                             Code = "H4",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9489),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4538),
                             IsDeleted = false,
                             Name = "4 Hours",
                             Value = "16388"
@@ -998,9 +815,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 7,
                             Code = "D1",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9637),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4672),
                             IsDeleted = false,
                             Name = "Daily",
                             Value = "16408"
@@ -1009,9 +824,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 8,
                             Code = "W1",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9789),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4808),
                             IsDeleted = false,
                             Name = "Weekly",
                             Value = "32769"
@@ -1020,9 +833,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 9,
                             Code = "MN1",
-                            CreatedById = "0",
-                            CreatedByUserName = "admin",
-                            CreatedOn = new DateTime(2023, 7, 27, 22, 51, 48, 511, DateTimeKind.Utc).AddTicks(9956),
+                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4960),
                             IsDeleted = false,
                             Name = "Monthly",
                             Value = "49153"

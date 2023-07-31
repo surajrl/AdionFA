@@ -1,0 +1,947 @@
+30-07-2023 23:56:24.238 [Information] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+30-07-2023 23:56:26.796 [Information] [ThreadId 1] :: Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development. 
+30-07-2023 23:56:27.681 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:27.790 [Information] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Project>()
+    .Where(e => !(e.IsDeleted))' 
+30-07-2023 23:56:28.583 [Information] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Project>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Project.ProjectId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Project.CreatedOn (DateTime) Required, 1], [Property: Project.HistoricalDataId (int) Required FK Index, 2], [Property: Project.IsDeleted (bool) Required, 3], [Property: Project.ProjectName (string) Index, 4], [Property: Project.UpdatedOn (DateTime?), 5], [Property: Project.WorkspacePath (string), 6] }
+        SELECT p.ProjectId, p.CreatedOn, p.HistoricalDataId, p.IsDeleted, p.ProjectName, p.UpdatedOn, p.WorkspacePath
+        FROM Project AS p
+        WHERE Not(p.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Project>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)' 
+30-07-2023 23:56:28.685 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:28.742 [Information] [ThreadId 1] :: Created DbConnection. (54ms). 
+30-07-2023 23:56:28.748 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:28.759 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (89ms). 
+30-07-2023 23:56:28.763 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (96ms). 
+30-07-2023 23:56:28.777 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:28.848 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:28.871 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "p"."ProjectId", "p"."CreatedOn", "p"."HistoricalDataId", "p"."IsDeleted", "p"."ProjectName", "p"."UpdatedOn", "p"."WorkspacePath"
+FROM "Project" AS "p"
+WHERE NOT ("p"."IsDeleted") 
+30-07-2023 23:56:28.925 [Information] [ThreadId 1] :: Executed DbCommand (53ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "p"."ProjectId", "p"."CreatedOn", "p"."HistoricalDataId", "p"."IsDeleted", "p"."ProjectName", "p"."UpdatedOn", "p"."WorkspacePath"
+FROM "Project" AS "p"
+WHERE NOT ("p"."IsDeleted") 
+30-07-2023 23:56:29.045 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Project' entity with key '{ProjectId: 1}'. 
+30-07-2023 23:56:29.137 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:29.147 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 213ms reading results. 
+30-07-2023 23:56:29.154 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:29.164 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (10ms). 
+30-07-2023 23:56:29.234 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:29.240 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:29.244 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (3ms). 
+30-07-2023 23:56:29.961 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:29.972 [Information] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Setting>()
+    .FirstOrDefault(e => e.SettingId == __settingId_0 && !(e.IsDeleted))' 
+30-07-2023 23:56:30.031 [Information] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Setting>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Setting.SettingId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Setting.Code (string), 1], [Property: Setting.CreatedOn (DateTime) Required, 2], [Property: Setting.IsDeleted (bool) Required, 3], [Property: Setting.Name (string), 4], [Property: Setting.UpdatedOn (DateTime?), 5], [Property: Setting.Value (string), 6] }
+        SELECT TOP(1) s.SettingId, s.Code, s.CreatedOn, s.IsDeleted, s.Name, s.UpdatedOn, s.Value
+        FROM Setting AS s
+        WHERE (s.SettingId == @__settingId_0) && Not(s.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Setting>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)
+    .SingleOrDefault()' 
+30-07-2023 23:56:30.054 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:30.054 [Information] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:56:30.054 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:30.054 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:30.059 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (5ms). 
+30-07-2023 23:56:30.059 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.059 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.070 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='4'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.079 [Information] [ThreadId 1] :: Executed DbCommand (19ms) [Parameters=[@__settingId_0='4'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.083 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 4}'. 
+30-07-2023 23:56:30.098 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.098 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 19ms reading results. 
+30-07-2023 23:56:30.098 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.098 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:30.114 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:30.114 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.114 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:30.132 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:30.137 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='2'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='2'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 2}'. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.138 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:30.151 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:30.151 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='3'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='3'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 3}'. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.152 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='1'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.184 [Information] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='1'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 1}'. 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:30.185 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:32.989 [Information] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+30-07-2023 23:56:33.013 [Information] [ThreadId 1] :: ProcessService.StartProcessWeka() :: Weka started. 
+30-07-2023 23:56:35.449 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:35.461 [Information] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Symbol>()
+    .Where(e => !(e.IsDeleted))' 
+30-07-2023 23:56:35.466 [Information] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Symbol>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Symbol.SymbolId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Symbol.Code (string), 1], [Property: Symbol.CreatedOn (DateTime) Required, 2], [Property: Symbol.IsDeleted (bool) Required, 3], [Property: Symbol.Name (string), 4], [Property: Symbol.UpdatedOn (DateTime?), 5], [Property: Symbol.Value (string), 6] }
+        SELECT s.SymbolId, s.Code, s.CreatedOn, s.IsDeleted, s.Name, s.UpdatedOn, s.Value
+        FROM Symbol AS s
+        WHERE Not(s.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Symbol>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)' 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SymbolId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Symbol" AS "s"
+WHERE NOT ("s"."IsDeleted") 
+30-07-2023 23:56:35.467 [Information] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SymbolId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Symbol" AS "s"
+WHERE NOT ("s"."IsDeleted") 
+30-07-2023 23:56:35.476 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 1}'. 
+30-07-2023 23:56:35.497 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 2}'. 
+30-07-2023 23:56:35.497 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 3}'. 
+30-07-2023 23:56:35.497 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 4}'. 
+30-07-2023 23:56:35.497 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:35.497 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 29ms reading results. 
+30-07-2023 23:56:35.497 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:35.498 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:35.498 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:35.498 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:35.498 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:35.500 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:35.506 [Information] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Timeframe>()
+    .Where(e => !(e.IsDeleted))' 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Timeframe>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Timeframe.TimeframeId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Timeframe.Code (string), 1], [Property: Timeframe.CreatedOn (DateTime) Required, 2], [Property: Timeframe.IsDeleted (bool) Required, 3], [Property: Timeframe.Name (string), 4], [Property: Timeframe.UpdatedOn (DateTime?), 5], [Property: Timeframe.Value (string), 6] }
+        SELECT t.TimeframeId, t.Code, t.CreatedOn, t.IsDeleted, t.Name, t.UpdatedOn, t.Value
+        FROM Timeframe AS t
+        WHERE Not(t.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Timeframe>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)' 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:35.512 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:35.513 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."TimeframeId", "t"."Code", "t"."CreatedOn", "t"."IsDeleted", "t"."Name", "t"."UpdatedOn", "t"."Value"
+FROM "Timeframe" AS "t"
+WHERE NOT ("t"."IsDeleted") 
+30-07-2023 23:56:35.513 [Information] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."TimeframeId", "t"."Code", "t"."CreatedOn", "t"."IsDeleted", "t"."Name", "t"."UpdatedOn", "t"."Value"
+FROM "Timeframe" AS "t"
+WHERE NOT ("t"."IsDeleted") 
+30-07-2023 23:56:35.526 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 1}'. 
+30-07-2023 23:56:35.550 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 2}'. 
+30-07-2023 23:56:35.550 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 3}'. 
+30-07-2023 23:56:35.550 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 4}'. 
+30-07-2023 23:56:35.550 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 5}'. 
+30-07-2023 23:56:35.550 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 6}'. 
+30-07-2023 23:56:35.550 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 7}'. 
+30-07-2023 23:56:35.550 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 8}'. 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 9}'. 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 37ms reading results. 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:35.551 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:38.610 [Information] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:56:38.625 [Information] [ThreadId 1] :: Compiling query expression: 
+'DbSet<GlobalConfiguration>()
+    .Where(e => !(e.IsDeleted))
+    .Include(e => e.GlobalScheduleConfigurations)
+    .ThenInclude(e => e.MarketRegion)
+    .FirstOrDefault()' 
+30-07-2023 23:56:38.670 [Information] [ThreadId 1] :: Including navigation: 'GlobalConfiguration.GlobalScheduleConfigurations'. 
+30-07-2023 23:56:38.690 [Information] [ThreadId 1] :: Including navigation: 'GlobalScheduleConfiguration.MarketRegion'. 
+30-07-2023 23:56:38.941 [Information] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<GlobalConfiguration>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Client Projections:
+            0 -> Dictionary<IProperty, int> { [Property: GlobalConfiguration.GlobalConfigurationId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: GlobalConfiguration.ABMinImprovePercent (decimal) Required, 1], [Property: GlobalConfiguration.ABMinTotalTradesIS (int) Required, 2], [Property: GlobalConfiguration.ABWekaMaxRatioTree (decimal) Required, 3], [Property: GlobalConfiguration.ABWekaNTotalTree (decimal) Required, 4], [Property: GlobalConfiguration.CreatedOn (DateTime) Required, 5], [Property: GlobalConfiguration.DepthWeka (int) Required, 6], [Property: GlobalConfiguration.ExpertAdvisorHost (string), 7], [Property: GlobalConfiguration.ExpertAdvisorPublisherPort (string), 8], [Property: GlobalConfiguration.ExpertAdvisorResponsePort (string), 9], [Property: GlobalConfiguration.ExtractorMinVariation (int) Required, 10], [Property: GlobalConfiguration.FromDateIS (DateTime?), 11], [Property: GlobalConfiguration.FromDateOS (DateTime?), 12], [Property: GlobalConfiguration.IsDeleted (bool) Required, 13], [Property: GlobalConfiguration.IsProgressiveness (bool) Required, 14], [Property: GlobalConfiguration.MaxProgressivenessVariation (decimal) Required, 15], [Property: GlobalConfiguration.MaxRatioTree (decimal) Required, 16], [Property: GlobalConfiguration.MaximumSeed (int) Required, 17], [Property: GlobalConfiguration.MinimalSeed (int) Required, 18], [Property: GlobalConfiguration.NTotalTree (decimal) Required, 19], [Property: GlobalConfiguration.SBMaxCorrelationPercent (decimal) Required, 20], [Property: GlobalConfiguration.SBMaxSuccessRateVariation (decimal) Required, 21], [Property: GlobalConfiguration.SBMinSuccessRatePercentIS (decimal) Required, 22], [Property: GlobalConfiguration.SBMinSuccessRatePercentOS (decimal) Required, 23], [Property: GlobalConfiguration.SBMinTotalTradesIS (int) Required, 24], [Property: GlobalConfiguration.SBMinTotalTradesOS (int) Required, 25], [Property: GlobalConfiguration.SBTotalTradesTarget (int) Required, 26], [Property: GlobalConfiguration.SBWinningStrategyDOWNTarget (int) Required, 27], [Property: GlobalConfiguration.SBWinningStrategyUPTarget (int) Required, 28], [Property: GlobalConfiguration.ToDateIS (DateTime?), 29], [Property: GlobalConfiguration.ToDateOS (DateTime?), 30], [Property: GlobalConfiguration.TotalDecimalWeka (int) Required, 31], [Property: GlobalConfiguration.TotalInstanceWeka (int) Required, 32], [Property: GlobalConfiguration.UpdatedOn (DateTime?), 33], [Property: GlobalConfiguration.WithoutSchedule (bool) Required, 34] }
+            1 -> 0
+            2 -> Dictionary<IProperty, int> { [Property: GlobalScheduleConfiguration.GlobalScheduleConfigurationId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 35], [Property: GlobalScheduleConfiguration.CreatedOn (DateTime) Required, 36], [Property: GlobalScheduleConfiguration.FromTimeInSeconds (int) Required, 37], [Property: GlobalScheduleConfiguration.GlobalConfigurationId (int) Required FK Index, 38], [Property: GlobalScheduleConfiguration.IsDeleted (bool) Required, 39], [Property: GlobalScheduleConfiguration.MarketRegionId (int) Required FK Index, 40], [Property: GlobalScheduleConfiguration.ToTimeInSeconds (int) Required, 41], [Property: GlobalScheduleConfiguration.UpdatedOn (DateTime?), 42] }
+            3 -> Dictionary<IProperty, int> { [Property: MarketRegion.MarketRegionId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 43], [Property: MarketRegion.Code (string), 44], [Property: MarketRegion.CreatedOn (DateTime) Required, 45], [Property: MarketRegion.IsDeleted (bool) Required, 46], [Property: MarketRegion.Name (string), 47], [Property: MarketRegion.UpdatedOn (DateTime?), 48], [Property: MarketRegion.Value (string), 49] }
+            4 -> 35
+            5 -> 43
+        SELECT t.GlobalConfigurationId, t.ABMinImprovePercent, t.ABMinTotalTradesIS, t.ABWekaMaxRatioTree, t.ABWekaNTotalTree, t.CreatedOn, t.DepthWeka, t.ExpertAdvisorHost, t.ExpertAdvisorPublisherPort, t.ExpertAdvisorResponsePort, t.ExtractorMinVariation, t.FromDateIS, t.FromDateOS, t.IsDeleted, t.IsProgressiveness, t.MaxProgressivenessVariation, t.MaxRatioTree, t.MaximumSeed, t.MinimalSeed, t.NTotalTree, t.SBMaxCorrelationPercent, t.SBMaxSuccessRateVariation, t.SBMinSuccessRatePercentIS, t.SBMinSuccessRatePercentOS, t.SBMinTotalTradesIS, t.SBMinTotalTradesOS, t.SBTotalTradesTarget, t.SBWinningStrategyDOWNTarget, t.SBWinningStrategyUPTarget, t.ToDateIS, t.ToDateOS, t.TotalDecimalWeka, t.TotalInstanceWeka, t.UpdatedOn, t.WithoutSchedule, t0.GlobalScheduleConfigurationId, t0.CreatedOn, t0.FromTimeInSeconds, t0.GlobalConfigurationId, t0.IsDeleted, t0.MarketRegionId, t0.ToTimeInSeconds, t0.UpdatedOn, t0.MarketRegionId0, t0.Code, t0.CreatedOn0, t0.IsDeleted0, t0.Name, t0.UpdatedOn0, t0.Value
+        FROM 
+        (
+            SELECT TOP(1) g.GlobalConfigurationId, g.ABMinImprovePercent, g.ABMinTotalTradesIS, g.ABWekaMaxRatioTree, g.ABWekaNTotalTree, g.CreatedOn, g.DepthWeka, g.ExpertAdvisorHost, g.ExpertAdvisorPublisherPort, g.ExpertAdvisorResponsePort, g.ExtractorMinVariation, g.FromDateIS, g.FromDateOS, g.IsDeleted, g.IsProgressiveness, g.MaxProgressivenessVariation, g.MaxRatioTree, g.MaximumSeed, g.MinimalSeed, g.NTotalTree, g.SBMaxCorrelationPercent, g.SBMaxSuccessRateVariation, g.SBMinSuccessRatePercentIS, g.SBMinSuccessRatePercentOS, g.SBMinTotalTradesIS, g.SBMinTotalTradesOS, g.SBTotalTradesTarget, g.SBWinningStrategyDOWNTarget, g.SBWinningStrategyUPTarget, g.ToDateIS, g.ToDateOS, g.TotalDecimalWeka, g.TotalInstanceWeka, g.UpdatedOn, g.WithoutSchedule
+            FROM GlobalConfiguration AS g
+            WHERE Not(g.IsDeleted)
+        ) AS t
+        LEFT JOIN 
+        (
+            SELECT g0.GlobalScheduleConfigurationId, g0.CreatedOn, g0.FromTimeInSeconds, g0.GlobalConfigurationId, g0.IsDeleted, g0.MarketRegionId, g0.ToTimeInSeconds, g0.UpdatedOn, m.MarketRegionId AS MarketRegionId0, m.Code, m.CreatedOn AS CreatedOn0, m.IsDeleted AS IsDeleted0, m.Name, m.UpdatedOn AS UpdatedOn0, m.Value
+            FROM GlobalScheduleConfiguration AS g0
+            INNER JOIN MarketRegion AS m ON g0.MarketRegionId == m.MarketRegionId
+        ) AS t0 ON t.GlobalConfigurationId == t0.GlobalConfigurationId
+        ORDER BY t.GlobalConfigurationId ASC, t0.GlobalScheduleConfigurationId ASC), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, GlobalConfiguration>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)
+    .SingleOrDefault()' 
+30-07-2023 23:56:38.946 [Information] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:56:38.946 [Information] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:56:38.946 [Information] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:56:38.946 [Information] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:38.946 [Information] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:56:38.946 [Information] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:38.947 [Information] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:38.947 [Information] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."GlobalConfigurationId", "t"."ABMinImprovePercent", "t"."ABMinTotalTradesIS", "t"."ABWekaMaxRatioTree", "t"."ABWekaNTotalTree", "t"."CreatedOn", "t"."DepthWeka", "t"."ExpertAdvisorHost", "t"."ExpertAdvisorPublisherPort", "t"."ExpertAdvisorResponsePort", "t"."ExtractorMinVariation", "t"."FromDateIS", "t"."FromDateOS", "t"."IsDeleted", "t"."IsProgressiveness", "t"."MaxProgressivenessVariation", "t"."MaxRatioTree", "t"."MaximumSeed", "t"."MinimalSeed", "t"."NTotalTree", "t"."SBMaxCorrelationPercent", "t"."SBMaxSuccessRateVariation", "t"."SBMinSuccessRatePercentIS", "t"."SBMinSuccessRatePercentOS", "t"."SBMinTotalTradesIS", "t"."SBMinTotalTradesOS", "t"."SBTotalTradesTarget", "t"."SBWinningStrategyDOWNTarget", "t"."SBWinningStrategyUPTarget", "t"."ToDateIS", "t"."ToDateOS", "t"."TotalDecimalWeka", "t"."TotalInstanceWeka", "t"."UpdatedOn", "t"."WithoutSchedule", "t0"."GlobalScheduleConfigurationId", "t0"."CreatedOn", "t0"."FromTimeInSeconds", "t0"."GlobalConfigurationId", "t0"."IsDeleted", "t0"."MarketRegionId", "t0"."ToTimeInSeconds", "t0"."UpdatedOn", "t0"."MarketRegionId0", "t0"."Code", "t0"."CreatedOn0", "t0"."IsDeleted0", "t0"."Name", "t0"."UpdatedOn0", "t0"."Value"
+FROM (
+    SELECT "g"."GlobalConfigurationId", "g"."ABMinImprovePercent", "g"."ABMinTotalTradesIS", "g"."ABWekaMaxRatioTree", "g"."ABWekaNTotalTree", "g"."CreatedOn", "g"."DepthWeka", "g"."ExpertAdvisorHost", "g"."ExpertAdvisorPublisherPort", "g"."ExpertAdvisorResponsePort", "g"."ExtractorMinVariation", "g"."FromDateIS", "g"."FromDateOS", "g"."IsDeleted", "g"."IsProgressiveness", "g"."MaxProgressivenessVariation", "g"."MaxRatioTree", "g"."MaximumSeed", "g"."MinimalSeed", "g"."NTotalTree", "g"."SBMaxCorrelationPercent", "g"."SBMaxSuccessRateVariation", "g"."SBMinSuccessRatePercentIS", "g"."SBMinSuccessRatePercentOS", "g"."SBMinTotalTradesIS", "g"."SBMinTotalTradesOS", "g"."SBTotalTradesTarget", "g"."SBWinningStrategyDOWNTarget", "g"."SBWinningStrategyUPTarget", "g"."ToDateIS", "g"."ToDateOS", "g"."TotalDecimalWeka", "g"."TotalInstanceWeka", "g"."UpdatedOn", "g"."WithoutSchedule"
+    FROM "GlobalConfiguration" AS "g"
+    WHERE NOT ("g"."IsDeleted")
+    LIMIT 1
+) AS "t"
+LEFT JOIN (
+    SELECT "g0"."GlobalScheduleConfigurationId", "g0"."CreatedOn", "g0"."FromTimeInSeconds", "g0"."GlobalConfigurationId", "g0"."IsDeleted", "g0"."MarketRegionId", "g0"."ToTimeInSeconds", "g0"."UpdatedOn", "m"."MarketRegionId" AS "MarketRegionId0", "m"."Code", "m"."CreatedOn" AS "CreatedOn0", "m"."IsDeleted" AS "IsDeleted0", "m"."Name", "m"."UpdatedOn" AS "UpdatedOn0", "m"."Value"
+    FROM "GlobalScheduleConfiguration" AS "g0"
+    INNER JOIN "MarketRegion" AS "m" ON "g0"."MarketRegionId" = "m"."MarketRegionId"
+) AS "t0" ON "t"."GlobalConfigurationId" = "t0"."GlobalConfigurationId"
+ORDER BY "t"."GlobalConfigurationId", "t0"."GlobalScheduleConfigurationId" 
+30-07-2023 23:56:38.949 [Information] [ThreadId 1] :: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."GlobalConfigurationId", "t"."ABMinImprovePercent", "t"."ABMinTotalTradesIS", "t"."ABWekaMaxRatioTree", "t"."ABWekaNTotalTree", "t"."CreatedOn", "t"."DepthWeka", "t"."ExpertAdvisorHost", "t"."ExpertAdvisorPublisherPort", "t"."ExpertAdvisorResponsePort", "t"."ExtractorMinVariation", "t"."FromDateIS", "t"."FromDateOS", "t"."IsDeleted", "t"."IsProgressiveness", "t"."MaxProgressivenessVariation", "t"."MaxRatioTree", "t"."MaximumSeed", "t"."MinimalSeed", "t"."NTotalTree", "t"."SBMaxCorrelationPercent", "t"."SBMaxSuccessRateVariation", "t"."SBMinSuccessRatePercentIS", "t"."SBMinSuccessRatePercentOS", "t"."SBMinTotalTradesIS", "t"."SBMinTotalTradesOS", "t"."SBTotalTradesTarget", "t"."SBWinningStrategyDOWNTarget", "t"."SBWinningStrategyUPTarget", "t"."ToDateIS", "t"."ToDateOS", "t"."TotalDecimalWeka", "t"."TotalInstanceWeka", "t"."UpdatedOn", "t"."WithoutSchedule", "t0"."GlobalScheduleConfigurationId", "t0"."CreatedOn", "t0"."FromTimeInSeconds", "t0"."GlobalConfigurationId", "t0"."IsDeleted", "t0"."MarketRegionId", "t0"."ToTimeInSeconds", "t0"."UpdatedOn", "t0"."MarketRegionId0", "t0"."Code", "t0"."CreatedOn0", "t0"."IsDeleted0", "t0"."Name", "t0"."UpdatedOn0", "t0"."Value"
+FROM (
+    SELECT "g"."GlobalConfigurationId", "g"."ABMinImprovePercent", "g"."ABMinTotalTradesIS", "g"."ABWekaMaxRatioTree", "g"."ABWekaNTotalTree", "g"."CreatedOn", "g"."DepthWeka", "g"."ExpertAdvisorHost", "g"."ExpertAdvisorPublisherPort", "g"."ExpertAdvisorResponsePort", "g"."ExtractorMinVariation", "g"."FromDateIS", "g"."FromDateOS", "g"."IsDeleted", "g"."IsProgressiveness", "g"."MaxProgressivenessVariation", "g"."MaxRatioTree", "g"."MaximumSeed", "g"."MinimalSeed", "g"."NTotalTree", "g"."SBMaxCorrelationPercent", "g"."SBMaxSuccessRateVariation", "g"."SBMinSuccessRatePercentIS", "g"."SBMinSuccessRatePercentOS", "g"."SBMinTotalTradesIS", "g"."SBMinTotalTradesOS", "g"."SBTotalTradesTarget", "g"."SBWinningStrategyDOWNTarget", "g"."SBWinningStrategyUPTarget", "g"."ToDateIS", "g"."ToDateOS", "g"."TotalDecimalWeka", "g"."TotalInstanceWeka", "g"."UpdatedOn", "g"."WithoutSchedule"
+    FROM "GlobalConfiguration" AS "g"
+    WHERE NOT ("g"."IsDeleted")
+    LIMIT 1
+) AS "t"
+LEFT JOIN (
+    SELECT "g0"."GlobalScheduleConfigurationId", "g0"."CreatedOn", "g0"."FromTimeInSeconds", "g0"."GlobalConfigurationId", "g0"."IsDeleted", "g0"."MarketRegionId", "g0"."ToTimeInSeconds", "g0"."UpdatedOn", "m"."MarketRegionId" AS "MarketRegionId0", "m"."Code", "m"."CreatedOn" AS "CreatedOn0", "m"."IsDeleted" AS "IsDeleted0", "m"."Name", "m"."UpdatedOn" AS "UpdatedOn0", "m"."Value"
+    FROM "GlobalScheduleConfiguration" AS "g0"
+    INNER JOIN "MarketRegion" AS "m" ON "g0"."MarketRegionId" = "m"."MarketRegionId"
+) AS "t0" ON "t"."GlobalConfigurationId" = "t0"."GlobalConfigurationId"
+ORDER BY "t"."GlobalConfigurationId", "t0"."GlobalScheduleConfigurationId" 
+30-07-2023 23:56:38.959 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalConfiguration' entity with key '{GlobalConfigurationId: 1}'. 
+30-07-2023 23:56:39.110 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalScheduleConfiguration' entity with key '{GlobalScheduleConfigurationId: 1}'. 
+30-07-2023 23:56:39.152 [Information] [ThreadId 1] :: The navigation 'GlobalScheduleConfiguration.MarketRegion' for entity with key '{GlobalScheduleConfigurationId: 1}' was detected as changed. 
+30-07-2023 23:56:39.161 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'MarketRegion' entity with key '{MarketRegionId: 1}'. 
+30-07-2023 23:56:39.190 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalScheduleConfiguration' entity with key '{GlobalScheduleConfigurationId: 2}'. 
+30-07-2023 23:56:39.190 [Information] [ThreadId 1] :: The navigation 'GlobalScheduleConfiguration.MarketRegion' for entity with key '{GlobalScheduleConfigurationId: 2}' was detected as changed. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'MarketRegion' entity with key '{MarketRegionId: 2}'. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalScheduleConfiguration' entity with key '{GlobalScheduleConfigurationId: 3}'. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: The navigation 'GlobalScheduleConfiguration.MarketRegion' for entity with key '{GlobalScheduleConfigurationId: 3}' was detected as changed. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'MarketRegion' entity with key '{MarketRegionId: 3}'. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 242ms reading results. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:56:39.191 [Information] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:56:39.244 [Information] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:56:39.244 [Information] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:56:39.244 [Information] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:05.250 [Information] [ProcessId ] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+30-07-2023 23:58:07.755 [Information] [ProcessId ] [ThreadId 1] :: Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development. 
+30-07-2023 23:58:08.410 [Information] [ProcessId ] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:58:08.578 [Information] [ProcessId ] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Project>()
+    .Where(e => !(e.IsDeleted))' 
+30-07-2023 23:58:09.219 [Information] [ProcessId ] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Project>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Project.ProjectId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Project.CreatedOn (DateTime) Required, 1], [Property: Project.HistoricalDataId (int) Required FK Index, 2], [Property: Project.IsDeleted (bool) Required, 3], [Property: Project.ProjectName (string) Index, 4], [Property: Project.UpdatedOn (DateTime?), 5], [Property: Project.WorkspacePath (string), 6] }
+        SELECT p.ProjectId, p.CreatedOn, p.HistoricalDataId, p.IsDeleted, p.ProjectName, p.UpdatedOn, p.WorkspacePath
+        FROM Project AS p
+        WHERE Not(p.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Project>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)' 
+30-07-2023 23:58:09.296 [Information] [ProcessId ] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:58:09.336 [Information] [ProcessId ] [ThreadId 1] :: Created DbConnection. (37ms). 
+30-07-2023 23:58:09.339 [Information] [ProcessId ] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:58:09.350 [Information] [ProcessId ] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (57ms). 
+30-07-2023 23:58:09.354 [Information] [ProcessId ] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (65ms). 
+30-07-2023 23:58:09.363 [Information] [ProcessId ] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:09.396 [Information] [ProcessId ] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:09.418 [Information] [ProcessId ] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "p"."ProjectId", "p"."CreatedOn", "p"."HistoricalDataId", "p"."IsDeleted", "p"."ProjectName", "p"."UpdatedOn", "p"."WorkspacePath"
+FROM "Project" AS "p"
+WHERE NOT ("p"."IsDeleted") 
+30-07-2023 23:58:09.467 [Information] [ProcessId ] [ThreadId 1] :: Executed DbCommand (50ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "p"."ProjectId", "p"."CreatedOn", "p"."HistoricalDataId", "p"."IsDeleted", "p"."ProjectName", "p"."UpdatedOn", "p"."WorkspacePath"
+FROM "Project" AS "p"
+WHERE NOT ("p"."IsDeleted") 
+30-07-2023 23:58:09.551 [Information] [ProcessId ] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Project' entity with key '{ProjectId: 1}'. 
+30-07-2023 23:58:09.634 [Information] [ProcessId ] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:09.651 [Information] [ProcessId ] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 170ms reading results. 
+30-07-2023 23:58:09.658 [Information] [ProcessId ] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:09.668 [Information] [ProcessId ] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (9ms). 
+30-07-2023 23:58:09.735 [Information] [ProcessId ] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:58:09.743 [Information] [ProcessId ] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:09.749 [Information] [ProcessId ] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (5ms). 
+30-07-2023 23:58:10.478 [Information] [ProcessId ] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:58:10.494 [Information] [ProcessId ] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Setting>()
+    .FirstOrDefault(e => e.SettingId == __settingId_0 && !(e.IsDeleted))' 
+30-07-2023 23:58:10.553 [Information] [ProcessId ] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Setting>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Setting.SettingId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Setting.Code (string), 1], [Property: Setting.CreatedOn (DateTime) Required, 2], [Property: Setting.IsDeleted (bool) Required, 3], [Property: Setting.Name (string), 4], [Property: Setting.UpdatedOn (DateTime?), 5], [Property: Setting.Value (string), 6] }
+        SELECT TOP(1) s.SettingId, s.Code, s.CreatedOn, s.IsDeleted, s.Name, s.UpdatedOn, s.Value
+        FROM Setting AS s
+        WHERE (s.SettingId == @__settingId_0) && Not(s.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Setting>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)
+    .SingleOrDefault()' 
+30-07-2023 23:58:10.578 [Information] [ProcessId ] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:58:10.579 [Information] [ProcessId ] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:58:10.579 [Information] [ProcessId ] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:58:10.579 [Information] [ProcessId ] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:58:10.585 [Information] [ProcessId ] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (6ms). 
+30-07-2023 23:58:10.585 [Information] [ProcessId ] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.585 [Information] [ProcessId ] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.602 [Information] [ProcessId ] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='4'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.615 [Information] [ProcessId ] [ThreadId 1] :: Executed DbCommand (30ms) [Parameters=[@__settingId_0='4'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.622 [Information] [ProcessId ] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 4}'. 
+30-07-2023 23:58:10.641 [Information] [ProcessId ] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.641 [Information] [ProcessId ] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 26ms reading results. 
+30-07-2023 23:58:10.642 [Information] [ProcessId ] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.642 [Information] [ProcessId ] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:10.647 [Information] [ProcessId ] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:58:10.647 [Information] [ProcessId ] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.647 [Information] [ProcessId ] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:10.667 [Information] [ProcessId ] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:58:10.673 [Information] [ProcessId ] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='2'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.674 [Information] [ProcessId ] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='2'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 2}'. 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.684 [Information] [ProcessId ] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:10.702 [Information] [ProcessId ] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='3'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='3'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 3}'. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.703 [Information] [ProcessId ] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Creating DbConnection. 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Created DbConnection. (0ms). 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.736 [Information] [ProcessId ] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='1'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='1'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 1}'. 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+30-07-2023 23:58:10.737 [Information] [ProcessId ] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+30-07-2023 23:58:13.694 [Information] [ProcessId ] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+30-07-2023 23:58:13.727 [Information] [ProcessId ] [ThreadId 1] :: ProcessService.StartProcessWeka() :: Weka started. 
+31-07-2023 00:00:02.746 [Information] [ProcessId 5224] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+31-07-2023 00:00:05.262 [Information] [ProcessId 5224] [ThreadId 1] :: Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development. 
+31-07-2023 00:00:05.914 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:06.006 [Information] [ProcessId 5224] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Project>()
+    .Where(e => !(e.IsDeleted))' 
+31-07-2023 00:00:06.738 [Information] [ProcessId 5224] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Project>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Project.ProjectId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Project.CreatedOn (DateTime) Required, 1], [Property: Project.HistoricalDataId (int) Required FK Index, 2], [Property: Project.IsDeleted (bool) Required, 3], [Property: Project.ProjectName (string) Index, 4], [Property: Project.UpdatedOn (DateTime?), 5], [Property: Project.WorkspacePath (string), 6] }
+        SELECT p.ProjectId, p.CreatedOn, p.HistoricalDataId, p.IsDeleted, p.ProjectName, p.UpdatedOn, p.WorkspacePath
+        FROM Project AS p
+        WHERE Not(p.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Project>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)' 
+31-07-2023 00:00:06.826 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:06.869 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (41ms). 
+31-07-2023 00:00:06.872 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:06.882 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (65ms). 
+31-07-2023 00:00:06.886 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (72ms). 
+31-07-2023 00:00:06.895 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:06.932 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:06.947 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "p"."ProjectId", "p"."CreatedOn", "p"."HistoricalDataId", "p"."IsDeleted", "p"."ProjectName", "p"."UpdatedOn", "p"."WorkspacePath"
+FROM "Project" AS "p"
+WHERE NOT ("p"."IsDeleted") 
+31-07-2023 00:00:06.992 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (41ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "p"."ProjectId", "p"."CreatedOn", "p"."HistoricalDataId", "p"."IsDeleted", "p"."ProjectName", "p"."UpdatedOn", "p"."WorkspacePath"
+FROM "Project" AS "p"
+WHERE NOT ("p"."IsDeleted") 
+31-07-2023 00:00:07.070 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Project' entity with key '{ProjectId: 1}'. 
+31-07-2023 00:00:07.173 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:07.183 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 182ms reading results. 
+31-07-2023 00:00:07.190 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:07.201 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (9ms). 
+31-07-2023 00:00:07.256 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:07.263 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:07.266 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (3ms). 
+31-07-2023 00:00:07.920 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:07.941 [Information] [ProcessId 5224] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Setting>()
+    .FirstOrDefault(e => e.SettingId == __settingId_0 && !(e.IsDeleted))' 
+31-07-2023 00:00:08.009 [Information] [ProcessId 5224] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Setting>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Setting.SettingId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Setting.Code (string), 1], [Property: Setting.CreatedOn (DateTime) Required, 2], [Property: Setting.IsDeleted (bool) Required, 3], [Property: Setting.Name (string), 4], [Property: Setting.UpdatedOn (DateTime?), 5], [Property: Setting.Value (string), 6] }
+        SELECT TOP(1) s.SettingId, s.Code, s.CreatedOn, s.IsDeleted, s.Name, s.UpdatedOn, s.Value
+        FROM Setting AS s
+        WHERE (s.SettingId == @__settingId_0) && Not(s.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Setting>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)
+    .SingleOrDefault()' 
+31-07-2023 00:00:08.037 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:08.037 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:08.037 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:08.037 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:08.043 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (5ms). 
+31-07-2023 00:00:08.043 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.043 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.053 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='4'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.063 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (20ms) [Parameters=[@__settingId_0='4'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.067 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 4}'. 
+31-07-2023 00:00:08.088 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.088 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 25ms reading results. 
+31-07-2023 00:00:08.088 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.088 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:08.094 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:08.095 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.095 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:08.111 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='2'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.117 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='2'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 2}'. 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.118 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:08.143 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:08.143 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:08.143 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:08.143 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:08.143 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:08.143 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:08.143 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='3'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='3'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 3}'. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.144 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='1'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='1'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 1}'. 
+31-07-2023 00:00:08.178 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.179 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+31-07-2023 00:00:08.179 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:08.179 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:08.179 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:08.179 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:08.179 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:11.244 [Information] [ProcessId 5224] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+31-07-2023 00:00:11.276 [Information] [ProcessId 5224] [ThreadId 1] :: ProcessService.StartProcessWeka() :: Weka started. 
+31-07-2023 00:00:27.612 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:27.630 [Information] [ProcessId 5224] [ThreadId 1] :: Compiling query expression: 
+'DbSet<GlobalConfiguration>()
+    .Where(e => !(e.IsDeleted))
+    .Include(e => e.GlobalScheduleConfigurations)
+    .ThenInclude(e => e.MarketRegion)
+    .FirstOrDefault()' 
+31-07-2023 00:00:27.680 [Information] [ProcessId 5224] [ThreadId 1] :: Including navigation: 'GlobalConfiguration.GlobalScheduleConfigurations'. 
+31-07-2023 00:00:27.698 [Information] [ProcessId 5224] [ThreadId 1] :: Including navigation: 'GlobalScheduleConfiguration.MarketRegion'. 
+31-07-2023 00:00:27.980 [Information] [ProcessId 5224] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<GlobalConfiguration>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Client Projections:
+            0 -> Dictionary<IProperty, int> { [Property: GlobalConfiguration.GlobalConfigurationId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: GlobalConfiguration.ABMinImprovePercent (decimal) Required, 1], [Property: GlobalConfiguration.ABMinTotalTradesIS (int) Required, 2], [Property: GlobalConfiguration.ABWekaMaxRatioTree (decimal) Required, 3], [Property: GlobalConfiguration.ABWekaNTotalTree (decimal) Required, 4], [Property: GlobalConfiguration.CreatedOn (DateTime) Required, 5], [Property: GlobalConfiguration.DepthWeka (int) Required, 6], [Property: GlobalConfiguration.ExpertAdvisorHost (string), 7], [Property: GlobalConfiguration.ExpertAdvisorPublisherPort (string), 8], [Property: GlobalConfiguration.ExpertAdvisorResponsePort (string), 9], [Property: GlobalConfiguration.ExtractorMinVariation (int) Required, 10], [Property: GlobalConfiguration.FromDateIS (DateTime?), 11], [Property: GlobalConfiguration.FromDateOS (DateTime?), 12], [Property: GlobalConfiguration.IsDeleted (bool) Required, 13], [Property: GlobalConfiguration.IsProgressiveness (bool) Required, 14], [Property: GlobalConfiguration.MaxProgressivenessVariation (decimal) Required, 15], [Property: GlobalConfiguration.MaxRatioTree (decimal) Required, 16], [Property: GlobalConfiguration.MaximumSeed (int) Required, 17], [Property: GlobalConfiguration.MinimalSeed (int) Required, 18], [Property: GlobalConfiguration.NTotalTree (decimal) Required, 19], [Property: GlobalConfiguration.SBMaxCorrelationPercent (decimal) Required, 20], [Property: GlobalConfiguration.SBMaxSuccessRateVariation (decimal) Required, 21], [Property: GlobalConfiguration.SBMinSuccessRatePercentIS (decimal) Required, 22], [Property: GlobalConfiguration.SBMinSuccessRatePercentOS (decimal) Required, 23], [Property: GlobalConfiguration.SBMinTotalTradesIS (int) Required, 24], [Property: GlobalConfiguration.SBMinTotalTradesOS (int) Required, 25], [Property: GlobalConfiguration.SBTotalTradesTarget (int) Required, 26], [Property: GlobalConfiguration.SBWinningStrategyDOWNTarget (int) Required, 27], [Property: GlobalConfiguration.SBWinningStrategyUPTarget (int) Required, 28], [Property: GlobalConfiguration.ToDateIS (DateTime?), 29], [Property: GlobalConfiguration.ToDateOS (DateTime?), 30], [Property: GlobalConfiguration.TotalDecimalWeka (int) Required, 31], [Property: GlobalConfiguration.TotalInstanceWeka (int) Required, 32], [Property: GlobalConfiguration.UpdatedOn (DateTime?), 33], [Property: GlobalConfiguration.WithoutSchedule (bool) Required, 34] }
+            1 -> 0
+            2 -> Dictionary<IProperty, int> { [Property: GlobalScheduleConfiguration.GlobalScheduleConfigurationId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 35], [Property: GlobalScheduleConfiguration.CreatedOn (DateTime) Required, 36], [Property: GlobalScheduleConfiguration.FromTimeInSeconds (int) Required, 37], [Property: GlobalScheduleConfiguration.GlobalConfigurationId (int) Required FK Index, 38], [Property: GlobalScheduleConfiguration.IsDeleted (bool) Required, 39], [Property: GlobalScheduleConfiguration.MarketRegionId (int) Required FK Index, 40], [Property: GlobalScheduleConfiguration.ToTimeInSeconds (int) Required, 41], [Property: GlobalScheduleConfiguration.UpdatedOn (DateTime?), 42] }
+            3 -> Dictionary<IProperty, int> { [Property: MarketRegion.MarketRegionId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 43], [Property: MarketRegion.Code (string), 44], [Property: MarketRegion.CreatedOn (DateTime) Required, 45], [Property: MarketRegion.IsDeleted (bool) Required, 46], [Property: MarketRegion.Name (string), 47], [Property: MarketRegion.UpdatedOn (DateTime?), 48], [Property: MarketRegion.Value (string), 49] }
+            4 -> 35
+            5 -> 43
+        SELECT t.GlobalConfigurationId, t.ABMinImprovePercent, t.ABMinTotalTradesIS, t.ABWekaMaxRatioTree, t.ABWekaNTotalTree, t.CreatedOn, t.DepthWeka, t.ExpertAdvisorHost, t.ExpertAdvisorPublisherPort, t.ExpertAdvisorResponsePort, t.ExtractorMinVariation, t.FromDateIS, t.FromDateOS, t.IsDeleted, t.IsProgressiveness, t.MaxProgressivenessVariation, t.MaxRatioTree, t.MaximumSeed, t.MinimalSeed, t.NTotalTree, t.SBMaxCorrelationPercent, t.SBMaxSuccessRateVariation, t.SBMinSuccessRatePercentIS, t.SBMinSuccessRatePercentOS, t.SBMinTotalTradesIS, t.SBMinTotalTradesOS, t.SBTotalTradesTarget, t.SBWinningStrategyDOWNTarget, t.SBWinningStrategyUPTarget, t.ToDateIS, t.ToDateOS, t.TotalDecimalWeka, t.TotalInstanceWeka, t.UpdatedOn, t.WithoutSchedule, t0.GlobalScheduleConfigurationId, t0.CreatedOn, t0.FromTimeInSeconds, t0.GlobalConfigurationId, t0.IsDeleted, t0.MarketRegionId, t0.ToTimeInSeconds, t0.UpdatedOn, t0.MarketRegionId0, t0.Code, t0.CreatedOn0, t0.IsDeleted0, t0.Name, t0.UpdatedOn0, t0.Value
+        FROM 
+        (
+            SELECT TOP(1) g.GlobalConfigurationId, g.ABMinImprovePercent, g.ABMinTotalTradesIS, g.ABWekaMaxRatioTree, g.ABWekaNTotalTree, g.CreatedOn, g.DepthWeka, g.ExpertAdvisorHost, g.ExpertAdvisorPublisherPort, g.ExpertAdvisorResponsePort, g.ExtractorMinVariation, g.FromDateIS, g.FromDateOS, g.IsDeleted, g.IsProgressiveness, g.MaxProgressivenessVariation, g.MaxRatioTree, g.MaximumSeed, g.MinimalSeed, g.NTotalTree, g.SBMaxCorrelationPercent, g.SBMaxSuccessRateVariation, g.SBMinSuccessRatePercentIS, g.SBMinSuccessRatePercentOS, g.SBMinTotalTradesIS, g.SBMinTotalTradesOS, g.SBTotalTradesTarget, g.SBWinningStrategyDOWNTarget, g.SBWinningStrategyUPTarget, g.ToDateIS, g.ToDateOS, g.TotalDecimalWeka, g.TotalInstanceWeka, g.UpdatedOn, g.WithoutSchedule
+            FROM GlobalConfiguration AS g
+            WHERE Not(g.IsDeleted)
+        ) AS t
+        LEFT JOIN 
+        (
+            SELECT g0.GlobalScheduleConfigurationId, g0.CreatedOn, g0.FromTimeInSeconds, g0.GlobalConfigurationId, g0.IsDeleted, g0.MarketRegionId, g0.ToTimeInSeconds, g0.UpdatedOn, m.MarketRegionId AS MarketRegionId0, m.Code, m.CreatedOn AS CreatedOn0, m.IsDeleted AS IsDeleted0, m.Name, m.UpdatedOn AS UpdatedOn0, m.Value
+            FROM GlobalScheduleConfiguration AS g0
+            INNER JOIN MarketRegion AS m ON g0.MarketRegionId == m.MarketRegionId
+        ) AS t0 ON t.GlobalConfigurationId == t0.GlobalConfigurationId
+        ORDER BY t.GlobalConfigurationId ASC, t0.GlobalScheduleConfigurationId ASC), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, GlobalConfiguration>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)
+    .SingleOrDefault()' 
+31-07-2023 00:00:27.985 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:27.985 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:27.985 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:27.985 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:27.985 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:27.986 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:27.986 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:27.986 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."GlobalConfigurationId", "t"."ABMinImprovePercent", "t"."ABMinTotalTradesIS", "t"."ABWekaMaxRatioTree", "t"."ABWekaNTotalTree", "t"."CreatedOn", "t"."DepthWeka", "t"."ExpertAdvisorHost", "t"."ExpertAdvisorPublisherPort", "t"."ExpertAdvisorResponsePort", "t"."ExtractorMinVariation", "t"."FromDateIS", "t"."FromDateOS", "t"."IsDeleted", "t"."IsProgressiveness", "t"."MaxProgressivenessVariation", "t"."MaxRatioTree", "t"."MaximumSeed", "t"."MinimalSeed", "t"."NTotalTree", "t"."SBMaxCorrelationPercent", "t"."SBMaxSuccessRateVariation", "t"."SBMinSuccessRatePercentIS", "t"."SBMinSuccessRatePercentOS", "t"."SBMinTotalTradesIS", "t"."SBMinTotalTradesOS", "t"."SBTotalTradesTarget", "t"."SBWinningStrategyDOWNTarget", "t"."SBWinningStrategyUPTarget", "t"."ToDateIS", "t"."ToDateOS", "t"."TotalDecimalWeka", "t"."TotalInstanceWeka", "t"."UpdatedOn", "t"."WithoutSchedule", "t0"."GlobalScheduleConfigurationId", "t0"."CreatedOn", "t0"."FromTimeInSeconds", "t0"."GlobalConfigurationId", "t0"."IsDeleted", "t0"."MarketRegionId", "t0"."ToTimeInSeconds", "t0"."UpdatedOn", "t0"."MarketRegionId0", "t0"."Code", "t0"."CreatedOn0", "t0"."IsDeleted0", "t0"."Name", "t0"."UpdatedOn0", "t0"."Value"
+FROM (
+    SELECT "g"."GlobalConfigurationId", "g"."ABMinImprovePercent", "g"."ABMinTotalTradesIS", "g"."ABWekaMaxRatioTree", "g"."ABWekaNTotalTree", "g"."CreatedOn", "g"."DepthWeka", "g"."ExpertAdvisorHost", "g"."ExpertAdvisorPublisherPort", "g"."ExpertAdvisorResponsePort", "g"."ExtractorMinVariation", "g"."FromDateIS", "g"."FromDateOS", "g"."IsDeleted", "g"."IsProgressiveness", "g"."MaxProgressivenessVariation", "g"."MaxRatioTree", "g"."MaximumSeed", "g"."MinimalSeed", "g"."NTotalTree", "g"."SBMaxCorrelationPercent", "g"."SBMaxSuccessRateVariation", "g"."SBMinSuccessRatePercentIS", "g"."SBMinSuccessRatePercentOS", "g"."SBMinTotalTradesIS", "g"."SBMinTotalTradesOS", "g"."SBTotalTradesTarget", "g"."SBWinningStrategyDOWNTarget", "g"."SBWinningStrategyUPTarget", "g"."ToDateIS", "g"."ToDateOS", "g"."TotalDecimalWeka", "g"."TotalInstanceWeka", "g"."UpdatedOn", "g"."WithoutSchedule"
+    FROM "GlobalConfiguration" AS "g"
+    WHERE NOT ("g"."IsDeleted")
+    LIMIT 1
+) AS "t"
+LEFT JOIN (
+    SELECT "g0"."GlobalScheduleConfigurationId", "g0"."CreatedOn", "g0"."FromTimeInSeconds", "g0"."GlobalConfigurationId", "g0"."IsDeleted", "g0"."MarketRegionId", "g0"."ToTimeInSeconds", "g0"."UpdatedOn", "m"."MarketRegionId" AS "MarketRegionId0", "m"."Code", "m"."CreatedOn" AS "CreatedOn0", "m"."IsDeleted" AS "IsDeleted0", "m"."Name", "m"."UpdatedOn" AS "UpdatedOn0", "m"."Value"
+    FROM "GlobalScheduleConfiguration" AS "g0"
+    INNER JOIN "MarketRegion" AS "m" ON "g0"."MarketRegionId" = "m"."MarketRegionId"
+) AS "t0" ON "t"."GlobalConfigurationId" = "t0"."GlobalConfigurationId"
+ORDER BY "t"."GlobalConfigurationId", "t0"."GlobalScheduleConfigurationId" 
+31-07-2023 00:00:27.988 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."GlobalConfigurationId", "t"."ABMinImprovePercent", "t"."ABMinTotalTradesIS", "t"."ABWekaMaxRatioTree", "t"."ABWekaNTotalTree", "t"."CreatedOn", "t"."DepthWeka", "t"."ExpertAdvisorHost", "t"."ExpertAdvisorPublisherPort", "t"."ExpertAdvisorResponsePort", "t"."ExtractorMinVariation", "t"."FromDateIS", "t"."FromDateOS", "t"."IsDeleted", "t"."IsProgressiveness", "t"."MaxProgressivenessVariation", "t"."MaxRatioTree", "t"."MaximumSeed", "t"."MinimalSeed", "t"."NTotalTree", "t"."SBMaxCorrelationPercent", "t"."SBMaxSuccessRateVariation", "t"."SBMinSuccessRatePercentIS", "t"."SBMinSuccessRatePercentOS", "t"."SBMinTotalTradesIS", "t"."SBMinTotalTradesOS", "t"."SBTotalTradesTarget", "t"."SBWinningStrategyDOWNTarget", "t"."SBWinningStrategyUPTarget", "t"."ToDateIS", "t"."ToDateOS", "t"."TotalDecimalWeka", "t"."TotalInstanceWeka", "t"."UpdatedOn", "t"."WithoutSchedule", "t0"."GlobalScheduleConfigurationId", "t0"."CreatedOn", "t0"."FromTimeInSeconds", "t0"."GlobalConfigurationId", "t0"."IsDeleted", "t0"."MarketRegionId", "t0"."ToTimeInSeconds", "t0"."UpdatedOn", "t0"."MarketRegionId0", "t0"."Code", "t0"."CreatedOn0", "t0"."IsDeleted0", "t0"."Name", "t0"."UpdatedOn0", "t0"."Value"
+FROM (
+    SELECT "g"."GlobalConfigurationId", "g"."ABMinImprovePercent", "g"."ABMinTotalTradesIS", "g"."ABWekaMaxRatioTree", "g"."ABWekaNTotalTree", "g"."CreatedOn", "g"."DepthWeka", "g"."ExpertAdvisorHost", "g"."ExpertAdvisorPublisherPort", "g"."ExpertAdvisorResponsePort", "g"."ExtractorMinVariation", "g"."FromDateIS", "g"."FromDateOS", "g"."IsDeleted", "g"."IsProgressiveness", "g"."MaxProgressivenessVariation", "g"."MaxRatioTree", "g"."MaximumSeed", "g"."MinimalSeed", "g"."NTotalTree", "g"."SBMaxCorrelationPercent", "g"."SBMaxSuccessRateVariation", "g"."SBMinSuccessRatePercentIS", "g"."SBMinSuccessRatePercentOS", "g"."SBMinTotalTradesIS", "g"."SBMinTotalTradesOS", "g"."SBTotalTradesTarget", "g"."SBWinningStrategyDOWNTarget", "g"."SBWinningStrategyUPTarget", "g"."ToDateIS", "g"."ToDateOS", "g"."TotalDecimalWeka", "g"."TotalInstanceWeka", "g"."UpdatedOn", "g"."WithoutSchedule"
+    FROM "GlobalConfiguration" AS "g"
+    WHERE NOT ("g"."IsDeleted")
+    LIMIT 1
+) AS "t"
+LEFT JOIN (
+    SELECT "g0"."GlobalScheduleConfigurationId", "g0"."CreatedOn", "g0"."FromTimeInSeconds", "g0"."GlobalConfigurationId", "g0"."IsDeleted", "g0"."MarketRegionId", "g0"."ToTimeInSeconds", "g0"."UpdatedOn", "m"."MarketRegionId" AS "MarketRegionId0", "m"."Code", "m"."CreatedOn" AS "CreatedOn0", "m"."IsDeleted" AS "IsDeleted0", "m"."Name", "m"."UpdatedOn" AS "UpdatedOn0", "m"."Value"
+    FROM "GlobalScheduleConfiguration" AS "g0"
+    INNER JOIN "MarketRegion" AS "m" ON "g0"."MarketRegionId" = "m"."MarketRegionId"
+) AS "t0" ON "t"."GlobalConfigurationId" = "t0"."GlobalConfigurationId"
+ORDER BY "t"."GlobalConfigurationId", "t0"."GlobalScheduleConfigurationId" 
+31-07-2023 00:00:27.996 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalConfiguration' entity with key '{GlobalConfigurationId: 1}'. 
+31-07-2023 00:00:28.124 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalScheduleConfiguration' entity with key '{GlobalScheduleConfigurationId: 1}'. 
+31-07-2023 00:00:28.154 [Information] [ProcessId 5224] [ThreadId 1] :: The navigation 'GlobalScheduleConfiguration.MarketRegion' for entity with key '{GlobalScheduleConfigurationId: 1}' was detected as changed. 
+31-07-2023 00:00:28.159 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'MarketRegion' entity with key '{MarketRegionId: 1}'. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalScheduleConfiguration' entity with key '{GlobalScheduleConfigurationId: 2}'. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: The navigation 'GlobalScheduleConfiguration.MarketRegion' for entity with key '{GlobalScheduleConfigurationId: 2}' was detected as changed. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'MarketRegion' entity with key '{MarketRegionId: 2}'. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'GlobalScheduleConfiguration' entity with key '{GlobalScheduleConfigurationId: 3}'. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: The navigation 'GlobalScheduleConfiguration.MarketRegion' for entity with key '{GlobalScheduleConfigurationId: 3}' was detected as changed. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'MarketRegion' entity with key '{MarketRegionId: 3}'. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 186ms reading results. 
+31-07-2023 00:00:28.174 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:28.175 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:28.216 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:28.216 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:28.216 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:51.118 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:51.125 [Information] [ProcessId 5224] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Symbol>()
+    .Where(e => !(e.IsDeleted))' 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Symbol>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Symbol.SymbolId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Symbol.Code (string), 1], [Property: Symbol.CreatedOn (DateTime) Required, 2], [Property: Symbol.IsDeleted (bool) Required, 3], [Property: Symbol.Name (string), 4], [Property: Symbol.UpdatedOn (DateTime?), 5], [Property: Symbol.Value (string), 6] }
+        SELECT s.SymbolId, s.Code, s.CreatedOn, s.IsDeleted, s.Name, s.UpdatedOn, s.Value
+        FROM Symbol AS s
+        WHERE Not(s.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Symbol>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)' 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:51.130 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SymbolId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Symbol" AS "s"
+WHERE NOT ("s"."IsDeleted") 
+31-07-2023 00:00:51.131 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SymbolId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Symbol" AS "s"
+WHERE NOT ("s"."IsDeleted") 
+31-07-2023 00:00:51.137 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 1}'. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 2}'. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 3}'. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Symbol' entity with key '{SymbolId: 4}'. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 23ms reading results. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:51.154 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:51.155 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:51.157 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:51.164 [Information] [ProcessId 5224] [ThreadId 1] :: Compiling query expression: 
+'DbSet<Timeframe>()
+    .Where(e => !(e.IsDeleted))' 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Generated query execution expression: 
+'queryContext => new SingleQueryingEnumerable<Timeframe>(
+    (RelationalQueryContext)queryContext, 
+    RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IProperty, int> { [Property: Timeframe.TimeframeId (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: Timeframe.Code (string), 1], [Property: Timeframe.CreatedOn (DateTime) Required, 2], [Property: Timeframe.IsDeleted (bool) Required, 3], [Property: Timeframe.Name (string), 4], [Property: Timeframe.UpdatedOn (DateTime?), 5], [Property: Timeframe.Value (string), 6] }
+        SELECT t.TimeframeId, t.Code, t.CreatedOn, t.IsDeleted, t.Name, t.UpdatedOn, t.Value
+        FROM Timeframe AS t
+        WHERE Not(t.IsDeleted)), 
+    null, 
+    Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, Timeframe>, 
+    AdionFA.Infrastructure.Persistence.AdionFADbContext, 
+    False, 
+    False, 
+    True
+)' 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:51.169 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."TimeframeId", "t"."Code", "t"."CreatedOn", "t"."IsDeleted", "t"."Name", "t"."UpdatedOn", "t"."Value"
+FROM "Timeframe" AS "t"
+WHERE NOT ("t"."IsDeleted") 
+31-07-2023 00:00:51.170 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "t"."TimeframeId", "t"."Code", "t"."CreatedOn", "t"."IsDeleted", "t"."Name", "t"."UpdatedOn", "t"."Value"
+FROM "Timeframe" AS "t"
+WHERE NOT ("t"."IsDeleted") 
+31-07-2023 00:00:51.177 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 1}'. 
+31-07-2023 00:00:51.191 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 2}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 3}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 4}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 5}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 6}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 7}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 8}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Timeframe' entity with key '{TimeframeId: 9}'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 22ms reading results. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:51.192 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:57.921 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='5'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='5'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 5}'. 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+31-07-2023 00:00:57.922 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Entity Framework Core 7.0.9 initialized 'AdionFADbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:7.0.9' with options: SensitiveDataLoggingEnabled  
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbConnection. 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbConnection. (0ms). 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Creating DbCommand for 'ExecuteReader'. 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Created DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Initialized DbCommand for 'ExecuteReader' (0ms). 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Opening connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Opened connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:57.923 [Information] [ProcessId 5224] [ThreadId 1] :: Executing DbCommand [Parameters=[@__settingId_0='6'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Executed DbCommand (0ms) [Parameters=[@__settingId_0='6'], CommandType='Text', CommandTimeout='30']
+SELECT "s"."SettingId", "s"."Code", "s"."CreatedOn", "s"."IsDeleted", "s"."Name", "s"."UpdatedOn", "s"."Value"
+FROM "Setting" AS "s"
+WHERE "s"."SettingId" = @__settingId_0 AND NOT ("s"."IsDeleted")
+LIMIT 1 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Context 'AdionFADbContext' started tracking 'Setting' entity with key '{SettingId: 6}'. 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Closing data reader to 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: A data reader for 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db' is being disposed after spending 0ms reading results. 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Closing connection to database 'main' on server 'C:\Development\AdionFA\src\UI\AdionFA.UI.Station\AdionFA.db'. 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Closed connection to database 'main' on server 'AdionFA.db' (0ms). 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
+31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 

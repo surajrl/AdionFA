@@ -208,6 +208,7 @@
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="winningStrategyNodesUP"
                                 Width="215"
+                                IsEnabled="{Binding CrossingBuilder.WinningStrategyNodesUP.Count, Converter={StaticResource IntToBooleanConverter}}"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="TrophyOutline"
@@ -236,6 +237,7 @@
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="winningStrategyNodesDOWN"
                                 Width="215"
+                                IsEnabled="{Binding CrossingBuilder.WinningStrategyNodesDOWN.Count, Converter={StaticResource IntToBooleanConverter}}"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="TrophyOutline"

@@ -24,13 +24,11 @@ using AdionFA.UI.ProjectStation.Features;
 using AdionFA.UI.ProjectStation.Model.Common;
 using AdionFA.UI.ProjectStation.Validators.CrossingBuilder;
 using AutoMapper;
-using DynamicData;
 using MahApps.Metro.Controls.Dialogs;
 using Ninject;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
-using ReactiveUI;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -142,7 +140,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 var historicalData = _marketDataService.GetAllHistoricalData(false);
                 CrossingHistoricalData.Clear();
                 CrossingHistoricalData.AddRange(historicalData
-                    .Where(historicalData => historicalData.HistoricalDataId != ProcessArgs.Project.HistoricalDataId)
+                    .Where(historicalData => historicalData.HistoricalDataId != ProcessArgs.HistoricalDataId)
                     .Select(historicalData => new Metadata
                     {
                         Id = historicalData.HistoricalDataId,
@@ -239,7 +237,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 ResetBuilderProcesses();
 
-                var mainHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.Project.HistoricalDataId, true);
+                var mainHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.HistoricalDataId, true);
                 var mainCandles = mainHistoricalData.HistoricalDataCandles.Select(candle => new Candle
                 {
                     Date = candle.StartDate,
@@ -277,11 +275,10 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ExtractionProcess(CrossingBuilderProcessesUP, "up", crossingCandles);
                     ExtractionProcess(CrossingBuilderProcessesDOWN, "down", crossingCandles);
 
-                    var allBacktests = new List<StrategyNodeModel>
-                    {
-                        FindBacktestNodes(CrossingBuilderProcessesUP, "up"),
-                        FindBacktestNodes(CrossingBuilderProcessesDOWN, "down")
-                    };
+                    var allBacktests = new List<StrategyNodeModel>();
+
+                    allBacktests.AddRange(FindBacktestNodes(CrossingBuilderProcessesUP, "up"));
+                    allBacktests.AddRange(FindBacktestNodes(CrossingBuilderProcessesDOWN, "down"));
 
                     BacktestProcess(allBacktests, mainCandles);
 
@@ -342,7 +339,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         backtestOperations.Last().Date,
                         indicators,
                         candles.ToList(),
-                        ProcessArgs.Project.HistoricalData.TimeframeId);
+                        ProcessArgs.TimeframeId);
 
                     var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
                                   let backtestOperation = backtestOperations.Where(operation => operation.Date == il._il.Interval)
@@ -493,7 +490,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         process.PreviousStrategyNode.BacktestIS.BacktestOperations,
                         process.PreviousStrategyNode.BacktestOS.BacktestOperations,
                         _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
-                        ProcessArgs.Project.HistoricalData.TimeframeId,
+                        ProcessArgs.TimeframeId,
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);
 
@@ -527,7 +524,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private void ResetBuilderProcesses()
         {
-
             CrossingBuilderProcessesUP.Clear();
             CrossingBuilderProcessesDOWN.Clear();
 
@@ -616,7 +612,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         }
 
         private CrossingBuilderModel _crossingBuilder;
-
         public CrossingBuilderModel CrossingBuilder
         {
             get => _crossingBuilder;

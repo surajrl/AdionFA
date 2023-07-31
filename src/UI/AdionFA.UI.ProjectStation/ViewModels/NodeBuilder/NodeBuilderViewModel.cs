@@ -22,13 +22,11 @@ using AdionFA.UI.ProjectStation.Features;
 using AdionFA.UI.ProjectStation.Model.Common;
 using AdionFA.UI.ProjectStation.Validators.NodeBuilder;
 using AutoMapper;
-using DynamicData;
 using MahApps.Metro.Controls.Dialogs;
 using Ninject;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
-using ReactiveUI;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -51,6 +49,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private readonly INodeBuilderService _nodeBuilderService;
 
         private readonly IProjectService _projectService;
+        private readonly IMarketDataService _marketDataService;
 
         private readonly IEventAggregator _eventAggregator;
 
@@ -62,10 +61,12 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         public NodeBuilderViewModel(MainViewModel mainViewModel)
             : base(mainViewModel)
         {
-            _projectService = IoC.Kernel.Get<IProjectService>();
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _nodeBuilderService = IoC.Kernel.Get<INodeBuilderService>();
+
+            _projectService = IoC.Kernel.Get<IProjectService>();
+            _marketDataService = IoC.Kernel.Get<IMarketDataService>();
 
             _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
 
@@ -79,7 +80,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 if (updated
                 && !IsTransactionActive
-                && (NodeBuilderProcesses.All(process => process.Message == BuilderProcessStatus.SBNotStarted.GetMetadata().Name)
+                && (NodeBuilderProcesses.All(process => process.Message == BuilderProcessStatus.NBNotStarted.GetMetadata().Name)
                 || NodeBuilderProcesses.All(process => process.Message.Contains(BuilderProcessStatus.Canceled.GetMetadata().Name))))
                 {
                     ResetBuilderProcesses();
@@ -126,8 +127,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             foreach (var process in NodeBuilderProcesses)
             {
-                if (process.Message != BuilderProcessStatus.SBCompleted.GetMetadata().Name
-                && process.Message != BuilderProcessStatus.SBNotStarted.GetMetadata().Name)
+                if (process.Message != BuilderProcessStatus.NBCompleted.GetMetadata().Name
+                && process.Message != BuilderProcessStatus.NBNotStarted.GetMetadata().Name)
                 {
                     var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
                     process.Message = $"{process.Message} - {stopped}";
@@ -209,7 +210,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 // Historical Data
 
-                var allProjectCandles = ProcessArgs.Project.HistoricalData.HistoricalDataCandles
+
+                var allProjectCandles = _marketDataService.GetHistoricalData(ProcessArgs.HistoricalDataId, true)
+                .HistoricalDataCandles
                 .Select(hdCandle => new Candle
                 {
                     Date = hdCandle.StartDate,
@@ -251,7 +254,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 foreach (var process in NodeBuilderProcesses)
                 {
-                    process.Message = BuilderProcessStatus.SBCompleted.GetMetadata().Name;
+                    process.Message = BuilderProcessStatus.NBCompleted.GetMetadata().Name;
                 }
 
                 // Results Message
@@ -314,7 +317,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         ProjectConfiguration.ToDateIS.Value,
                         indicators,
                         projectCandles.ToList(),
-                        ProcessArgs.Project.HistoricalData.TimeframeId,
+                        ProcessArgs.TimeframeId,
                         ProjectConfiguration.ExtractorMinVariation);
 
                     var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
@@ -410,7 +413,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                             node,
                             projectCandles,
                             _mapper.Map<ProjectConfigurationDTO>(ProjectConfiguration),
-                            ProcessArgs.Project.HistoricalData.TimeframeId,
+                            ProcessArgs.TimeframeId,
                             _manualResetEventSlim,
                             _cancellationTokenSource.Token);
 
@@ -444,7 +447,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ExtractionTemplatePath = file.FullName,
                     ExtractionTemplateName = file.Name,
                     ExtractionName = file.Name,
-                    Message = BuilderProcessStatus.SBNotStarted.GetMetadata().Name,
+                    Message = BuilderProcessStatus.NBNotStarted.GetMetadata().Name,
                     Tree = new(),
                     BacktestNodes = new()
                 });

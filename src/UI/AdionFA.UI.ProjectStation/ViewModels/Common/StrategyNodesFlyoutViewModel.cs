@@ -2,7 +2,6 @@
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;
-using DynamicData;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -29,11 +28,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
                 switch (flyout.ModelOne)
                 {
                     case ObservableCollection<StrategyNodeModel> collection:
-                        StrategyNodes.Add(collection);
+                        StrategyNodes.AddRange(collection);
                         break;
 
                     case List<StrategyNodeModel> list:
-                        StrategyNodes.Add(list);
+                        StrategyNodes.AddRange(list);
                         break;
 
                     case StrategyNodeModel strategyNode:

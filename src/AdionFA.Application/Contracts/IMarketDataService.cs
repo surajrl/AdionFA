@@ -1,7 +1,6 @@
 ﻿using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.MarketData;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AdionFA.Application.Contracts
 {
@@ -12,7 +11,7 @@ namespace AdionFA.Application.Contracts
         IList<HistoricalDataDTO> GetAllHistoricalData(bool includeGraph);
         HistoricalDataDTO GetHistoricalData(int historicalDataId, bool includeGraph);
         HistoricalDataDTO GetHistoricalData(int marketId, int symbolId, int timeframeId, bool includeGraph);
-        Task<ResponseDTO> CreateHistoricalDataAsync(HistoricalDataDTO historicalDataDTO);
+        ResponseDTO CreateHistoricalData(HistoricalDataDTO historicalDataDTO);
 
         // Timeframe
 
@@ -24,6 +23,6 @@ namespace AdionFA.Application.Contracts
         IList<SymbolDTO> GetAllSymbol();
         SymbolDTO GetSymbol(int symbolId);
         SymbolDTO GetSymbol(string symbolName);
-        Task<ResponseDTO> CreateSymbolAsync(SymbolDTO symbol);
+        ResponseDTO CreateSymbol(SymbolDTO symbol);
     }
 }

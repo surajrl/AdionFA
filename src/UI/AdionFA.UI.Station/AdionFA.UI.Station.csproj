@@ -20,12 +20,9 @@
 		<Content Include="Weka\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="AdionFA.db">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+		<Content Include="..\..\AdionFA.Infrastructure\AdionFA.db">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -35,18 +32,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MahApps.Metro" Version="2.4.9" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Prism.Unity" Version="8.1.97" />
+		<PackageReference Include="Serilog" Version="3.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\AdionFA.Infrastructure\AdionFA.Infrastructure.csproj" />
-		<ProjectReference Include="..\AdionFA.UI.Station.LookAndFeel\AdionFA.UI.LookAndFeel.csproj" />
+		<ProjectReference Include="..\AdionFA.UI.Station.LookAndFeel\AdionFA.UI.LookAndFeel.csproj">
+			<TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
 		<ProjectReference Include="..\Modules\Dashboard\AdionFA.UI.Module.Dashboard.csproj" />
 		<ProjectReference Include="..\Modules\Shell\AdionFA.UI.Module.Shell.csproj" />
 	</ItemGroup>

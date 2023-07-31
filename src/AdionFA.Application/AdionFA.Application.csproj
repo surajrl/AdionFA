@@ -6,17 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Ninject" Version="3.3.6" PrivateAssets="none" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AdionFA.Domain\AdionFA.Domain.csproj" />
     <ProjectReference Include="..\AdionFA.TransferObject\AdionFA.TransferObject.csproj" />
   </ItemGroup>
 

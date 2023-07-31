@@ -4,6 +4,7 @@ using AdionFA.Infrastructure.Persistence;
 using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,6 +36,12 @@ namespace AdionFA.Application.Services.Commons
             };
 
             var setting = Mapper.Map<Setting>(settingDTO);
+
+            // Entity Base
+
+            setting.UpdatedOn = DateTime.UtcNow;
+
+            // Update
 
             dbContext.Set<Setting>().Update(setting);
             await dbContext.SaveChangesAsync().ConfigureAwait(false);

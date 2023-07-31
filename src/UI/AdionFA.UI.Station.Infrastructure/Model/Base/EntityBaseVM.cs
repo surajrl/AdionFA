@@ -5,15 +5,26 @@ namespace AdionFA.UI.Infrastructure.Model.Base
 {
     public class EntityBaseVM : ViewModelBase
     {
-        public bool IsDeleted { get; set; }
+        private DateTime _createdOn;
+        public DateTime CreatedOn
+        {
+            get => _createdOn;
+            set => SetProperty(ref _createdOn, value);
+        }
 
-        public string CreatedById { get; set; }
-        public string CreatedByUserName { get; set; }
-        public DateTime CreatedOn { get; set; }
 
-        public string UpdatedById { get; set; }
-        public string UpdatedByUserName { get; set; }
-        public DateTime? UpdatedOn { get; set; }
+        private DateTime? _updatedOn;
+        public DateTime? UpdatedOn
+        {
+            get => _updatedOn;
+            set => SetProperty(ref _updatedOn, value);
+        }
 
+        private bool _isDeleted;
+        public bool IsDeleted
+        {
+            get => _isDeleted;
+            set => SetProperty(ref _isDeleted, value);
+        }
     }
 }

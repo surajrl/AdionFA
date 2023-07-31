@@ -235,10 +235,12 @@
                 <StackPanel Grid.Column="3"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right">
+                    
                     <!--Strategy Node-->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="strategyNodesBtn"
                                 Width="125"
+                                IsEnabled="{Binding StrategyNode, Converter={StaticResource NullToBooleanConverter}}"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="Graph"
@@ -266,6 +268,7 @@
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assemblyNodesBtn"
                                 Width="125"
+                                IsEnabled="{Binding AssemblyNode, Converter={StaticResource NullToBooleanConverter}}"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="Graph"
@@ -293,6 +296,7 @@
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="nodeBtn"
                                 Width="80"
+                                IsEnabled="{Binding Nodes.Count, Converter={StaticResource IntToBooleanConverter}}"
                                 Height="40">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="Graph"

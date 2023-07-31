@@ -4,8 +4,8 @@ namespace AdionFA.Domain.Enums
 {
     public enum BuilderProcessStatus
     {
-        [Metadata(Name = "Strategy Builder Not Started")]
-        SBNotStarted = 0,
+        [Metadata(Name = "Node Builder Not Started")]
+        NBNotStarted = 0,
 
         [Metadata(Name = "Assembly Builder Not Started")]
         ABNotStarted,
@@ -34,8 +34,8 @@ namespace AdionFA.Domain.Enums
         [Metadata(Name = "Executing Correlation Analysis")]
         ExecutingCorrelation,
 
-        [Metadata(Name = "Strategy Builder Completed")]
-        SBCompleted,
+        [Metadata(Name = "Node Builder Completed")]
+        NBCompleted,
 
         [Metadata(Name = "Assembly Builder Completed")]
         ABCompleted,

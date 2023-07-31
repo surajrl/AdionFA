@@ -23,7 +23,6 @@ using AdionFA.UI.ProjectStation.EventAggregator;
 using AdionFA.UI.ProjectStation.Features;
 using AdionFA.UI.ProjectStation.Model.Common;
 using AutoMapper;
-using DynamicData;
 using MahApps.Metro.Controls.Dialogs;
 using Ninject;
 using Prism.Commands;
@@ -76,12 +75,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             // Event Aggregators
 
-            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(canExecute => CanExecute = canExecute);
 
             _eventAggregator.GetEvent<ExtractorTemplatesUpdatedEvent>().Subscribe(updated =>
             {
                 if (updated
-                && !IsTransactionActive
                 && AssemblyBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Name)
                 && AssemblyBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.ABNotStarted.GetMetadata().Name))
                 {
@@ -89,9 +87,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 }
             });
 
-            _eventAggregator.GetEvent<NodeBuilderCompletedEvent>().Subscribe(strategyBuilderCompleted =>
+            _eventAggregator.GetEvent<NodeBuilderCompletedEvent>().Subscribe(nodeBuilderCompleted =>
             {
-                if (strategyBuilderCompleted)
+                if (nodeBuilderCompleted)
                 {
                     DeleteAssemblyBuilder();
                     AssemblyBuilder = _assemblyBuilderService.LoadNewAssemblyBuilder(ProcessArgs.ProjectName);
@@ -210,7 +208,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 // Historical Data
 
-                var projectHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.Project.HistoricalDataId, true);
+                var projectHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.HistoricalDataId, true);
                 var allProjectCandles = projectHistoricalData.HistoricalDataCandles.
                 Select(hdCandle => new Candle
                 {
@@ -235,11 +233,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         ExtractionProcess("up", allProjectCandles);
                         ExtractionProcess("down", allProjectCandles);
 
-                        var backtestNodes = new List<AssemblyNodeModel>
-                        {
-                            GetAssemblyNodeBacktests(AssemblyBuilderProcessesUP, "up"),
-                            GetAssemblyNodeBacktests(AssemblyBuilderProcessesDOWN, "down")
-                        };
+                        var backtestNodes = new List<AssemblyNodeModel>();
+                        backtestNodes.AddRange(GetAssemblyNodeBacktests(AssemblyBuilderProcessesUP, "up"));
+                        backtestNodes.AddRange(GetAssemblyNodeBacktests(AssemblyBuilderProcessesDOWN, "down"));
 
                         BacktestProcess(backtestNodes, allProjectCandles);
                     }
@@ -327,6 +323,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         // ONLY IMPLEMENTED WITHOUT SCHEDULE EXTRACTIONS !!
+
         private void ExtractionProcess(string label, IEnumerable<Candle> candles)
         {
             IList<BacktestModel> backtests;
@@ -349,8 +346,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
 
             var backtestOperations = backtests
-            .SelectMany(backtest => backtest.BacktestOperations
-            .OrderBy(backtestOperation => backtestOperation.Date)).ToList();
+                .SelectMany(backtest => backtest.BacktestOperations
+                .OrderBy(backtestOperation => backtestOperation.Date))
+                .ToList();
 
             var dates = new List<DateTime>();
             foreach (var backtestOperation in backtestOperations)
@@ -387,7 +385,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         lastOperation,
                         indicators,
                         candles.ToList(),
-                        ProcessArgs.Project.HistoricalData.TimeframeId);
+                        ProcessArgs.TimeframeId);
 
                     // Filter the extraction for only the candles with backtest operations
                     var filter = (from il in extractionResult[0].IntervalLabels.Select((_il, _idx) => new { _idx, _il })
@@ -539,7 +537,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         bactestingAssemblyNode,
                         projectCandles,
                         _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
-                        ProcessArgs.Project.HistoricalData.TimeframeId,
+                        ProcessArgs.TimeframeId,
                         meanSuccessRatePercentIS,
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);

@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace AdionFA.UI.Module.Dashboard.ViewModels
@@ -89,7 +88,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
         public ICommand HistoricalDataFilterCommand => new DelegateCommand(LoadHistoricalData);
 
-        private async void LoadHistoricalData()
+        private void LoadHistoricalData()
         {
             try
             {
@@ -100,11 +99,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     return;
                 }
 
-                var historicalDataDTO = new HistoricalDataDTO();
-                await Task.Run(() =>
-                {
-                    historicalDataDTO = _marketDataService.GetHistoricalData(SelectedMarketId, SelectedSymbolId, SelectedTimeframeId, true);
-                });
+                var historicalDataDTO = _marketDataService.GetHistoricalData(SelectedMarketId, SelectedSymbolId, SelectedTimeframeId, true);
 
                 HistoricalDataCandles.Clear();
                 if (historicalDataDTO != null)
