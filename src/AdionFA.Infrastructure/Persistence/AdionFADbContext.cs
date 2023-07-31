@@ -3,12 +3,8 @@ using AdionFA.Domain.Enums;
 using AdionFA.Domain.Enums.Market;
 using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Model;
-using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Ninject;
-using Serilog;
 using System;
 using System.Reflection;
 
@@ -26,10 +22,10 @@ namespace AdionFA.Infrastructure.Persistence
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(_connectionString);
-            optionsBuilder.LogTo(
-                IoC.Kernel.Get<ILogger>().Information,
-                options: DbContextLoggerOptions.None)
-                .EnableSensitiveDataLogging();
+            //optionsBuilder.LogTo(
+            //    IoC.Kernel.Get<ILogger>().Information,
+            //    options: DbContextLoggerOptions.None)
+            //    .EnableSensitiveDataLogging();
 
         }
 
