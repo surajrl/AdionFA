@@ -7,7 +7,6 @@ using AdionFA.UI.Infrastructure.Model.Base;
 using AdionFA.UI.Infrastructure.Model.Common;
 using AdionFA.UI.Infrastructure.Model.MarketData;
 using AdionFA.UI.Infrastructure.Model.Project;
-
 using AutoMapper;
 
 namespace AdionFA.UI.Infrastructure.AutoMapper

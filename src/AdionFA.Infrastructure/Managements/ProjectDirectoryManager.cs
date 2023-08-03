@@ -30,47 +30,42 @@ namespace AdionFA.Infrastructure.Managements
 
         // Node Builder
 
-        // Extractor
-
         public static string ProjectNodeBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string withFileName = null)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.NodeBuilderExtractorWithoutSchedule.GetDescription(), projectNameFolder))
-                + (!string.IsNullOrWhiteSpace(withFileName)
-                ? @$"\{withFileName}"
-                : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
 
         public static string ProjectNodeBuilderExtractorEuropeDirectory(this string projectNameFolder, string withFileName = null)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Europe.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName)
-                ? @$"\{withFileName}"
-                : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
 
         public static string ProjectNodeBuilderExtractorAmericaDirectory(this string projectNameFolder, string withFileName = null)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.America.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName)
-                ? @$"\{withFileName}"
-                : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
 
         public static string ProjectNodeBuilderExtractorAsiaDirectory(this string projectNameFolder, string withFileName = null)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectNameFolder, MarketRegionEnum.Asia.GetMetadata().Name))
-                + (!string.IsNullOrWhiteSpace(withFileName)
-                ? @$"\{withFileName}"
-                : string.Empty);
+                + (!string.IsNullOrWhiteSpace(withFileName) ? @$"\{withFileName}" : string.Empty);
         }
 
         public static string ProjectNodeBuilderNodesDirectory(this string projectNameFolder)
         {
-            return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
+            return string.Format(@"{0}\{1}",
+                ProjectsDirectoryBase(),
                 string.Format(ProjectDirectoryEnum.NodeBuilderNodes.GetDescription(), projectNameFolder));
         }
 
@@ -89,8 +84,6 @@ namespace AdionFA.Infrastructure.Managements
         }
 
         // Assembly Builder
-
-        // Extractor
 
         public static string ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string label, string withFileName = null)
         {
@@ -133,8 +126,6 @@ namespace AdionFA.Infrastructure.Managements
                 : string.Empty);
         }
 
-        // Assembly Builder Nodes
-
         public static string ProjectAssemblyBuilderNodesUPDirectory(this string projectNameFolder)
         {
             return string.Format(@"{0}\{1}", ProjectsDirectoryBase(),
@@ -148,8 +139,6 @@ namespace AdionFA.Infrastructure.Managements
         }
 
         // Crossing Builder
-
-        // Crossing Builder Extractor
 
         public static string ProjectCrossingBuilderExtractorWithoutScheduleDirectory(this string projectNameFolder, string label, string withFileName = null)
         {
@@ -191,8 +180,6 @@ namespace AdionFA.Infrastructure.Managements
                 ? @$"\{withFileName}"
                 : string.Empty);
         }
-
-        // Crossing Builder Nodes
 
         public static string ProjectCrossingBuilderNodesDirectory(this string projectNameFolder)
         {

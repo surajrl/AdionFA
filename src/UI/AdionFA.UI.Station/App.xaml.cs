@@ -15,7 +15,6 @@ using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
 using Serilog;
-using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -60,29 +59,26 @@ namespace AdionFA.UI.Station
                 MessageBox.Show(e.Exception.Message);
                 IoC.Kernel.Get<ILogger>().Error($"{e.Exception.Message} :: {e.Exception.StackTrace}.");
             };
-
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler((object sender, UnhandledExceptionEventArgs e) =>
-            {
-                MessageBox.Show(e.ExceptionObject.ToString());
-            });
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
             base.ConfigureModuleCatalog(moduleCatalog);
 
-            var shellModuleType = typeof(ShellModule);
+            // Shell Module
+
             moduleCatalog.AddModule(new ModuleInfo()
             {
-                ModuleName = shellModuleType.Name,
-                ModuleType = shellModuleType.AssemblyQualifiedName,
+                ModuleName = typeof(ShellModule).Name,
+                ModuleType = typeof(ShellModule).AssemblyQualifiedName,
             });
 
-            var settingModuleType = typeof(DashboardModule);
+            // Dashboard Module
+
             moduleCatalog.AddModule(new ModuleInfo()
             {
-                ModuleName = settingModuleType.Name,
-                ModuleType = settingModuleType.AssemblyQualifiedName,
+                ModuleName = typeof(DashboardModule).Name,
+                ModuleType = typeof(DashboardModule).AssemblyQualifiedName,
             });
         }
 
@@ -96,9 +92,6 @@ namespace AdionFA.UI.Station
             base.OnStartup(e);
 
             IoC.Kernel.Get<ILogger>().Information("App.OnStartup() :: AdionFA.UI.Station");
-
-            ContainerLocator.Current.Resolve<IApplicationCommands>().EndAllProcessProjectCommand.Execute(false);
-            ContainerLocator.Current.Resolve<IProcessService>().StartProcessWeka();
         }
 
         protected override void OnInitialized()

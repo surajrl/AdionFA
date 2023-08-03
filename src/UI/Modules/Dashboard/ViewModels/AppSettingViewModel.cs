@@ -112,8 +112,8 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                             }
 
                             MessageHelper.ShowMessage(this,
-                                nameof(EntityTypeEnum.Setting),
-                                "Default workspace was updated.");
+                                EntityTypeEnum.Setting.GetMetadata().Name,
+                                "Default workspace was updated");
                         }
                     }
                 }
@@ -121,7 +121,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 {
                     MessageHelper.ShowMessage(this,
                         EntityTypeEnum.Setting.GetMetadata().Name,
-                        "Close all running projects to run the operation.");
+                        "Close all running projects to run the operation");
                 }
             }
             catch (Exception ex)

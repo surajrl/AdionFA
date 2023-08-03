@@ -163,9 +163,10 @@ namespace AdionFA.Infrastructure.Directories.Services
             {
                 if (File.Exists(fi.FullName))
                 {
-                    File.Copy(fi.FullName, Path.Combine(targetDir, fi.Name));
+                    File.Copy(fi.FullName, Path.Combine(targetDir, fi.Name), overwrite: true);
                     return true;
                 }
+
                 return false;
             }
             catch (Exception ex)
@@ -273,15 +274,16 @@ namespace AdionFA.Infrastructure.Directories.Services
 
             try
             {
-                var csvList = Directory.GetFiles(sourceDir, ext, option).Where(d => !d.Contains("Backup_")).ToArray();
+                var filesToDelete = Directory.GetFiles(sourceDir, ext, option)
+                    .Where(d => !d.Contains("Backup_")).ToArray();
 
                 if (isBackup)
                 {
                     // Copy text files
-                    foreach (var f in csvList)
+                    foreach (var file in filesToDelete)
                     {
                         // Remove path from the file name
-                        var fName = f[(sourceDir.Length + 1)..];
+                        var fName = file[(sourceDir.Length + 1)..];
 
                         try
                         {
@@ -295,7 +297,7 @@ namespace AdionFA.Infrastructure.Directories.Services
                             File.Copy(Path.Combine(sourceDir, fName), targetPath, overwrite);
                         }
 
-                        // Catch exception if the file was already copied.
+                        // Catch exception if the file was already copied
                         catch (IOException copyError)
                         {
                             Trace.TraceError(copyError.Message);
@@ -304,10 +306,10 @@ namespace AdionFA.Infrastructure.Directories.Services
                     }
                 }
 
-                // Delete source files that were copied.
-                foreach (var f in csvList)
+                // Delete source files that were copied
+                foreach (var file in filesToDelete)
                 {
-                    File.Delete(f);
+                    File.Delete(file);
                 }
 
                 return true;

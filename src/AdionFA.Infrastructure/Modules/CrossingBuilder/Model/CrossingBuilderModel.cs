@@ -1,4 +1,4 @@
-﻿using AdionFA.Infrastructure.Weka.Model;
+﻿using AdionFA.Infrastructure.Modules.Strategy;
 using System.Collections.Generic;
 
 namespace AdionFA.Infrastructure.CrossingBuilder.Model

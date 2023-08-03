@@ -1,55 +1,53 @@
 ﻿<UserControl x:Class="AdionFA.UI.ProjectStation.Views.MetaTraderView"
-             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             dialog:DialogParticipation.Register="{Binding}"
-             mc:Ignorable="d"
+             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignWidth="800"
+             dialog:DialogParticipation.Register="{Binding}"
+             mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Thickness x:Key="ColumnMargin">10 5 10 5</Thickness>
-        <Thickness x:Key="ControlMargin">0 5 25 5</Thickness>
+        <Thickness x:Key="ColumnMargin">
+            10 5 10 5
+        </Thickness>
+        <Thickness x:Key="ControlMargin">
+            0 5 25 5
+        </Thickness>
 
-        <Style TargetType="Button"
-               x:Key="DisableBorderRarioBtn">
-            <Setter Property="Padding"
-                    Value="5,0,5,0" />
+        <Style x:Key="DisableBorderRarioBtn"
+               TargetType="Button">
+            <Setter Property="Padding" Value="5,0,5,0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border CornerRadius="0,2,2,0"
-                                BorderBrush="{StaticResource MahApps.Brushes.Button.Border}"
-                                BorderThickness="0,1,1,1">
+                        <Border BorderBrush="{StaticResource MahApps.Brushes.Button.Border}"
+                                BorderThickness="0,1,1,1"
+                                CornerRadius="0,2,2,0">
                             <ContentPresenter x:Name="contentPresenter"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              Content="{TemplateBinding Content}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               Margin="{TemplateBinding Padding}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
+                            <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background">
                                     <Setter.Value>
-                                        <LinearGradientBrush EndPoint="0.5,1"
-                                                             StartPoint="0.5,0">
-                                            <GradientStop Color="#FF5BB75B"
-                                                          Offset="0" />
-                                            <GradientStop Color="#FF398239"
-                                                          Offset="1" />
+                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                            <GradientStop Offset="0" Color="#FF5BB75B" />
+                                            <GradientStop Offset="1" Color="#FF398239" />
                                         </LinearGradientBrush>
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="Cursor"
-                                        Value="Hand" />
+                                <Setter Property="Cursor" Value="Hand" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -78,129 +76,125 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Right">
-            <!--#region Stop Button-->
-            <Grid Margin="0 20 10 0">
+        <StackPanel HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+            <!--  Stop Button  -->
+            <Grid Margin="0,20,10,0">
                 <Button Width="80"
                         Height="40"
                         Command="{Binding StopCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:FontAwesome Kind="PauseCircleSolid"
-                                               Width="14" />
+                        <iconPacks:FontAwesome Width="14"
+                                               Kind="PauseCircleSolid" />
                         <Label Content="Stop"
                                FontSize="11" />
                     </StackPanel>
                 </Button>
             </Grid>
-            <!--#endregion-->
-            <!--#region Process Button-->
-            <Grid Margin="0 20 0 0">
+
+            <!--  Process Button  -->
+            <Grid Margin="0,20,0,0">
                 <Button Width="80"
                         Height="40"
-                        IsEnabled="{Binding CanExecute}"
-                        Command="{Binding ProcessCommand}">
+                        Command="{Binding ProcessCommand}"
+                        IsEnabled="{Binding CanExecute}">
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:FontAwesome Kind="PlaySolid"
-                                               Width="14" />
+                        <iconPacks:FontAwesome Width="14"
+                                               Kind="PlaySolid" />
                         <Label Content="Process"
                                FontSize="11" />
                     </StackPanel>
                 </Button>
-                <metro:ProgressRing IsActive="True"
-                                    Width="25"
+                <metro:ProgressRing Width="25"
                                     Height="25"
+                                    IsActive="True"
                                     Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
-            <!--#endregion-->
+
         </StackPanel>
 
-        <!--Expert Advisor-->
+        <!--  Expert Advisor  -->
         <Expander Grid.Row="1"
-                  Margin="0 10 0 10"
-                  Style="{DynamicResource ControlExpanderStyle}"
+                  Margin="0,10,0,10"
                   Header="Expert Advisor"
-                  IsExpanded="False">
+                  IsExpanded="False"
+                  Style="{DynamicResource ControlExpanderStyle}">
             <StackPanel Orientation="Horizontal">
                 <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Label Content="Expert Advisor Host" />
-                    <TextBox Text="{Binding ProjectConfiguration.ExpertAdvisorHost}"
-                             IsReadOnly="True"
+                    <TextBox Width="225"
                              Focusable="False"
                              IsEnabled="False"
-                             Width="225" />
+                             IsReadOnly="True"
+                             Text="{Binding ProjectConfiguration.ExpertAdvisorHost}" />
                 </StackPanel>
                 <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Label Content="Expert Advisor Publisher Port" />
-                    <TextBox Text="{Binding ProjectConfiguration.ExpertAdvisorPublisherPort}"
-                             IsReadOnly="True"
+                    <TextBox Width="225"
                              Focusable="False"
                              IsEnabled="False"
-                             Width="225" />
+                             IsReadOnly="True"
+                             Text="{Binding ProjectConfiguration.ExpertAdvisorPublisherPort}" />
                 </StackPanel>
                 <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Label Content="Expert Advisor Response Port" />
-                    <TextBox Text="{Binding ProjectConfiguration.ExpertAdvisorResponsePort}"
-                             IsReadOnly="True"
+                    <TextBox Width="225"
                              Focusable="False"
                              IsEnabled="False"
-                             Width="225" />
+                             IsReadOnly="True"
+                             Text="{Binding ProjectConfiguration.ExpertAdvisorResponsePort}" />
                 </StackPanel>
             </StackPanel>
-            <!--#endregion-->
+
         </Expander>
-        <!--#endregion-->
+
 
         <metro:MetroHeader Grid.Row="2"
                            Header="MetaTrader">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!--#region Messages From Current Period-->
-                <TextBlock HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           Margin="{StaticResource ColumnMargin}">
-                        <Run Text="Input Messages"
-                             FontWeight="SemiBold" />
-                        <Run Text=":"
-                             FontWeight="SemiBold" />
+                <StackPanel Orientation="Horizontal">
+                    <!--  Messages From Current Period  -->
+                    <TextBlock Margin="{StaticResource ColumnMargin}"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center">
+                        <Run FontWeight="SemiBold"
+                             Text="Input Messages" />
+                        <Run FontWeight="SemiBold"
+                             Text=":" />
                         <Run Text="{Binding DataInput.Count, Mode=OneWay}" />
-                </TextBlock>
-                <!--#endregion-->
+                    </TextBlock>
 
-                <!--Clean Buttons-->
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal">
-                    <!--Clean Input-->
+                    <!--  Clean Input  -->
                     <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button Command="{Binding CleanMessageInputCommand}"
-                                Width="100"
-                                Height="40">
+                        <Button Width="100"
+                                Height="40"
+                                Command="{Binding CleanMessageInputCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
+                                <iconPacks:PackIconMaterial Width="14"
                                                             VerticalAlignment="Center"
-                                                            Width="14" />
+                                                            Kind="TextBoxRemoveOutline" />
                                 <Label Content="Clean Input"
                                        FontSize="11" />
                             </StackPanel>
                         </Button>
                     </Grid>
 
-                    <!--Clean Output-->
+                    <!--  Clean Output  -->
                     <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button Command="{Binding CleanMessageOutputCommand}"
-                                Width="100"
-                                Height="40">
+                        <Button Width="100"
+                                Height="40"
+                                Command="{Binding CleanMessageOutputCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="TextBoxRemoveOutline"
+                                <iconPacks:PackIconMaterial Width="14"
                                                             VerticalAlignment="Center"
-                                                            Width="14" />
+                                                            Kind="TextBoxRemoveOutline" />
                                 <Label Content="Clean Output"
                                        FontSize="11" />
                             </StackPanel>
@@ -208,50 +202,50 @@
                     </Grid>
                 </StackPanel>
 
-                <!--Toggle Switch-->
-                <StackPanel Grid.Column="2"
+                <!--  Toggle Switch  -->
+                <StackPanel Grid.Column="1"
                             Orientation="Horizontal">
                     <StackPanel>
                         <Label Content="Test Strategy Node" />
-                        <metro:ToggleSwitch Toggled="TestStrategyNodeToggleSwitch_Toggled"
-                                            IsEnabled="{Binding CanExecute}"
-                                            IsOn="{Binding TestStrategyNode, Mode=TwoWay}" />
+                        <metro:ToggleSwitch IsEnabled="{Binding CanExecute}"
+                                            IsOn="{Binding TestStrategyNode, Mode=TwoWay}"
+                                            Toggled="TestStrategyNodeToggleSwitch_Toggled" />
                     </StackPanel>
                     <StackPanel>
                         <Label Content="Test Assembly Node" />
-                        <metro:ToggleSwitch Toggled="TestAssemblyNodeToggleSwitch_Toggled"
-                                            IsEnabled="{Binding CanExecute}"
-                                            IsOn="{Binding TestAssemblyNode, Mode=TwoWay}" />
+                        <metro:ToggleSwitch IsEnabled="{Binding CanExecute}"
+                                            IsOn="{Binding TestAssemblyNode, Mode=TwoWay}"
+                                            Toggled="TestAssemblyNodeToggleSwitch_Toggled" />
                     </StackPanel>
                     <StackPanel>
                         <Label Content="Test Nodes" />
-                        <metro:ToggleSwitch Toggled="TestNodesToggleSwitch_Toggled"
-                                            IsEnabled="{Binding CanExecute}"
-                                            IsOn="{Binding TestNodes, Mode=TwoWay}" />
+                        <metro:ToggleSwitch IsEnabled="{Binding CanExecute}"
+                                            IsOn="{Binding TestNodes, Mode=TwoWay}"
+                                            Toggled="TestNodesToggleSwitch_Toggled" />
                     </StackPanel>
                 </StackPanel>
 
-                <!--Strategy, Assembly & Nodes Buttons-->
-                <StackPanel Grid.Column="3"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right">
-                    
-                    <!--Strategy Node-->
+                <!--  Strategy, Assembly & Nodes Buttons  -->
+                <StackPanel Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+
+                    <!--  Strategy Node  -->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="strategyNodesBtn"
                                 Width="125"
-                                IsEnabled="{Binding StrategyNode, Converter={StaticResource NullToBooleanConverter}}"
-                                Height="40">
+                                Height="40"
+                                IsEnabled="{Binding StrategyNode, Converter={StaticResource NullToBooleanConverter}}">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Graph"
+                                <iconPacks:PackIconMaterial Width="15"
                                                             VerticalAlignment="Center"
-                                                            Width="15" />
+                                                            Kind="Graph" />
                                 <Label Content="Strategy Node"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="strategyNodesBtn"
-                                                        EventName="Click">
+                                <behaviors:EventTrigger EventName="Click"
+                                                        SourceName="strategyNodesBtn">
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -264,22 +258,22 @@
                             </behaviors:Interaction.Triggers>
                         </Button>
                     </Grid>
-                    <!--Assembly Node-->
+                    <!--  Assembly Node  -->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="assemblyNodesBtn"
                                 Width="125"
-                                IsEnabled="{Binding AssemblyNode, Converter={StaticResource NullToBooleanConverter}}"
-                                Height="40">
+                                Height="40"
+                                IsEnabled="{Binding AssemblyNode, Converter={StaticResource NullToBooleanConverter}}">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Graph"
+                                <iconPacks:PackIconMaterial Width="15"
                                                             VerticalAlignment="Center"
-                                                            Width="15" />
+                                                            Kind="Graph" />
                                 <Label Content="Assembly Node"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="assemblyNodesBtn"
-                                                        EventName="Click">
+                                <behaviors:EventTrigger EventName="Click"
+                                                        SourceName="assemblyNodesBtn">
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -292,22 +286,22 @@
                             </behaviors:Interaction.Triggers>
                         </Button>
                     </Grid>
-                    <!--Nodes-->
+                    <!--  Nodes  -->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="nodeBtn"
                                 Width="80"
-                                IsEnabled="{Binding Nodes.Count, Converter={StaticResource IntToBooleanConverter}}"
-                                Height="40">
+                                Height="40"
+                                IsEnabled="{Binding Nodes.Count, Converter={StaticResource IntToBooleanConverter}}">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Graph"
+                                <iconPacks:PackIconMaterial Width="15"
                                                             VerticalAlignment="Center"
-                                                            Width="15" />
+                                                            Kind="Graph" />
                                 <Label Content="Nodes"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger SourceName="nodeBtn"
-                                                        EventName="Click">
+                                <behaviors:EventTrigger EventName="Click"
+                                                        SourceName="nodeBtn">
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
@@ -319,16 +313,16 @@
                                 </behaviors:EventTrigger>
                             </behaviors:Interaction.Triggers>
                         </Button>
-                        <!--#endregion-->
+
                     </Grid>
                 </StackPanel>
-                <!--#endregion-->
+
 
             </Grid>
         </metro:MetroHeader>
 
         <Grid Grid.Row="3"
-              Margin="0, 10, 0, 0">
+              Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -338,34 +332,34 @@
                 <Grid Name="dummygrid"
                       Visibility="Hidden">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.8*"></ColumnDefinition>
-                        <ColumnDefinition Width="1.2*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="0.8*"></ColumnDefinition>
-                        <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                        <ColumnDefinition Width="0.8*" />
+                        <ColumnDefinition Width="1.2*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="0.8*" />
+                        <ColumnDefinition Width="0.8*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0"
-                            Name="dummywidth0"></Border>
-                    <Border Grid.Column="1"
-                            Name="dummywidth1"></Border>
-                    <Border Grid.Column="2"
-                            Name="dummywidth2"></Border>
-                    <Border Grid.Column="3"
-                            Name="dummywidth3"></Border>
-                    <Border Grid.Column="4"
-                            Name="dummywidth4"></Border>
-                    <Border Grid.Column="5"
-                            Name="dummywidth5"></Border>
-                    <Border Grid.Column="6"
-                            Name="dummywidth6"></Border>
-                    <Border Grid.Column="7"
-                            Name="dummywidth7"></Border>
+                    <Border Name="dummywidth0"
+                            Grid.Column="0" />
+                    <Border Name="dummywidth1"
+                            Grid.Column="1" />
+                    <Border Name="dummywidth2"
+                            Grid.Column="2" />
+                    <Border Name="dummywidth3"
+                            Grid.Column="3" />
+                    <Border Name="dummywidth4"
+                            Grid.Column="4" />
+                    <Border Name="dummywidth5"
+                            Grid.Column="5" />
+                    <Border Name="dummywidth6"
+                            Grid.Column="6" />
+                    <Border Name="dummywidth7"
+                            Grid.Column="7" />
                 </Grid>
-                <!--#region Message Input-->
-                <metro:MetroHeader Margin="0, 0, 10, 0"
+                <!--  Message Input  -->
+                <metro:MetroHeader Margin="0,0,10,0"
                                    Header="MessageInput">
                     <ListView ItemsSource="{Binding DataInput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">
@@ -404,22 +398,22 @@
                 <Grid Name="dummygrid1"
                       Visibility="Hidden">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.4*"></ColumnDefinition>
-                        <ColumnDefinition Width="1.2*"></ColumnDefinition>
-                        <ColumnDefinition Width="0.8*"></ColumnDefinition>
-                        <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                        <ColumnDefinition Width="0.4*" />
+                        <ColumnDefinition Width="1.2*" />
+                        <ColumnDefinition Width="0.8*" />
+                        <ColumnDefinition Width="0.8*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0"
-                            Name="dummywidth10"></Border>
-                    <Border Grid.Column="1"
-                            Name="dummywidth11"></Border>
-                    <Border Grid.Column="2"
-                            Name="dummywidth12"></Border>
-                    <Border Grid.Column="3"
-                            Name="dummywidth13"></Border>
+                    <Border Name="dummywidth10"
+                            Grid.Column="0" />
+                    <Border Name="dummywidth11"
+                            Grid.Column="1" />
+                    <Border Name="dummywidth12"
+                            Grid.Column="2" />
+                    <Border Name="dummywidth13"
+                            Grid.Column="3" />
                 </Grid>
-                <!--#region Message Output-->
-                <metro:MetroHeader Margin="10 0 0 0"
+                <!--  Message Output  -->
+                <metro:MetroHeader Margin="10,0,0,0"
                                    Header="Message Output">
                     <ListView ItemsSource="{Binding DataOutput}"
                               Style="{StaticResource MahApps.Styles.ListView.Virtualized}">

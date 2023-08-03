@@ -1,21 +1,27 @@
 ﻿using AdionFA.Application.Contracts;
+using AdionFA.Domain.Properties;
 using AdionFA.Infrastructure.Directories.Contracts;
+using AdionFA.Infrastructure.Directories.Services;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure.AutoMapper;
+using AdionFA.UI.Infrastructure.Helpers;
 using AdionFA.UI.Infrastructure.Model.Project;
 using AdionFA.UI.ProjectStation.Commands;
 using AdionFA.UI.ProjectStation.EventAggregator;
 using AdionFA.UI.ProjectStation.Features;
 using AutoMapper;
+using MahApps.Metro.Controls.Dialogs;
 using Ninject;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.IO;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace AdionFA.UI.ProjectStation.ViewModels
@@ -53,30 +59,95 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             if (item == HamburgerMenuItems.ExtractorTrim)
             {
-                try
-                {
-                    // Get the latest project configuration
-                    ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
+                // Get the latest project configuration
+                ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
 
-                    ExtractorPath = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
-                    ExtractorTemplates.Clear();
+                ExtractorPath = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
+                ExtractorTemplates.Clear();
 
-                    foreach (var template in _projectDirectoryService.GetFilesInPath(ExtractorPath))
-                    {
-                        ExtractorTemplates.Add(template.Name);
-                    }
-                }
-                catch (Exception ex)
+                foreach (var template in _projectDirectoryService.GetFilesInPath(ExtractorPath))
                 {
-                    Trace.TraceError(ex.Message);
-                    throw;
+                    ExtractorTemplates.Add(template.Name);
                 }
             }
         });
 
+        public ICommand AddExtractorTemplateCommand => new DelegateCommand(async () =>
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv",
+                Multiselect = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var directoryService = new ProjectDirectoryService();
+                foreach (var filename in openFileDialog.FileNames)
+                {
+                    var fileInfo = new FileInfo(filename);
+
+                    // Check if the file already exists
+                    if (ExtractorTemplates.Contains(fileInfo.Name))
+                    {
+                        var overwrite = await MessageHelper.ShowMessageInputAsync(this,
+                            Resources.Extractor,
+                            $"A template with the name {fileInfo.Name} already exists, do you want to overwrite it?")
+                            .ConfigureAwait(true);
+
+                        if (overwrite != MessageDialogResult.Affirmative)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            ExtractorTemplates.Remove(fileInfo.Name);
+                        }
+                    }
+
+                    directoryService.CopyCSVFileTo(fileInfo, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+                    ExtractorTemplates.Add(fileInfo.Name);
+                }
+
+                ContainerLocator.Current.Resolve<IEventAggregator>().GetEvent<ExtractorTemplatesUpdatedEvent>().Publish(true);
+            }
+        });
+
+        public ICommand ReplaceExtractorTemplateCommand => new DelegateCommand(() =>
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv",
+                Multiselect = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var directoryService = new ProjectDirectoryService();
+                if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), isBackup: false))
+                {
+                    var filenames = new List<string>();
+                    foreach (var filename in openFileDialog.FileNames)
+                    {
+                        var fileInfo = new FileInfo(filename);
+                        directoryService.CopyCSVFileTo(fileInfo, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+                        filenames.Add(fileInfo.Name);
+                    }
+
+                    ExtractorTemplates.Clear();
+                    ExtractorTemplates.AddRange(filenames);
+
+                    ContainerLocator.Current.Resolve<IEventAggregator>().GetEvent<ExtractorTemplatesUpdatedEvent>().Publish(true);
+                }
+            }
+        });
+
+
         // View Bindings
 
-        private bool _canExecute;
+        private bool _canExecute = true;
         public bool CanExecute
         {
             get => _canExecute;

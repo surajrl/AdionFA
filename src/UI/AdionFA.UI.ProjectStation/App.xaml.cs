@@ -13,7 +13,6 @@ using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
 using Serilog;
-using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -29,8 +28,6 @@ namespace AdionFA.UI.ProjectStation
     {
         protected override Window CreateShell()
         {
-            IoC.Kernel.Get<ILogger>().Information("App.CreateShell() :: Call.");
-
             return Container.Resolve<Shell>();
         }
 
@@ -61,12 +58,14 @@ namespace AdionFA.UI.ProjectStation
                 IoC.Kernel.Get<ILogger>().Error($"{e.Exception.Message} :: {e.Exception.StackTrace}.");
             };
 
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler((object sender, UnhandledExceptionEventArgs e) =>
-            {
-                MessageBox.Show(e.ExceptionObject.ToString());
-            });
-        }
+            // Exit
 
+            Current.Exit += (object sender, ExitEventArgs e) =>
+            {
+                ContainerLocator.Current.Resolve<IProcessService>().EndWeka();
+            };
+
+        }
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
             base.ConfigureModuleCatalog(moduleCatalog);
@@ -79,12 +78,10 @@ namespace AdionFA.UI.ProjectStation
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            var arg = e.Args[0];
+            var args = e.Args[0].Split("_AdionFA.UI.ProjectStation_");
 
-            ProcessArgs.Args = arg.Split("_AdionFA.UI.ProjectStation_");
-            ProcessArgs.ProjectId = ProcessArgs.Args.Length > 0
-                ? int.Parse(ProcessArgs.Args[0], CultureInfo.InvariantCulture)
-                : 0;
+            ProcessArgs.ProjectId = args.Length > 0 ? int.Parse(args[0], CultureInfo.InvariantCulture) : 0;
+            ProcessArgs.ProjectName = args[1] ?? string.Empty;
 
             if (ProcessArgs.ProjectId > 0)
             {
@@ -95,7 +92,7 @@ namespace AdionFA.UI.ProjectStation
                 var settingService = IoC.Kernel.Get<ISettingService>();
                 ProjectDirectoryManager.DefaultWorkspace = settingService.GetSetting((int)SettingEnum.DefaultWorkspace).Value;
 
-                // Theme
+                // Set theme
 
                 var themeSetting = settingService.GetSetting((int)SettingEnum.Theme);
                 ThemeManager.Current.ChangeThemeBaseColor(Current, themeSetting?.Value ?? "Light");
@@ -103,7 +100,7 @@ namespace AdionFA.UI.ProjectStation
                 var colorSetting = settingService.GetSetting((int)SettingEnum.Color);
                 ThemeManager.Current.ChangeThemeColorScheme(Current, colorSetting?.Value ?? "Orange");
 
-                // Culture
+                // Set culture info
 
                 var cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList();
 
@@ -114,7 +111,7 @@ namespace AdionFA.UI.ProjectStation
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = culture;
 
-                ContainerLocator.Current.Resolve<IProcessService>().StartProcessWeka();
+                ContainerLocator.Current.Resolve<IProcessService>().StartWeka();
             }
             else
             {
@@ -126,11 +123,10 @@ namespace AdionFA.UI.ProjectStation
 
     public static class ProcessArgs
     {
-        public static string[] Args { get; set; }
         public static int SymbolId => IoC.Kernel.Get<IProjectService>().GetProject(ProjectId, true).HistoricalData.SymbolId;
         public static int TimeframeId => IoC.Kernel.Get<IProjectService>().GetProject(ProjectId, true).HistoricalData.TimeframeId;
         public static int HistoricalDataId => IoC.Kernel.Get<IProjectService>().GetProject(ProjectId, true).HistoricalDataId;
         public static int ProjectId { get; set; }
-        public static string ProjectName => Args[1] ?? string.Empty;
+        public static string ProjectName { get; set; }
     }
 }

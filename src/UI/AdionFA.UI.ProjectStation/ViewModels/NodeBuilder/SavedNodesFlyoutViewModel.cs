@@ -2,8 +2,7 @@
 using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Modules.Weka.Model;
-using AdionFA.Infrastructure.Weka.Model;
+using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;

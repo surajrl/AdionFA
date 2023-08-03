@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AdionFA.UI.ProjectStation": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "1_AdionFA.UI.ProjectStation_test1"
     }
   }
 }

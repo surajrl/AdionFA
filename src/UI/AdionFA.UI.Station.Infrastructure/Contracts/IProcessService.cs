@@ -2,9 +2,9 @@
 {
     public interface IProcessService
     {
-        void StartProcessProject(int? projectId);
+        void StartWeka();
 
-        void StartProcessWeka();
+        void EndWeka();
 
         bool AnyProcessProject();
     }

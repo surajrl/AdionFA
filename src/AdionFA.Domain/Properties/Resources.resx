@@ -132,6 +132,9 @@
   <data name="EndDate" xml:space="preserve">
     <value>End Date</value>
   </data>
+  <data name="Extractor" xml:space="preserve">
+    <value>Extractor</value>
+  </data>
   <data name="FailEntitySave" xml:space="preserve">
     <value>Error saving</value>
   </data>

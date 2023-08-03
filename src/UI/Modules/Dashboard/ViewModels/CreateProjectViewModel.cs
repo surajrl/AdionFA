@@ -64,25 +64,25 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
         public ICommand CreateProjectBtnCommand => new DelegateCommand(() =>
         {
+            var validationResult = Project.Validate();
+            if (!validationResult.IsValid)
+            {
+                MessageHelper.ShowMessages(this,
+                    Resources.CreateProject,
+                    validationResult.Errors.Select(msg => msg.ErrorMessage).ToArray());
+
+                return;
+            }
+
             try
             {
-                var validationResult = Project.Validate();
-                if (!validationResult.IsValid)
-                {
-                    MessageHelper.ShowMessages(this,
-                        Resources.CreateProject,
-                        validationResult.Errors.Select(msg => msg.ErrorMessage).ToArray());
-
-                    return;
-                }
-
                 IsTransactionActive = true;
 
                 var responseDTO = _projectService.CreateProject(_mapper.Map<ProjectDTO>(Project));
 
                 if (responseDTO.IsSuccess)
                 {
-                    ContainerLocator.Current.Resolve<IApplicationCommands>().LoadProjectHierarchyCommand.Execute(null);
+                    ContainerLocator.Current.Resolve<IApplicationCommands>().LoadProjectsCommand.Execute(null);
                 }
 
                 IsTransactionActive = false;

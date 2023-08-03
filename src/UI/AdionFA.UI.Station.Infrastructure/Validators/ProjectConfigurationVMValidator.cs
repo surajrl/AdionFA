@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace AdionFA.UI.Infrastructure.Validators
 {
-    internal class ProjectConfigurationVMValidator : AbstractValidator<ProjectConfigurationVM>
+    public class ProjectConfigurationVMValidator : AbstractValidator<ProjectConfigurationVM>
     {
         public ProjectConfigurationVMValidator()
         {
@@ -19,21 +19,29 @@ namespace AdionFA.UI.Infrastructure.Validators
 
             // Period
 
-            RuleFor(m => m.FromDateIS).NotNull().NotEmpty()
+            RuleFor(m => m.FromDateIS)
+                .NotNull()
+                .NotEmpty()
                 .Must((m, fromDateIS) => fromDateIS < m.ToDateIS && fromDateIS < DateTime.UtcNow)
                 .WithMessage(m => string.Format(CultureInfo.InvariantCulture, Resources.MustBeLessOneAndTwo, Resources.Value, nameof(m.ToDateIS), nameof(DateTime.Today)));
 
-            RuleFor(m => m.ToDateIS).NotNull().NotEmpty()
-                            .Must((m, toDateIS) => toDateIS > m.FromDateIS && toDateIS < DateTime.UtcNow).WithMessage(m =>
-                                    string.Format(CultureInfo.InvariantCulture, Resources.MustBeGreaterThanOneAndLessThanTow, Resources.Value, nameof(m.FromDateIS), nameof(DateTime.Today)));
+            RuleFor(m => m.ToDateIS)
+                .NotNull()
+                .NotEmpty()
+                .Must((m, toDateIS) => toDateIS > m.FromDateIS && toDateIS < DateTime.UtcNow)
+                .WithMessage(m => string.Format(CultureInfo.InvariantCulture, Resources.MustBeGreaterThanOneAndLessThanTow, Resources.Value, nameof(m.FromDateIS), nameof(DateTime.Today)));
 
-            RuleFor(m => m.FromDateOS).NotNull().NotEmpty()
-                .Must((m, fromDateOS) => fromDateOS < m.ToDateOS && fromDateOS < DateTime.UtcNow).WithMessage(m =>
-                        string.Format(CultureInfo.InvariantCulture, Resources.MustBeLessOneAndTwo, Resources.Value, nameof(m.ToDateOS), nameof(DateTime.Today)));
+            RuleFor(m => m.FromDateOS)
+                .NotNull()
+                .NotEmpty()
+                .Must((m, fromDateOS) => fromDateOS < m.ToDateOS && fromDateOS < DateTime.UtcNow)
+                .WithMessage(m => string.Format(CultureInfo.InvariantCulture, Resources.MustBeLessOneAndTwo, Resources.Value, nameof(m.ToDateOS), nameof(DateTime.Today)));
 
-            RuleFor(m => m.ToDateOS).NotNull().NotEmpty()
-                .Must((m, toDateOS) => toDateOS > m.FromDateOS && toDateOS < DateTime.UtcNow).WithMessage(m =>
-                    string.Format(CultureInfo.InvariantCulture, Resources.MustBeGreaterThanOneAndLessThanTow, Resources.Value, nameof(m.FromDateOS), nameof(DateTime.Today)));
+            RuleFor(m => m.ToDateOS)
+                .NotNull()
+                .NotEmpty()
+                .Must((m, toDateOS) => toDateOS > m.FromDateOS && toDateOS < DateTime.UtcNow)
+                .WithMessage(m => string.Format(CultureInfo.InvariantCulture, Resources.MustBeGreaterThanOneAndLessThanTow, Resources.Value, nameof(m.FromDateOS), nameof(DateTime.Today)));
 
             // Extractor
 

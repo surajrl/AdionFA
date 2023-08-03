@@ -5,6 +5,9 @@ Adion Financial Automat
 ## TODO
 
 - Unit tests
-- Improve project dashboard on Station
+- Name nodes differently
+- Implement changes of flyout nodes for the Assembly Node and Strategy Node
+- Do not allow to modify FromPeriodIS, ToPeriodIS, FromPeriodOS, ToPeriodOS between builders ?
+- Improve dashboard containing the projects on AdionFA.UI.Station
 - Use TreeView to display nodes
-- Set the Winning Nodes to true
+- Make Logger configurable through appsettings, so that it can be enabled or disabled in release mode

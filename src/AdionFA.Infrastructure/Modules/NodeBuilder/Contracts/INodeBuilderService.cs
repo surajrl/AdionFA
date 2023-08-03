@@ -1,8 +1,7 @@
 ﻿using AdionFA.Infrastructure.AssemblyBuilder.Model;
 using AdionFA.Infrastructure.Extractor.Model;
-using AdionFA.Infrastructure.Modules.Weka.Model;
+using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.Infrastructure.NodeBuilder.Model;
-using AdionFA.Infrastructure.Weka.Model;
 using AdionFA.TransferObject.Base;
 using System.Collections.Generic;
 using System.Threading;

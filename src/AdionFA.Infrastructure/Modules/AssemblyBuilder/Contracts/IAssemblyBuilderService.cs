@@ -5,15 +5,15 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Contracts
     public interface IAssemblyBuilderService
     {
         /// <summary>
-        /// Resets the Assembly Builder Winning Nodes and gets the Child Nodes from the Strategy Builder.
+        /// Creates a new Assembly Builder and gets the child nodes from the Strategy Builder.
         /// </summary>
         /// <param name="projectName"></param>
-        AssemblyBuilderModel LoadNewAssemblyBuilder(string projectName);
+        AssemblyBuilderModel CreateNewAssemblyBuilder(string projectName);
 
         /// <summary>
-        /// Gets the Assembly Builder Winning Nodes found on the directory and the Child Nodes from the Strategy Builder.
+        /// Gets the Assembly Builder winning nodes found on the directory and the child nodes from the Strategy Builder.
         /// </summary>
         /// <param name="projectName"></param>
-        AssemblyBuilderModel LoadExistingAssemblyBuilder(string projectName);
+        AssemblyBuilderModel GetExistingAssemblyBuilder(string projectName);
     }
 }

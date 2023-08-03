@@ -18,6 +18,8 @@
             <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
             <converter:TimeInSecondsToDateTimeConverter x:Key="TimeInSecondsToDateTimeConverter" />
             <converter:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+            <converter:BacktestStatusToVisibilityConverter x:Key="BacktestStatusToVisibilityConverter" />
+            <converter:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
 
             <converter:CompositeConverter x:Key="InverseBooleanToVisibilityConverter">
                 <converter:InverseBooleanConverter />

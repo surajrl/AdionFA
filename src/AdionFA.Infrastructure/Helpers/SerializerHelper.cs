@@ -1,7 +1,6 @@
 ﻿using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Modules.Weka.Model;
-using AdionFA.Infrastructure.Weka.Model;
+using AdionFA.Infrastructure.Modules.Strategy;
 using System;
 using System.Diagnostics;
 using System.IO;

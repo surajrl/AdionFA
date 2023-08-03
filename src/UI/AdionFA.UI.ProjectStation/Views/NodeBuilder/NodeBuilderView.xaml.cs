@@ -11,5 +11,10 @@ namespace AdionFA.UI.ProjectStation.Views
         {
             InitializeComponent();
         }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

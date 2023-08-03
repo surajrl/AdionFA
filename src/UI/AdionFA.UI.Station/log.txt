@@ -945,3 +945,64 @@ LIMIT 1
 31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: 'AdionFADbContext' disposed. 
 31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Disposing connection to database 'main' on server 'AdionFA.db'. 
 31-07-2023 00:00:57.924 [Information] [ProcessId 5224] [ThreadId 1] :: Disposed connection to database 'main' on server 'AdionFA.db' (0ms). 
+01-08-2023 23:46:23.248 [Information] [ProcessId 2888] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+01-08-2023 23:46:32.013 [Information] [ProcessId 2888] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+01-08-2023 23:46:32.054 [Information] [ProcessId 2888] [ThreadId 1] :: ProcessService.StartProcessWeka() :: Weka started. 
+01-08-2023 23:48:28.974 [Information] [ProcessId 15448] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+01-08-2023 23:48:36.600 [Information] [ProcessId 15448] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+01-08-2023 23:48:36.621 [Information] [ProcessId 15448] [ThreadId 1] :: ProcessService.StartProcessWeka() :: Weka started. 
+01-08-2023 23:49:19.033 [Information] [ProcessId 15448] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: Call. 
+01-08-2023 23:49:34.677 [Information] [ProcessId 15448] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.Set<HistoricalData>().Add(). 
+01-08-2023 23:49:53.256 [Information] [ProcessId 15448] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.SaveChanges(). 
+01-08-2023 23:50:19.135 [Information] [ProcessId 15448] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: Call. 
+01-08-2023 23:50:34.562 [Information] [ProcessId 15448] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.Set<HistoricalData>().Add(). 
+01-08-2023 23:50:52.895 [Information] [ProcessId 15448] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.SaveChanges(). 
+01-08-2023 23:52:23.263 [Information] [ProcessId 15448] [ThreadId 1] :: ProjectService.CreateProject() :: Call. 
+01-08-2023 23:52:23.400 [Information] [ProcessId 15448] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.Set<Project>().Add(). 
+01-08-2023 23:52:23.458 [Information] [ProcessId 15448] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.SaveChanges(). 
+01-08-2023 23:52:23.481 [Information] [ProcessId 15448] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 20:39:46.349 [Information] [ProcessId 4852] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 20:39:51.361 [Information] [ProcessId 4852] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+03-08-2023 20:43:43.581 [Information] [ProcessId 16852] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 20:44:12.672 [Information] [ProcessId 16852] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+03-08-2023 20:44:47.718 [Information] [ProcessId 16852] [ThreadId 1] :: ProjectService.CreateProject() :: Call. 
+03-08-2023 20:44:47.858 [Information] [ProcessId 16852] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.Set<Project>().Add(). 
+03-08-2023 20:44:48.067 [Information] [ProcessId 16852] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.SaveChanges(). 
+03-08-2023 20:44:48.082 [Information] [ProcessId 16852] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 20:48:36.194 [Information] [ProcessId 15484] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 20:48:41.682 [Information] [ProcessId 15484] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+03-08-2023 20:48:49.584 [Information] [ProcessId 15484] [ThreadId 1] :: ProjectService.GetProject() :: Call. 
+03-08-2023 20:48:49.605 [Information] [ProcessId 15484] [ThreadId 1] :: ProcessService.StartProcessProject() :: Project 2 started. 
+03-08-2023 20:59:35.112 [Information] [ProcessId 12084] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 20:59:42.073 [Information] [ProcessId 12084] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+03-08-2023 21:00:32.746 [Information] [ProcessId 12084] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: Call. 
+03-08-2023 21:00:48.813 [Information] [ProcessId 12084] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.Set<HistoricalData>().Add(). 
+03-08-2023 21:01:11.728 [Information] [ProcessId 12084] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.SaveChanges(). 
+03-08-2023 21:01:19.263 [Information] [ProcessId 12084] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: Call. 
+03-08-2023 21:02:21.303 [Information] [ProcessId 12084] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.Set<HistoricalData>().Add(). 
+03-08-2023 21:03:27.079 [Information] [ProcessId 12084] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.SaveChanges(). 
+03-08-2023 21:05:07.065 [Information] [ProcessId 12084] [ThreadId 1] :: ProjectService.CreateProject() :: Call. 
+03-08-2023 21:05:07.168 [Information] [ProcessId 12084] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.Set<Project>().Add(). 
+03-08-2023 21:05:07.220 [Information] [ProcessId 12084] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.SaveChanges(). 
+03-08-2023 21:05:07.226 [Information] [ProcessId 12084] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 21:05:11.970 [Information] [ProcessId 12084] [ThreadId 1] :: ProjectService.GetProject() :: Call. 
+03-08-2023 21:07:31.241 [Information] [ProcessId 13208] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 21:07:37.034 [Information] [ProcessId 13208] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+03-08-2023 21:07:48.207 [Information] [ProcessId 13208] [ThreadId 1] :: ProjectService.CreateProject() :: Call. 
+03-08-2023 21:07:48.398 [Information] [ProcessId 13208] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.Set<Project>().Add(). 
+03-08-2023 21:07:48.662 [Information] [ProcessId 13208] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.SaveChanges(). 
+03-08-2023 21:07:48.683 [Information] [ProcessId 13208] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 21:07:53.009 [Information] [ProcessId 13208] [ThreadId 1] :: ProjectService.GetProject() :: Call. 
+03-08-2023 21:07:53.073 [Information] [ProcessId 13208] [ThreadId 1] :: ProcessService.StartProcessProject() :: Project 2 started. 
+03-08-2023 21:13:06.342 [Information] [ProcessId 4448] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 21:13:11.446 [Information] [ProcessId 4448] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+03-08-2023 21:13:21.824 [Information] [ProcessId 4448] [ThreadId 1] :: ProjectService.CreateProject() :: Call. 
+03-08-2023 21:13:21.964 [Information] [ProcessId 4448] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.Set<Project>().Add(). 
+03-08-2023 21:13:22.166 [Information] [ProcessId 4448] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.SaveChanges(). 
+03-08-2023 21:13:22.194 [Information] [ProcessId 4448] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 21:14:14.240 [Information] [ProcessId 8092] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+03-08-2023 21:14:18.854 [Information] [ProcessId 8092] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+03-08-2023 21:14:35.250 [Information] [ProcessId 8092] [ThreadId 1] :: ProjectService.CreateProject() :: Call. 
+03-08-2023 21:14:35.517 [Information] [ProcessId 8092] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.Set<Project>().Add(). 
+03-08-2023 21:14:35.720 [Information] [ProcessId 8092] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.SaveChanges(). 
+03-08-2023 21:14:35.734 [Information] [ProcessId 8092] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 

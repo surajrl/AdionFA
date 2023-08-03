@@ -11,8 +11,8 @@ using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
+using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.Infrastructure.NodeBuilder.Contracts;
-using AdionFA.Infrastructure.Weka.Model;
 using AdionFA.Infrastructure.Weka.Services;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure.AutoMapper;
@@ -22,7 +22,7 @@ using AdionFA.UI.ProjectStation.Commands;
 using AdionFA.UI.ProjectStation.EventAggregator;
 using AdionFA.UI.ProjectStation.Features;
 using AdionFA.UI.ProjectStation.Model.Common;
-using AdionFA.UI.ProjectStation.Validators.CrossingBuilder;
+using AdionFA.UI.ProjectStation.Validators;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
 using Ninject;
@@ -92,40 +92,53 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _cancellationTokenSource = new();
             _manualResetEventSlim = new(true);
             _lock = new();
-            _crossingBuilderService.LoadExistingCrossingBuilder(ProcessArgs.ProjectName, CrossingBuilder);
+            CrossingBuilder = _crossingBuilderService.GetExistingCrossingBuilder(ProcessArgs.ProjectName);
 
             if (CrossingBuilder.WinningStrategyNodesUP.Count == 0 && CrossingBuilder.WinningStrategyNodesDOWN.Count == 0)
             {
-                _crossingBuilderService.LoadNewCrossingBuilder(ProcessArgs.ProjectName, CrossingBuilder);
+                CrossingBuilder = _crossingBuilderService.CreateNewCrossingBuilder(ProcessArgs.ProjectName);
             }
 
-            ResetBuilderProcesses();
+            UpdateExtractorTemplates();
         }
 
         private void InitializeEventAggregators()
         {
-            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(p => CanExecute = p);
+            _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(canExecute => CanExecute = canExecute);
+
             _eventAggregator.GetEvent<ExtractorTemplatesUpdatedEvent>().Subscribe(updated =>
             {
-                if (updated
-                && !IsTransactionActive
-                && CrossingBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Name)
-                && CrossingBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Name))
+                var canUpdateProcessesUP =
+                CrossingBuilderProcessesDOWN.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Name)
+                || CrossingBuilderProcessesDOWN.All(process => process.Message.Contains(BuilderProcessStatus.Canceled.GetMetadata().Name));
+
+                var canUpdateProcessesDOWN =
+                CrossingBuilderProcessesUP.All(process => process.Message == BuilderProcessStatus.CBNotStarted.GetMetadata().Name)
+                || CrossingBuilderProcessesUP.All(process => process.Message.Contains(BuilderProcessStatus.Canceled.GetMetadata().Name));
+
+                // Only update the extractor templates if the builder process has not started or has been cancelled
+                if (updated && canUpdateProcessesUP && canUpdateProcessesDOWN)
                 {
-                    ResetBuilderProcesses();
+                    UpdateExtractorTemplates();
                 }
             });
+
+            _eventAggregator.GetEvent<BuilderResetEvent>().Subscribe(reset =>
+            {
+                if (reset)
+                {
+                    DeleteCrossingBuilder();
+                    UpdateExtractorTemplates();
+                }
+            });
+
             _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Subscribe(assemblyBuilderCompleted =>
             {
                 if (assemblyBuilderCompleted)
                 {
                     DeleteCrossingBuilder();
-                    _crossingBuilderService.LoadNewCrossingBuilder(ProcessArgs.ProjectName, CrossingBuilder);
-                    ResetBuilderProcesses();
-                }
-                else
-                {
-                    DeleteCrossingBuilder();
+                    CrossingBuilder = _crossingBuilderService.CreateNewCrossingBuilder(ProcessArgs.ProjectName);
+                    UpdateExtractorTemplates();
                 }
             });
         }
@@ -201,7 +214,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand Reset => new DelegateCommand(async () =>
         {
-            var reset = await MessageHelper.ShowMessageInput(this,
+            var reset = await MessageHelper.ShowMessageInputAsync(this,
                     Resources.CrossingBuilder,
                     "This will reset the Strategy Nodes.\n"
                     + "Do you want to continue?").ConfigureAwait(true);
@@ -212,8 +225,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
 
             DeleteCrossingBuilder();
-            _crossingBuilderService.LoadNewCrossingBuilder(ProcessArgs.ProjectName, CrossingBuilder);
-            ResetBuilderProcesses();
+            CrossingBuilder = _crossingBuilderService.CreateNewCrossingBuilder(ProcessArgs.ProjectName);
+            UpdateExtractorTemplates();
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
         public ICommand Process => new DelegateCommand(async () =>
@@ -235,7 +248,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 _cancellationTokenSource = new();
 
-                ResetBuilderProcesses();
+                UpdateExtractorTemplates();
 
                 var mainHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.HistoricalDataId, true);
                 var mainCandles = mainHistoricalData.HistoricalDataCandles.Select(candle => new Candle
@@ -286,7 +299,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 await _processTask;
 
-                ResetBuilderProcesses();
+                UpdateExtractorTemplates();
             }
             catch (OperationCanceledException)
             {
@@ -315,7 +328,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _cancellationTokenSource = null;
             }
 
-        }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, () => !IsTransactionActive && (CrossingBuilder.WinningStrategyNodesUP.Count > 0 || CrossingBuilder.WinningStrategyNodesDOWN.Count > 0))
+            .ObservesProperty(() => IsTransactionActive)
+            .ObservesProperty(() => CrossingBuilder);
 
         private void ExtractionProcess(IList<BuilderProcess> processes, string label, IEnumerable<Candle> candles)
         {
@@ -404,6 +419,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         (double)ProjectConfiguration.ABWekaMaxRatioTree,
                         (double)ProjectConfiguration.ABWekaNTotalTree);
 
+                // No tree was found
                 if (responseWeka.Count == 0)
                 {
                     continue;
@@ -425,6 +441,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                             CrossingNodesData = new(process.PreviousStrategyNode.CrossingNodesData),
                             BacktestIS = new(),
                             BacktestOS = new(),
+                            BacktestStatusIS = BacktestStatus.NotStarted,
+                            BacktestStatusOS = BacktestStatus.NotStarted,
                         };
 
                         newStrategyNode.CrossingNodesData.Add(Tuple.Create(node, CrossingHistoricalDataId, CrossingSymbolName));
@@ -439,15 +457,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _manualResetEventSlim.Wait();
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                if (process.BacktestStrategyNodes.Count == 0)
-                {
-                    // No backtests to do
-                    process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name;
-                }
-                else
-                {
-                    process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Name;
-                }
+                process.Message = process.BacktestStrategyNodes.Count == 0
+                    ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name // No backtests to do
+                    : process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Name;
             }
 
             return backtestNodes;
@@ -522,7 +534,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 });
         }
 
-        private void ResetBuilderProcesses()
+        private void UpdateExtractorTemplates()
         {
             CrossingBuilderProcessesUP.Clear();
             CrossingBuilderProcessesDOWN.Clear();
@@ -561,17 +573,17 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private void DeleteCrossingBuilder()
         {
-            // Delete Crossing Builder Nodes
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesUPDirectory(), "*.xml", isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
-            // Delete Crossing Builder Extractions
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
-
+            // Reset the winning strategy nodes
             CrossingBuilder.WinningStrategyNodesUP.Clear();
             CrossingBuilder.WinningStrategyNodesDOWN.Clear();
 
-            ResetBuilderProcesses();
+            // Delete node files from the Crossing Builder
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesUPDirectory(), "*.xml", isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+
+            // Delete extractor files from the Crossing Builder
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
         }
 
         // View Bindings

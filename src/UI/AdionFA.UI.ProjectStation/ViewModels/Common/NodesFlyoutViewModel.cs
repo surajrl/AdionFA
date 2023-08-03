@@ -1,6 +1,6 @@
 ﻿using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Modules.Weka.Model;
+using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;

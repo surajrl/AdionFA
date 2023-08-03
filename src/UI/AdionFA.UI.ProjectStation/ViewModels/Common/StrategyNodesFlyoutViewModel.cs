@@ -1,4 +1,4 @@
-﻿using AdionFA.Infrastructure.Weka.Model;
+﻿using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;

@@ -29,7 +29,7 @@ namespace AdionFA.UI.Infrastructure.Helpers
                 settings: _setting);
         }
 
-        public static async Task<MessageDialogResult> ShowMessageInput(object context, string title, string message)
+        public static async Task<MessageDialogResult> ShowMessageInputAsync(object context, string title, string message)
         {
             return await Dialog.ShowMessageAsync(context,
                 title, $"{message ?? string.Empty}",

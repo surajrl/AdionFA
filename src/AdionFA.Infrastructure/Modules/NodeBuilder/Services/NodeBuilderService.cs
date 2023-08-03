@@ -7,7 +7,7 @@ using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Modules.Weka.Model;
+using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.Infrastructure.NodeBuilder.Contracts;
 using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
@@ -213,6 +213,8 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
             {
                 // Backtest OS
 
+                node.BacktestStatusOS = BacktestStatus.Executing;
+
                 node.BacktestOS = Backtest(
                     EntityTypeEnum.StrategyBuilder,
                     configuration.FromDateOS.Value,
@@ -224,18 +226,22 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                     manualResetEvent,
                     cancellationToken);
 
+                node.BacktestStatusOS = BacktestStatus.Completed;
+
                 // Backtest OS Pass Conditions
 
-                node.WinningStrategy =
+                var passBacktestOS =
                     node.BacktestOS.WinningTrades >= configuration.SBMinTotalTradesIS
                     && node.BacktestOS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentOS;
 
-                if (!node.WinningStrategy)
+                if (!passBacktestOS)
                 {
-                    return false;
+                    return node.WinningStrategy = passBacktestOS;
                 }
 
                 // Backtest IS
+
+                node.BacktestStatusIS = BacktestStatus.Executing;
 
                 node.BacktestIS = Backtest(
                     EntityTypeEnum.StrategyBuilder,
@@ -248,24 +254,15 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                     manualResetEvent,
                     cancellationToken);
 
-                // Backtest IS Pass Conditions
+                node.BacktestStatusIS = BacktestStatus.Completed;
 
-                node.WinningStrategy =
-                     node.BacktestIS.WinningTrades >= configuration.SBMinTotalTradesIS
-                     && node.BacktestIS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentIS;
+                // Winning Conditions
 
-                if (!node.WinningStrategy)
-                {
-                    return false;
-                }
-
-                // Winning Strategy Conditions
-
-                node.WinningStrategy =
-                    node.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
+                return node.WinningStrategy =
+                    node.BacktestIS.WinningTrades >= configuration.SBMinTotalTradesIS
+                    && node.BacktestIS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentIS
+                    && node.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
                     && (!configuration.IsProgressiveness || node.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
-
-                return node.WinningStrategy;
             }
             catch (Exception ex)
             {
@@ -283,7 +280,9 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
-            // IS Backtest
+            // Backtest IS
+
+            assemblyNode.BacktestStatusIS = BacktestStatus.Executing;
 
             assemblyNode.BacktestIS = Backtest(
                 EntityTypeEnum.AssemblyBuilder,
@@ -296,18 +295,22 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                 manualResetEvent,
                 cancellationToken);
 
-            // IS Winning Conditions
+            assemblyNode.BacktestStatusIS = BacktestStatus.Completed;
 
-            assemblyNode.WinningStrategy =
+            // Backtest IS Pass Conditions
+
+            var passBacktestIS =
                 (assemblyNode.BacktestIS.SuccessRatePercent - meanSuccessRatePercentIS) >= (double)configuration.ABMinImprovePercent
                 && assemblyNode.BacktestIS.TotalTrades >= configuration.ABMinTotalTradesIS;
 
-            if (!assemblyNode.WinningStrategy)
+            if (!passBacktestIS)
             {
-                return false;
+                return assemblyNode.WinningStrategy = passBacktestIS;
             }
 
-            // OS Backtest
+            // Backtest OS
+
+            assemblyNode.BacktestStatusOS = BacktestStatus.Executing;
 
             assemblyNode.BacktestOS = Backtest(
                 EntityTypeEnum.AssemblyBuilder,
@@ -320,13 +323,13 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                 manualResetEvent,
                 cancellationToken);
 
+            assemblyNode.BacktestStatusOS = BacktestStatus.Completed;
+
             // Winning Conditions
 
-            assemblyNode.WinningStrategy =
+            return assemblyNode.WinningStrategy =
                 assemblyNode.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
                 && (!configuration.IsProgressiveness || assemblyNode.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
-
-            return assemblyNode.WinningStrategy;
         }
 
         public bool BuildBacktestOfStrategyNode(
@@ -341,7 +344,9 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
         {
             try
             {
-                // OS Backtest
+                // Backtest OS
+
+                strategyNode.BacktestStatusOS = BacktestStatus.Executing;
 
                 strategyNode.BacktestOS = BacktestStrategyNode(
                     strategyNode,
@@ -353,12 +358,18 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                     manualResetEvent,
                     cancellationToken);
 
+                strategyNode.BacktestStatusOS = BacktestStatus.Completed;
+
+                // TODO: Backtest OS Pass Conditions
+
                 if (strategyNode.BacktestOS.WinningTrades == 0)
                 {
                     return false;
                 }
 
-                // IS Backtest
+                // Backtest IS
+
+                strategyNode.BacktestStatusIS = BacktestStatus.Executing;
 
                 strategyNode.BacktestIS = BacktestStrategyNode(
                     strategyNode,
@@ -369,6 +380,10 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                     timeframeId,
                     manualResetEvent,
                     cancellationToken);
+
+                strategyNode.BacktestStatusIS = BacktestStatus.Completed;
+
+                // TODO: Winning Conditions
 
                 if (strategyNode.BacktestIS.WinningTrades == 0)
                 {

@@ -106,6 +106,15 @@ namespace AdionFA.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extractor.
+        /// </summary>
+        public static string Extractor {
+            get {
+                return ResourceManager.GetString("Extractor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error saving.
         /// </summary>
         public static string FailEntitySave {
