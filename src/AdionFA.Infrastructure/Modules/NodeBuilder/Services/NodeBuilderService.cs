@@ -231,7 +231,7 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                 // Backtest OS Pass Conditions
 
                 var passBacktestOS =
-                    node.BacktestOS.WinningTrades >= configuration.SBMinTotalTradesIS
+                    node.BacktestOS.TotalTrades >= configuration.SBMinTotalTradesOS
                     && node.BacktestOS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentOS;
 
                 if (!passBacktestOS)
@@ -259,7 +259,7 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                 // Winning Conditions
 
                 return node.WinningStrategy =
-                    node.BacktestIS.WinningTrades >= configuration.SBMinTotalTradesIS
+                    node.BacktestIS.TotalTrades >= configuration.SBMinTotalTradesIS
                     && node.BacktestIS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentIS
                     && node.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
                     && (!configuration.IsProgressiveness || node.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
@@ -360,7 +360,7 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 strategyNode.BacktestStatusOS = BacktestStatus.Completed;
 
-                // TODO: Backtest OS Pass Conditions
+                // Backtest OS Pass Conditions
 
                 if (strategyNode.BacktestOS.WinningTrades == 0)
                 {
@@ -383,7 +383,7 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 strategyNode.BacktestStatusIS = BacktestStatus.Completed;
 
-                // TODO: Winning Conditions
+                // Winning Conditions
 
                 if (strategyNode.BacktestIS.WinningTrades == 0)
                 {
