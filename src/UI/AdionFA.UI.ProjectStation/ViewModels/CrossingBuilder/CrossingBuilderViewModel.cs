@@ -132,14 +132,20 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 }
             });
 
-            _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Subscribe(assemblyBuilderCompleted =>
+            _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Subscribe(assemblyBuilder =>
             {
-                if (assemblyBuilderCompleted)
+                CrossingBuilder.WinningStrategyNodesUP.Clear();
+                CrossingBuilder.WinningStrategyNodesDOWN.Clear();
+
+                if (assemblyBuilder.IsMultiAssembly)
                 {
-                    DeleteCrossingBuilder();
-                    CrossingBuilder = _crossingBuilderService.CreateNewCrossingBuilder(ProcessArgs.ProjectName);
-                    UpdateExtractorTemplates();
+
                 }
+
+                CrossingBuilder.WinningStrategyNodesUP.Add(new StrategyNodeModel()
+                {
+                    ParentNodeData = assemblyBuilder.
+                });
             });
         }
 

@@ -5,7 +5,13 @@ namespace AdionFA.Infrastructure.CrossingBuilder.Model
 {
     public class CrossingBuilderModel
     {
-        public List<StrategyNodeModel> WinningStrategyNodesUP { get; } = new();
-        public List<StrategyNodeModel> WinningStrategyNodesDOWN { get; } = new();
+        public CrossingBuilderModel()
+        {
+            WinningStrategyNodesUP = new();
+            WinningStrategyNodesDOWN = new();
+        }
+
+        public List<StrategyNodeModel> WinningStrategyNodesUP { get; set; }
+        public List<StrategyNodeModel> WinningStrategyNodesDOWN { get; set; }
     }
 }

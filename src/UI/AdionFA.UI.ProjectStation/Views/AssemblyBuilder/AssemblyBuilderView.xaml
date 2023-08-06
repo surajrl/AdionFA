@@ -252,6 +252,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <!--  Assembly Nodes Buttons  -->
                 <StackPanel HorizontalAlignment="Left"
@@ -326,8 +327,18 @@
                         <Run Text="Mean Success Rate DOWN (IS):" />
                         <Run Text="{Binding MeanSuccessRatePercentDOWN, StringFormat=N2}" /></TextBlock>
                 </StackPanel>
-                <!--  Maximum Parallelism Configuration  -->
+                <!--  Assembly Builder Mode -->
                 <StackPanel Grid.Column="2"
+                            Margin="{StaticResource ColumnMargin}"
+                            VerticalAlignment="Center">
+                    <StackPanel>
+                        <Label Content="Multi Assembly Mode" />
+                        <metro:ToggleSwitch IsOn="{Binding MultiAssemblyMode, Mode=TwoWay}"
+                                            Toggled="MultiAssemblyToggleSwitch_Toggled" />
+                    </StackPanel>
+                </StackPanel>
+                <!--  Maximum Parallelism Configuration  -->
+                <StackPanel Grid.Column="3"
                             Margin="{StaticResource ColumnMargin}"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"

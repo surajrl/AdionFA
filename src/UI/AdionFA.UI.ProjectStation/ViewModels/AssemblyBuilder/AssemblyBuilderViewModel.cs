@@ -299,6 +299,15 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     processDOWN.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Name;
                 }
 
+                if (MultiAssemblyMode)
+                {
+                    // Pass the group of UP and group of DOWN nodes to the Crossing Builder.
+                }
+                else
+                {
+                    // Pass the individual UP and individual DOWN nodes to the Crossing Builder.
+                }
+
                 // Result Message
 
                 _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(true);
@@ -718,6 +727,13 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             get => _meanSuccessRatePercentDOWN;
             set => SetProperty(ref _meanSuccessRatePercentDOWN, value);
+        }
+
+        private bool _multiAssemblyMode;
+        public bool MultiAssemblyMode
+        {
+            get => _multiAssemblyMode;
+            set => SetProperty(ref _multiAssemblyMode, value);
         }
 
         public ObservableCollection<BuilderProcess> AssemblyBuilderProcessesUP { get; set; }
