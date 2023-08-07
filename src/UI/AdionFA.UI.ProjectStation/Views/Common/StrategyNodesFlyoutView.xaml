@@ -8,7 +8,6 @@
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
               xmlns:prism="http://prismlibrary.com/"
-              Width="1200"
               prism:ViewModelLocator.AutoWireViewModel="True"
               CloseButtonIsCancel="True"
               Header="Strategy Nodes"
@@ -123,11 +122,17 @@
                                                        Text="{Binding Name, Mode=OneWay}" />
                                         </StackPanel>
                                     </Expander.Header>
+                                    <!--  Nodes, Backtest Information & Buttons  -->
                                     <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
+                                        <!--  Nodes  -->
                                         <Border Margin="5"
                                                 Padding="5"
                                                 BorderBrush="Black"
@@ -138,16 +143,26 @@
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
-                                                <!--  Parent Node  -->
+                                                <!--  Parent Nodes  -->
                                                 <StackPanel>
-                                                    <Label Content="Parent Node"
+                                                    <Label Content="Parent Nodes"
                                                            FontWeight="SemiBold" />
                                                     <ListView ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
-                                                              ItemsSource="{Binding}"
+                                                              ItemsSource="{Binding ParentNodesData}"
                                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                                        <Expander Style="{x:Null}">
-                                                            <ListView ItemsSource="{Binding ParentNodeData.Node}" />
-                                                        </Expander>
+                                                        <ListView.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <WrapPanel Orientation="Horizontal" />
+                                                            </ItemsPanelTemplate>
+                                                        </ListView.ItemsPanel>
+                                                        <ListView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Expander Style="{x:Null}">
+                                                                    <ListView ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                                                                              ItemsSource="{Binding Node}" />
+                                                                </Expander>
+                                                            </DataTemplate>
+                                                        </ListView.ItemTemplate>
                                                     </ListView>
                                                 </StackPanel>
                                                 <!--  Child Nodes  -->
@@ -327,7 +342,8 @@
                                         </StackPanel>
                                         <!--  Buttons  -->
                                         <!--  Add to MetaTrader Button  -->
-                                        <StackPanel Orientation="Horizontal">
+                                        <StackPanel Grid.Row="1"
+                                                    Orientation="Horizontal">
                                             <Button x:Name="addToMetaTraderBtn"
                                                     Width="150"
                                                     Margin="{StaticResource ControlMargin}">

@@ -39,28 +39,30 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }).CreateMapper();
 
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
+
+            HistoricalData = new ObservableCollection<Metadata>();
         }
 
         public ICommand FlyoutCommand => new DelegateCommand<FlyoutModel>(flyoutModel =>
-        {
-            if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutCreateProject))
             {
-                if (!IsTransactionActive)
+                if ((flyoutModel?.Name ?? string.Empty).Equals(FlyoutRegions.FlyoutCreateProject))
                 {
-                    Project = new();
+                    if (!IsTransactionActive)
+                    {
+                        Project = new();
 
-                    var allHistoricalDataDTO = _marketDataService.GetAllHistoricalData(false);
+                        var allHistoricalDataDTO = _marketDataService.GetAllHistoricalData(false);
 
-                    HistoricalData.Clear();
-                    HistoricalData.AddRange(allHistoricalDataDTO
-                        .Select(historicalDataDTO => new Metadata
-                        {
-                            Id = historicalDataDTO.HistoricalDataId,
-                            Name = historicalDataDTO.Description
-                        }).ToList());
+                        HistoricalData.Clear();
+                        HistoricalData.AddRange(allHistoricalDataDTO
+                            .Select(historicalDataDTO => new Metadata
+                            {
+                                Id = historicalDataDTO.HistoricalDataId,
+                                Name = historicalDataDTO.Description
+                            }).ToList());
+                    }
                 }
-            }
-        });
+            });
 
         public ICommand CreateProjectBtnCommand => new DelegateCommand(() =>
         {
@@ -118,6 +120,5 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             set => SetProperty(ref _project, value);
         }
 
-        public ObservableCollection<Metadata> HistoricalData { get; } = new ObservableCollection<Metadata>();
+        public ObservableCollection<Metadata> HistoricalData { get; }
     }
-}

@@ -4,6 +4,7 @@ using AdionFA.Infrastructure.Modules.Strategy;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -69,7 +70,7 @@ namespace AdionFA.Infrastructure.Helpers
 
         public static void SerializeStrategyNode(string projectName, StrategyNodeModel strategyNode)
         {
-            var directory = strategyNode.ParentNodeData.Label.ToLower() == "up"
+            var directory = strategyNode.ParentNodesData.First().Label.ToLower() == "up"
                 ? projectName.ProjectCrossingBuilderNodesUPDirectory()
                 : projectName.ProjectCrossingBuilderNodesDOWNDirectory();
 

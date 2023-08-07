@@ -19,45 +19,6 @@ namespace AdionFA.Infrastructure.CrossingBuilder.Services
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
         }
 
-        public CrossingBuilderModel CreateNewCrossingBuilder(string projectName)
-        {
-            var crossingBuilder = new CrossingBuilderModel();
-
-            // Get Assembly Nodes UP
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml")
-                .ToList()
-                .ForEach(file =>
-                {
-                    var assemblyNode = SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName);
-                    crossingBuilder.WinningStrategyNodesUP.Add(new StrategyNodeModel
-                    {
-                        ParentNodeData = assemblyNode.ParentNodeData,
-                        ChildNodesData = assemblyNode.ChildNodesData,
-                        CrossingNodesData = new(),
-                        BacktestIS = assemblyNode.BacktestIS,
-                        BacktestOS = assemblyNode.BacktestOS,
-                    });
-                });
-
-            // Get Assembly Nodes DOWN
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml")
-                .ToList()
-                .ForEach(file =>
-                {
-                    var assemblyNode = SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName);
-                    crossingBuilder.WinningStrategyNodesDOWN.Add(new StrategyNodeModel
-                    {
-                        ParentNodeData = assemblyNode.ParentNodeData,
-                        ChildNodesData = assemblyNode.ChildNodesData,
-                        CrossingNodesData = new(),
-                        BacktestIS = assemblyNode.BacktestIS,
-                        BacktestOS = assemblyNode.BacktestOS
-                    });
-                });
-
-            return crossingBuilder;
-        }
-
         public CrossingBuilderModel GetExistingCrossingBuilder(string projectName)
         {
             var crossingBuilder = new CrossingBuilderModel();

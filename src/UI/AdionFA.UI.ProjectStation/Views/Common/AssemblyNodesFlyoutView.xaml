@@ -8,7 +8,6 @@
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
               xmlns:prism="http://prismlibrary.com/"
-              Width="1200"
               prism:ViewModelLocator.AutoWireViewModel="True"
               CloseButtonIsCancel="True"
               Header="Assembly Nodes"
@@ -123,11 +122,17 @@
                                                        Text="{Binding Name, Mode=OneWay}" />
                                         </StackPanel>
                                     </Expander.Header>
+                                    <!--  Nodes, Backtest Information & Buttons  -->
                                     <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
+                                        <!--  Nodes  -->
                                         <Border Margin="5"
                                                 Padding="5"
                                                 BorderBrush="Black"
@@ -136,20 +141,14 @@
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
                                                 <!--  Parent Node  -->
                                                 <StackPanel>
                                                     <Label Content="Parent Node"
                                                            FontWeight="SemiBold" />
-                                                    <ListView ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
-                                                              ItemsSource="{Binding}"
-                                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                                        <Expander Style="{x:Null}">
-                                                            <ListView ItemsSource="{Binding ParentNodeData.Node}" />
-                                                        </Expander>
-                                                    </ListView>
+                                                    <ListView ItemsSource="{Binding ParentNodeData}" />
                                                 </StackPanel>
-                                                <!--  Child Nodes  -->
                                                 <StackPanel Grid.Row="1">
                                                     <Label Content="Child Nodes"
                                                            FontWeight="SemiBold" />
@@ -306,7 +305,8 @@
                                         </StackPanel>
                                         <!--  Buttons  -->
                                         <!--  Add to MetaTrader Button  -->
-                                        <StackPanel Orientation="Horizontal">
+                                        <StackPanel Grid.Row="1"
+                                                    Orientation="Horizontal">
                                             <Button x:Name="addToMetaTraderBtn"
                                                     Width="150"
                                                     Margin="{StaticResource ControlMargin}">

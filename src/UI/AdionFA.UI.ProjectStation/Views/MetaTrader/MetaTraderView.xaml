@@ -8,8 +8,8 @@
              xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-             d:DesignHeight="450"
-             d:DesignWidth="800"
+             d:DesignHeight="1080"
+             d:DesignWidth="1920"
              dialog:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d">
 

@@ -9,8 +9,8 @@
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:prism="http://prismlibrary.com/"
              x:Name="globalConfigurationView"
-             d:DesignHeight="1750"
-             d:DesignWidth="1080"
+             d:DesignHeight="1080"
+             d:DesignWidth="1920"
              dialog:DialogParticipation.Register="{Binding}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
@@ -107,7 +107,6 @@
                             <CheckBox Content="Without Schedules"
                                       IsChecked="{Binding GlobalConfiguration.WithoutSchedule, Mode=TwoWay}" />
                         </StackPanel>
-
 
                         <!--  With Schedule  -->
                         <StackPanel Grid.Row="1"

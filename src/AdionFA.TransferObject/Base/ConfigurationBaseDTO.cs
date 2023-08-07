@@ -2,7 +2,7 @@
 
 namespace AdionFA.TransferObject.Base
 {
-    public class ConfigurationBaseDTO : EntityBaseDTO
+    public abstract class ConfigurationBaseDTO : EntityBaseDTO
     {
         // Period
 
@@ -28,38 +28,21 @@ namespace AdionFA.TransferObject.Base
 
         // Weka
 
-        public int TotalInstanceWeka { get; set; }
-        public int DepthWeka { get; set; }
-        public int TotalDecimalWeka { get; set; }
         public int MinimalSeed { get; set; }
         public int MaximumSeed { get; set; }
-        public decimal MaxRatioTree { get; set; }
-        public decimal NTotalTree { get; set; }
+        public int TotalDecimalWeka { get; set; }
 
-        // Strategy Builder
-
-        public int SBMinTotalTradesIS { get; set; }
-        public decimal SBMinSuccessRatePercentIS { get; set; }
-
-        public int SBMinTotalTradesOS { get; set; }
-        public decimal SBMinSuccessRatePercentOS { get; set; }
-
-        public decimal SBMaxSuccessRateVariation { get; set; }
+        // Builder
 
         public bool IsProgressiveness { get; set; }
         public decimal MaxProgressivenessVariation { get; set; }
 
-        public decimal SBMaxCorrelationPercent { get; set; }
+        public decimal MaxCorrelationPercent { get; set; }
 
-        public int SBWinningStrategyUPTarget { get; set; }
-        public int SBWinningStrategyDOWNTarget { get; set; }
-        public int SBTotalTradesTarget { get; set; }
+        public NodeBuilderConfigurationBaseDTO NodeBuilderConfiguration { get; set; }
 
-        // Assembly Builder
+        public AssemblyBuilderConfigurationBaseDTO AssemblyBuilderConfiguration { get; set; }
 
-        public int ABMinTotalTradesIS { get; set; }
-        public decimal ABMinImprovePercent { get; set; }
-        public decimal ABWekaMaxRatioTree { get; set; }
-        public decimal ABWekaNTotalTree { get; set; }
+        public CrossingBuilderConfigurationBaseDTO CrossingBuilderConfiguration { get; set; }
     }
 }

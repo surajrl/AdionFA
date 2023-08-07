@@ -335,8 +335,6 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
         public bool BuildBacktestOfStrategyNode(
             StrategyNodeModel strategyNode,
             IEnumerable<Candle> mainCandles,
-            IEnumerable<BacktestOperationModel> backtestOperationsIS,
-            IEnumerable<BacktestOperationModel> backtestOperationsOS,
             ConfigurationBaseDTO configuration,
             int timeframeId,
             ManualResetEventSlim manualResetEvent,
@@ -344,14 +342,13 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
         {
             try
             {
-                // Backtest OS
+                // Out-of-sample backtest
 
                 strategyNode.BacktestStatusOS = BacktestStatus.Executing;
 
                 strategyNode.BacktestOS = BacktestStrategyNode(
                     strategyNode,
                     mainCandles,
-                    backtestOperationsOS,
                     configuration.FromDateOS.Value,
                     configuration.ToDateOS.Value,
                     timeframeId,
@@ -360,21 +357,20 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 strategyNode.BacktestStatusOS = BacktestStatus.Completed;
 
-                // Backtest OS Pass Conditions
+                // Out-of-sample pass conditions
 
                 if (strategyNode.BacktestOS.WinningTrades == 0)
                 {
                     return false;
                 }
 
-                // Backtest IS
+                // In-sample backtest
 
                 strategyNode.BacktestStatusIS = BacktestStatus.Executing;
 
                 strategyNode.BacktestIS = BacktestStrategyNode(
                     strategyNode,
                     mainCandles,
-                    backtestOperationsIS,
                     configuration.FromDateIS.Value,
                     configuration.ToDateIS.Value,
                     timeframeId,
@@ -402,7 +398,6 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
         private BacktestModel BacktestStrategyNode(
             StrategyNodeModel strategyNode,
             IEnumerable<Candle> mainCandles,
-            IEnumerable<BacktestOperationModel> backtestOperations,
             DateTime fromDate,
             DateTime toDate,
             int timeframeId,
@@ -417,45 +412,16 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                 BacktestOperations = new List<BacktestOperationModel>()
             };
 
-            var previousOperations = backtestOperations.Select(operation => operation.Date).ToList();
-
-            var mainCandlesRange = mainCandles.Where(candle =>
-            {
-                var dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time);
-                return dt >= fromDate && dt <= toDate;
-            }).Select(candle => candle).ToList();
-
-            var crossingCandlesRange = new Dictionary<int, List<Candle>>();
-            foreach (var crossingNode in strategyNode.CrossingNodesData)
-            {
-                // TODO: REMOVE THIS SO IT DOES NOT CALL THE MARKET DATA SERVICE
-                var historicalDataDTO = _marketDataService.GetHistoricalData(crossingNode.Item2, true);
-
-                var candles = historicalDataDTO.HistoricalDataCandles.Select(candle => new Candle
+            var mainCandlesSample = mainCandles
+                .Where(candle =>
                 {
-                    Date = candle.StartDate,
-                    Time = candle.StartTime,
+                    var dateTime = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time);
+                    return dateTime >= fromDate && dateTime <= toDate;
+                })
+                .Select(candle => candle)
+                .ToList();
 
-                    Open = candle.Open,
-                    High = candle.High,
-                    Low = candle.Low,
-                    Close = candle.Close,
-
-                    Volume = candle.Volume,
-                    Spread = candle.Spread
-                }).OrderBy(d => d.Date)
-                .ThenBy(d => d.Time);
-
-                var range = candles.Where(candle =>
-                {
-                    var dt = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time);
-                    return dt >= fromDate && dt <= toDate;
-                }).Select(candle => candle).ToList();
-
-                crossingCandlesRange.Add(crossingNode.Item2, range);
-            }
-
-            for (var idx = 0; idx < mainCandlesRange.Count - 1; idx++)
+            for (var candleIdx = 0; candleIdx < mainCandlesSample.Count - 1; candleIdx++)
             {
                 manualResetEvent.Wait(CancellationToken.None);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -464,53 +430,121 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 var mainCurrentCandle = new Candle
                 {
-                    Date = mainCandlesRange[idx].Date,
-                    Time = mainCandlesRange[idx].Time,
+                    Date = mainCandlesSample[candleIdx].Date,
+                    Time = mainCandlesSample[candleIdx].Time,
 
-                    Open = mainCandlesRange[idx].Open,
-                    High = mainCandlesRange[idx].Open,
-                    Low = mainCandlesRange[idx].Open,
-                    Close = mainCandlesRange[idx].Open,
+                    Open = mainCandlesSample[candleIdx].Open,
+                    High = mainCandlesSample[candleIdx].Open,
+                    Low = mainCandlesSample[candleIdx].Open,
+                    Close = mainCandlesSample[candleIdx].Open,
 
-                    Spread = mainCandlesRange[idx].Spread
+                    Spread = mainCandlesSample[candleIdx].Spread
                 };
 
-                // Skip dates that were not operated on
-                if (!previousOperations.Contains(DateTimeHelper.BuildDateTime(timeframeId, mainCurrentCandle.Date, mainCurrentCandle.Time)))
+                if (strategyNode.HasParentNodes)
                 {
-                    continue;
+                    var parentNodeSignal = false;
+                    foreach (var parentNode in strategyNode.ParentNodesData)
+                    {
+                        var parentNodeIndicators = _extractorService.BuildIndicatorsFromNode(parentNode.Node);
+                        parentNodeSignal = ApproveCandle(
+                            parentNodeIndicators,
+                            candleIdx,
+                            mainCandlesSample[0],
+                            mainCurrentCandle,
+                            mainCandlesSample);
+
+                        if (parentNodeSignal)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!parentNodeSignal)
+                    {
+                        // Move to the next candle
+                        continue;
+                    }
                 }
 
-                // Has to approve all of the crossing nodes
-                var crossingNodePass = true;
-                foreach (var crossingNode in strategyNode.CrossingNodesData)
+                var childNodeSignal = false;
+                foreach (var childNode in strategyNode.ChildNodesData)
                 {
-                    var candles = crossingCandlesRange.GetValueOrDefault(crossingNode.Item2);
+                    // Check for at least one child node
+                    var childNodeIndicators = _extractorService.BuildIndicatorsFromNode(childNode.Node);
+                    childNodeSignal = ApproveCandle(childNodeIndicators, candleIdx, mainCandlesSample[0], mainCurrentCandle, mainCandlesSample);
 
-                    var currentCandle = new Candle
+                    if (childNodeSignal)
                     {
-                        Date = candles[idx].Date,
-                        Time = candles[idx].Time,
-
-                        Open = candles[idx].Open,
-                        High = candles[idx].Open,
-                        Low = candles[idx].Open,
-                        Close = candles[idx].Open,
-
-                        Spread = candles[idx].Spread
-                    };
-
-                    var crossingNodeIndicators = _extractorService.BuildIndicatorsFromNode(crossingNode.Item1.Node).ToList();
-                    if (!ApproveCandle(crossingNodeIndicators, idx, candles[0], currentCandle, candles))
-                    {
-                        crossingNodePass = false;
                         break;
                     }
                 }
 
-                if (!crossingNodePass)
+                if (!childNodeSignal)
                 {
-                    // No trade signal, move to the next candle
+                    // Move to the next candle
+                    continue;
+                }
+
+                var crossingNodeSignal = false;
+                foreach (var crossingNode in strategyNode.CrossingNodesData)
+                {
+                    // Check for at least one crossing node.
+                    var crossingCandlesSample = _marketDataService.GetHistoricalData(crossingNode.Item2, true)
+                        .HistoricalDataCandles
+                        .Select(candle => new Candle
+                        {
+                            Date = candle.StartDate,
+                            Time = candle.StartTime,
+
+                            Open = candle.Open,
+                            High = candle.High,
+                            Low = candle.Low,
+                            Close = candle.Close,
+
+                            Volume = candle.Volume,
+                            Spread = candle.Spread
+                        })
+                        .OrderBy(candle => candle.Date)
+                        .ThenBy(candle => candle.Time)
+                        .Where(candle =>
+                        {
+                            var dateTime = DateTimeHelper.BuildDateTime(timeframeId, candle.Date, candle.Time);
+                            return dateTime >= fromDate && dateTime <= toDate;
+                        })
+                        .Select(candle => candle)
+                        .ToList();
+
+                    var currentCrossingCandle = new Candle
+                    {
+                        Date = crossingCandlesSample[candleIdx].Date,
+                        Time = crossingCandlesSample[candleIdx].Time,
+
+                        Open = crossingCandlesSample[candleIdx].Open,
+                        High = crossingCandlesSample[candleIdx].Open,
+                        Low = crossingCandlesSample[candleIdx].Open,
+                        Close = crossingCandlesSample[candleIdx].Open,
+
+                        Spread = crossingCandlesSample[candleIdx].Spread
+                    };
+
+                    var crossingNodeIndicators = _extractorService.BuildIndicatorsFromNode(crossingNode.Item1.Node);
+                    crossingNodeSignal = ApproveCandle(
+                        crossingNodeIndicators,
+                        candleIdx,
+                        crossingCandlesSample[0],
+                        currentCrossingCandle,
+                        crossingCandlesSample);
+
+                    if (crossingNodeSignal)
+                    {
+                        break;
+                    }
+                }
+
+                if (!crossingNodeSignal)
+                {
+                    // Move to the next candle
                     continue;
                 }
 
@@ -518,9 +552,9 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 var spread = mainCurrentCandle.Spread * 0.00001;
 
-                var isWinnerTrade = strategyNode.ParentNodeData.Label.ToLowerInvariant() == "up"
-                    ? (mainCurrentCandle.Open + spread) < mainCandlesRange[idx + 1].Open
-                    : mainCurrentCandle.Open > (mainCandlesRange[idx + 1].Open + spread);
+                var isWinnerTrade = strategyNode.ParentNodesData.First().Label.ToLowerInvariant() == "up"
+                    ? (mainCurrentCandle.Open + spread) < mainCandlesSample[candleIdx + 1].Open
+                    : mainCurrentCandle.Open > (mainCandlesSample[candleIdx + 1].Open + spread);
 
                 if (isWinnerTrade)
                 {

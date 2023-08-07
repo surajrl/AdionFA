@@ -118,8 +118,6 @@ namespace AdionFA.Application.Services.Projects
 
             project.ProjectConfiguration = new ProjectConfiguration
             {
-                // ProjectId set automatically
-
                 // Period
 
                 FromDateIS = globalConfiguration.FromDateIS,
@@ -127,6 +125,8 @@ namespace AdionFA.Application.Services.Projects
 
                 FromDateOS = globalConfiguration.FromDateOS,
                 ToDateOS = globalConfiguration.ToDateOS,
+
+                // Schedule
 
                 WithoutSchedule = globalConfiguration.WithoutSchedule,
 
@@ -142,45 +142,26 @@ namespace AdionFA.Application.Services.Projects
 
                 // Weka
 
-                TotalInstanceWeka = globalConfiguration.TotalInstanceWeka,
-                DepthWeka = globalConfiguration.DepthWeka,
-                TotalDecimalWeka = globalConfiguration.TotalDecimalWeka,
                 MinimalSeed = globalConfiguration.MinimalSeed,
                 MaximumSeed = globalConfiguration.MaximumSeed,
-                MaxRatioTree = globalConfiguration.MaxRatioTree,
-                NTotalTree = globalConfiguration.NTotalTree,
+                TotalDecimalWeka = globalConfiguration.TotalDecimalWeka,
 
-                // Strategy Builder
-
-                SBMinTotalTradesIS = globalConfiguration.SBMinTotalTradesIS,
-                SBMinSuccessRatePercentIS = globalConfiguration.SBMinSuccessRatePercentIS,
-
-                SBMinTotalTradesOS = globalConfiguration.SBMinTotalTradesOS,
-                SBMinSuccessRatePercentOS = globalConfiguration.SBMinSuccessRatePercentOS,
-
-                SBMaxSuccessRateVariation = globalConfiguration.SBMaxSuccessRateVariation,
+                // Builder
 
                 IsProgressiveness = globalConfiguration.IsProgressiveness,
                 MaxProgressivenessVariation = globalConfiguration.MaxProgressivenessVariation,
 
-                SBMaxCorrelationPercent = globalConfiguration.SBMaxCorrelationPercent,
+                MaxCorrelationPercent = globalConfiguration.MaxCorrelationPercent,
 
-                SBWinningStrategyDOWNTarget = globalConfiguration.SBWinningStrategyDOWNTarget,
-                SBWinningStrategyUPTarget = globalConfiguration.SBWinningStrategyUPTarget,
-                SBTotalTradesTarget = globalConfiguration.SBTotalTradesTarget,
+                NodeBuilderConfiguration = globalConfiguration.NodeBuilderConfiguration,
+                AssemblyBuilderConfiguration = globalConfiguration.AssemblyBuilderConfiguration,
+                CrossingBuilderConfiguration = globalConfiguration.CrossingBuilderConfiguration,
 
-                // Assembly Builder
-
-                ABMinTotalTradesIS = globalConfiguration.ABMinTotalTradesIS,
-                ABMinImprovePercent = globalConfiguration.ABMinImprovePercent,
-                ABWekaMaxRatioTree = globalConfiguration.ABWekaMaxRatioTree,
-                ABWekaNTotalTree = globalConfiguration.ABWekaNTotalTree,
-
-                // Schedule Configuration
+                // Schedule configuration
 
                 ProjectScheduleConfigurations = new List<ProjectScheduleConfiguration>(),
 
-                // Entity Base
+                // Entity base
 
                 CreatedOn = DateTime.UtcNow,
                 IsDeleted = false,
@@ -190,8 +171,6 @@ namespace AdionFA.Application.Services.Projects
             {
                 project.ProjectConfiguration.ProjectScheduleConfigurations.Add(new ProjectScheduleConfiguration
                 {
-                    // ProjectConfigurationId set automatically
-
                     MarketRegionId = globalScheduleConfig.MarketRegionId,
 
                     FromTimeInSeconds = globalScheduleConfig.FromTimeInSeconds,

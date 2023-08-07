@@ -89,6 +89,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 }
             });
 
+            _eventAggregator.GetEvent<BuilderResetEvent>().Subscribe(builderReset =>
+            {
+                if (builderReset)
+                {
+                    DeleteStrategyBuilder();
+                }
+            });
+
             _mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMappingInfrastructureProfile());
@@ -204,13 +212,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             try
             {
                 IsTransactionActive = true;
-                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
+                _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
                 _eventAggregator.GetEvent<BuilderResetEvent>().Publish(true);
 
                 _cancellationTokenSource = new();
-
-                DeleteStrategyBuilder();
 
                 // Historical data
 
@@ -233,7 +239,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 })
                 .OrderBy(candle => candle.Date)
                 .ThenBy(candle => candle.Time);
-
 
                 // Extractions and backtests
 

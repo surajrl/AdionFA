@@ -44,8 +44,6 @@ namespace AdionFA.Infrastructure.NodeBuilder.Contracts
         bool BuildBacktestOfStrategyNode(
             StrategyNodeModel strategyNode,
             IEnumerable<Candle> mainCandles,
-            IEnumerable<BacktestOperationModel> backtestOperationsIS,
-            IEnumerable<BacktestOperationModel> backtestOperationsOS,
             ConfigurationBaseDTO configuration,
             int timeframeId,
             ManualResetEventSlim manualResetEvent,

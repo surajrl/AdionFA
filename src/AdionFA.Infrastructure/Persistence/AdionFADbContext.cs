@@ -1,10 +1,15 @@
 ﻿using AdionFA.Domain.Entities;
+using AdionFA.Domain.Entities.Base;
 using AdionFA.Domain.Enums;
 using AdionFA.Domain.Enums.Market;
 using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Model;
+using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Ninject;
+using Serilog;
 using System;
 using System.Reflection;
 
@@ -22,11 +27,12 @@ namespace AdionFA.Infrastructure.Persistence
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(_connectionString);
-            //optionsBuilder.LogTo(
-            //    IoC.Kernel.Get<ILogger>().Information,
-            //    options: DbContextLoggerOptions.None)
-            //    .EnableSensitiveDataLogging();
-
+#if DEBUG
+            optionsBuilder.LogTo(
+                IoC.Kernel.Get<ILogger>().Information,
+                options: DbContextLoggerOptions.None)
+                .EnableSensitiveDataLogging();
+#endif
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -169,13 +175,13 @@ namespace AdionFA.Infrastructure.Persistence
                 FromDateOS = null,
                 ToDateOS = null,
 
-                // Schedule
+                // Schedule 
 
                 WithoutSchedule = true,
 
                 // MetaTrader
 
-                ExpertAdvisorHost = "192.168.50.137",
+                ExpertAdvisorHost = "192.168.1.35",
                 ExpertAdvisorPublisherPort = "5551",
                 ExpertAdvisorResponsePort = "5550",
 
@@ -183,41 +189,80 @@ namespace AdionFA.Infrastructure.Persistence
 
                 ExtractorMinVariation = 50,
 
+                // MetaTrader
+
+                ExpertAdvisorHost = null,
+                ExpertAdvisorPublisherPort = null,
+                ExpertAdvisorResponsePort = null,
+
                 // Weka
 
-                TotalInstanceWeka = 1,
-                DepthWeka = 6,
                 TotalDecimalWeka = 5,
                 MinimalSeed = 100,
                 MaximumSeed = 1000000,
-                MaxRatioTree = (decimal)1.5,
-                NTotalTree = 300,
 
-                // Node Builder
+                // Builder general
 
-                SBMinTotalTradesIS = 300,
-                SBMinSuccessRatePercentIS = 55,
-
-                SBMinTotalTradesOS = 100,
-                SBMinSuccessRatePercentOS = 55,
-
-                SBMaxSuccessRateVariation = 4,
-
-                MaxProgressivenessVariation = 2,
                 IsProgressiveness = false,
+                MaxProgressivenessVariation = (decimal)2.0,
 
-                SBMaxCorrelationPercent = 2,
+                MaxCorrelationPercent = (decimal)2.0,
 
-                SBWinningStrategyDOWNTarget = 6,
-                SBWinningStrategyUPTarget = 6,
-                SBTotalTradesTarget = 300,
+                // Node builder
 
-                // Assembly Builder
+                NodeBuilderConfiguration = new NodeBuilderConfigurationBase
+                {
+                    MinTotalTradesIS = 200,
+                    MinSuccessRatePercentIS = (decimal)40.0,
 
-                ABMinTotalTradesIS = 300,
-                ABMinImprovePercent = 5,
-                ABWekaMaxRatioTree = (decimal)1.5,
-                ABWekaNTotalTree = 300,
+                    MinTotalTradesOS = 100,
+                    MinSuccessRatePercentOS = (decimal)40.0,
+
+                    MaxSuccessRateVariation = (decimal)5.0,
+
+                    WinningNodesUPTarget = 6,
+                    WinningNodesDOWNTarget = 6,
+                    TotalTradesTarget = 100,
+
+                    WekaNTotal = 300,
+                    WekaStartDepth = 4,
+                    WekaEndDepth = 12,
+                    WekaMaxRatio = (decimal)1.5,
+                },
+
+                // Assembly builder
+
+                AssemblyBuilderConfiguration = new AssemblyBuilderConfigurationBase
+                {
+                    MinTotalTradesIS = 100,
+
+                    MinSuccessRateImprovementIS = (decimal)2.0,
+                    MinSuccessRateImprovementOS = (decimal)2.0,
+
+                    MaxSuccessRateImprovementIS = (decimal)4.0,
+                    MaxSuccessRateImprovementOS = (decimal)4.0,
+
+                    WekaNTotal = 300,
+                    WekaStartDepth = 1,
+                    WekaEndDepth = 6,
+                    WekaMaxRatio = (decimal)1.5,
+                },
+
+                // Crossing builder
+
+                CrossingBuilderConfiguration = new CrossingBuilderConfigurationBase
+                {
+                    MinSuccessRateImprovementIS = (decimal)2.0,
+                    MinSuccessRateImprovementOS = (decimal)2.0,
+
+                    MaxSuccessRateImprovementIS = (decimal)4.0,
+                    MaxSuccessRateImprovementOS = (decimal)4.0,
+
+                    WekaNTotal = 300,
+                    WekaStartDepth = 1,
+                    WekaEndDepth = 6,
+                    WekaMaxRatio = (decimal)1.5,
+                },
 
                 // Entity Base
 

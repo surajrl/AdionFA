@@ -227,8 +227,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 AssemblyBuilder = _assemblyBuilderService.CreateNewAssemblyBuilder(ProcessArgs.ProjectName);
                 UpdateExtractorTemplates();
 
-                _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(false);
-
                 // Historical Data
 
                 var projectHistoricalData = _marketDataService.GetHistoricalData(ProcessArgs.HistoricalDataId, true);
@@ -299,18 +297,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     processDOWN.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Name;
                 }
 
-                if (MultiAssemblyMode)
-                {
-                    // Pass the group of UP and group of DOWN nodes to the Crossing Builder.
-                }
-                else
-                {
-                    // Pass the individual UP and individual DOWN nodes to the Crossing Builder.
-                }
-
                 // Result Message
-
-                _eventAggregator.GetEvent<AssemblyBuilderCompletedEvent>().Publish(true);
 
                 var msgUP = AssemblyBuilder.WinningAssemblyNodesUP.Count > 0
                 ? $"{AssemblyBuilder.WinningAssemblyNodesUP.Count} UP Assembly Nodes Found"

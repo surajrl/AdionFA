@@ -28,39 +28,28 @@ namespace AdionFA.Domain.Entities.Base
 
         // Weka
 
-        public int TotalInstanceWeka { get; set; }
-        public int DepthWeka { get; set; }
-        public int TotalDecimalWeka { get; set; }
         public int MinimalSeed { get; set; }
         public int MaximumSeed { get; set; }
-        public decimal MaxRatioTree { get; set; }
-        public decimal NTotalTree { get; set; }
+        public int TotalDecimalWeka { get; set; }
 
-        // Strategy Builder
-
-        public int SBMinTotalTradesIS { get; set; }
-        public decimal SBMinSuccessRatePercentIS { get; set; }
-
-        public int SBMinTotalTradesOS { get; set; }
-        public decimal SBMinSuccessRatePercentOS { get; set; }
-
-        public decimal SBMaxSuccessRateVariation { get; set; }
+        // Builder general
 
         public bool IsProgressiveness { get; set; }
         public decimal MaxProgressivenessVariation { get; set; }
 
-        public decimal SBMaxCorrelationPercent { get; set; }
+        public decimal MaxCorrelationPercent { get; set; }
 
-        public int SBWinningStrategyUPTarget { get; set; }
-        public int SBWinningStrategyDOWNTarget { get; set; }
-        public int SBTotalTradesTarget { get; set; }
+        // Node builder
 
-        // Assembly Builder
+        public NodeBuilderConfigurationBase NodeBuilderConfiguration { get; set; }
 
-        public int ABMinTotalTradesIS { get; set; }
-        public decimal ABMinImprovePercent { get; set; }
-        public decimal ABWekaMaxRatioTree { get; set; }
-        public decimal ABWekaNTotalTree { get; set; }
+        // Assembly builder
+
+        public AssemblyBuilderConfigurationBase AssemblyBuilderConfiguration { get; set; }
+
+        // Crossing builder
+
+        public CrossingBuilderConfigurationBase CrossingBuilderConfiguration { get; set; }
 
         public void RestoreConfiguration()
         {
@@ -78,7 +67,7 @@ namespace AdionFA.Domain.Entities.Base
 
             // MetaTrader
 
-            ExpertAdvisorHost = "192.168.50.137";
+            ExpertAdvisorHost = "192.168.1.35";
             ExpertAdvisorPublisherPort = "5551";
             ExpertAdvisorResponsePort = "5550";
 
@@ -94,39 +83,72 @@ namespace AdionFA.Domain.Entities.Base
 
             // Weka
 
-            TotalInstanceWeka = 1;
-            DepthWeka = 6;
             TotalDecimalWeka = 5;
             MinimalSeed = 100;
             MaximumSeed = 1000000;
-            MaxRatioTree = (decimal)1.5;
-            NTotalTree = 300;
 
-            // Strategy Builder
+            // Builder general
 
-            SBMinTotalTradesIS = 300;
-            SBMinSuccessRatePercentIS = 55;
-
-            SBMinTotalTradesOS = 100;
-            SBMinSuccessRatePercentOS = 55;
-
-            SBMaxSuccessRateVariation = 5;
-
-            MaxProgressivenessVariation = 2;
             IsProgressiveness = false;
+            MaxProgressivenessVariation = (decimal)2.0;
 
-            SBMaxCorrelationPercent = 2;
+            MaxCorrelationPercent = (decimal)2.0;
 
-            SBWinningStrategyDOWNTarget = 6;
-            SBWinningStrategyUPTarget = 6;
-            SBTotalTradesTarget = 300;
+            // Node builder
 
-            // Assembly Builder
+            NodeBuilderConfiguration = new NodeBuilderConfigurationBase
+            {
+                MinTotalTradesIS = 200,
+                MinSuccessRatePercentIS = (decimal)40.0,
 
-            ABMinTotalTradesIS = 300;
-            ABMinImprovePercent = 5;
-            ABWekaMaxRatioTree = (decimal)1.5;
-            ABWekaNTotalTree = 300;
+                MinTotalTradesOS = 100,
+                MinSuccessRatePercentOS = (decimal)40.0,
+
+                MaxSuccessRateVariation = (decimal)5.0,
+
+                WinningNodesUPTarget = 6,
+                WinningNodesDOWNTarget = 6,
+                TotalTradesTarget = 100,
+
+                WekaNTotal = 300,
+                WekaStartDepth = 4,
+                WekaEndDepth = 12,
+                WekaMaxRatio = (decimal)1.5,
+            };
+
+            // Assembly builder
+
+            AssemblyBuilderConfiguration = new AssemblyBuilderConfigurationBase
+            {
+                MinTotalTradesIS = 100,
+
+                MinSuccessRateImprovementIS = (decimal)2.0,
+                MinSuccessRateImprovementOS = (decimal)2.0,
+
+                MaxSuccessRateImprovementIS = (decimal)4.0,
+                MaxSuccessRateImprovementOS = (decimal)4.0,
+
+                WekaNTotal = 300,
+                WekaStartDepth = 1,
+                WekaEndDepth = 6,
+                WekaMaxRatio = (decimal)1.5,
+            };
+
+            // Crossing builder
+
+            CrossingBuilderConfiguration = new CrossingBuilderConfigurationBase
+            {
+                MinSuccessRateImprovementIS = (decimal)2.0,
+                MinSuccessRateImprovementOS = (decimal)2.0,
+
+                MaxSuccessRateImprovementIS = (decimal)4.0,
+                MaxSuccessRateImprovementOS = (decimal)4.0,
+
+                WekaNTotal = 300,
+                WekaStartDepth = 1,
+                WekaEndDepth = 6,
+                WekaMaxRatio = (decimal)1.5,
+            };
         }
     }
 }

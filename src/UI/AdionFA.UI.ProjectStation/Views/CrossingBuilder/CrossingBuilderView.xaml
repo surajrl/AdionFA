@@ -8,8 +8,8 @@
              xmlns:infrastructure="clr-namespace:AdionFA.UI.Infrastructure;assembly=AdionFA.UI.Infrastructure"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-             d:DesignHeight="450"
-             d:DesignWidth="800"
+             d:DesignHeight="1080"
+             d:DesignWidth="1920"
              dialog:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -71,25 +71,6 @@
         </Grid.RowDefinitions>
         <StackPanel HorizontalAlignment="Right"
                     Orientation="Horizontal">
-            <!--  Reset Button  -->
-            <Grid Margin="0,20,10,0">
-                <Button Width="80"
-                        Height="40"
-                        Command="{Binding Reset}"
-                        IsEnabled="{Binding CanExecute}">
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <iconPacks:FontAwesome Width="14"
-                                               Kind="RedoSolid" />
-                        <Label Content="Reset"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-                <metro:ProgressRing Width="25"
-                                    Height="25"
-                                    IsActive="True"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            </Grid>
             <!--  Stop Button  -->
             <Grid Margin="0,20,10,0">
                 <Button Width="80"
@@ -156,11 +137,11 @@
                   IsExpanded="True"
                   Style="{DynamicResource ControlExpanderStyle}">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                 <!--  Crossing Historical Data  -->
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="{StaticResource ColumnMargin}">
@@ -171,6 +152,31 @@
                                   SelectedValuePath="Id" />
                     </StackPanel>
                 </StackPanel>
+                <!--  Load From ...  -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal">
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Load From" />
+                        <metro:ToggleSwitch Content="Node Builder"
+                                            IsEnabled="{Binding CrossingBuilder.IsStarted}"
+                                            IsOn="{Binding LoadFromNodeBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Toggled="LoadFromNodeBuilderToggleSwitch_Toggled" />
+                        <metro:ToggleSwitch Content="Assembly Builder"
+                                            IsEnabled="{Binding CrossingBuilder.IsStarted}"
+                                            IsOn="{Binding LoadFromAssemblyBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Toggled="LoadFromAssemblyBuilderToggleSwitch_Toggled" />
+                    </StackPanel>
+                    <!--  Assembly Mode  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}"
+                                IsEnabled="{Binding CrossingBuilder.IsStarted}">
+                        <Label Content="Assembly Mode" />
+                        <metro:ToggleSwitch x:Name="assemblyMode"
+                                            Content="Single Assembly"
+                                            IsEnabled="{Binding LoadFromAssemblyBuilder}"
+                                            IsOn="{Binding IsMultiAssemblyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Toggled="MultiAssemblyToggleSwitch_Toggled" />
+                    </StackPanel>
+                </StackPanel>
             </Grid>
         </Expander>
         <!--  Crossing Builder  -->
@@ -179,7 +185,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <!--  Winning Strategy Nodes  -->
@@ -251,6 +257,22 @@
                     <Label Content="Maximum Parallelism" />
                     <TextBox IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                              Text="{Binding MaxParallelism}" />
+                </StackPanel>
+                <!--  Load Crossing Builder  -->
+                <StackPanel Grid.Column="2"
+                            Margin="{StaticResource ColumnMargin}"
+                            HorizontalAlignment="Right">
+                    <Button Width="150"
+                            Height="40"
+                            Command="{Binding LoadCrossingBuilder}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Width="14"
+                                                        VerticalAlignment="Center"
+                                                        Kind="Upload" />
+                            <Label Content="Load Crossing Builder"
+                                   FontSize="11" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
         </metro:MetroHeader>

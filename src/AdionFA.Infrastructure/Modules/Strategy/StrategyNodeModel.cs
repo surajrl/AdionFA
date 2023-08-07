@@ -2,8 +2,6 @@
 using AdionFA.Infrastructure.Weka.Model;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 
 namespace AdionFA.Infrastructure.Modules.Strategy
 {
@@ -18,15 +16,11 @@ namespace AdionFA.Infrastructure.Modules.Strategy
 
         // Strategy Node
 
-        public List<REPTreeNodeModel> ParentNodesData { get; set; }
-        public List<REPTreeNodeModel> ChildNodesData { get; set; }
+        public List<REPTreeNodeModel> ParentNodesData { get; init; }
+        public List<REPTreeNodeModel> ChildNodesData { get; init; }
+        public List<SerializableTuple<REPTreeNodeModel, int, string>> CrossingNodesData { get; init; }
 
-        /// <summary>
-        /// REPTreeNodeModel is the node data. <br></br>
-        /// int is the symbol ID. <br></br>
-        /// string is the symbol name. <br></br>
-        /// </summary>
-        public List<SerializableTuple<REPTreeNodeModel, int, string>> CrossingNodesData { get; set; }
+        public bool HasParentNodes => ParentNodesData.Count > 0;
 
         public string Name => _guid.ToString();
     }

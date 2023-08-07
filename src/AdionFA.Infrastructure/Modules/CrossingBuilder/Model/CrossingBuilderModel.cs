@@ -1,5 +1,5 @@
 ﻿using AdionFA.Infrastructure.Modules.Strategy;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AdionFA.Infrastructure.CrossingBuilder.Model
 {
@@ -11,7 +11,9 @@ namespace AdionFA.Infrastructure.CrossingBuilder.Model
             WinningStrategyNodesDOWN = new();
         }
 
-        public List<StrategyNodeModel> WinningStrategyNodesUP { get; set; }
-        public List<StrategyNodeModel> WinningStrategyNodesDOWN { get; set; }
+        public ObservableCollection<StrategyNodeModel> WinningStrategyNodesUP { get; }
+        public ObservableCollection<StrategyNodeModel> WinningStrategyNodesDOWN { get; }
+
+        public bool IsStarted => WinningStrategyNodesDOWN.Count > 0 || WinningStrategyNodesUP.Count > 0;
     }
 }

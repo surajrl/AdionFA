@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -281,7 +282,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             // Test parent node
             var isTrade = _tradeService.IsTrade(
-                StrategyNode.ParentNodeData.Node,
+                StrategyNode.ParentNodesData.First().Node,
                 _completeCandles[_mainSymbol],
                 _currentCandles[_mainSymbol]);
 
@@ -345,7 +346,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 else if (TestStrategyNode && IsTradeStrategyNode())
                 {
                     isTrade = true;
-                    label = StrategyNode.ParentNodeData.Label;
+                    label = StrategyNode.ParentNodesData.First().Label;
                 }
 
                 if (isTrade)

@@ -8,6 +8,7 @@ namespace AdionFA.UI.ProjectStation.Model.Common
     public class BuilderProcess : ViewModelBase
     {
         // Extraction
+        public string ExtractionPath { get; set; }
 
         public string ExtractionTemplatePath { get; set; }
 
@@ -17,8 +18,6 @@ namespace AdionFA.UI.ProjectStation.Model.Common
             get => _extractionTemplateName;
             set => SetProperty(ref _extractionTemplateName, value);
         }
-
-        public string ExtractionPath { get; set; }
 
         private string _extractionName;
         public string ExtractionName

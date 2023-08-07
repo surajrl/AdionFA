@@ -4,6 +4,13 @@ namespace AdionFA.UI.Infrastructure.Model.Base
 {
     public class ConfigurationBaseVM : EntityBaseVM
     {
+        public ConfigurationBaseVM()
+        {
+            NodeBuilderConfiguration = new();
+            AssemblyBuilderConfiguration = new();
+            CrossingBuilderConfiguration = new();
+        }
+
         // Period
 
         private DateTime? _fromDateIS;
@@ -78,27 +85,6 @@ namespace AdionFA.UI.Infrastructure.Model.Base
 
         // Weka
 
-        private int _totalInstanceWeka;
-        public int TotalInstanceWeka
-        {
-            get => _totalInstanceWeka;
-            set => SetProperty(ref _totalInstanceWeka, value);
-        }
-
-        private int _depthWeka;
-        public int DepthWeka
-        {
-            get => _depthWeka;
-            set => SetProperty(ref _depthWeka, value);
-        }
-
-        private int _totalDecimalWeka;
-        public int TotalDecimalWeka
-        {
-            get => _totalDecimalWeka;
-            set => SetProperty(ref _totalDecimalWeka, value);
-        }
-
         private int _minimalSeed;
         public int MinimalSeed
         {
@@ -113,56 +99,14 @@ namespace AdionFA.UI.Infrastructure.Model.Base
             set => SetProperty(ref _maximumSeed, value);
         }
 
-        private decimal _maxRatioTree;
-        public decimal MaxRatioTree
+        private int _totalDecimalWeka;
+        public int TotalDecimalWeka
         {
-            get => _maxRatioTree;
-            set => SetProperty(ref _maxRatioTree, value);
+            get => _totalDecimalWeka;
+            set => SetProperty(ref _totalDecimalWeka, value);
         }
 
-        private decimal _nTotalTree;
-        public decimal NTotalTree
-        {
-            get => _nTotalTree;
-            set => SetProperty(ref _nTotalTree, value);
-        }
-
-        // Strategy Builder
-
-        private int _sbMinTotalTradesIS;
-        public int SBMinTotalTradesIS
-        {
-            get => _sbMinTotalTradesIS;
-            set => SetProperty(ref _sbMinTotalTradesIS, value);
-        }
-
-        private decimal _sbMinSuccessRatePercentIS;
-        public decimal SBMinSuccessRatePercentIS
-        {
-            get => _sbMinSuccessRatePercentIS;
-            set => SetProperty(ref _sbMinSuccessRatePercentIS, value);
-        }
-
-        private int _sbMinTotalTradesOS;
-        public int SBMinTotalTradesOS
-        {
-            get => _sbMinTotalTradesOS;
-            set => SetProperty(ref _sbMinTotalTradesOS, value);
-        }
-
-        private decimal _sbMinSuccessRatePercentOS;
-        public decimal SBMinSuccessRatePercentOS
-        {
-            get => _sbMinSuccessRatePercentOS;
-            set => SetProperty(ref _sbMinSuccessRatePercentOS, value);
-        }
-
-        private decimal _sbMaxSuccessRateVariation;
-        public decimal SBMaxSuccessRateVariation
-        {
-            get => _sbMaxSuccessRateVariation;
-            set => SetProperty(ref _sbMaxSuccessRateVariation, value);
-        }
+        // Builder
 
         private bool _isProgressiveness;
         public bool IsProgressiveness
@@ -178,63 +122,32 @@ namespace AdionFA.UI.Infrastructure.Model.Base
             set => SetProperty(ref _maxProgressivenessVariation, value);
         }
 
-        private decimal _sbMaxCorrelationPercent;
-        public decimal SBMaxCorrelationPercent
+        private decimal _maxCorrelationPercent;
+        public decimal MaxCorrelationPercent
         {
-            get => _sbMaxCorrelationPercent;
-            set => SetProperty(ref _sbMaxCorrelationPercent, value);
+            get => _maxCorrelationPercent;
+            set => SetProperty(ref _maxCorrelationPercent, value);
         }
 
-        private int _sbWinningStrategyUPTarget;
-        public int SBWinningStrategyUPTarget
+        private NodeBuilderConfigurationBaseVM _nodeBuilderConfiguration;
+        public NodeBuilderConfigurationBaseVM NodeBuilderConfiguration
         {
-            get => _sbWinningStrategyUPTarget;
-            set => SetProperty(ref _sbWinningStrategyUPTarget, value);
+            get => _nodeBuilderConfiguration;
+            set => SetProperty(ref _nodeBuilderConfiguration, value);
         }
 
-        private int _sbWinningStrategyDOWNTarget;
-        public int SBWinningStrategyDOWNTarget
+        private AssemblyBuilderConfigurationBaseVM _assemblyBuilderConfiguration;
+        public AssemblyBuilderConfigurationBaseVM AssemblyBuilderConfiguration
         {
-            get => _sbWinningStrategyDOWNTarget;
-            set => SetProperty(ref _sbWinningStrategyDOWNTarget, value);
+            get => _assemblyBuilderConfiguration;
+            set => SetProperty(ref _assemblyBuilderConfiguration, value);
         }
 
-        private int _sbTotalTradesTarget;
-        public int SBTotalTradesTarget
+        private CrossingBuilderConfigurationBaseVM _crossingBuilderConfiguration;
+        public CrossingBuilderConfigurationBaseVM CrossingBuilderConfiguration
         {
-            get => _sbTotalTradesTarget;
-            set => SetProperty(ref _sbTotalTradesTarget, value);
-        }
-
-
-        // Assembly Builder
-
-        private int _abMinTotalTradesIS;
-        public int ABMinTotalTradesIS
-        {
-            get => _abMinTotalTradesIS;
-            set => SetProperty(ref _abMinTotalTradesIS, value);
-        }
-
-        private decimal _abMinImprovePercent;
-        public decimal ABMinImprovePercent
-        {
-            get => _abMinImprovePercent;
-            set => SetProperty(ref _abMinImprovePercent, value);
-        }
-
-        private decimal _abWekaMaxRatioTree;
-        public decimal ABWekaMaxRatioTree
-        {
-            get => _abWekaMaxRatioTree;
-            set => SetProperty(ref _abWekaMaxRatioTree, value);
-        }
-
-        private decimal _abWekaNTotalTree;
-        public decimal ABWekaNTotalTree
-        {
-            get => _abWekaNTotalTree;
-            set => SetProperty(ref _abWekaNTotalTree, value);
+            get => _crossingBuilderConfiguration;
+            set => SetProperty(ref _crossingBuilderConfiguration, value);
         }
     }
 }
