@@ -54,15 +54,15 @@ namespace AdionFA.Infrastructure.Modules.Strategy
             set => SetProperty(ref _backtestStatusOS, value);
         }
 
-        private double _successRateVariation;
-        public double SuccessRateVariation
+        private decimal _successRateVariation;
+        public decimal SuccessRateVariation
         {
             get => _successRateVariation;
             set => SetProperty(ref _successRateVariation, value);
         }
 
-        private double _progressivenessVariation;
-        public double ProgressivenessVariation
+        private decimal _progressivenessVariation;
+        public decimal ProgressivenessVariation
         {
             get => _progressivenessVariation;
             set => SetProperty(ref _progressivenessVariation, value);

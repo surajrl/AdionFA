@@ -2,7 +2,6 @@
 using AdionFA.Domain.Enums;
 using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Model;
-using AdionFA.Infrastructure.CrossingBuilder.Contracts;
 using AdionFA.Infrastructure.CrossingBuilder.Model;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Extractor.Contracts;
@@ -12,6 +11,7 @@ using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.Infrastructure.NodeBuilder.Contracts;
+using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.Infrastructure.Weka.Services;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure.AutoMapper;
@@ -45,7 +45,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IExtractorService _extractorService;
         private readonly INodeBuilderService _nodeBuilderService;
-        private readonly ICrossingBuilderService _crossingBuilderService;
 
         private readonly IEventAggregator _eventAggregator;
         private readonly IMarketDataService _marketDataService;
@@ -64,7 +63,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
             _nodeBuilderService = IoC.Kernel.Get<INodeBuilderService>();
-            _crossingBuilderService = IoC.Kernel.Get<ICrossingBuilderService>();
             _marketDataService = IoC.Kernel.Get<IMarketDataService>();
             _projectService = IoC.Kernel.Get<IProjectService>();
 
@@ -89,10 +87,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             _cancellationTokenSource = new();
             _manualResetEventSlim = new(true);
             _lock = new();
-
-            CrossingBuilder = _crossingBuilderService.GetExistingCrossingBuilder(ProcessArgs.ProjectName);
-
-            UpdateExtractorTemplates();
         }
 
         private void InitializeEventAggregators()
@@ -112,7 +106,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 // Only update the extractor templates if the builder process has not started or has been cancelled
                 if (updated && canUpdateProcessesUP && canUpdateProcessesDOWN)
                 {
-                    UpdateExtractorTemplates();
+                    CrossingBuilderProcessesUP.Clear();
+                    CrossingBuilderProcessesDOWN.Clear();
                 }
             });
 
@@ -121,7 +116,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 if (reset)
                 {
                     DeleteCrossingBuilder();
-                    UpdateExtractorTemplates();
                 }
             });
         }
@@ -197,31 +191,111 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             IsStopped = false;
         }, () => IsStopped).ObservesProperty(() => IsStopped);
 
-        public ICommand LoadCrossingBuilder => new DelegateCommand(() =>
+        private void FromNodeBuilder()
         {
-            CrossingBuilder.WinningStrategyNodesUP.Clear();
-            CrossingBuilder.WinningStrategyNodesDOWN.Clear();
+            var nodesUP = new List<SingleNodeModel>();
+            var nodesDOWN = new List<SingleNodeModel>();
 
-            if (LoadFromNodeBuilder)
+            // Child nodes UP from node builder
+            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml")
+            .ToList()
+            .ForEach(file =>
             {
-                var nodesUP = new List<NodeModel>();
-                var nodesDOWN = new List<NodeModel>();
+                nodesUP.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
+            });
 
-                // Child nodes UP from Node Builder
-                _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodeBuilderNodesUPDirectory(), "*.xml")
-                .ToList()
-                .ForEach(file =>
+            // Child nodes DOWN from node builder
+            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml")
+            .ToList()
+            .ForEach(file =>
+            {
+                nodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
+            });
+
+            var previousBacktestOperationsUP = new List<BacktestOperationModel>();
+            nodesUP.ForEach(node =>
+            {
+                previousBacktestOperationsUP.AddRange(node.BacktestIS.BacktestOperations);
+            });
+
+            var previousBacktestOperationsDOWN = new List<BacktestOperationModel>();
+            nodesDOWN.ForEach(node =>
+            {
+                previousBacktestOperationsDOWN.AddRange(node.BacktestIS.BacktestOperations);
+            });
+
+            var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+            foreach (var file in extractionTemplates)
+            {
+                CrossingBuilderProcessesUP.Add(new BuilderProcess
                 {
-                    nodesUP.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
+                    ExtractionTemplatePath = file.FullName,
+                    ExtractionTemplateName = file.Name,
+                    ExtractionName = file.Name,
+                    Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                    Tree = new(),
+                    BacktestStrategyNodes = new(),
+                    PreviousStrategyNode = new StrategyNodeModel
+                    {
+                        ParentNodesData = new(),
+                        ChildNodesData = nodesUP.Select(node => node.NodeData).ToList(),
+                        CrossingNodesData = new(),
+                    },
+                    PreviousBacktestOperationsIS = new(previousBacktestOperationsUP)
                 });
 
-                // Child nodes DOWN from Node Builder
-                _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodeBuilderNodesDOWNDirectory(), "*.xml")
-                .ToList()
-                .ForEach(file =>
+                CrossingBuilderProcessesDOWN.Add(new BuilderProcess
                 {
-                    nodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
+                    ExtractionTemplatePath = file.FullName,
+                    ExtractionTemplateName = file.Name,
+                    ExtractionName = file.Name,
+                    Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                    Tree = new(),
+                    BacktestStrategyNodes = new(),
+                    PreviousStrategyNode = new StrategyNodeModel
+                    {
+                        ParentNodesData = new(),
+                        ChildNodesData = nodesDOWN.Select(node => node.NodeData).ToList(),
+                        CrossingNodesData = new()
+                    },
+                    PreviousBacktestOperationsIS = new(previousBacktestOperationsDOWN)
                 });
+            }
+        }
+
+        private void FromAssemblyBuilder()
+        {
+            var assemblyNodesUP = new List<AssemblyNodeModel>();
+            var assemblyNodesDOWN = new List<AssemblyNodeModel>();
+
+            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml")
+            .ToList()
+            .ForEach(file =>
+            {
+                assemblyNodesUP.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
+            });
+
+            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml")
+            .ToList()
+            .ForEach(file =>
+            {
+                assemblyNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
+            });
+
+            var previousBacktestOperationsUP = new List<BacktestOperationModel>();
+            foreach (var assemblyNode in assemblyNodesUP)
+            {
+                previousBacktestOperationsUP.AddRange(assemblyNode.BacktestIS.BacktestOperations);
+            }
+
+            var previousBacktestOperationsDOWN = new List<BacktestOperationModel>();
+            foreach (var assemblyNode in assemblyNodesDOWN)
+            {
+                previousBacktestOperationsDOWN.AddRange(assemblyNode.BacktestIS.BacktestOperations);
+            }
+
+            if (IsMultiAssemblyMode)
+            {
 
                 var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
                 foreach (var file in extractionTemplates)
@@ -236,10 +310,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         BacktestStrategyNodes = new(),
                         PreviousStrategyNode = new StrategyNodeModel
                         {
-                            ParentNodesData = new(),
-                            ChildNodesData = nodesUP.Select(node => node.NodeData).ToList(),
+                            ParentNodesData = assemblyNodesUP.Select(assemblyNode => assemblyNode.ParentNodeData).ToList(),
+                            ChildNodesData = assemblyNodesUP.FirstOrDefault().ChildNodesData,
                             CrossingNodesData = new()
-                        }
+                        },
+                        PreviousBacktestOperationsIS = new(previousBacktestOperationsUP)
                     });
 
                     CrossingBuilderProcessesDOWN.Add(new BuilderProcess
@@ -252,36 +327,20 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         BacktestStrategyNodes = new(),
                         PreviousStrategyNode = new StrategyNodeModel
                         {
-                            ParentNodesData = new(),
-                            ChildNodesData = nodesDOWN.Select(node => node.NodeData).ToList(),
+                            ParentNodesData = assemblyNodesDOWN.Select(assemblyNode => assemblyNode.ParentNodeData).ToList(),
+                            ChildNodesData = assemblyNodesDOWN.FirstOrDefault().ChildNodesData,
                             CrossingNodesData = new()
-                        }
+                        },
+                        PreviousBacktestOperationsIS = new(previousBacktestOperationsDOWN)
                     });
                 }
             }
-            else if (LoadFromAssemblyBuilder)
+            else
             {
-                var assemblyNodesUP = new List<AssemblyNodeModel>();
-                var assemblyNodesDOWN = new List<AssemblyNodeModel>();
-
-                _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml")
-                .ToList()
-                .ForEach(file =>
+                var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+                foreach (var file in extractionTemplates)
                 {
-                    assemblyNodesUP.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
-                });
-
-                _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml")
-                .ToList()
-                .ForEach(file =>
-                {
-                    assemblyNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
-                });
-
-                if (IsMultiAssemblyMode)
-                {
-                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
-                    foreach (var file in extractionTemplates)
+                    foreach (var assemblyNode in assemblyNodesUP)
                     {
                         CrossingBuilderProcessesUP.Add(new BuilderProcess
                         {
@@ -293,12 +352,16 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                             BacktestStrategyNodes = new(),
                             PreviousStrategyNode = new StrategyNodeModel
                             {
-                                ParentNodesData = assemblyNodesUP.Select(assemblyNode => assemblyNode.ParentNodeData).ToList(),
-                                ChildNodesData = assemblyNodesUP.FirstOrDefault().ChildNodesData,
+                                ParentNodesData = new() { assemblyNode.ParentNodeData },
+                                ChildNodesData = assemblyNode.ChildNodesData,
                                 CrossingNodesData = new()
-                            }
+                            },
+                            PreviousBacktestOperationsIS = new(previousBacktestOperationsUP)
                         });
+                    }
 
+                    foreach (var assemblyNode in assemblyNodesDOWN)
+                    {
                         CrossingBuilderProcessesDOWN.Add(new BuilderProcess
                         {
                             ExtractionTemplatePath = file.FullName,
@@ -309,63 +372,36 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                             BacktestStrategyNodes = new(),
                             PreviousStrategyNode = new StrategyNodeModel
                             {
-                                ParentNodesData = assemblyNodesDOWN.Select(assemblyNode => assemblyNode.ParentNodeData).ToList(),
-                                ChildNodesData = assemblyNodesDOWN.FirstOrDefault().ChildNodesData,
+                                ParentNodesData = new() { assemblyNode.ParentNodeData },
+                                ChildNodesData = assemblyNode.ChildNodesData,
                                 CrossingNodesData = new()
-                            }
+                            },
+                            PreviousBacktestOperationsIS = new(previousBacktestOperationsDOWN)
                         });
                     }
                 }
-                else
-                {
-                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
-                    foreach (var file in extractionTemplates)
-                    {
-                        foreach (var assemblyNode in assemblyNodesUP)
-                        {
-                            CrossingBuilderProcessesUP.Add(new BuilderProcess
-                            {
-                                ExtractionTemplatePath = file.FullName,
-                                ExtractionTemplateName = file.Name,
-                                ExtractionName = file.Name,
-                                Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                                Tree = new(),
-                                BacktestStrategyNodes = new(),
-                                PreviousStrategyNode = new StrategyNodeModel
-                                {
-                                    ParentNodesData = new() { assemblyNode.ParentNodeData },
-                                    ChildNodesData = assemblyNode.ChildNodesData,
-                                    CrossingNodesData = new()
-                                }
-                            });
-                        }
+            }
+        }
 
-                        foreach (var assemblyNode in assemblyNodesDOWN)
-                        {
-                            CrossingBuilderProcessesDOWN.Add(new BuilderProcess
-                            {
-                                ExtractionTemplatePath = file.FullName,
-                                ExtractionTemplateName = file.Name,
-                                ExtractionName = file.Name,
-                                Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                                Tree = new(),
-                                BacktestStrategyNodes = new(),
-                                PreviousStrategyNode = new StrategyNodeModel
-                                {
-                                    ParentNodesData = new() { assemblyNode.ParentNodeData },
-                                    ChildNodesData = assemblyNode.ChildNodesData,
-                                    CrossingNodesData = new()
-                                }
-                            });
-                        }
-                    }
-                }
+        public ICommand LoadCrossingBuilder => new DelegateCommand(() =>
+        {
+            CrossingBuilder.AllWinningStrategyNodes.Clear();
+            CrossingBuilderProcessesUP.Clear();
+            CrossingBuilderProcessesDOWN.Clear();
+
+            if (LoadFromNodeBuilder)
+            {
+                FromNodeBuilder();
+            }
+            else if (LoadFromAssemblyBuilder)
+            {
+                FromAssemblyBuilder();
             }
             else
             {
                 // ...
             }
-        }, () => !CrossingBuilder.IsStarted && (LoadFromNodeBuilder || LoadFromAssemblyBuilder))
+        }, () => !CrossingBuilder.HasWinningStrategyNodes && (LoadFromNodeBuilder || LoadFromAssemblyBuilder))
             .ObservesProperty(() => LoadFromNodeBuilder)
             .ObservesProperty(() => LoadFromAssemblyBuilder);
 
@@ -387,8 +423,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
 
                 _cancellationTokenSource = new();
-
-                UpdateExtractorTemplates();
 
                 var mainCandles = _marketDataService.GetHistoricalData(ProcessArgs.HistoricalDataId, true)
                 .HistoricalDataCandles
@@ -437,8 +471,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     BacktestProcess(allBacktests, mainCandles);
 
                 }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
-
-                UpdateExtractorTemplates();
             }
             catch (OperationCanceledException)
             {
@@ -468,9 +500,10 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _cancellationTokenSource = null;
             }
 
-        }, () => !IsTransactionActive && (CrossingBuilder.WinningStrategyNodesUP.Count > 0 || CrossingBuilder.WinningStrategyNodesDOWN.Count > 0))
+        }, () => !IsTransactionActive && (CrossingBuilderProcessesUP.Count > 0 || CrossingBuilderProcessesDOWN.Count > 0))
             .ObservesProperty(() => IsTransactionActive)
-            .ObservesProperty(() => CrossingBuilder);
+            .ObservesProperty(() => CrossingBuilderProcessesUP.Count)
+            .ObservesProperty(() => CrossingBuilderProcessesDOWN.Count);
 
         private void ExtractionProcess(IList<BuilderProcess> processes, string label, IEnumerable<Candle> candles)
         {
@@ -485,7 +518,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 {
                     process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Name;
 
-                    var backtestOperations = process.PreviousStrategyNode.BacktestIS.BacktestOperations;
+                    var backtestOperations = process.PreviousBacktestOperationsIS;
 
                     // Perform extraction
                     var indicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
@@ -543,59 +576,58 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             foreach (var process in processes)
             {
-                _manualResetEventSlim.Wait();
-                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
-
-                var wekaApi = new WekaApiClient();
-                var responseWeka = wekaApi.GetREPTreeClassifier(
-                        process.ExtractionPath,
-                        ProjectConfiguration.DepthWeka,
-                        ProjectConfiguration.TotalDecimalWeka,
-                        ProjectConfiguration.MinimalSeed,
-                        ProjectConfiguration.MaximumSeed,
-                        ProjectConfiguration.TotalInstanceWeka,
-                        (double)ProjectConfiguration.ABWekaMaxRatioTree,
-                        (double)ProjectConfiguration.ABWekaNTotalTree);
-
-                // No tree was found
-                if (responseWeka.Count == 0)
+                for (var currentDepth = ProjectConfiguration.CrossingBuilderConfiguration.WekaStartDepth; currentDepth <= ProjectConfiguration.CrossingBuilderConfiguration.WekaEndDepth; currentDepth++)
                 {
-                    continue;
-                }
+                    // Weka
 
-                process.Tree = responseWeka[0];
+                    process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
 
-                // UP   ->  WINNER
-                // DOWN ->  LOSER
-                var nodes = process.Tree.NodeOutput.Where(node => node.Winner && node.Label.ToLowerInvariant() == "up")
-                    .Select(node =>
+                    var wekaApi = new WekaApiClient();
+                    var responseWeka = wekaApi.GetREPTreeClassifier(
+                            process.ExtractionPath,
+                            currentDepth,
+                            ProjectConfiguration.TotalDecimalWeka,
+                            ProjectConfiguration.MinimalSeed,
+                            ProjectConfiguration.MaximumSeed,
+                            1,
+                            (double)ProjectConfiguration.CrossingBuilderConfiguration.WekaMaxRatio,
+                            ProjectConfiguration.CrossingBuilderConfiguration.WekaNTotal);
+
+                    // No tree was found
+                    if (responseWeka.Count == 0)
                     {
-                        node.Node = node.Node.OrderByDescending(node => node).ToList();
-                        node.Label = label.ToUpperInvariant();
-                        var newStrategyNode = new StrategyNodeModel
+                        continue;
+                    }
+
+                    process.Tree = responseWeka[0];
+
+                    // UP   ->  WINNER
+                    // DOWN ->  LOSER
+                    var nodes = process.Tree.NodeOutput.Where(node => node.Winner && node.Label.ToLowerInvariant() == "up")
+                        .Select(node =>
                         {
-                            ParentNodesData = new(process.PreviousStrategyNode.ParentNodesData),
-                            ChildNodesData = new(process.PreviousStrategyNode.ChildNodesData),
-                            CrossingNodesData = new(process.PreviousStrategyNode.CrossingNodesData),
-                            BacktestIS = new(),
-                            BacktestOS = new(),
-                            BacktestStatusIS = BacktestStatus.NotStarted,
-                            BacktestStatusOS = BacktestStatus.NotStarted,
-                        };
+                            node.Node = node.Node.OrderByDescending(node => node).ToList();
+                            node.Label = label.ToUpperInvariant();
+                            var newStrategyNode = new StrategyNodeModel
+                            {
+                                ParentNodesData = new(process.PreviousStrategyNode.ParentNodesData),
+                                ChildNodesData = new(process.PreviousStrategyNode.ChildNodesData),
+                                CrossingNodesData = new(process.PreviousStrategyNode.CrossingNodesData),
+                                BacktestIS = new(),
+                                BacktestOS = new(),
+                                BacktestStatusIS = BacktestStatus.NotStarted,
+                                BacktestStatusOS = BacktestStatus.NotStarted,
+                            };
 
-                        newStrategyNode.CrossingNodesData.Add(Tuple.Create(node, CrossingHistoricalDataId, CrossingSymbolName));
+                            newStrategyNode.CrossingNodesData.Add(Tuple.Create(node, CrossingHistoricalDataId, CrossingSymbolName));
 
-                        return newStrategyNode;
-                    }).ToList();
+                            return newStrategyNode;
+                        }).ToList();
 
-                backtestNodes.AddRange(nodes);
-                process.BacktestStrategyNodes.Clear();
-                process.BacktestStrategyNodes.AddRange(nodes);
-
-                _manualResetEventSlim.Wait();
-                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                    backtestNodes.AddRange(nodes);
+                    process.BacktestStrategyNodes.Clear();
+                    process.BacktestStrategyNodes.AddRange(nodes);
+                }
 
                 process.Message = process.BacktestStrategyNodes.Count == 0
                     ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name // No backtests to do
@@ -609,8 +641,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             var backtestNodesPartition = Partitioner.Create(backtestNodes, EnumerablePartitionerOptions.NoBuffering);
 
-            CrossingBuilder.WinningStrategyNodesUP.Clear();
-            CrossingBuilder.WinningStrategyNodesDOWN.Clear();
+            CrossingBuilder.AllWinningStrategyNodes.Clear();
 
             Parallel.ForEach(
                 backtestNodesPartition,
@@ -624,9 +655,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     _manualResetEventSlim.Wait();
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    var label = backtestingNode.ParentNodesData.First().Label.ToLowerInvariant();
+                    var label = backtestingNode.Label;
 
-                    var process = label == "up"
+                    var process = label == Domain.Enums.Label.UP
                     ? CrossingBuilderProcessesUP.FirstOrDefault(process => process.BacktestStrategyNodes.Any(processNode => processNode == backtestingNode))
                     : CrossingBuilderProcessesDOWN.FirstOrDefault(process => process.BacktestStrategyNodes.Any(processNode => processNode == backtestingNode));
 
@@ -638,7 +669,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
                     }
 
-                    var isWinningNode = _nodeBuilderService.BuildBacktestOfStrategyNode(
+                    backtestingNode.WinningStrategy = _nodeBuilderService.BuildBacktestOfStrategyNode(
                         backtestingNode,
                         mainCandles,
                         _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
@@ -646,17 +677,10 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);
 
-                    if (isWinningNode)
+                    if (backtestingNode.WinningStrategy)
                     {
-                        SerializerHelper.SerializeStrategyNode(ProcessArgs.ProjectName, backtestingNode);
-                        if (label == "up")
-                        {
-                            CrossingBuilder.WinningStrategyNodesUP.Add(backtestingNode);
-                        }
-                        else if (label == "down")
-                        {
-                            CrossingBuilder.WinningStrategyNodesDOWN.Add(backtestingNode);
-                        }
+                        SerializerHelper.SerializeNode(ProcessArgs.ProjectName, backtestingNode);
+                        CrossingBuilder.AllWinningStrategyNodes.Add(backtestingNode);
                     }
 
                     // Lock due to process being shared by other threads, as one
@@ -674,54 +698,16 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 });
         }
 
-        private void UpdateExtractorTemplates()
-        {
-            CrossingBuilderProcessesUP.Clear();
-            CrossingBuilderProcessesDOWN.Clear();
-
-            var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
-            foreach (var file in extractionTemplates)
-            {
-                foreach (var strategyNode in CrossingBuilder.WinningStrategyNodesUP)
-                {
-                    CrossingBuilderProcessesUP.Add(new BuilderProcess
-                    {
-                        ExtractionTemplatePath = file.FullName,
-                        ExtractionTemplateName = file.Name,
-                        ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                        Tree = new(),
-                        BacktestStrategyNodes = new(),
-                        PreviousStrategyNode = strategyNode
-                    });
-                }
-                foreach (var strategyNode in CrossingBuilder.WinningStrategyNodesDOWN)
-                {
-                    CrossingBuilderProcessesDOWN.Add(new BuilderProcess
-                    {
-                        ExtractionTemplatePath = file.FullName,
-                        ExtractionTemplateName = file.Name,
-                        ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                        Tree = new(),
-                        BacktestStrategyNodes = new(),
-                        PreviousStrategyNode = strategyNode
-                    });
-                }
-            }
-        }
-
         private void DeleteCrossingBuilder()
         {
             // Reset the winning strategy nodes
-            CrossingBuilder.WinningStrategyNodesUP.Clear();
-            CrossingBuilder.WinningStrategyNodesDOWN.Clear();
+            CrossingBuilder.AllWinningStrategyNodes.Clear();
 
-            // Delete node files from the Crossing Builder
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesUPDirectory(), "*.xml", isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+            // Delete node files from the crossing Builder
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription()), "*.xml", isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription()), "*.xml", isBackup: false);
 
-            // Delete extractor files from the Crossing Builder
+            // Delete extractor files from the crossing Builder
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
         }

@@ -7,7 +7,6 @@ using AdionFA.TransferObject.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AdionFA.Application.Services.Commons
 {
@@ -26,12 +25,15 @@ namespace AdionFA.Application.Services.Commons
                 .Where(e => !e.IsDeleted)
                 .Include(e => e.GlobalScheduleConfigurations)
                     .ThenInclude(e => e.MarketRegion)
+                .Include(e => e.NodeBuilderConfiguration)
+                .Include(e => e.AssemblyBuilderConfiguration)
+                .Include(e => e.CrossingBuilderConfiguration)
                 .FirstOrDefault();
 
             return Mapper.Map<GlobalConfigurationDTO>(globalConfiguration);
         }
 
-        public async Task<ResponseDTO> UpdateGlobalConfigurationAsync(GlobalConfigurationDTO globalConfigurationDTO)
+        public ResponseDTO UpdateGlobalConfiguration(GlobalConfigurationDTO globalConfigurationDTO)
         {
             using var dbContext = new AdionFADbContext();
 
@@ -47,9 +49,13 @@ namespace AdionFA.Application.Services.Commons
             globalConfiguration.UpdatedOn = DateTime.UtcNow;
 
             dbContext.Set<GlobalConfiguration>().Update(globalConfiguration);
-            var r = await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            Logger.Information("GlobalConfigurationService.UpdateGlobalConfiguration() :: dbContext.Set<GlobalConfiguration>().Update().");
 
-            response.IsSuccess = true;
+            if (dbContext.SaveChanges() > 0)
+            {
+                Logger.Information("GlobalConfigurationService.UpdateGlobalConfiguration() :: dbContext.SaveChanges().");
+                response.IsSuccess = true;
+            }
 
             return response;
         }

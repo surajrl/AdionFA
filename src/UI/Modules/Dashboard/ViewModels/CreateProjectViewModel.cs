@@ -122,3 +122,4 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
         public ObservableCollection<Metadata> HistoricalData { get; }
     }
+}

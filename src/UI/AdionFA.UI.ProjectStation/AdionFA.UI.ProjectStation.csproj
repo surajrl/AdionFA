@@ -29,20 +29,6 @@
 		<Content Include="Weka\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Compile Remove="Debug\**" />
-		<Compile Remove="Release\**" />
-		<EmbeddedResource Remove="Debug\**" />
-		<EmbeddedResource Remove="Release\**" />
-		<None Remove="Debug\**" />
-		<None Remove="Release\**" />
-		<Page Remove="Debug\**" />
-		<Page Remove="Release\**" />
-		<Content Include="..\..\AdionFA.Infrastructure\AdionFA.db">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-	
-	<ItemGroup>
 		<Content Include="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

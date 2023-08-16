@@ -1,6 +1,5 @@
 ﻿using AdionFA.UI.Infrastructure;
 using AdionFA.UI.ProjectStation.Common;
-using AdionFA.UI.ProjectStation.StrategyBuilder;
 using AdionFA.UI.ProjectStation.ViewModels;
 using MahApps.Metro.Controls;
 using Prism.Regions;
@@ -21,10 +20,6 @@ namespace AdionFA.UI.ProjectStation
             if (regionManager != null)
             {
                 SetRegionManager(regionManager, flyoutsControlRegion, FlyoutRegions.FlyoutRegion);
-
-                // Node Builder
-
-                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(SavedNodesFlyoutView));
 
                 // Common
 

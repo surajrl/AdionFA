@@ -159,199 +159,163 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal">
-                    <!--  Total Instance Weka  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Total Instances" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.TotalInstanceWeka}" />
-                    </StackPanel>
-
-                    <!--  N Total Tree  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="N Total" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.NTotalTree}" />
-                    </StackPanel>
-
-                    <!--  Depth Weka  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Depth" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.DepthWeka}" />
-                    </StackPanel>
-
-                    <!--  Max Ratio Tree  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Ratio" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.MaxRatioTree}" />
-                    </StackPanel>
-
-                </StackPanel>
-
-                <StackPanel Grid.Row="1"
-                            Orientation="Horizontal">
-                    <!--  Minimal Seed  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimal Seed" />
-                        <TextBox Width="225"
+                        <Label Content="Maximum Seed" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.MinimalSeed}" />
                     </StackPanel>
-
-                    <!--  Maximum Seed  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Seed" />
-                        <TextBox Width="225"
+                        <Label Content="Minimal Seed" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.MaximumSeed}" />
                     </StackPanel>
-
-                    <!--  Total Decimal Weka  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Decimals" />
-                        <TextBox Width="225"
+                        <Label Content="Total Decimal Weka" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.TotalDecimalWeka}" />
                     </StackPanel>
-
                 </StackPanel>
 
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal">
+                    <!--  Nodes UP Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Nodes UP Target *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.NodesUPTarget}" />
+                    </StackPanel>
+
+                    <!--  Nodes DOWN Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Nodes DOWN Target *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.NodesDOWNTarget}" />
+                    </StackPanel>
+
+                    <!--  Transactions Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Trades Target *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.TotalTradesTarget}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  IS  -->
                 <StackPanel Grid.Row="2"
                             Orientation="Horizontal">
-                    <!--  Winning Nodes Total UP Target  -->
+                    <!--  Minimum Total Trades IS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Winning Nodes UP Target" />
-                        <TextBox Width="225"
+                        <Label Content="Minimum Total Trades (IS) *" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBWinningStrategyUPTarget}" />
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.MinTotalTradesIS}" />
                     </StackPanel>
 
-                    <!--  Winning Nodes Total DOWN Target  -->
+                    <!--  Minimum Success Rate Percent IS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Winning Nodes DOWN Target" />
-                        <TextBox Width="225"
+                        <Label Content="Minimum Success Rate % (IS) *" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBWinningStrategyDOWNTarget}" />
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.MinSuccessRatePercentIS}" />
                     </StackPanel>
-
-                    <!--  Transaction Target  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Total Trades Target" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBTotalTradesTarget}" />
-                    </StackPanel>
-
                 </StackPanel>
 
+                <!--  OS  -->
                 <StackPanel Grid.Row="3"
                             Orientation="Horizontal">
-                    <!--  Variation Transaction  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Success Rate Variation" />
-                        <TextBox Width="225"
+                        <!--  Minimum Total Trades OS  -->
+                        <Label Content="Minimum Total Trades (OS) *" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBMaxSuccessRateVariation}" />
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.MinTotalTradesOS}" />
                     </StackPanel>
 
-                    <!--  Is Progressiveness  -->
+                    <!--  Minimum Success Rate Percent OS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Activate Progressiveness" />
-                        <metro:ToggleSwitch Margin="0,-3"
-                                            IsEnabled="False"
-                                            IsOn="{Binding ProjectConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                    <!--  Progressiveness  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Progressiveness Variation" />
-                        <TextBox Width="225"
+                        <Label Content="Minimum Success Rate % (OS) *" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.MaxProgressivenessVariation}" />
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.MinSuccessRatePercentOS}" />
                     </StackPanel>
-
-                    <!--  Maximum Correlation Percent  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Correlation %" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}" />
-                    </StackPanel>
-
                 </StackPanel>
 
                 <StackPanel Grid.Row="4"
                             Orientation="Horizontal">
-                    <!--  Minimum Total Trades IS  -->
+                    <!--  Maximum Success Rate Variation  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Total Trades (IS)" />
-                        <TextBox Width="225"
+                        <Label Content="Maximum Success Rate Variation *" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBMinTotalTradesIS}" />
-                    </StackPanel>
-                    <!--  Minimum Success Rate Percent IS  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Success Rate % (IS)" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentIS}" />
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.MaxSuccessRateVariation}" />
                     </StackPanel>
                 </StackPanel>
 
                 <StackPanel Grid.Row="5"
                             Orientation="Horizontal">
-                    <!--  Minimum Total Trades OS  -->
+                    <!--  Weka N Total  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Total Trades (OS)" />
-                        <TextBox Width="225"
+                        <Label Content="Weka N Total *" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBMinTotalTradesOS}" />
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.WekaNTotal}" />
                     </StackPanel>
-
-                    <!--  Minimum Success Rate Percent IS  -->
+                    <!--  Weka Max Ratio  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Success Rate % (OS)" />
-                        <TextBox Width="225"
+                        <Label Content="Weka Max Ratio *" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBMinSuccessRatePercentOS}" />
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.WekaMaxRatio}" />
+                    </StackPanel>
+                    <!--  Weka Start Depth  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka Start Depth *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.WekaStartDepth}" />
+                    </StackPanel>
+                    <!--  Weka End Depth  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka End Depth *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.WekaEndDepth}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -362,87 +326,72 @@
                            Header="Node Builder">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!--  Saved Nodes & Correlation Nodes Buttons  -->
-                <StackPanel HorizontalAlignment="Left"
-                            Orientation="Horizontal">
-                    <!--  Saved Nodes  -->
-                    <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="savedNodesBtn"
-                                Width="120"
-                                Height="40">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconFontAwesome Width="14"
-                                                               VerticalAlignment="Center"
-                                                               Kind="DatabaseSolid" />
-                                <Label Content="Saved Nodes"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger EventName="Click"
-                                                        SourceName="savedNodesBtn">
-                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                        <behaviors:InvokeCommandAction.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSavedNodes}" />
-                                            </MultiBinding>
-                                        </behaviors:InvokeCommandAction.CommandParameter>
-                                    </behaviors:InvokeCommandAction>
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                    </Grid>
+                <!--  Winning Nodes  -->
+                <Grid Margin="{StaticResource ColumnMargin}"
+                      HorizontalAlignment="Left">
+                    <Button x:Name="winningNodesBtn"
+                            Width="120"
+                            Height="40"
+                            IsEnabled="{Binding NodeBuilder.AllWinningNodes.Count, Converter={StaticResource IntToBooleanConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome Width="14"
+                                                           VerticalAlignment="Center"
+                                                           Kind="TrophySolid" />
+                            <Label Content="Winning Nodes"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="Click"
+                                                    SourceName="winningNodesBtn">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                            <Binding Path="NodeBuilder" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                </Grid>
 
-                    <!--  Winning Nodes Button  -->
-                    <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="winningNodesBtn"
-                                Width="120"
-                                Height="40"
-                                IsEnabled="{Binding NodeBuilder.HasWinningNodes}">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconFontAwesome Width="14"
-                                                               VerticalAlignment="Center"
-                                                               Kind="TrophySolid" />
-                                <Label Content="Winning Nodes"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger EventName="Click"
-                                                        SourceName="winningNodesBtn">
-                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                        <behaviors:InvokeCommandAction.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                <Binding Path="NodeBuilder" />
-                                            </MultiBinding>
-                                        </behaviors:InvokeCommandAction.CommandParameter>
-                                    </behaviors:InvokeCommandAction>
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                    </Grid>
-
-                </StackPanel>
-
-                <!--  Maximum Parallelism Configuration  -->
                 <StackPanel Grid.Column="1"
                             Margin="{StaticResource ColumnMargin}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
+                            HorizontalAlignment="Right">
+                    <!--  Weka Depth  -->
+                    <Label Content="Weka Depth" />
+                    <TextBlock>
+                        <Run Text="Start: " />
+                        <Run Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.WekaStartDepth}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Current: " />
+                        <Run Text="{Binding CurrentWekaDepth}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="End: " />
+                        <Run Text="{Binding ProjectConfiguration.NodeBuilderConfiguration.WekaEndDepth}" />
+                    </TextBlock>
+                </StackPanel>
+
+                <!--  Maximum Parallelism  -->
+                <StackPanel Grid.Column="2"
+                            Margin="{StaticResource ColumnMargin}"
+                            HorizontalAlignment="Right">
                     <Label Content="Maximum Parallelism" />
                     <TextBox IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                              Text="{Binding MaxParallelism}" />
                 </StackPanel>
-
             </Grid>
         </metro:MetroHeader>
 
-
-        <!--  Strategy Builder Process  -->
+        <!--  Node Builder Process  -->
         <DataGrid Grid.Row="3"
                   Margin="0,10,0,0"
                   AutoGenerateColumns="False"

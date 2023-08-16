@@ -1,4 +1,5 @@
 ﻿using AdionFA.Infrastructure.Modules.Strategy;
+using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
 using AdionFA.UI.Infrastructure.Base;
 using System.Collections.ObjectModel;
@@ -8,6 +9,7 @@ namespace AdionFA.UI.ProjectStation.Model.Common
     public class BuilderProcess : ViewModelBase
     {
         // Extraction
+
         public string ExtractionPath { get; set; }
 
         public string ExtractionTemplatePath { get; set; }
@@ -49,12 +51,13 @@ namespace AdionFA.UI.ProjectStation.Model.Common
             set => SetProperty(ref _tree, value);
         }
 
-        public ObservableCollection<NodeModel> BacktestNodes { get; set; }  // Used for Node Builder
+        public ObservableCollection<SingleNodeModel> BacktestNodes { get; set; }  // Used for Node Builder
         public ObservableCollection<AssemblyNodeModel> BacktestAssemblyNodes { get; set; } // Used for Assembly Builder
         public ObservableCollection<StrategyNodeModel> BacktestStrategyNodes { get; set; } // Used for Crossing Builder
         public StrategyNodeModel PreviousStrategyNode { get; set; } // Used for Crossing Builder
+        public ObservableCollection<BacktestOperationModel> PreviousBacktestOperationsIS { get; set; } // Used for Crossing Builder
 
-        // Builder Process Status 
+        // Builder process status 
 
         private string _message;
         public string Message

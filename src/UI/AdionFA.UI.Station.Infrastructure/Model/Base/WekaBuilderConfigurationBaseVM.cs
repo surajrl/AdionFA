@@ -31,6 +31,5 @@ namespace AdionFA.UI.Infrastructure.Model.Base
             get => _wekaMaxRatio;
             set => SetProperty(ref _wekaMaxRatio, value);
         }
-
     }
 }

@@ -1,4 +1,6 @@
-﻿using AdionFA.Infrastructure.AssemblyBuilder.Contracts;
+﻿using AdionFA.Domain.Enums;
+using AdionFA.Domain.Extensions;
+using AdionFA.Infrastructure.AssemblyBuilder.Contracts;
 using AdionFA.Infrastructure.AssemblyBuilder.Model;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Helpers;
@@ -23,20 +25,20 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Services
         {
             var assemblyBuilder = new AssemblyBuilderModel();
 
-            // Get the Child Nodes UP
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesUPDirectory(), "*.xml")
+            // Get the child nodes UP
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml")
                 .ToList()
                 .ForEach(file =>
                 {
-                    assemblyBuilder.ChildNodesUP.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
+                    assemblyBuilder.ChildNodesUP.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
                 });
 
-            // Get the Child Nodes DOWN
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesDOWNDirectory(), "*.xml")
+            // Get the child nodes DOWN
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml")
                 .ToList()
                 .ForEach(file =>
                 {
-                    assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
+                    assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
                 });
 
             return assemblyBuilder;
@@ -46,36 +48,36 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Services
         {
             var assemblyBuilder = new AssemblyBuilderModel();
 
-            // Get the Assembly Nodes UP
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml")
+            // Get the assembly nodes UP
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription()), "*.xml")
                 .ToList()
                 .ForEach(file =>
                 {
-                    assemblyBuilder.WinningAssemblyNodesUP.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
+                    assemblyBuilder.AllWinningAssemblyNodes.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
                 });
 
-            // Get the Assembly Nodes DOWN
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml")
+            // Get the assembly nodes DOWN
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription()), "*.xml")
                 .ToList()
                 .ForEach(file =>
                 {
-                    assemblyBuilder.WinningAssemblyNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
+                    assemblyBuilder.AllWinningAssemblyNodes.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
                 });
 
-            // Get the Child Nodes UP
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesUPDirectory(), "*.xml")
+            // Get the child nodes UP
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml")
                 .ToList()
                 .ForEach(file =>
                 {
-                    assemblyBuilder.ChildNodesUP.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
+                    assemblyBuilder.ChildNodesUP.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
                 });
 
-            // Get the Child Nodes DOWN
-            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodeBuilderNodesDOWNDirectory(), "*.xml")
+            // Get the child nodes DOWN
+            _projectDirectoryService.GetFilesInPath(projectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml")
                 .ToList()
                 .ForEach(file =>
                 {
-                    assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName));
+                    assemblyBuilder.ChildNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
                 });
 
             return assemblyBuilder;

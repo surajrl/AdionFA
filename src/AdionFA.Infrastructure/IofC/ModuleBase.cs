@@ -5,8 +5,6 @@ using AdionFA.Application.Services.Projects;
 using AdionFA.Infrastructure.AssemblyBuilder.Contracts;
 using AdionFA.Infrastructure.AssemblyBuilder.Services;
 using AdionFA.Infrastructure.AutoMappers;
-using AdionFA.Infrastructure.CrossingBuilder.Contracts;
-using AdionFA.Infrastructure.CrossingBuilder.Services;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Directories.Services;
 using AdionFA.Infrastructure.Extractor.Contracts;
@@ -56,7 +54,6 @@ namespace AdionFA.Infrastructure.IofC
             Kernel.Bind<IExtractorService>().To<ExtractorService>();
             Kernel.Bind<INodeBuilderService>().To<NodeBuilderService>();
             Kernel.Bind<IAssemblyBuilderService>().To<AssemblyBuilderService>();
-            Kernel.Bind<ICrossingBuilderService>().To<CrossingBuilderService>();
             Kernel.Bind<ITradeService>().To<TradeService>();
 
             // Application

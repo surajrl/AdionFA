@@ -22,8 +22,8 @@ namespace AdionFA.Domain.Enums
         [Metadata(codeKey: "EXT", nameKey: "Extractor")]
         Extractor = 503,
 
-        [Metadata(codeKey: "SB", nameKey: "Strategy Builder")]
-        StrategyBuilder = 504,
+        [Metadata(codeKey: "NB", nameKey: "Node Builder")]
+        NodeBuilder = 504,
 
         [Metadata(codeKey: "AB", nameKey: "Assembly Builder")]
         AssemblyBuilder = 505,

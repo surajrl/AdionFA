@@ -16,8 +16,8 @@ namespace AdionFA.Infrastructure.NodeBuilder.Model
         public int WinningTrades { get; set; }
         public int LosingTrades { get; set; }
 
-        public double SuccessRatePercent => TotalTrades > 0 && WinningTrades > 0 ? WinningTrades * 100 / TotalTrades : 0;
-        public double Progressiveness => TotalTrades > 0 && TotalOpportunity > 0 ? TotalTrades * 100 / TotalOpportunity : 0;
+        public decimal SuccessRatePercent => TotalTrades > 0 && WinningTrades > 0 ? WinningTrades * 100 / TotalTrades : 0;
+        public decimal Progressiveness => TotalTrades > 0 && TotalOpportunity > 0 ? TotalTrades * 100 / TotalOpportunity : 0;
 
         public List<BacktestOperationModel> BacktestOperations { get; set; }
     }

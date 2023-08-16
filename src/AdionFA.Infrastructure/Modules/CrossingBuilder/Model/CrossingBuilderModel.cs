@@ -1,5 +1,7 @@
-﻿using AdionFA.Infrastructure.Modules.Strategy;
-using System.Collections.ObjectModel;
+﻿using AdionFA.Domain.Enums;
+using AdionFA.Infrastructure.Modules.Strategy;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AdionFA.Infrastructure.CrossingBuilder.Model
 {
@@ -7,13 +9,14 @@ namespace AdionFA.Infrastructure.CrossingBuilder.Model
     {
         public CrossingBuilderModel()
         {
-            WinningStrategyNodesUP = new();
-            WinningStrategyNodesDOWN = new();
+            AllWinningStrategyNodes = new();
         }
 
-        public ObservableCollection<StrategyNodeModel> WinningStrategyNodesUP { get; }
-        public ObservableCollection<StrategyNodeModel> WinningStrategyNodesDOWN { get; }
+        public IReadOnlyCollection<StrategyNodeModel> WinningStrategyNodesUP => AllWinningStrategyNodes.Where(winningAssemblyNodes => winningAssemblyNodes.Label == Label.UP).ToList();
+        public IReadOnlyCollection<StrategyNodeModel> WinningStrategyNodesDOWN => AllWinningStrategyNodes.Where(winningAssemblyNodes => winningAssemblyNodes.Label == Label.DOWN).ToList();
 
-        public bool IsStarted => WinningStrategyNodesDOWN.Count > 0 || WinningStrategyNodesUP.Count > 0;
+        public List<StrategyNodeModel> AllWinningStrategyNodes { get; set; }
+
+        public bool HasWinningStrategyNodes => AllWinningStrategyNodes.Count > 0;
     }
 }

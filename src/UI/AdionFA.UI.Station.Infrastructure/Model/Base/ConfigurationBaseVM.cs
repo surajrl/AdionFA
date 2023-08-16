@@ -4,13 +4,6 @@ namespace AdionFA.UI.Infrastructure.Model.Base
 {
     public class ConfigurationBaseVM : EntityBaseVM
     {
-        public ConfigurationBaseVM()
-        {
-            NodeBuilderConfiguration = new();
-            AssemblyBuilderConfiguration = new();
-            CrossingBuilderConfiguration = new();
-        }
-
         // Period
 
         private DateTime? _fromDateIS;
@@ -108,6 +101,13 @@ namespace AdionFA.UI.Infrastructure.Model.Base
 
         // Builder
 
+        private decimal _maxCorrelationPercent;
+        public decimal MaxCorrelationPercent
+        {
+            get => _maxCorrelationPercent;
+            set => SetProperty(ref _maxCorrelationPercent, value);
+        }
+
         private bool _isProgressiveness;
         public bool IsProgressiveness
         {
@@ -120,34 +120,6 @@ namespace AdionFA.UI.Infrastructure.Model.Base
         {
             get => _maxProgressivenessVariation;
             set => SetProperty(ref _maxProgressivenessVariation, value);
-        }
-
-        private decimal _maxCorrelationPercent;
-        public decimal MaxCorrelationPercent
-        {
-            get => _maxCorrelationPercent;
-            set => SetProperty(ref _maxCorrelationPercent, value);
-        }
-
-        private NodeBuilderConfigurationBaseVM _nodeBuilderConfiguration;
-        public NodeBuilderConfigurationBaseVM NodeBuilderConfiguration
-        {
-            get => _nodeBuilderConfiguration;
-            set => SetProperty(ref _nodeBuilderConfiguration, value);
-        }
-
-        private AssemblyBuilderConfigurationBaseVM _assemblyBuilderConfiguration;
-        public AssemblyBuilderConfigurationBaseVM AssemblyBuilderConfiguration
-        {
-            get => _assemblyBuilderConfiguration;
-            set => SetProperty(ref _assemblyBuilderConfiguration, value);
-        }
-
-        private CrossingBuilderConfigurationBaseVM _crossingBuilderConfiguration;
-        public CrossingBuilderConfigurationBaseVM CrossingBuilderConfiguration
-        {
-            get => _crossingBuilderConfiguration;
-            set => SetProperty(ref _crossingBuilderConfiguration, value);
         }
     }
 }

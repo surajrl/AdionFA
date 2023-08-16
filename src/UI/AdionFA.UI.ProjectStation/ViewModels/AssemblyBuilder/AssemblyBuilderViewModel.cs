@@ -285,10 +285,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 await Task.Run(() =>
                 {
-                    _nodeBuilderService.Correlation(
-                        ProcessArgs.ProjectName,
-                        AssemblyBuilder,
-                        ProjectConfiguration.SBMaxCorrelationPercent);
+                    AssemblyBuilder.AllWinningAssemblyNodes.AddRange(
+                        _nodeBuilderService.Correlation<AssemblyNodeModel>(
+                            ProcessArgs.ProjectName,
+                            EntityTypeEnum.AssemblyBuilder,
+                            ProjectConfiguration.MaxCorrelationPercent));
                 });
 
                 foreach ((var processUP, var processDOWN) in AssemblyBuilderProcessesUP.Zip(AssemblyBuilderProcessesDOWN, (processUP, processDOWN) => (processUP, processDOWN)))
@@ -297,7 +298,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     processDOWN.Message = BuilderProcessStatus.ABCompleted.GetMetadata().Name;
                 }
 
-                // Result Message
+                // Result message
 
                 var msgUP = AssemblyBuilder.WinningAssemblyNodesUP.Count > 0
                 ? $"{AssemblyBuilder.WinningAssemblyNodesUP.Count} UP Assembly Nodes Found"
@@ -459,57 +460,54 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             foreach (var process in assemblyBuilderProcess)
             {
-                _manualResetEventSlim.Wait();
-                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                // Weka 
-
-                process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
-
-                var wekaApi = new WekaApiClient();
-                var responseWeka = wekaApi.GetREPTreeClassifier(
-                        process.ExtractionPath,
-                        ProjectConfiguration.DepthWeka,
-                        ProjectConfiguration.TotalDecimalWeka,
-                        ProjectConfiguration.MinimalSeed,
-                        ProjectConfiguration.MaximumSeed,
-                        ProjectConfiguration.TotalInstanceWeka,
-                        (double)ProjectConfiguration.ABWekaMaxRatioTree,
-                        (double)ProjectConfiguration.ABWekaNTotalTree);
-
-                // No tree was found
-                if (responseWeka.Count == 0)
+                for (var currentDepth = ProjectConfiguration.AssemblyBuilderConfiguration.WekaStartDepth; currentDepth <= ProjectConfiguration.AssemblyBuilderConfiguration.WekaEndDepth; currentDepth++)
                 {
-                    continue;
-                }
+                    // Weka 
 
-                process.Tree = responseWeka[0];
+                    process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
 
-                // UP   ->  WINNER
-                // DOWN ->  LOSER
-                var nodes = process.Tree.NodeOutput.Where(node => node.Winner && node.Label.ToLowerInvariant() == "up")
-                    .Select(node =>
+                    var wekaApi = new WekaApiClient();
+                    var responseWeka = wekaApi.GetREPTreeClassifier(
+                            process.ExtractionPath,
+                            currentDepth,
+                            ProjectConfiguration.TotalDecimalWeka,
+                            ProjectConfiguration.MinimalSeed,
+                            ProjectConfiguration.MaximumSeed,
+                            1,
+                            (double)ProjectConfiguration.AssemblyBuilderConfiguration.WekaMaxRatio,
+                            ProjectConfiguration.AssemblyBuilderConfiguration.WekaNTotal);
+
+                    // No tree was found
+                    if (responseWeka.Count == 0)
                     {
-                        node.Node = node.Node.OrderByDescending(node => node).ToList();
-                        node.Label = label.ToUpperInvariant();
-                        return new AssemblyNodeModel
+                        continue;
+                    }
+
+                    process.Tree = responseWeka[0];
+
+                    // UP   ->  WINNER
+                    // DOWN ->  LOSER
+                    var nodes = process.Tree.NodeOutput.Where(node => node.Winner && node.Label.ToLowerInvariant() == "up")
+                        .Select(node =>
                         {
-                            ParentNodeData = node,
-                            ChildNodesData = (label.ToLowerInvariant() == "up"
-                            ? AssemblyBuilder.ChildNodesUP
-                            : AssemblyBuilder.ChildNodesDOWN)
-                            .Select(node => node.NodeData).ToList(),
-                            BacktestStatusIS = BacktestStatus.NotStarted,
-                            BacktestStatusOS = BacktestStatus.NotStarted
-                        };
-                    }).ToList();
+                            node.Node = node.Node.OrderByDescending(node => node).ToList();
+                            node.Label = label.ToUpperInvariant();
+                            return new AssemblyNodeModel
+                            {
+                                ParentNodeData = node,
+                                ChildNodesData = (label.ToLowerInvariant() == "up"
+                                ? AssemblyBuilder.ChildNodesUP
+                                : AssemblyBuilder.ChildNodesDOWN)
+                                .Select(node => node.NodeData).ToList(),
+                                BacktestStatusIS = BacktestStatus.NotStarted,
+                                BacktestStatusOS = BacktestStatus.NotStarted
+                            };
+                        }).ToList();
 
-                backtestNodes.AddRange(nodes);
-                process.BacktestAssemblyNodes.Clear();
-                process.BacktestAssemblyNodes.AddRange(nodes);
-
-                _manualResetEventSlim.Wait();
-                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                    backtestNodes.AddRange(nodes);
+                    process.BacktestAssemblyNodes.Clear();
+                    process.BacktestAssemblyNodes.AddRange(nodes);
+                }
 
                 process.Message = process.BacktestAssemblyNodes.Count == 0
                     ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name // No backtests to do
@@ -530,27 +528,27 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     MaxDegreeOfParallelism = MaxParallelism,
                     CancellationToken = _cancellationTokenSource.Token
                 },
-                bactestingAssemblyNode =>
+                backtestingAssemblyNode =>
                 {
                     _manualResetEventSlim.Wait();
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                     BuilderProcess builderProcess;
-                    double meanSuccessRatePercentIS;
+                    decimal meanSuccessRatePercentIS;
 
-                    switch (bactestingAssemblyNode.ParentNodeData.Label.ToLowerInvariant())
+                    switch (backtestingAssemblyNode.ParentNodeData.Label.ToLowerInvariant())
                     {
                         case "up":
                             builderProcess = AssemblyBuilderProcessesUP
                             .Where(process => process.BacktestAssemblyNodes
-                            .Any(processNode => processNode == bactestingAssemblyNode)).FirstOrDefault();
+                            .Any(processNode => processNode == backtestingAssemblyNode)).FirstOrDefault();
                             meanSuccessRatePercentIS = MeanSuccessRatePercentUP;
                             break;
 
                         case "down":
                             builderProcess = AssemblyBuilderProcessesDOWN
                             .Where(process => process.BacktestAssemblyNodes
-                            .Any(processNode => processNode == bactestingAssemblyNode)).FirstOrDefault();
+                            .Any(processNode => processNode == backtestingAssemblyNode)).FirstOrDefault();
                             meanSuccessRatePercentIS = MeanSuccessRatePercentDOWN;
                             break;
 
@@ -564,8 +562,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {builderProcess.ExecutingBacktests} Nodes";
                     }
 
-                    var winningNode = _nodeBuilderService.BuildBacktestOfAssemblyNode(
-                        bactestingAssemblyNode,
+                    backtestingAssemblyNode.WinningStrategy = _nodeBuilderService.BuildBacktestOfAssemblyNode(
+                        backtestingAssemblyNode,
                         projectCandles,
                         _mapper.Map<ProjectConfigurationVM, ProjectConfigurationDTO>(ProjectConfiguration),
                         ProcessArgs.TimeframeId,
@@ -573,9 +571,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         _manualResetEventSlim,
                         _cancellationTokenSource.Token);
 
-                    if (winningNode)
+                    if (backtestingAssemblyNode.WinningStrategy)
                     {
-                        SerializerHelper.SerializeAssemblyNode(ProcessArgs.ProjectName, bactestingAssemblyNode);
+                        SerializerHelper.SerializeNode(ProcessArgs.ProjectName, backtestingAssemblyNode);
                     }
 
                     lock (_lock)
@@ -630,18 +628,17 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private void DeleteAssemblyBuilder()
         {
             // Reset the winning assembly nodes
-            AssemblyBuilder.WinningAssemblyNodesUP.Clear();
-            AssemblyBuilder.WinningAssemblyNodesDOWN.Clear();
+            AssemblyBuilder.AllWinningAssemblyNodes.Clear();
 
             // Reset the child nodes
             AssemblyBuilder.ChildNodesUP.Clear();
             AssemblyBuilder.ChildNodesDOWN.Clear();
 
-            // Delete node files from the Assembly Builder
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesUPDirectory(), "*.xml", isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderNodesDOWNDirectory(), "*.xml", isBackup: false);
+            // Delete node files from the assembly builder
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription()), "*.xml", isBackup: false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription()), "*.xml", isBackup: false);
 
-            // Delete extractor files from the Assembly Builder
+            // Delete extractor files from the assembly builder
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("up"), isBackup: false);
             _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory("down"), isBackup: false);
         }
@@ -691,26 +688,34 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 if (SetProperty(ref _assemblyBuilder, value))
                 {
-                    MeanSuccessRatePercentUP = _assemblyBuilder.ChildNodesUP
-                        .Select(node => node.BacktestIS.SuccessRatePercent)
-                        .Sum() / _assemblyBuilder.ChildNodesUP.Count;
+                    try
+                    {
+                        MeanSuccessRatePercentUP = _assemblyBuilder.ChildNodesUP
+                            .Select(node => node.BacktestIS.SuccessRatePercent)
+                            .Sum() / _assemblyBuilder.ChildNodesUP.Count;
 
-                    MeanSuccessRatePercentDOWN = _assemblyBuilder.ChildNodesDOWN
-                        .Select(node => node.BacktestIS.SuccessRatePercent)
-                        .Sum() / _assemblyBuilder.ChildNodesDOWN.Count;
+                        MeanSuccessRatePercentDOWN = _assemblyBuilder.ChildNodesDOWN
+                            .Select(node => node.BacktestIS.SuccessRatePercent)
+                            .Sum() / _assemblyBuilder.ChildNodesDOWN.Count;
+                    }
+                    catch (DivideByZeroException)
+                    {
+                        MeanSuccessRatePercentUP = 0;
+                        MeanSuccessRatePercentDOWN = 0;
+                    }
                 }
             }
         }
 
-        private double _meanSuccessRatePercentUP;
-        public double MeanSuccessRatePercentUP
+        private decimal _meanSuccessRatePercentUP;
+        public decimal MeanSuccessRatePercentUP
         {
             get => _meanSuccessRatePercentUP;
             set => SetProperty(ref _meanSuccessRatePercentUP, value);
         }
 
-        private double _meanSuccessRatePercentDOWN;
-        public double MeanSuccessRatePercentDOWN
+        private decimal _meanSuccessRatePercentDOWN;
+        public decimal MeanSuccessRatePercentDOWN
         {
             get => _meanSuccessRatePercentDOWN;
             set => SetProperty(ref _meanSuccessRatePercentDOWN, value);

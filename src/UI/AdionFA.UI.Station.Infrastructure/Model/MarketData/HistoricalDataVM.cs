@@ -16,7 +16,6 @@ namespace AdionFA.UI.Infrastructure.Model.MarketData
 
         public MarketVM Market { get; set; }
         private int _marketId;
-
         public int MarketId
         {
             get => _marketId;
@@ -25,7 +24,6 @@ namespace AdionFA.UI.Infrastructure.Model.MarketData
 
         public SymbolVM Symbol { get; set; }
         private int _symbolId;
-
         public int SymbolId
         {
             get => _symbolId;
@@ -34,7 +32,6 @@ namespace AdionFA.UI.Infrastructure.Model.MarketData
 
         public TimeframeVM Timeframe { get; set; }
         private int _timeframeId;
-
         public int TimeframeId
         {
             get => _timeframeId;

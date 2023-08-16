@@ -417,7 +417,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is NodeModel node)
+            if (item is SingleNodeModel node)
             {
                 if (Nodes.IndexOf(node) == -1)
                 {
@@ -438,7 +438,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is NodeModel node)
+            if (item is SingleNodeModel node)
             {
                 Nodes.Remove(node);
             }
@@ -498,8 +498,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             set => SetProperty(ref _testNodes, value);
         }
 
-        private ObservableCollection<NodeModel> _nodes;
-        public ObservableCollection<NodeModel> Nodes
+        private ObservableCollection<SingleNodeModel> _nodes;
+        public ObservableCollection<SingleNodeModel> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);

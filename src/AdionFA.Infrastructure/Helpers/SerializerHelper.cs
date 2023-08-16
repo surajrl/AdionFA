@@ -4,7 +4,6 @@ using AdionFA.Infrastructure.Modules.Strategy;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -12,7 +11,17 @@ namespace AdionFA.Infrastructure.Helpers
 {
     public static class SerializerHelper
     {
-        public static void XMLSerializeObject<T>(T serializableObject, string fileName)
+        public static void SerializeNode(string projectName, INodeModel node)
+        {
+            var directory = node.Label == Label.UP
+                ? projectName.ProjectNodesUPDirectory(node.WinningUPDirectory)
+                : projectName.ProjectNodesDOWNDirectory(node.WinningDOWNDirectory);
+
+            var filename = node.Name + ".xml";
+            XMLSerializeObject(node, string.Format(@"{0}\{1}", directory, filename));
+        }
+
+        private static void XMLSerializeObject<T>(T serializableObject, string fileName)
         {
             if (serializableObject == null)
             {
@@ -66,53 +75,6 @@ namespace AdionFA.Infrastructure.Helpers
             }
 
             return objectOut;
-        }
-
-        public static void SerializeStrategyNode(string projectName, StrategyNodeModel strategyNode)
-        {
-            var directory = strategyNode.ParentNodesData.First().Label.ToLower() == "up"
-                ? projectName.ProjectCrossingBuilderNodesUPDirectory()
-                : projectName.ProjectCrossingBuilderNodesDOWNDirectory();
-
-            var filename = RegexHelper.GetValidFileName(strategyNode.Name, "_") + ".xml";
-            XMLSerializeObject(strategyNode, string.Format(@"{0}\{1}", directory, filename));
-        }
-
-        public static void SerializeAssemblyNode(string projectName, AssemblyNodeModel assemblyNode)
-        {
-            var directory = assemblyNode.ParentNodeData.Label.ToLower() == "up"
-                ? projectName.ProjectAssemblyBuilderNodesUPDirectory()
-                : projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
-
-            var filename = RegexHelper.GetValidFileName(assemblyNode.Name, "_") + ".xml";
-            XMLSerializeObject(assemblyNode, string.Format(@"{0}\{1}", directory, filename));
-        }
-
-        public static void SerializeNode(EntityTypeEnum entityType, string projectName, NodeModel node)
-        {
-            string directory;
-
-            switch (entityType)
-            {
-                case EntityTypeEnum.StrategyBuilder:
-                    directory = node.NodeData.Label.ToLower() == "up"
-                        ? projectName.ProjectNodeBuilderNodesUPDirectory()
-                        : projectName.ProjectNodeBuilderNodesDOWNDirectory();
-                    break;
-
-                case EntityTypeEnum.AssemblyBuilder:
-                    directory = node.NodeData.Label.ToLower() == "up"
-                        ? projectName.ProjectAssemblyBuilderNodesUPDirectory()
-                        : projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
-                    break;
-
-                default:
-                    return;
-            }
-
-            var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
-
-            XMLSerializeObject(node, string.Format(@"{0}\{1}", directory, filename));
         }
     }
 

@@ -44,7 +44,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
         });
 
-        public ICommand SaveBtnCommand => new DelegateCommand(async () =>
+        public ICommand SaveBtnCommand => new DelegateCommand(() =>
         {
             try
             {
@@ -60,7 +60,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 IsTransactionActive = true;
 
-                var responseDTO = await _globalConfigurationService.UpdateGlobalConfigurationAsync(_mapper.Map<GlobalConfigurationDTO>(GlobalConfiguration)).ConfigureAwait(true);
+                var responseDTO = _globalConfigurationService.UpdateGlobalConfiguration(_mapper.Map<GlobalConfigurationDTO>(GlobalConfiguration));
 
                 IsTransactionActive = false;
 

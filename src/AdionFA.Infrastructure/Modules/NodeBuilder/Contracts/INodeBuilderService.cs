@@ -1,8 +1,7 @@
-﻿using AdionFA.Infrastructure.AssemblyBuilder.Model;
+﻿using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Modules.Strategy;
-using AdionFA.Infrastructure.NodeBuilder.Model;
-using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.Project;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -12,22 +11,17 @@ namespace AdionFA.Infrastructure.NodeBuilder.Contracts
     {
         // Correlation
 
-        void Correlation(
+        IList<TNode> Correlation<TNode>(
             string projectName,
-            NodeBuilderModel strategyBuilder,
-            decimal maxCorrelation);
-
-        void Correlation(
-            string projectName,
-            AssemblyBuilderModel assemblyBuilder,
-            decimal maxCorrelation);
+            EntityTypeEnum entityType,
+            decimal maxCorrelation) where TNode : INodeModel;
 
         // Backtest
 
         bool BuildBacktestOfNode(
-            NodeModel backtestingNode,
+            SingleNodeModel backtestingNode,
             IEnumerable<Candle> candles,
-            ConfigurationBaseDTO configuration,
+            ProjectConfigurationDTO projectConfiguration,
             int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
@@ -35,16 +29,16 @@ namespace AdionFA.Infrastructure.NodeBuilder.Contracts
         bool BuildBacktestOfAssemblyNode(
             AssemblyNodeModel backtestingNode,
             IEnumerable<Candle> candles,
-            ConfigurationBaseDTO configuration,
+            ProjectConfigurationDTO projectConfiguration,
             int timeframeId,
-            double meanSuccessRatePercentIS,
+            decimal meanSuccessRatePercentIS,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);
 
         bool BuildBacktestOfStrategyNode(
             StrategyNodeModel strategyNode,
             IEnumerable<Candle> mainCandles,
-            ConfigurationBaseDTO configuration,
+            ProjectConfigurationDTO projectConfiguration,
             int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken);

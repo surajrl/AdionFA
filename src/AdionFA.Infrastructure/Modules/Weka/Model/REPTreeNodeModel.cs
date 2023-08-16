@@ -25,12 +25,12 @@ namespace AdionFA.Infrastructure.Weka.Model
 
         public List<string> Node { get; set; }
         public string Label { get; set; }
-        public double Total { get; set; }
-        public double TotalUP { get; set; }
-        public double TotalDOWN { get; set; }
-        public double RatioUP { get; set; }
-        public double RatioDOWN { get; set; }
-        public double RatioMax { get; set; }
+        public decimal Total { get; set; }
+        public decimal TotalUP { get; set; }
+        public decimal TotalDOWN { get; set; }
+        public decimal RatioUP { get; set; }
+        public decimal RatioDOWN { get; set; }
+        public decimal RatioMax { get; set; }
         public bool Winner { get; set; }
     }
 }

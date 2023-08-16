@@ -153,9 +153,9 @@ namespace AdionFA.Application.Services.Projects
 
                 MaxCorrelationPercent = globalConfiguration.MaxCorrelationPercent,
 
-                NodeBuilderConfiguration = globalConfiguration.NodeBuilderConfiguration,
-                AssemblyBuilderConfiguration = globalConfiguration.AssemblyBuilderConfiguration,
-                CrossingBuilderConfiguration = globalConfiguration.CrossingBuilderConfiguration,
+                NodeBuilderConfigurationId = globalConfiguration.NodeBuilderConfigurationId,
+                AssemblyBuilderConfigurationId = globalConfiguration.AssemblyBuilderConfigurationId,
+                CrossingBuilderConfigurationId = globalConfiguration.CrossingBuilderConfigurationId,
 
                 // Schedule configuration
 
@@ -229,6 +229,9 @@ namespace AdionFA.Application.Services.Projects
                     .Include(e => e.Project)
                         .ThenInclude(e => e.HistoricalData)
                             .ThenInclude(e => e.Timeframe)
+                    .Include(e => e.NodeBuilderConfiguration)
+                    .Include(e => e.AssemblyBuilderConfiguration)
+                    .Include(e => e.CrossingBuilderConfiguration)
                     .FirstOrDefault();
             }
             else
@@ -259,10 +262,11 @@ namespace AdionFA.Application.Services.Projects
             dbContext.Set<ProjectConfiguration>().Update(projectConfiguration);
             Logger.Information("ProjectService.UpdateProjectConfiguration() :: dbContext.Set<ProjectConfiguration>().Update().");
 
-            dbContext.SaveChanges();
-            Logger.Information("ProjectService.UpdateProjectConfiguration() :: dbContext.SaveChanges().");
-
-            response.IsSuccess = true;
+            if (dbContext.SaveChanges() > 0)
+            {
+                Logger.Information("ProjectService.UpdateProjectConfiguration() :: dbContext.SaveChanges().");
+                response.IsSuccess = true;
+            }
 
             return response;
         }
@@ -282,7 +286,7 @@ namespace AdionFA.Application.Services.Projects
 
             // Restore
 
-            projectConfiguration.RestoreConfiguration();
+            projectConfiguration.RestoreProjectConfiguration();
 
             // Update
 
@@ -290,10 +294,11 @@ namespace AdionFA.Application.Services.Projects
             dbContext.Set<ProjectConfiguration>().Update(projectConfiguration);
             Logger.Information("ProjectService.RestoreProjectConfiguration() :: dbContext.Set<ProjectConfiguration>().Update().");
 
-            dbContext.SaveChanges();
-            Logger.Information("ProjectService.RestoreProjectConfiguration() :: dbContext.SaveChanges().");
-
-            response.IsSuccess = true;
+            if (dbContext.SaveChanges() > 0)
+            {
+                Logger.Information("ProjectService.RestoreProjectConfiguration() :: dbContext.SaveChanges().");
+                response.IsSuccess = true;
+            }
 
             return response;
         }

@@ -1,5 +1,6 @@
 ﻿using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.Common;
+using AdionFA.TransferObject.Configuration;
 using AdionFA.TransferObject.MarketData;
 using AdionFA.TransferObject.Project;
 
@@ -17,8 +18,12 @@ namespace AdionFA.UI.Infrastructure.AutoMapper
         {
             // Base
 
-            CreateMap<ResponseVM, ResponseDTO>().ReverseMap();
-            CreateMap<ConfigurationBaseVM, ConfigurationBaseDTO>().ReverseMap();
+            CreateMap<ResponseDTO, ResponseVM>().ReverseMap();
+            CreateMap<ConfigurationBaseDTO, ConfigurationBaseVM>().ReverseMap();
+
+            CreateMap<NodeBuilderConfigurationDTO, NodeBuilderConfigurationVM>().ReverseMap();
+            CreateMap<AssemblyBuilderConfigurationDTO, AssemblyBuilderConfigurationVM>().ReverseMap();
+            CreateMap<CrossingBuilderConfigurationDTO, CrossingBuilderConfigurationVM>().ReverseMap();
 
             // Common
 
@@ -26,7 +31,7 @@ namespace AdionFA.UI.Infrastructure.AutoMapper
             CreateMap<GlobalConfigurationDTO, GlobalConfigurationVM>().ReverseMap();
             CreateMap<GlobalScheduleConfigurationDTO, GlobalScheduleConfigurationVM>().ReverseMap();
 
-            // Market Data
+            // Market data
 
             CreateMap<MarketDTO, MarketVM>().ReverseMap();
             CreateMap<SymbolDTO, SymbolVM>().ReverseMap();

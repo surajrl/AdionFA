@@ -14,8 +14,8 @@ namespace AdionFA.Application.Contracts
 
         // Project Configuration
 
-        ProjectConfigurationDTO GetProjectConfiguration(int projectId, bool includeGraph);
-        ResponseDTO UpdateProjectConfiguration(ProjectConfigurationDTO updatedProjectConfiguration);
+        TransferObject.Project.ProjectConfigurationDTO GetProjectConfiguration(int projectId, bool includeGraph);
+        ResponseDTO UpdateProjectConfiguration(TransferObject.Project.ProjectConfigurationDTO updatedProjectConfiguration);
         ResponseDTO RestoreProjectConfiguration(int projectId);
 
     }

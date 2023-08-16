@@ -1,6 +1,4 @@
-﻿using AdionFA.Infrastructure.Helpers;
-using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Modules.Strategy;
+﻿using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
@@ -9,7 +7,6 @@ using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Windows.Input;
 
 namespace AdionFA.UI.ProjectStation.ViewModels.Common
@@ -19,7 +16,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
         public NodesFlyoutViewModel(IApplicationCommands applicationCommands)
         {
             applicationCommands.ShowFlyoutCommand.RegisterCommand(FlyoutCommand);
-            applicationCommands.SaveNodeCommand.RegisterCommand(SaveNodeCommand);
 
             Nodes = new();
         }
@@ -31,11 +27,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
                 Nodes.Clear();
                 switch (flyout.ModelOne)
                 {
-                    case ObservableCollection<NodeModel> collection:
+                    case ObservableCollection<SingleNodeModel> collection:
                         Nodes.AddRange(collection);
                         break;
 
-                    case List<NodeModel> list:
+                    case List<SingleNodeModel> list:
                         Nodes.AddRange(list);
                         break;
 
@@ -44,23 +40,15 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
                         Nodes.AddRange(((NodeBuilderModel)flyout.ModelOne).WinningNodesDOWN);
                         break;
 
-                    case NodeModel node:
+                    case SingleNodeModel node:
                         Nodes.Add(node);
                         break;
                 }
             }
         });
 
-        public static ICommand SaveNodeCommand => new DelegateCommand<NodeModel>(node =>
-        {
-            var directory = ProcessArgs.ProjectName.ProjectNodeBuilderNodesDirectory();
-            var filename = RegexHelper.GetValidFileName(node.Name, "_") + ".xml";
-
-            SerializerHelper.XMLSerializeObject(node, string.Format(CultureInfo.InvariantCulture, @"{0}\{1}", directory, filename));
-        });
-
         // View Bindings
 
-        public ObservableCollection<NodeModel> Nodes { get; set; }
+        public ObservableCollection<SingleNodeModel> Nodes { get; set; }
     }
 }

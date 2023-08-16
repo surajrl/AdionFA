@@ -34,15 +34,9 @@ namespace AdionFA.TransferObject.Base
 
         // Builder
 
-        public bool IsProgressiveness { get; set; }
-        public decimal MaxProgressivenessVariation { get; set; }
-
         public decimal MaxCorrelationPercent { get; set; }
 
-        public NodeBuilderConfigurationBaseDTO NodeBuilderConfiguration { get; set; }
-
-        public AssemblyBuilderConfigurationBaseDTO AssemblyBuilderConfiguration { get; set; }
-
-        public CrossingBuilderConfigurationBaseDTO CrossingBuilderConfiguration { get; set; }
+        public bool IsProgressiveness { get; set; }
+        public decimal MaxProgressivenessVariation { get; set; }
     }
 }

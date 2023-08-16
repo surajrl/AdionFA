@@ -1,5 +1,7 @@
-﻿using AdionFA.Infrastructure.Modules.Strategy;
+﻿using AdionFA.Domain.Enums;
+using AdionFA.Infrastructure.Modules.Strategy;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdionFA.Infrastructure.AssemblyBuilder.Model
 {
@@ -10,14 +12,17 @@ namespace AdionFA.Infrastructure.AssemblyBuilder.Model
             ChildNodesUP = new();
             ChildNodesDOWN = new();
 
-            WinningAssemblyNodesUP = new();
-            WinningAssemblyNodesDOWN = new();
+            AllWinningAssemblyNodes = new();
         }
 
-        public List<NodeModel> ChildNodesUP { get; }
-        public List<NodeModel> ChildNodesDOWN { get; }
+        public List<SingleNodeModel> ChildNodesUP { get; }
+        public List<SingleNodeModel> ChildNodesDOWN { get; }
 
-        public List<AssemblyNodeModel> WinningAssemblyNodesUP { get; }
-        public List<AssemblyNodeModel> WinningAssemblyNodesDOWN { get; }
+        public IReadOnlyCollection<AssemblyNodeModel> WinningAssemblyNodesUP => AllWinningAssemblyNodes.Where(winningAssemblyNodes => winningAssemblyNodes.Label == Label.UP).ToList();
+        public IReadOnlyCollection<AssemblyNodeModel> WinningAssemblyNodesDOWN => AllWinningAssemblyNodes.Where(winningAssemblyNodes => winningAssemblyNodes.Label == Label.DOWN).ToList();
+
+        public List<AssemblyNodeModel> AllWinningAssemblyNodes { get; set; }
+
+        public bool HasWinningAssemblyNodes => AllWinningAssemblyNodes.Count > 0;
     }
 }

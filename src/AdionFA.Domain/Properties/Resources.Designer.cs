@@ -178,6 +178,24 @@ namespace AdionFA.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Node Builder.
+        /// </summary>
+        public static string NodeBuilder {
+            get {
+                return ResourceManager.GetString("NodeBuilder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Node Builder Completed.
+        /// </summary>
+        public static string NodeBuilderCompleted {
+            get {
+                return ResourceManager.GetString("NodeBuilderCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Is required.
         /// </summary>
         public static string NotEmpty {
@@ -237,24 +255,6 @@ namespace AdionFA.Domain.Properties {
         public static string StartDate {
             get {
                 return ResourceManager.GetString("StartDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Strategy Builder.
-        /// </summary>
-        public static string StrategyBuilder {
-            get {
-                return ResourceManager.GetString("StrategyBuilder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Strategy Builder Completed.
-        /// </summary>
-        public static string StrategyBuilderCompleted {
-            get {
-                return ResourceManager.GetString("StrategyBuilderCompleted", resourceCulture);
             }
         }
         

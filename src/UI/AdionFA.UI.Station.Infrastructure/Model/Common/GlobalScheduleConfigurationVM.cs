@@ -16,8 +16,19 @@ namespace AdionFA.UI.Infrastructure.Model.Common
         public int MarketRegionId { get; set; }
         public MarketRegionVM MarketRegion { get; set; }
 
-        public int FromTimeInSeconds { get; set; }
-        public int ToTimeInSeconds { get; set; }
+        private int _fromTimeInSeconds;
+        public int FromTimeInSeconds
+        {
+            get => _fromTimeInSeconds;
+            set => SetProperty(ref _fromTimeInSeconds, value);
+        }
+
+        private int _toTimeInSeconds;
+        public int ToTimeInSeconds
+        {
+            get => _toTimeInSeconds;
+            set => SetProperty(ref _toTimeInSeconds, value);
+        }
 
         // Validation
 

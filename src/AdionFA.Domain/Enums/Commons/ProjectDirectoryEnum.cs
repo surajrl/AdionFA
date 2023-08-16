@@ -16,7 +16,7 @@ namespace AdionFA.Domain.Enums
         [Description(@"{0}\ExtractorTemplates")]
         ExtractorTemplate = 120,
 
-        // Node Builder
+        // Node builder
 
         [Description(@"{0}\NodeBuilder")]
         NodeBuilder = 210,
@@ -36,7 +36,7 @@ namespace AdionFA.Domain.Enums
         [Description(@"{0}\NodeBuilder\Extractions\WithoutSchedule")]
         NodeBuilderExtractorWithoutSchedule = 260,
 
-        // Assembly Builder
+        // Assembly builder
 
         [Description(@"{0}\AssemblyBuilder")]
         AssemblyBuilder = 310,
@@ -62,7 +62,7 @@ namespace AdionFA.Domain.Enums
         [Description(@"{0}\AssemblyBuilder\Nodes\DOWN")]
         AssemblyBuilderNodesDOWN = 380,
 
-        // Strategy Builder
+        // Crossing builder
 
         [Description(@"{0}\CrossingBuilder")]
         CrossingBuilder = 410,

@@ -1,6 +1,6 @@
 ﻿using AdionFA.Application.Contracts;
 using AdionFA.Domain.Enums;
-using AdionFA.Infrastructure.AssemblyBuilder.Model;
+using AdionFA.Domain.Extensions;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Extractor.Contracts;
 using AdionFA.Infrastructure.Extractor.Model;
@@ -11,7 +11,7 @@ using AdionFA.Infrastructure.Modules.Strategy;
 using AdionFA.Infrastructure.NodeBuilder.Contracts;
 using AdionFA.Infrastructure.NodeBuilder.Model;
 using AdionFA.Infrastructure.Weka.Model;
-using AdionFA.TransferObject.Base;
+using AdionFA.TransferObject.Project;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -38,124 +38,72 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
         // Correlation
 
-        public void Correlation(
+        public IList<TNode> Correlation<TNode>(
             string projectName,
-            NodeBuilderModel strategyBuilder,
-            decimal maxCorrelation)
+            EntityTypeEnum entityType,
+            decimal maxCorrelation) where TNode : INodeModel
         {
-            string directory;
-            IList<NodeModel> winningNodes;
+            var directory = string.Empty;
+            var winningNodes = new List<TNode>();
 
-            FindCorrelation("up");
-            FindCorrelation("down");
+            FindCorrelation(Label.UP);
+            FindCorrelation(Label.DOWN);
 
-            void FindCorrelation(string label)
+            void FindCorrelation(Label label)
             {
-                switch (label.ToLowerInvariant())
+                if (entityType is EntityTypeEnum.NodeBuilder)
                 {
-                    case "up":
-                        directory = projectName.ProjectNodeBuilderNodesUPDirectory();
-                        winningNodes = strategyBuilder.WinningNodesUP;
-                        break;
-
-                    case "down":
-                        directory = projectName.ProjectNodeBuilderNodesDOWNDirectory();
-                        winningNodes = strategyBuilder.WinningNodesDOWN;
-                        break;
-
-                    default:
-                        return;
+                    directory = label == Label.UP
+                        ? projectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription())
+                        : projectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription());
+                }
+                else if (entityType is EntityTypeEnum.AssemblyBuilder)
+                {
+                    directory = label == Label.UP
+                        ? projectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription())
+                        : projectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription());
+                }
+                else if (entityType is EntityTypeEnum.CrossingBuilder)
+                {
+                    directory = label == Label.UP
+                        ? projectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription())
+                        : projectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription());
                 }
 
                 var backtests = new List<BacktestModel>();
 
-                _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
-                {
-                    var node = SerializerHelper.XMLDeSerializeObject<NodeModel>(file.FullName);
-
-                    // Algorithm to find maxCorrelation
-                    var indexOf = IndexOfCorrelation(backtests, node.BacktestIS, maxCorrelation);
-                    node.BacktestIS.CorrelationPass = indexOf != null;
-
-                    if (node.BacktestIS.CorrelationPass)
+                _projectDirectoryService.GetFilesInPath(directory, "*.xml")
+                    .ToList()
+                    .ForEach(file =>
                     {
-                        winningNodes.Add(node);
+                        var node = SerializerHelper.XMLDeSerializeObject<TNode>(file.FullName);
 
-                        if (indexOf >= 0)
+                        // Algorithm to find max correlation
+                        var indexOf = IndexOfCorrelation(backtests, node.BacktestIS, maxCorrelation);
+
+                        node.BacktestIS.CorrelationPass = indexOf != null;
+
+                        if (node.BacktestIS.CorrelationPass)
                         {
-                            backtests.Insert(indexOf.Value, node.BacktestIS);
+                            winningNodes.Add(node);
+
+                            if (indexOf >= 0)
+                            {
+                                backtests.Insert(indexOf.Value, node.BacktestIS);
+                            }
+                            if (indexOf == -1)
+                            {
+                                backtests.Add(node.BacktestIS);
+                            }
                         }
-                        if (indexOf == -1)
+                        else
                         {
-                            backtests.Add(node.BacktestIS);
+                            _projectDirectoryService.DeleteFile(file.FullName);
                         }
-                    }
-                    else
-                    {
-                        _projectDirectoryService.DeleteFile(file.FullName);
-                    }
-                });
+                    });
             }
-        }
 
-        public void Correlation(
-            string projectName,
-            AssemblyBuilderModel assemblyBuilder,
-            decimal maxCorrelation)
-        {
-            string directory;
-            IList<AssemblyNodeModel> winningAssemblyNodes;
-
-            FindCorrelation("up");
-            FindCorrelation("down");
-
-            void FindCorrelation(string label)
-            {
-                switch (label.ToLowerInvariant())
-                {
-                    case "up":
-                        directory = projectName.ProjectAssemblyBuilderNodesUPDirectory();
-                        winningAssemblyNodes = assemblyBuilder.WinningAssemblyNodesUP;
-                        break;
-
-                    case "down":
-                        directory = projectName.ProjectAssemblyBuilderNodesDOWNDirectory();
-                        winningAssemblyNodes = assemblyBuilder.WinningAssemblyNodesDOWN;
-                        break;
-
-                    default:
-                        return;
-                }
-
-                var backtests = new List<BacktestModel>();
-
-                _projectDirectoryService.GetFilesInPath(directory, "*.xml").ToList().ForEach(file =>
-                {
-                    var assemblyNode = SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName);
-
-                    // Algorithm to find correlation
-                    var indexOf = IndexOfCorrelation(backtests, assemblyNode.BacktestIS, maxCorrelation);
-                    assemblyNode.BacktestIS.CorrelationPass = indexOf != null;
-
-                    if (assemblyNode.BacktestIS.CorrelationPass)
-                    {
-                        winningAssemblyNodes.Add(assemblyNode);
-
-                        if (indexOf >= 0)
-                        {
-                            backtests.Insert(indexOf.Value, assemblyNode.BacktestIS);
-                        }
-                        if (indexOf == -1)
-                        {
-                            backtests.Add(assemblyNode.BacktestIS);
-                        }
-                    }
-                    else
-                    {
-                        _projectDirectoryService.DeleteFile(file.FullName);
-                    }
-                });
-            }
+            return winningNodes;
         }
 
         private static int? IndexOfCorrelation(IList<BacktestModel> backtests, BacktestModel btModel, decimal correlation)
@@ -202,9 +150,9 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
         // Backtest
 
         public bool BuildBacktestOfNode(
-            NodeModel node,
+            SingleNodeModel node,
             IEnumerable<Candle> candles,
-            ConfigurationBaseDTO configuration,
+            ProjectConfigurationDTO projectConfiguration,
             int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
@@ -216,9 +164,9 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                 node.BacktestStatusOS = BacktestStatus.Executing;
 
                 node.BacktestOS = Backtest(
-                    EntityTypeEnum.StrategyBuilder,
-                    configuration.FromDateOS.Value,
-                    configuration.ToDateOS.Value,
+                    EntityTypeEnum.NodeBuilder,
+                    projectConfiguration.FromDateOS.Value,
+                    projectConfiguration.ToDateOS.Value,
                     timeframeId,
                     node.NodeData,
                     null,
@@ -228,11 +176,11 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 node.BacktestStatusOS = BacktestStatus.Completed;
 
-                // Backtest OS Pass Conditions
+                // Backtest OS pass conditions
 
                 var passBacktestOS =
-                    node.BacktestOS.TotalTrades >= configuration.SBMinTotalTradesOS
-                    && node.BacktestOS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentOS;
+                    node.BacktestOS.TotalTrades >= projectConfiguration.NodeBuilderConfiguration.MinTotalTradesOS
+                    && node.BacktestOS.SuccessRatePercent >= projectConfiguration.NodeBuilderConfiguration.MinSuccessRatePercentOS;
 
                 if (!passBacktestOS)
                 {
@@ -244,9 +192,9 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                 node.BacktestStatusIS = BacktestStatus.Executing;
 
                 node.BacktestIS = Backtest(
-                    EntityTypeEnum.StrategyBuilder,
-                    configuration.FromDateIS.Value,
-                    configuration.ToDateIS.Value,
+                    EntityTypeEnum.NodeBuilder,
+                    projectConfiguration.FromDateIS.Value,
+                    projectConfiguration.ToDateIS.Value,
                     timeframeId,
                     node.NodeData,
                     null,
@@ -256,13 +204,19 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 node.BacktestStatusIS = BacktestStatus.Completed;
 
-                // Winning Conditions
+                // Backtest IS pass conditions
+
+                var passBacktestIS =
+                    node.BacktestIS.TotalTrades >= projectConfiguration.NodeBuilderConfiguration.MinTotalTradesIS
+                    && node.BacktestIS.SuccessRatePercent >= projectConfiguration.NodeBuilderConfiguration.MinSuccessRatePercentIS;
+
+                // Winning conditions
 
                 return node.WinningStrategy =
-                    node.BacktestIS.TotalTrades >= configuration.SBMinTotalTradesIS
-                    && node.BacktestIS.SuccessRatePercent >= (double)configuration.SBMinSuccessRatePercentIS
-                    && node.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
-                    && (!configuration.IsProgressiveness || node.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
+                    passBacktestOS
+                    && passBacktestIS
+                    && node.SuccessRateVariation <= projectConfiguration.NodeBuilderConfiguration.MaxSuccessRateVariation
+                    && (!projectConfiguration.IsProgressiveness || node.ProgressivenessVariation <= projectConfiguration.MaxProgressivenessVariation);
             }
             catch (Exception ex)
             {
@@ -274,9 +228,9 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
         public bool BuildBacktestOfAssemblyNode(
             AssemblyNodeModel assemblyNode,
             IEnumerable<Candle> candles,
-            ConfigurationBaseDTO configuration,
+            ProjectConfigurationDTO projectConfiguration,
             int timeframeId,
-            double meanSuccessRatePercentIS,
+            decimal meanSuccessRatePercentIS,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
@@ -286,8 +240,8 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
             assemblyNode.BacktestIS = Backtest(
                 EntityTypeEnum.AssemblyBuilder,
-                configuration.FromDateIS.Value,
-                configuration.ToDateIS.Value,
+                projectConfiguration.FromDateIS.Value,
+                projectConfiguration.ToDateIS.Value,
                 timeframeId,
                 assemblyNode.ParentNodeData,
                 assemblyNode.ChildNodesData,
@@ -297,15 +251,15 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
             assemblyNode.BacktestStatusIS = BacktestStatus.Completed;
 
-            // Backtest IS Pass Conditions
+            // Backtest IS pass conditions
 
             var passBacktestIS =
-                (assemblyNode.BacktestIS.SuccessRatePercent - meanSuccessRatePercentIS) >= (double)configuration.ABMinImprovePercent
-                && assemblyNode.BacktestIS.TotalTrades >= configuration.ABMinTotalTradesIS;
+                (assemblyNode.BacktestIS.SuccessRatePercent - meanSuccessRatePercentIS) >= projectConfiguration.AssemblyBuilderConfiguration.MinSuccessRateImprovementIS
+                && assemblyNode.BacktestIS.TotalTrades >= projectConfiguration.AssemblyBuilderConfiguration.MinTotalTradesIS;
 
             if (!passBacktestIS)
             {
-                return assemblyNode.WinningStrategy = passBacktestIS;
+                return passBacktestIS;
             }
 
             // Backtest OS
@@ -314,8 +268,8 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
             assemblyNode.BacktestOS = Backtest(
                 EntityTypeEnum.AssemblyBuilder,
-                configuration.FromDateOS.Value,
-                configuration.ToDateOS.Value,
+                projectConfiguration.FromDateOS.Value,
+                projectConfiguration.ToDateOS.Value,
                 timeframeId,
                 assemblyNode.ParentNodeData,
                 assemblyNode.ChildNodesData,
@@ -325,24 +279,29 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
             assemblyNode.BacktestStatusOS = BacktestStatus.Completed;
 
-            // Winning Conditions
+            // Backtest OS pass conditions
 
-            return assemblyNode.WinningStrategy =
-                assemblyNode.SuccessRateVariation <= (double)configuration.SBMaxSuccessRateVariation
-                && (!configuration.IsProgressiveness || assemblyNode.ProgressivenessVariation <= (double)configuration.MaxProgressivenessVariation);
+            var passBacktestOS = (assemblyNode.BacktestOS.SuccessRatePercent - meanSuccessRatePercentIS) >= projectConfiguration.AssemblyBuilderConfiguration.MinSuccessRateImprovementOS;
+
+            // Winning conditions
+
+            return
+                passBacktestIS
+                && passBacktestOS
+                && (!projectConfiguration.IsProgressiveness || assemblyNode.ProgressivenessVariation <= projectConfiguration.MaxProgressivenessVariation);
         }
 
         public bool BuildBacktestOfStrategyNode(
             StrategyNodeModel strategyNode,
             IEnumerable<Candle> mainCandles,
-            ConfigurationBaseDTO configuration,
+            ProjectConfigurationDTO configuration,
             int timeframeId,
             ManualResetEventSlim manualResetEvent,
             CancellationToken cancellationToken)
         {
             try
             {
-                // Out-of-sample backtest
+                // Backtest OS
 
                 strategyNode.BacktestStatusOS = BacktestStatus.Executing;
 
@@ -357,14 +316,18 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 strategyNode.BacktestStatusOS = BacktestStatus.Completed;
 
-                // Out-of-sample pass conditions
+                // Backtest OS pass conditions
 
-                if (strategyNode.BacktestOS.WinningTrades == 0)
+                var passBacktestOS =
+                    strategyNode.BacktestOS.SuccessRatePercent >= configuration.CrossingBuilderConfiguration.MinSuccessRateImprovementOS
+                    && strategyNode.BacktestOS.SuccessRatePercent <= configuration.CrossingBuilderConfiguration.MaxSuccessRateImprovementOS;
+
+                if (!passBacktestOS)
                 {
-                    return false;
+                    return passBacktestOS;
                 }
 
-                // In-sample backtest
+                // Backtest IS
 
                 strategyNode.BacktestStatusIS = BacktestStatus.Executing;
 
@@ -379,14 +342,15 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
 
                 strategyNode.BacktestStatusIS = BacktestStatus.Completed;
 
-                // Winning Conditions
+                // Backtest IS pass conditions
 
-                if (strategyNode.BacktestIS.WinningTrades == 0)
-                {
-                    return false;
-                }
+                var passBacktestIS =
+                    strategyNode.BacktestIS.SuccessRatePercent >= configuration.CrossingBuilderConfiguration.MinSuccessRateImprovementIS
+                    && strategyNode.BacktestIS.SuccessRatePercent <= configuration.CrossingBuilderConfiguration.MaxSuccessRateImprovementIS;
 
-                return true;
+                // Winning conditions
+
+                return passBacktestOS && passBacktestIS;
             }
             catch (Exception ex)
             {
@@ -441,7 +405,7 @@ namespace AdionFA.Infrastructure.NodeBuilder.Services
                     Spread = mainCandlesSample[candleIdx].Spread
                 };
 
-                if (strategyNode.HasParentNodes)
+                if (strategyNode.ParentNodesData.Count > 0)
                 {
                     var parentNodeSignal = false;
                     foreach (var parentNode in strategyNode.ParentNodesData)

@@ -114,8 +114,7 @@
             <Grid Margin="0,20,0,0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding Process}"
-                        IsEnabled="{Binding CanExecute}">
+                        Command="{Binding Process}">
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <iconPacks:FontAwesome Width="14"
@@ -134,67 +133,187 @@
         <Expander Grid.Row="1"
                   Margin="0,10,0,10"
                   Header="Configuration"
-                  IsExpanded="True"
+                  IsExpanded="False"
                   Style="{DynamicResource ControlExpanderStyle}">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <!--  Crossing Historical Data  -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Crossing Historical Data" />
-                        <ComboBox DisplayMemberPath="Name"
-                                  ItemsSource="{Binding CrossingHistoricalData}"
-                                  SelectedValue="{Binding CrossingHistoricalDataId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}"
-                                  SelectedValuePath="Id" />
+                        <Label Content="Maximum Seed" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MinimalSeed}" />
+                    </StackPanel>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimal Seed" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MaximumSeed}" />
+                    </StackPanel>
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Decimal Weka" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.TotalDecimalWeka}" />
                     </StackPanel>
                 </StackPanel>
-                <!--  Load From ...  -->
-                <StackPanel Grid.Column="1"
+
+                <StackPanel Grid.Row="1"
                             Orientation="Horizontal">
+                    <!--  Assembly Nodes UP Target  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Load From" />
-                        <metro:ToggleSwitch Content="Node Builder"
-                                            IsEnabled="{Binding CrossingBuilder.IsStarted}"
-                                            IsOn="{Binding LoadFromNodeBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Toggled="LoadFromNodeBuilderToggleSwitch_Toggled" />
-                        <metro:ToggleSwitch Content="Assembly Builder"
-                                            IsEnabled="{Binding CrossingBuilder.IsStarted}"
-                                            IsOn="{Binding LoadFromAssemblyBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Toggled="LoadFromAssemblyBuilderToggleSwitch_Toggled" />
+                        <Label Content="Strategy Nodes UP Target" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.StrategyNodesUPTarget}" />
                     </StackPanel>
-                    <!--  Assembly Mode  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}"
-                                IsEnabled="{Binding CrossingBuilder.IsStarted}">
-                        <Label Content="Assembly Mode" />
-                        <metro:ToggleSwitch x:Name="assemblyMode"
-                                            Content="Single Assembly"
-                                            IsEnabled="{Binding LoadFromAssemblyBuilder}"
-                                            IsOn="{Binding IsMultiAssemblyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Toggled="MultiAssemblyToggleSwitch_Toggled" />
+
+                    <!--  Assembly Nodes DOWN Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Strategy Nodes DOWN Target" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.StrategyNodesDOWNTarget}" />
+                    </StackPanel>
+
+                    <!--  Total Trades Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Trades Target" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.TotalTradesTarget}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  IS  -->
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
+                    <!--  Minimum Success Rate Improvement IS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate Improvement % (IS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.MinSuccessRateImprovementIS}" />
+                    </StackPanel>
+
+                    <!--  Maximum Success Rate Improvement IS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Success Rate Improvement % (IS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.MaxSuccessRateImprovementIS}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  OS  -->
+                <StackPanel Grid.Row="3"
+                            Orientation="Horizontal">
+                    <!--  Minimum Success Rate Improvement OS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate Improvement % (OS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.MinSuccessRateImprovementOS}" />
+                    </StackPanel>
+
+                    <!--  Maximum Success Rate Improvement OS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Success Rate Improvement % (OS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.MaxSuccessRateImprovementOS}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="5"
+                            Orientation="Horizontal">
+                    <!--  Weka N Total  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka N Total *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaNTotal}" />
+                    </StackPanel>
+                    <!--  Weka Max Ratio  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka Max Ratio *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaMaxRatio}" />
+                    </StackPanel>
+                    <!--  Weka Start Depth  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka Start Depth *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaStartDepth}" />
+                    </StackPanel>
+                    <!--  Weka End Depth  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka End Depth *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaEndDepth}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
         </Expander>
+
         <!--  Crossing Builder  -->
         <metro:MetroHeader Grid.Row="2"
                            Header="Crossing Builder">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--  Winning Strategy Nodes  -->
-                <StackPanel HorizontalAlignment="Left"
-                            Orientation="Horizontal">
+
+                <StackPanel>
                     <!--  Winning Strategy Nodes UP  -->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="winningStrategyNodesUP"
-                                Width="215"
+                                Width="200"
                                 Height="40"
                                 IsEnabled="{Binding CrossingBuilder.WinningStrategyNodesUP.Count, Converter={StaticResource IntToBooleanConverter}}">
                             <StackPanel Orientation="Horizontal">
@@ -222,7 +341,7 @@
                     <!--  Winning Strategy Nodes DOWN  -->
                     <Grid Margin="{StaticResource ColumnMargin}">
                         <Button x:Name="winningStrategyNodesDOWN"
-                                Width="215"
+                                Width="200"
                                 Height="40"
                                 IsEnabled="{Binding CrossingBuilder.WinningStrategyNodesDOWN.Count, Converter={StaticResource IntToBooleanConverter}}">
                             <StackPanel Orientation="Horizontal">
@@ -248,32 +367,65 @@
                         </Button>
                     </Grid>
                 </StackPanel>
-                <!--  Maximum Parallelism Configuration  -->
+
+                <!--  Crossing Historical Data  -->
                 <StackPanel Grid.Column="1"
+                            Margin="{StaticResource ColumnMargin}">
+                    <Label Content="Crossing Historical Data" />
+                    <ComboBox DisplayMemberPath="Name"
+                              ItemsSource="{Binding CrossingHistoricalData}"
+                              SelectedValue="{Binding CrossingHistoricalDataId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}"
+                              SelectedValuePath="Id" />
+                </StackPanel>
+
+                <!--  Load From ...  -->
+                <StackPanel Grid.Column="2"
                             Margin="{StaticResource ColumnMargin}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
                             Orientation="Horizontal">
+                    <StackPanel>
+                        <Label Content="Load From" />
+                        <metro:ToggleSwitch Content="Node Builder"
+                                            IsOn="{Binding LoadFromNodeBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Toggled="LoadFromNodeBuilderToggleSwitch_Toggled" />
+                        <metro:ToggleSwitch Content="Assembly Builder"
+                                            IsOn="{Binding LoadFromAssemblyBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Toggled="LoadFromAssemblyBuilderToggleSwitch_Toggled" />
+                    </StackPanel>
+                    <!--  Assembly Mode  -->
+                    <StackPanel>
+                        <Label Content="Assembly Mode" />
+                        <metro:ToggleSwitch x:Name="assemblyMode"
+                                            Content="Single Assembly"
+                                            IsEnabled="{Binding LoadFromAssemblyBuilder}"
+                                            IsOn="{Binding IsMultiAssemblyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Toggled="MultiAssemblyToggleSwitch_Toggled" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  Maximum Parallelism Configuration  -->
+                <StackPanel Grid.Column="3"
+                            Margin="{StaticResource ColumnMargin}"
+                            HorizontalAlignment="Right">
                     <Label Content="Maximum Parallelism" />
                     <TextBox IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                              Text="{Binding MaxParallelism}" />
                 </StackPanel>
+
                 <!--  Load Crossing Builder  -->
-                <StackPanel Grid.Column="2"
-                            Margin="{StaticResource ColumnMargin}"
-                            HorizontalAlignment="Right">
-                    <Button Width="150"
-                            Height="40"
-                            Command="{Binding LoadCrossingBuilder}">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Width="14"
-                                                        VerticalAlignment="Center"
-                                                        Kind="Upload" />
-                            <Label Content="Load Crossing Builder"
-                                   FontSize="11" />
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+                <Button Grid.Column="4"
+                        Width="150"
+                        Height="40"
+                        Margin="{StaticResource ColumnMargin}"
+                        HorizontalAlignment="Right"
+                        Command="{Binding LoadCrossingBuilder}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Width="14"
+                                                    VerticalAlignment="Center"
+                                                    Kind="Upload" />
+                        <Label Content="Load Crossing Builder"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
             </Grid>
         </metro:MetroHeader>
         <!--  Crossing Builder Processes  -->

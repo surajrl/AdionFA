@@ -1,15 +1,11 @@
 ﻿using AdionFA.Domain.Entities;
-using AdionFA.Domain.Entities.Base;
+using AdionFA.Domain.Entities.Configuration;
 using AdionFA.Domain.Enums;
 using AdionFA.Domain.Enums.Market;
 using AdionFA.Domain.Extensions;
 using AdionFA.Domain.Model;
-using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Ninject;
-using Serilog;
 using System;
 using System.Reflection;
 
@@ -27,17 +23,15 @@ namespace AdionFA.Infrastructure.Persistence
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(_connectionString);
-#if DEBUG
-            optionsBuilder.LogTo(
-                IoC.Kernel.Get<ILogger>().Information,
-                options: DbContextLoggerOptions.None)
-                .EnableSensitiveDataLogging();
-#endif
+            //            optionsBuilder.LogTo(
+            //                IoC.Kernel.Get<ILogger>().Information,
+            //                options: DbContextLoggerOptions.None)
+            //                .EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Entity Configuration
+            // Entity configuration
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
@@ -53,13 +47,13 @@ namespace AdionFA.Infrastructure.Persistence
                     {
                         SettingId = (int)setting,
 
-                        // Reference Data Base
+                        // Reference data base
 
                         Code = meta.Code,
                         Name = meta.Name,
                         Value = meta.Value,
 
-                        // Entity Base
+                        // Entity base
 
                         CreatedOn = DateTime.UtcNow,
                         IsDeleted = false,
@@ -77,13 +71,13 @@ namespace AdionFA.Infrastructure.Persistence
                     {
                         SymbolId = (int)symbol,
 
-                        // Reference Data Base
+                        // Reference data base
 
                         Code = meta.Code,
                         Name = meta.Name,
                         Value = meta.Value,
 
-                        // Entity Base
+                        // Entity base
 
                         CreatedOn = DateTime.UtcNow,
                         IsDeleted = false,
@@ -101,13 +95,13 @@ namespace AdionFA.Infrastructure.Persistence
                     {
                         TimeframeId = (int)timeframe,
 
-                        // Reference Data Base
+                        // Reference data base
 
                         Code = meta.Code,
                         Name = meta.Name,
                         Value = meta.Value,
 
-                        // Entity Base
+                        // Entity base
 
                         CreatedOn = DateTime.UtcNow,
                         IsDeleted = false,
@@ -125,12 +119,12 @@ namespace AdionFA.Infrastructure.Persistence
                     {
                         MarketId = (int)market,
 
-                        // Reference Data Base
+                        // Reference data base
 
                         Code = meta.Code,
                         Name = meta.Name,
 
-                        // Entity Base
+                        // Entity base
 
                         CreatedOn = DateTime.UtcNow,
                         IsDeleted = false,
@@ -138,7 +132,7 @@ namespace AdionFA.Infrastructure.Persistence
                 );
             }
 
-            // Market Region
+            // Market region
 
             foreach (var mr in Enum.GetValues(typeof(MarketRegionEnum)))
             {
@@ -148,12 +142,12 @@ namespace AdionFA.Infrastructure.Persistence
                     {
                         MarketRegionId = (int)mr,
 
-                        // Reference Data Base
+                        // Reference data base
 
                         Code = meta.Code,
                         Name = meta.Name,
 
-                        // Entity Base
+                        // Entity base
 
                         CreatedOn = DateTime.UtcNow,
                         IsDeleted = false,
@@ -161,7 +155,7 @@ namespace AdionFA.Infrastructure.Persistence
                 );
             }
 
-            // Global Configuration
+            // Global configuration
 
             modelBuilder.Entity<GlobalConfiguration>().HasData(new GlobalConfiguration
             {
@@ -189,12 +183,6 @@ namespace AdionFA.Infrastructure.Persistence
 
                 ExtractorMinVariation = 50,
 
-                // MetaTrader
-
-                ExpertAdvisorHost = null,
-                ExpertAdvisorPublisherPort = null,
-                ExpertAdvisorResponsePort = null,
-
                 // Weka
 
                 TotalDecimalWeka = 5,
@@ -208,87 +196,105 @@ namespace AdionFA.Infrastructure.Persistence
 
                 MaxCorrelationPercent = (decimal)2.0,
 
-                // Node builder
-
-                NodeBuilderConfiguration = new NodeBuilderConfigurationBase
-                {
-                    MinTotalTradesIS = 200,
-                    MinSuccessRatePercentIS = (decimal)40.0,
-
-                    MinTotalTradesOS = 100,
-                    MinSuccessRatePercentOS = (decimal)40.0,
-
-                    MaxSuccessRateVariation = (decimal)5.0,
-
-                    WinningNodesUPTarget = 6,
-                    WinningNodesDOWNTarget = 6,
-                    TotalTradesTarget = 100,
-
-                    WekaNTotal = 300,
-                    WekaStartDepth = 4,
-                    WekaEndDepth = 12,
-                    WekaMaxRatio = (decimal)1.5,
-                },
-
-                // Assembly builder
-
-                AssemblyBuilderConfiguration = new AssemblyBuilderConfigurationBase
-                {
-                    MinTotalTradesIS = 100,
-
-                    MinSuccessRateImprovementIS = (decimal)2.0,
-                    MinSuccessRateImprovementOS = (decimal)2.0,
-
-                    MaxSuccessRateImprovementIS = (decimal)4.0,
-                    MaxSuccessRateImprovementOS = (decimal)4.0,
-
-                    WekaNTotal = 300,
-                    WekaStartDepth = 1,
-                    WekaEndDepth = 6,
-                    WekaMaxRatio = (decimal)1.5,
-                },
-
-                // Crossing builder
-
-                CrossingBuilderConfiguration = new CrossingBuilderConfigurationBase
-                {
-                    MinSuccessRateImprovementIS = (decimal)2.0,
-                    MinSuccessRateImprovementOS = (decimal)2.0,
-
-                    MaxSuccessRateImprovementIS = (decimal)4.0,
-                    MaxSuccessRateImprovementOS = (decimal)4.0,
-
-                    WekaNTotal = 300,
-                    WekaStartDepth = 1,
-                    WekaEndDepth = 6,
-                    WekaMaxRatio = (decimal)1.5,
-                },
-
-                // Entity Base
+                NodeBuilderConfigurationId = 1,
+                AssemblyBuilderConfigurationId = 1,
+                CrossingBuilderConfigurationId = 1,
 
                 CreatedOn = DateTime.UtcNow,
                 IsDeleted = false,
             });
 
-            // Schedule Configuration
+            modelBuilder.Entity<NodeBuilderConfiguration>().HasData(new NodeBuilderConfiguration
+            {
+                NodeBuilderConfigurationId = 1,
+
+                NodesUPTarget = 6,
+                NodesDOWNTarget = 6,
+                TotalTradesTarget = 100,
+
+                MinTotalTradesIS = 200,
+                MinSuccessRatePercentIS = (decimal)40.0,
+
+                MinTotalTradesOS = 100,
+                MinSuccessRatePercentOS = (decimal)40.0,
+
+                MaxSuccessRateVariation = (decimal)5.0,
+                WekaNTotal = 300,
+                WekaStartDepth = 4,
+                WekaEndDepth = 12,
+                WekaMaxRatio = (decimal)1.5,
+
+                CreatedOn = DateTime.UtcNow,
+                IsDeleted = false,
+            });
+
+            modelBuilder.Entity<AssemblyBuilderConfiguration>().HasData(new AssemblyBuilderConfiguration
+            {
+                AssemblyBuilderConfigurationId = 1,
+
+                AssemblyNodesUPTarget = 6,
+                AssemblyNodesDOWNTarget = 6,
+                TotalTradesTarget = 1000,
+
+                MinTotalTradesIS = 100,
+
+                MinSuccessRateImprovementIS = (decimal)2.0,
+                MinSuccessRateImprovementOS = (decimal)2.0,
+
+                MaxSuccessRateImprovementIS = (decimal)4.0,
+                MaxSuccessRateImprovementOS = (decimal)4.0,
+
+                WekaNTotal = 300,
+                WekaStartDepth = 1,
+                WekaEndDepth = 6,
+                WekaMaxRatio = (decimal)1.5,
+
+                CreatedOn = DateTime.UtcNow,
+                IsDeleted = false,
+            });
+
+            modelBuilder.Entity<CrossingBuilderConfiguration>().HasData(new CrossingBuilderConfiguration
+            {
+                CrossingBuilderConfigurationId = 1,
+
+                StrategyNodesUPTarget = 6,
+                StrategyNodesDOWNTarget = 6,
+                TotalTradesTarget = 1000,
+
+                MinSuccessRateImprovementIS = (decimal)2.0,
+                MinSuccessRateImprovementOS = (decimal)2.0,
+
+                MaxSuccessRateImprovementIS = (decimal)4.0,
+                MaxSuccessRateImprovementOS = (decimal)4.0,
+
+                WekaNTotal = 300,
+                WekaStartDepth = 1,
+                WekaEndDepth = 6,
+                WekaMaxRatio = (decimal)1.5,
+
+                CreatedOn = DateTime.UtcNow,
+                IsDeleted = false,
+            });
+
+            // Schedule configuration
 
             modelBuilder.Entity<GlobalScheduleConfiguration>().HasData(
                 new GlobalScheduleConfiguration
                 {
                     GlobalScheduleConfigurationId = 1,
 
-                    // Configuration
+                    // Global configuration
 
                     GlobalConfigurationId = 1,
 
-                    // Market Region
+                    // Market region
 
                     MarketRegionId = (int)MarketRegionEnum.America,
 
                     FromTimeInSeconds = 54000,
                     ToTimeInSeconds = 82800,
 
-                    // Entity Base
+                    // Entity base
 
                     CreatedOn = DateTime.UtcNow,
                     IsDeleted = false,
@@ -301,14 +307,14 @@ namespace AdionFA.Infrastructure.Persistence
 
                     GlobalConfigurationId = 1,
 
-                    // Market Region
+                    // Market region
 
                     MarketRegionId = (int)MarketRegionEnum.Europe,
 
                     FromTimeInSeconds = 32400,
                     ToTimeInSeconds = 64800,
 
-                    // Entity Base
+                    // Entity base
 
                     CreatedOn = DateTime.UtcNow,
                     IsDeleted = false,
@@ -321,13 +327,13 @@ namespace AdionFA.Infrastructure.Persistence
 
                     GlobalConfigurationId = 1,
 
-                    // Market Region
+                    // Market region
 
                     MarketRegionId = (int)MarketRegionEnum.Asia,
                     FromTimeInSeconds = 3600,
                     ToTimeInSeconds = 32400,
 
-                    // Entity Base
+                    // Entity base
 
                     CreatedOn = DateTime.UtcNow,
                     IsDeleted = false,
@@ -338,6 +344,10 @@ namespace AdionFA.Infrastructure.Persistence
         // Entities
 
         // Common
+
+        public DbSet<NodeBuilderConfiguration> NodeBuilderConfiguration { get; set; }
+        public DbSet<AssemblyBuilderConfiguration> AssemblyBuilderConfiguration { get; set; }
+        public DbSet<CrossingBuilderConfiguration> CrossingBuilderConfiguration { get; set; }
 
         public DbSet<Setting> Settings { get; set; }
         public DbSet<GlobalConfiguration> GlobalConfigurations { get; set; }

@@ -1,13 +1,35 @@
-﻿using AdionFA.Infrastructure.Modules.Strategy;
+﻿using AdionFA.Domain.Enums;
+using AdionFA.Infrastructure.Modules.Strategy;
+using Prism.Mvvm;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AdionFA.Infrastructure.NodeBuilder.Model
 {
-    public class NodeBuilderModel
+    public class NodeBuilderModel : BindableBase
     {
-        public List<NodeModel> WinningNodesUP { get; set; } = new();
-        public List<NodeModel> WinningNodesDOWN { get; set; } = new();
+        public NodeBuilderModel()
+        {
+            AllWinningNodes = new();
+        }
 
-        public bool HasWinningNodes => WinningNodesUP.Count > 0 || WinningNodesDOWN.Count > 0;
+        public IReadOnlyCollection<SingleNodeModel> WinningNodesUP
+        {
+            get
+            {
+                return AllWinningNodes.Where(winningNode => winningNode.Label == Label.UP).ToList();
+            }
+        }
+
+        public IReadOnlyCollection<SingleNodeModel> WinningNodesDOWN
+        {
+            get
+            {
+                return AllWinningNodes.Where(winningNode => winningNode.Label == Label.DOWN).ToList();
+            }
+        }
+
+        public ObservableCollection<SingleNodeModel> AllWinningNodes { get; set; }
     }
 }

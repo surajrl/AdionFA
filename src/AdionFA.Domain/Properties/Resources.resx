@@ -156,6 +156,12 @@
   <data name="MustBeLessOneAndTwo" xml:space="preserve">
     <value>Must be less than one</value>
   </data>
+  <data name="NodeBuilder" xml:space="preserve">
+    <value>Node Builder</value>
+  </data>
+  <data name="NodeBuilderCompleted" xml:space="preserve">
+    <value>Node Builder Completed</value>
+  </data>
   <data name="NotEmpty" xml:space="preserve">
     <value>Is required</value>
   </data>
@@ -176,12 +182,6 @@
   </data>
   <data name="StartDate" xml:space="preserve">
     <value>Start Date</value>
-  </data>
-  <data name="StrategyBuilder" xml:space="preserve">
-    <value>Strategy Builder</value>
-  </data>
-  <data name="StrategyBuilderCompleted" xml:space="preserve">
-    <value>Strategy Builder Completed</value>
   </data>
   <data name="SuccessEntitySave" xml:space="preserve">
     <value>Saved successfully</value>

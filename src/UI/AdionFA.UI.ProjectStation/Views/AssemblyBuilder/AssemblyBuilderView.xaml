@@ -139,107 +139,168 @@
                   Style="{DynamicResource ControlExpanderStyle}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+
                 <StackPanel Orientation="Horizontal">
-                    <!--  Minimum Total Trades IS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Total Trades (IS)" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.ABMinTotalTradesIS}" />
-                    </StackPanel>
-                    <!--  Minimum Success Rate Improvement IS  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimum Success Rate Improvement (IS) %" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.ABMinImprovePercent}" />
-                    </StackPanel>
-                    <!--  Maximum Correlation Percent  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Correlation %" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.SBMaxCorrelationPercent}" />
-                    </StackPanel>
-                </StackPanel>
-                <!--  Weka  -->
-                <StackPanel Grid.Row="1"
-                            Orientation="Horizontal">
-                    <!--  Total Instances  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Total Instances" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.TotalInstanceWeka}" />
-                    </StackPanel>
-                    <!--  N Total  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="N Total" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.ABWekaNTotalTree}" />
-                    </StackPanel>
-                    <!--  Maximum Ratio  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Ratio" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.ABWekaMaxRatioTree}" />
-                    </StackPanel>
-                    <!--  Depth Weka  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Depth" />
-                        <TextBox Width="225"
-                                 Focusable="False"
-                                 IsEnabled="False"
-                                 IsReadOnly="True"
-                                 Text="{Binding ProjectConfiguration.DepthWeka}" />
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Grid.Row="2"
-                            Orientation="Horizontal">
-                    <!--  Minimal Seed  -->
-                    <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Minimal Seed" />
-                        <TextBox Width="225"
+                        <Label Content="Maximum Seed" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.MinimalSeed}" />
                     </StackPanel>
-                    <!--  Maximum Seed  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Maximum Seed" />
-                        <TextBox Width="225"
+                        <Label Content="Minimal Seed" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.MaximumSeed}" />
                     </StackPanel>
-                    <!--  Total Decimal Weka  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
-                        <Label Content="Decimals" />
-                        <TextBox Width="225"
+                        <Label Content="Total Decimal Weka" />
+                        <TextBox Width="250"
                                  Focusable="False"
                                  IsEnabled="False"
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.TotalDecimalWeka}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal">
+                    <!--  Assembly Nodes UP Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Assembly Nodes UP Target *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.AssemblyNodesUPTarget}" />
+                    </StackPanel>
+
+                    <!--  Assembly Nodes DOWN Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Assembly Nodes DOWN Target *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.AssemblyNodesDOWNTarget}" />
+                    </StackPanel>
+
+                    <!--  Total Trades Target  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Total Trades Target *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.TotalTradesTarget}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  IS  -->
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
+                    <!--  Minimum Success Rate Improvement IS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate Improvement % (IS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.MinSuccessRateImprovementIS}" />
+                    </StackPanel>
+
+                    <!--  Maximum Success Rate Improvement IS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Success Rate Improvement % (IS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.MaxSuccessRateImprovementIS}" />
+                    </StackPanel>
+
+                    <!--  Minimum Total Trades iS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Total Trades (IS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.MinTotalTradesIS}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  OS  -->
+                <StackPanel Grid.Row="3"
+                            Orientation="Horizontal">
+
+                    <!--  Minimum Success Rate Improvement OS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Minimum Success Rate Improvement % (OS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.MinSuccessRateImprovementOS}" />
+                    </StackPanel>
+                    <!--  Maximum Success Rate Improvement OS  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Success Rate Improvement % (OS)" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.MaxSuccessRateImprovementOS}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="5"
+                            Orientation="Horizontal">
+                    <!--  Weka N Total  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka N Total *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaNTotal}" />
+                    </StackPanel>
+                    <!--  Weka Max Ratio  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka Max Ratio *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaMaxRatio}" />
+                    </StackPanel>
+                    <!--  Weka Start Depth  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka Start Depth *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaStartDepth}" />
+                    </StackPanel>
+                    <!--  Weka End Depth  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Weka End Depth *" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaEndDepth}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>

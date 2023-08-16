@@ -9,8 +9,8 @@ namespace AdionFA.UI.ProjectStation.Validators
         public NodeBuilderValidator()
         {
             RuleFor(model => model.NodeBuilderProcesses)
-                .NotEmpty()
-                .WithMessage("Add extractor templates");
+                .NotNull()
+                .NotEmpty();
 
             RuleFor(model => model.MaxParallelism)
                 .GreaterThan(0);

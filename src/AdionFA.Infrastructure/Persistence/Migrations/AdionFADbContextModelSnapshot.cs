@@ -17,28 +17,243 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
 
+            modelBuilder.Entity("AdionFA.Domain.Entities.Configuration.AssemblyBuilderConfiguration", b =>
+                {
+                    b.Property<int>("AssemblyBuilderConfigurationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AssemblyNodesDOWNTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AssemblyNodesUPTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("MaxSuccessRateImprovementIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MaxSuccessRateImprovementOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MinSuccessRateImprovementIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MinSuccessRateImprovementOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MinTotalTradesIS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalTradesTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WekaEndDepth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("WekaMaxRatio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WekaNTotal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WekaStartDepth")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AssemblyBuilderConfigurationId");
+
+                    b.ToTable("AssemblyBuilderConfiguration");
+
+                    b.HasData(
+                        new
+                        {
+                            AssemblyBuilderConfigurationId = 1,
+                            AssemblyNodesDOWNTarget = 6,
+                            AssemblyNodesUPTarget = 6,
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8578),
+                            IsDeleted = false,
+                            MaxSuccessRateImprovementIS = 4m,
+                            MaxSuccessRateImprovementOS = 4m,
+                            MinSuccessRateImprovementIS = 2m,
+                            MinSuccessRateImprovementOS = 2m,
+                            MinTotalTradesIS = 100,
+                            TotalTradesTarget = 1000,
+                            WekaEndDepth = 6,
+                            WekaMaxRatio = 1.5m,
+                            WekaNTotal = 300,
+                            WekaStartDepth = 1
+                        });
+                });
+
+            modelBuilder.Entity("AdionFA.Domain.Entities.Configuration.CrossingBuilderConfiguration", b =>
+                {
+                    b.Property<int>("CrossingBuilderConfigurationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("MaxSuccessRateImprovementIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MaxSuccessRateImprovementOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MinSuccessRateImprovementIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MinSuccessRateImprovementOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("StrategyNodesDOWNTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("StrategyNodesUPTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalTradesTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WekaEndDepth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("WekaMaxRatio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WekaNTotal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WekaStartDepth")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CrossingBuilderConfigurationId");
+
+                    b.ToTable("CrossingBuilderConfiguration");
+
+                    b.HasData(
+                        new
+                        {
+                            CrossingBuilderConfigurationId = 1,
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8608),
+                            IsDeleted = false,
+                            MaxSuccessRateImprovementIS = 4m,
+                            MaxSuccessRateImprovementOS = 4m,
+                            MinSuccessRateImprovementIS = 2m,
+                            MinSuccessRateImprovementOS = 2m,
+                            StrategyNodesDOWNTarget = 6,
+                            StrategyNodesUPTarget = 6,
+                            TotalTradesTarget = 1000,
+                            WekaEndDepth = 6,
+                            WekaMaxRatio = 1.5m,
+                            WekaNTotal = 300,
+                            WekaStartDepth = 1
+                        });
+                });
+
+            modelBuilder.Entity("AdionFA.Domain.Entities.Configuration.NodeBuilderConfiguration", b =>
+                {
+                    b.Property<int>("NodeBuilderConfigurationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("MaxSuccessRateVariation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MinSuccessRatePercentIS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MinSuccessRatePercentOS")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MinTotalTradesIS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinTotalTradesOS")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NodesDOWNTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NodesUPTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalTradesTarget")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WekaEndDepth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("WekaMaxRatio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WekaNTotal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WekaStartDepth")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("NodeBuilderConfigurationId");
+
+                    b.ToTable("NodeBuilderConfiguration");
+
+                    b.HasData(
+                        new
+                        {
+                            NodeBuilderConfigurationId = 1,
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8547),
+                            IsDeleted = false,
+                            MaxSuccessRateVariation = 5m,
+                            MinSuccessRatePercentIS = 40m,
+                            MinSuccessRatePercentOS = 40m,
+                            MinTotalTradesIS = 200,
+                            MinTotalTradesOS = 100,
+                            NodesDOWNTarget = 6,
+                            NodesUPTarget = 6,
+                            TotalTradesTarget = 100,
+                            WekaEndDepth = 12,
+                            WekaMaxRatio = 1.5m,
+                            WekaNTotal = 300,
+                            WekaStartDepth = 4
+                        });
+                });
+
             modelBuilder.Entity("AdionFA.Domain.Entities.GlobalConfiguration", b =>
                 {
                     b.Property<int>("GlobalConfigurationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("ABMinImprovePercent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ABMinTotalTradesIS")
+                    b.Property<int>("AssemblyBuilderConfigurationId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("ABWekaMaxRatioTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("ABWekaNTotalTree")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DepthWeka")
+                    b.Property<int>("CrossingBuilderConfigurationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ExpertAdvisorHost")
@@ -65,10 +280,10 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsProgressiveness")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("MaxProgressivenessVariation")
+                    b.Property<decimal>("MaxCorrelationPercent")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("MaxRatioTree")
+                    b.Property<decimal>("MaxProgressivenessVariation")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MaximumSeed")
@@ -77,34 +292,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("MinimalSeed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("NTotalTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMaxCorrelationPercent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMaxSuccessRateVariation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMinSuccessRatePercentIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMinSuccessRatePercentOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SBMinTotalTradesIS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBMinTotalTradesOS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBTotalTradesTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBWinningStrategyDOWNTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBWinningStrategyUPTarget")
+                    b.Property<int>("NodeBuilderConfigurationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("ToDateIS")
@@ -116,9 +304,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("TotalDecimalWeka")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TotalInstanceWeka")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
@@ -127,40 +312,33 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
 
                     b.HasKey("GlobalConfigurationId");
 
+                    b.HasIndex("AssemblyBuilderConfigurationId");
+
+                    b.HasIndex("CrossingBuilderConfigurationId");
+
+                    b.HasIndex("NodeBuilderConfigurationId");
+
                     b.ToTable("GlobalConfiguration");
 
                     b.HasData(
                         new
                         {
                             GlobalConfigurationId = 1,
-                            ABMinImprovePercent = 5m,
-                            ABMinTotalTradesIS = 300,
-                            ABWekaMaxRatioTree = 1.5m,
-                            ABWekaNTotalTree = 300m,
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5739),
-                            DepthWeka = 6,
-                            ExpertAdvisorHost = "192.168.50.137",
+                            AssemblyBuilderConfigurationId = 1,
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8509),
+                            CrossingBuilderConfigurationId = 1,
+                            ExpertAdvisorHost = "192.168.1.35",
                             ExpertAdvisorPublisherPort = "5551",
                             ExpertAdvisorResponsePort = "5550",
                             ExtractorMinVariation = 50,
                             IsDeleted = false,
                             IsProgressiveness = false,
+                            MaxCorrelationPercent = 2m,
                             MaxProgressivenessVariation = 2m,
-                            MaxRatioTree = 1.5m,
                             MaximumSeed = 1000000,
                             MinimalSeed = 100,
-                            NTotalTree = 300m,
-                            SBMaxCorrelationPercent = 2m,
-                            SBMaxSuccessRateVariation = 4m,
-                            SBMinSuccessRatePercentIS = 55m,
-                            SBMinSuccessRatePercentOS = 55m,
-                            SBMinTotalTradesIS = 300,
-                            SBMinTotalTradesOS = 100,
-                            SBTotalTradesTarget = 300,
-                            SBWinningStrategyDOWNTarget = 6,
-                            SBWinningStrategyUPTarget = 6,
+                            NodeBuilderConfigurationId = 1,
                             TotalDecimalWeka = 5,
-                            TotalInstanceWeka = 1,
                             WithoutSchedule = true
                         });
                 });
@@ -204,7 +382,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         new
                         {
                             GlobalScheduleConfigurationId = 1,
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5766),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8634),
                             FromTimeInSeconds = 54000,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -214,7 +392,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         new
                         {
                             GlobalScheduleConfigurationId = 2,
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5771),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8636),
                             FromTimeInSeconds = 32400,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -224,7 +402,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         new
                         {
                             GlobalScheduleConfigurationId = 3,
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5773),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8637),
                             FromTimeInSeconds = 3600,
                             GlobalConfigurationId = 1,
                             IsDeleted = false,
@@ -353,7 +531,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketId = 1,
                             Code = "Forex",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5171),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(7971),
                             IsDeleted = false,
                             Name = "Forex"
                         });
@@ -392,7 +570,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketRegionId = 1,
                             Code = "America",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5407),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8187),
                             IsDeleted = false,
                             Name = "America"
                         },
@@ -400,7 +578,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketRegionId = 2,
                             Code = "Europe",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5561),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8328),
                             IsDeleted = false,
                             Name = "Europe"
                         },
@@ -408,7 +586,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             MarketRegionId = 3,
                             Code = "Asia",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(5694),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(8467),
                             IsDeleted = false,
                             Name = "Asia"
                         });
@@ -454,22 +632,13 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("ABMinImprovePercent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ABMinTotalTradesIS")
+                    b.Property<int>("AssemblyBuilderConfigurationId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("ABWekaMaxRatioTree")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("ABWekaNTotalTree")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DepthWeka")
+                    b.Property<int>("CrossingBuilderConfigurationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ExpertAdvisorHost")
@@ -496,10 +665,10 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsProgressiveness")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("MaxProgressivenessVariation")
+                    b.Property<decimal>("MaxCorrelationPercent")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("MaxRatioTree")
+                    b.Property<decimal>("MaxProgressivenessVariation")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MaximumSeed")
@@ -508,37 +677,10 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("MinimalSeed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("NTotalTree")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("NodeBuilderConfigurationId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("SBMaxCorrelationPercent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMaxSuccessRateVariation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMinSuccessRatePercentIS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("SBMinSuccessRatePercentOS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SBMinTotalTradesIS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBMinTotalTradesOS")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBTotalTradesTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBWinningStrategyDOWNTarget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SBWinningStrategyUPTarget")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("ToDateIS")
@@ -550,9 +692,6 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                     b.Property<int>("TotalDecimalWeka")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TotalInstanceWeka")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
@@ -560,6 +699,12 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProjectConfigurationId");
+
+                    b.HasIndex("AssemblyBuilderConfigurationId");
+
+                    b.HasIndex("CrossingBuilderConfigurationId");
+
+                    b.HasIndex("NodeBuilderConfigurationId");
 
                     b.HasIndex("ProjectId")
                         .IsUnique();
@@ -636,7 +781,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 1,
                             Code = "Culture",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2497),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(5220),
                             IsDeleted = false,
                             Name = "Culture",
                             Value = "eng"
@@ -645,7 +790,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 2,
                             Code = "Theme",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2690),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(5421),
                             IsDeleted = false,
                             Name = "Theme",
                             Value = "Light"
@@ -654,7 +799,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 3,
                             Code = "Color",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2831),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(5570),
                             IsDeleted = false,
                             Name = "Color",
                             Value = "Orange"
@@ -663,7 +808,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 4,
                             Code = "DefaultWorkspace",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(2982),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(5727),
                             IsDeleted = false,
                             Name = "DefaultWorkspace",
                             Value = ""
@@ -672,7 +817,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 5,
                             Code = "Host",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3126),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(5871),
                             IsDeleted = false,
                             Name = "Host",
                             Value = "192.168.50.137"
@@ -681,7 +826,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SettingId = 6,
                             Code = "Port",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3273),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(6025),
                             IsDeleted = false,
                             Name = "Port",
                             Value = "5555"
@@ -721,7 +866,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             SymbolId = 1,
                             Code = "EURUSD",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3522),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(6272),
                             IsDeleted = false,
                             Name = "EURUSD",
                             Value = ""
@@ -761,7 +906,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 1,
                             Code = "M1",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3800),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(6553),
                             IsDeleted = false,
                             Name = "1 Minute",
                             Value = "1"
@@ -770,7 +915,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 2,
                             Code = "M5",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(3955),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(6709),
                             IsDeleted = false,
                             Name = "5 Minutes",
                             Value = "5"
@@ -779,7 +924,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 3,
                             Code = "M15",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4094),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(6847),
                             IsDeleted = false,
                             Name = "15 Minutes",
                             Value = "15"
@@ -788,7 +933,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 4,
                             Code = "M30",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4239),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(6989),
                             IsDeleted = false,
                             Name = "30 Minutes",
                             Value = "30"
@@ -797,7 +942,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 5,
                             Code = "H1",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4387),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(7169),
                             IsDeleted = false,
                             Name = "1 Hour",
                             Value = "16385"
@@ -806,7 +951,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 6,
                             Code = "H4",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4538),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(7322),
                             IsDeleted = false,
                             Name = "4 Hours",
                             Value = "16388"
@@ -815,7 +960,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 7,
                             Code = "D1",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4672),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(7467),
                             IsDeleted = false,
                             Name = "Daily",
                             Value = "16408"
@@ -824,7 +969,7 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 8,
                             Code = "W1",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4808),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(7605),
                             IsDeleted = false,
                             Name = "Weekly",
                             Value = "32769"
@@ -833,11 +978,38 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
                         {
                             TimeframeId = 9,
                             Code = "MN1",
-                            CreatedOn = new DateTime(2023, 7, 29, 16, 20, 35, 587, DateTimeKind.Utc).AddTicks(4960),
+                            CreatedOn = new DateTime(2023, 8, 10, 20, 39, 40, 35, DateTimeKind.Utc).AddTicks(7755),
                             IsDeleted = false,
                             Name = "Monthly",
                             Value = "49153"
                         });
+                });
+
+            modelBuilder.Entity("AdionFA.Domain.Entities.GlobalConfiguration", b =>
+                {
+                    b.HasOne("AdionFA.Domain.Entities.Configuration.AssemblyBuilderConfiguration", "AssemblyBuilderConfiguration")
+                        .WithMany()
+                        .HasForeignKey("AssemblyBuilderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdionFA.Domain.Entities.Configuration.CrossingBuilderConfiguration", "CrossingBuilderConfiguration")
+                        .WithMany()
+                        .HasForeignKey("CrossingBuilderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdionFA.Domain.Entities.Configuration.NodeBuilderConfiguration", "NodeBuilderConfiguration")
+                        .WithMany()
+                        .HasForeignKey("NodeBuilderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssemblyBuilderConfiguration");
+
+                    b.Navigation("CrossingBuilderConfiguration");
+
+                    b.Navigation("NodeBuilderConfiguration");
                 });
 
             modelBuilder.Entity("AdionFA.Domain.Entities.GlobalScheduleConfiguration", b =>
@@ -910,11 +1082,35 @@ namespace AdionFA.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("AdionFA.Domain.Entities.ProjectConfiguration", b =>
                 {
+                    b.HasOne("AdionFA.Domain.Entities.Configuration.AssemblyBuilderConfiguration", "AssemblyBuilderConfiguration")
+                        .WithMany()
+                        .HasForeignKey("AssemblyBuilderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdionFA.Domain.Entities.Configuration.CrossingBuilderConfiguration", "CrossingBuilderConfiguration")
+                        .WithMany()
+                        .HasForeignKey("CrossingBuilderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdionFA.Domain.Entities.Configuration.NodeBuilderConfiguration", "NodeBuilderConfiguration")
+                        .WithMany()
+                        .HasForeignKey("NodeBuilderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AdionFA.Domain.Entities.Project", "Project")
                         .WithOne("ProjectConfiguration")
                         .HasForeignKey("AdionFA.Domain.Entities.ProjectConfiguration", "ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AssemblyBuilderConfiguration");
+
+                    b.Navigation("CrossingBuilderConfiguration");
+
+                    b.Navigation("NodeBuilderConfiguration");
 
                     b.Navigation("Project");
                 });

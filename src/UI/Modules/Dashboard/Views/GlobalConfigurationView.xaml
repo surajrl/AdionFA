@@ -89,6 +89,9 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!--  Schedule  -->
@@ -137,7 +140,6 @@
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
-
                         </StackPanel>
                     </Grid>
                 </metro:MetroHeader>
@@ -160,7 +162,6 @@
                     </StackPanel>
 
                 </metro:MetroHeader>
-
 
                 <!--  MetaTrader  -->
                 <metro:MetroHeader Grid.Row="2"
@@ -193,9 +194,7 @@
                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}" />
                         </StackPanel>
                     </StackPanel>
-
                 </metro:MetroHeader>
-
 
                 <!--  Weka  -->
                 <metro:MetroHeader Grid.Row="3"
@@ -208,50 +207,6 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Orientation="Horizontal">
-                            <!--  Total Instances  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Total Instances *" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Numbers"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.TotalInstanceWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-                            <!--  N Total  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="N Total *" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Decimal"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.NTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-                            <!--  Depth  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Maximum Depth *" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Numbers"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.DepthWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-                            <!--  Maximum Ratio  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Maximum Ratio *" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Decimal"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.MaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Horizontal">
                             <!--  Minimal Seed  -->
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
@@ -261,7 +216,6 @@
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                      Value="{Binding GlobalConfiguration.MinimalSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
-
                             <!--  Maximum Seed  -->
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
@@ -271,7 +225,6 @@
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                      Value="{Binding GlobalConfiguration.MaximumSeed, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
-
                             <!--  Decimals  -->
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
@@ -281,14 +234,53 @@
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
                                                      Value="{Binding GlobalConfiguration.TotalDecimalWeka, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
-
                         </StackPanel>
                     </Grid>
                 </metro:MetroHeader>
 
+                <!--  Builder  -->
+                <metro:MetroHeader Grid.Row="5"
+                                   Margin="0,10,0,10"
+                                   Header="Builder">
+                    <StackPanel Orientation="Horizontal">
+                        <!--  Maximum Correlation Percent  -->
+                        <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label Content="Maximum Correlation % *" />
+                            <metro:NumericUpDown Minimum="0"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding GlobalConfiguration.MaxCorrelationPercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
 
+                        <!--  Activate Progressiveness  -->
+                        <StackPanel Margin="{StaticResource ColumnMargin}">
+                            <Label Content="Activate Progressiveness" />
+                            <metro:ToggleSwitch IsOn="{Binding GlobalConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Toggled="ProgressivenessToggleSwitch_Toggled" />
+                        </StackPanel>
+
+                        <!--  Progressiveness  -->
+                        <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label IsEnabled="{Binding GlobalConfiguration.IsProgressiveness}">
+                                <TextBlock>
+                                    <Run Text="Maximum Progressiveness Variation" />
+                                    <Run Text="{Binding ElementName=globalConfigurationView, Path=LabelRequiredProgressiveness}" />
+                                </TextBlock>
+                            </Label>
+                            <metro:NumericUpDown IsEnabled="{Binding GlobalConfiguration.IsProgressiveness}"
+                                                 Minimum="0"
+                                                 NumericInputMode="Decimal"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding GlobalConfiguration.MaxProgressivenessVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
+
+
+                    </StackPanel>
+                </metro:MetroHeader>
                 <!--  Node Builder  -->
-                <metro:MetroHeader Grid.Row="4"
+                <metro:MetroHeader Grid.Row="6"
                                    Margin="0,10,0,10"
                                    Header="Node Builder">
                     <Grid>
@@ -297,28 +289,28 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <!--  Target  -->
                         <StackPanel Orientation="Horizontal">
-                            <!--  Winning Nodes UP Target  -->
+                            <!--  Nodes UP Target  -->
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Winning Nodes UP Target *" />
+                                <Label Content="Nodes UP Target *" />
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBWinningStrategyUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.NodesUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
 
-                            <!--  Winning Nodes DOWN Target  -->
+                            <!--  Nodes DOWN Target  -->
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Winning Nodes DOWN Target *" />
+                                <Label Content="Nodes DOWN Target *" />
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBWinningStrategyDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.NodesDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
 
                             <!--  Transactions Target  -->
@@ -328,65 +320,12 @@
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBTotalTradesTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.TotalTradesTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
-
                         </StackPanel>
-
-
-                        <!--  Variation  -->
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Horizontal">
-                            <!--  Maximum Success Rate Variation  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Maximum Success Rate Variation *" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Decimal"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBMaxSuccessRateVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-                            <!--  Progressiveness  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Activate Progressiveness" />
-                                <metro:ToggleSwitch Margin="0,-3"
-                                                    IsOn="{Binding GlobalConfiguration.IsProgressiveness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    Toggled="ProgressivenessToggleSwitch_Toggled" />
-                            </StackPanel>
-
-                            <!--  Progressiveness  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label IsEnabled="{Binding GlobalConfiguration.IsProgressiveness}">
-                                    <TextBlock>
-                                        <Run Text="Maximum Progressiveness Variation" />
-                                        <Run Text="{Binding ElementName=globalConfigurationView, Path=LabelRequiredProgressiveness}" />
-                                    </TextBlock>
-                                </Label>
-                                <metro:NumericUpDown IsEnabled="{Binding GlobalConfiguration.IsProgressiveness}"
-                                                     Minimum="0"
-                                                     NumericInputMode="Decimal"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.MaxProgressivenessVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-                            <!--  Maximum Correlation Percent  -->
-                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Maximum Correlation % *" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Numbers"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBMaxCorrelationPercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-                        </StackPanel>
-
 
                         <!--  IS  -->
-                        <StackPanel Grid.Row="2"
+                        <StackPanel Grid.Row="1"
                                     Orientation="Horizontal">
                             <!--  Minimum Total Trades IS  -->
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
@@ -395,7 +334,7 @@
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBMinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.MinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
 
                             <!--  Minimum Success Rate Percent IS  -->
@@ -405,14 +344,12 @@
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Decimal"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBMinSuccessRatePercentIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.MinSuccessRatePercentIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
-
                         </StackPanel>
 
-
                         <!--  OS  -->
-                        <StackPanel Grid.Row="3"
+                        <StackPanel Grid.Row="2"
                                     Orientation="Horizontal">
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
@@ -421,7 +358,7 @@
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBMinTotalTradesOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.MinTotalTradesOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
 
                             <!--  Minimum Success Rate Percent OS  -->
@@ -431,25 +368,131 @@
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Decimal"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.SBMinSuccessRatePercentOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.MinSuccessRatePercentOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
                         </StackPanel>
 
+                        <StackPanel Grid.Row="3"
+                                    Orientation="Horizontal">
+                            <!--  Maximum Success Rate Variation  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Maximum Success Rate Variation *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.MaxSuccessRateVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="4"
+                                    Orientation="Horizontal">
+                            <!--  Weka N Total  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka N Total *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.WekaNTotal, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka Max Ratio  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka Max Ratio *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.WekaMaxRatio, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka Start Depth  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka Start Depth *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.WekaStartDepth, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka End Depth  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka End Depth *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.NodeBuilderConfiguration.WekaEndDepth, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
                     </Grid>
                 </metro:MetroHeader>
 
-
                 <!--  Assembly Builder  -->
-                <metro:MetroHeader Grid.Row="5"
+                <metro:MetroHeader Grid.Row="7"
                                    Margin="0,10,0,10"
                                    Header="Assembly Builder">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <StackPanel Orientation="Horizontal">
+                            <!--  Assembly Nodes UP Target  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Assembly Nodes UP Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.AssemblyNodesUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+
+                            <!--  Assembly Nodes DOWN Target  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Assembly Nodes DOWN Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.AssemblyNodesDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+
+                            <!--  Transactions Target  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Total Trades Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.TotalTradesTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal">
+                            <!--  Minimum Success Rate Improvement Percent IS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Minimum Success Rate Improvement % (IS) *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.MinSuccessRateImprovementIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Maximum Success Rate Improvement Percent OS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Maximum Success Rate Improvement % (IS) *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.MaxSuccessRateImprovementIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+
                             <!--  Minimum Total Trades IS  -->
                             <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
@@ -457,48 +500,199 @@
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Numbers"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.ABMinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.MinTotalTradesIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
-
-                            <!--  Minimum Success Rate Improvement Percent IS  -->
-                            <StackPanel Grid.Column="1"
-                                        MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Minimum Success Rate Improvement (IS) % *" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Numbers"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.ABMinImprovePercent, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
                         </StackPanel>
 
-                        <!--  Assembly Builder Weka  -->
-                        <StackPanel Grid.Row="1"
+                        <StackPanel Grid.Row="2"
                                     Orientation="Horizontal">
-                            <!--  AB Weka NTotals  -->
-                            <StackPanel Grid.Column="2"
-                                        MinWidth="{StaticResource ColumnWidth}"
+                            <!--  Minimum Success Rate Improvement Percent OS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                         Margin="{StaticResource ColumnMargin}">
-                                <Label Content="N Total" />
-                                <metro:NumericUpDown Minimum="0"
-                                                     NumericInputMode="Numbers"
-                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.ABWekaNTotalTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
-                            </StackPanel>
-
-
-                            <!--  AB Weka Max Ratio  -->
-                            <StackPanel Grid.Column="3"
-                                        MinWidth="{StaticResource ColumnWidth}"
-                                        Margin="{StaticResource ColumnMargin}">
-                                <Label Content="Maximum Ratio" />
+                                <Label Content="Minimum Success Rate Improvement % (OS) *" />
                                 <metro:NumericUpDown Minimum="0"
                                                      NumericInputMode="Decimal"
                                                      Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                                                     Value="{Binding GlobalConfiguration.ABWekaMaxRatioTree, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.MinSuccessRateImprovementOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Maximum Success Rate Improvement Percent OS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Maximum Success Rate Improvement % (OS) *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.MaxSuccessRateImprovementOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Row="4"
+                                    Orientation="Horizontal">
+                            <!--  Weka N Total  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka N Total *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.WekaNTotal, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka Max Ratio  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka Max Ratio *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.WekaMaxRatio, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka Start Depth  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka Start Depth *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.WekaStartDepth, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka End Depth  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka End Depth *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.AssemblyBuilderConfiguration.WekaEndDepth, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </metro:MetroHeader>
+
+                <!--  Crossing Builder  -->
+                <metro:MetroHeader Grid.Row="8"
+                                   Margin="0,10,0,10"
+                                   Header="Crossing Builder">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal">
+                            <!--  Strategy Nodes UP Target  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Strategy Nodes UP Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.StrategyNodesUPTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                             </StackPanel>
 
+                            <!--  Strategy Nodes DOWN Target  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Strategy Nodes DOWN Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.StrategyNodesDOWNTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+
+                            <!--  Total Trades Target  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Total Trades Target *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.TotalTradesTarget, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal">
+                            <!--  Minimum Success Rate Improvement Percent IS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Minimum Success Rate Improvement % (IS) *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.MinSuccessRateImprovementIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Maximum Success Rate Improvement Percent OS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Maximum Success Rate Improvement % (IS) *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.MaxSuccessRateImprovementIS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal">
+                            <!--  Minimum Success Rate Improvement Percent OS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Minimum Success Rate Improvement % (OS) *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.MinSuccessRateImprovementOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Maximum Success Rate Improvement Percent OS  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Maximum Success Rate Improvement % (OS) *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.MaxSuccessRateImprovementOS, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3"
+                                    Orientation="Horizontal">
+                            <!--  Weka N Total  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka N Total *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.WekaNTotal, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka Max Ratio  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka Max Ratio *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Decimal"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.WekaMaxRatio, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka Start Depth  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka Start Depth *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.WekaStartDepth, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
+                            <!--  Weka End Depth  -->
+                            <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                        Margin="{StaticResource ColumnMargin}">
+                                <Label Content="Weka End Depth *" />
+                                <metro:NumericUpDown Minimum="0"
+                                                     NumericInputMode="Numbers"
+                                                     Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                     Value="{Binding GlobalConfiguration.CrossingBuilderConfiguration.WekaEndDepth, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </metro:MetroHeader>
