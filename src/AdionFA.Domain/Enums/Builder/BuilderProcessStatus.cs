@@ -4,17 +4,9 @@ namespace AdionFA.Domain.Enums
 {
     public enum BuilderProcessStatus
     {
-        [Metadata(Name = "Node Builder Not Started")]
-        NBNotStarted = 0,
-
-        [Metadata(Name = "Assembly Builder Not Started")]
-        ABNotStarted,
-
-        [Metadata(Name = "Correlation Builder Not Started")]
-        CBNotStarted,
 
         [Metadata(Name = "Executing Extraction")]
-        ExecutingExtraction,
+        ExecutingExtraction = 0,
 
         [Metadata(Name = "Extraction Completed")]
         ExtractionCompleted,
@@ -25,6 +17,24 @@ namespace AdionFA.Domain.Enums
         [Metadata(Name = "Weka Completed")]
         WekaCompleted,
 
+        [Metadata(Name = "Node Builder Not Started")]
+        NBNotStarted,
+
+        [Metadata(Name = "Node Builder Completed")]
+        NBCompleted,
+
+        [Metadata(Name = "Assembly Builder Not Started")]
+        ABNotStarted,
+
+        [Metadata(Name = "Assembly Builder Completed")]
+        ABCompleted,
+
+        [Metadata(Name = "Crossing Builder Not Started")]
+        CBNotStarted,
+
+        [Metadata(Name = "Crossing Builder Completed")]
+        CBCompleted,
+
         [Metadata(Name = "Executing Backtest")]
         ExecutingBacktest,
 
@@ -33,20 +43,5 @@ namespace AdionFA.Domain.Enums
 
         [Metadata(Name = "Executing Correlation Analysis")]
         ExecutingCorrelation,
-
-        [Metadata(Name = "Node Builder Completed")]
-        NBCompleted,
-
-        [Metadata(Name = "Assembly Builder Completed")]
-        ABCompleted,
-
-        [Metadata(Name = "Correlation Builder Completed")]
-        CBCompleted,
-
-        [Metadata(Name = "Stopped")]
-        Stopped,
-
-        [Metadata(Name = "Canceled")]
-        Canceled,
     }
 }

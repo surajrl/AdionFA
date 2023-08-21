@@ -121,5 +121,12 @@ namespace AdionFA.UI.Infrastructure.Model.Base
             get => _maxProgressivenessVariation;
             set => SetProperty(ref _maxProgressivenessVariation, value);
         }
+
+        private int _maxParallelism;
+        public int MaxParallelism
+        {
+            get => _maxParallelism;
+            set => SetProperty(ref _maxParallelism, value);
+        }
     }
 }

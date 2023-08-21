@@ -189,12 +189,14 @@ namespace AdionFA.Infrastructure.Persistence
                 MinimalSeed = 100,
                 MaximumSeed = 1000000,
 
-                // Builder general
+                // Builder
 
                 IsProgressiveness = false,
                 MaxProgressivenessVariation = (decimal)2.0,
 
                 MaxCorrelationPercent = (decimal)2.0,
+
+                MaxParallelism = 1,
 
                 NodeBuilderConfigurationId = 1,
                 AssemblyBuilderConfigurationId = 1,

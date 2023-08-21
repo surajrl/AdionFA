@@ -38,5 +38,7 @@ namespace AdionFA.Domain.Entities.Base
 
         public bool IsProgressiveness { get; set; }
         public decimal MaxProgressivenessVariation { get; set; }
+
+        public int MaxParallelism { get; set; }
     }
 }

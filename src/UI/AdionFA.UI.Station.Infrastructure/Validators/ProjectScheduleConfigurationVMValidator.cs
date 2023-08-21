@@ -7,8 +7,13 @@ namespace AdionFA.UI.Infrastructure.Validators
     {
         public ProjectScheduleConfigurationVMValidator()
         {
-            RuleFor(m => m.FromTimeInSeconds).NotNull().NotEmpty();
-            RuleFor(m => m.ToTimeInSeconds).NotNull().NotEmpty();
+            RuleFor(m => m.FromTimeInSeconds)
+                .NotNull()
+                .NotEmpty();
+
+            RuleFor(m => m.ToTimeInSeconds)
+                .NotNull()
+                .NotEmpty();
         }
     }
 }

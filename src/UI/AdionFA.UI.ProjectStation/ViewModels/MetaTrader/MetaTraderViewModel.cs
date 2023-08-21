@@ -4,7 +4,7 @@ using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.MetaTrader.Contracts;
 using AdionFA.Infrastructure.MetaTrader.Model;
-using AdionFA.Infrastructure.Modules.Strategy;
+using AdionFA.Infrastructure.Modules.Builder;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.AutoMapper;
@@ -12,7 +12,6 @@ using AdionFA.UI.Infrastructure.Model.Project;
 using AdionFA.UI.ProjectStation.Commands;
 using AdionFA.UI.ProjectStation.EventAggregator;
 using AdionFA.UI.ProjectStation.Features;
-using AdionFA.UI.ProjectStation.Model.MetaTrader;
 using AutoMapper;
 using NetMQ;
 using NetMQ.Sockets;
@@ -122,14 +121,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     _crossingSymbols.Clear();
                     _currentCandles.Clear();
 
-                    var symbol = _marketDataService.GetSymbol(ProcessArgs.SymbolId);
+                    var symbol = _marketDataService.GetSymbol(ProjectConfiguration.Project.HistoricalData.SymbolId);
 
                     _completeCandles.Add(symbol.Name, new());
                     _mainSymbol = symbol.Name;
 
                     foreach (var crossingNode in StrategyNode.CrossingNodesData)
                     {
-                        var historicalData = _marketDataService.GetHistoricalData(crossingNode.Item2, includeGraph: false);
+                        var historicalData = _marketDataService.GetHistoricalData(crossingNode.Item2, false);
                         symbol = _marketDataService.GetSymbol(historicalData.SymbolId);
                         _completeCandles.Add(symbol.Name, new());
                         _crossingSymbols.Add(symbol.Name);
@@ -140,7 +139,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     _completeCandles.Clear();
                     _currentCandles.Clear();
 
-                    var symbol = _marketDataService.GetSymbol(ProcessArgs.SymbolId);
+                    var symbol = _marketDataService.GetSymbol(ProjectConfiguration.Project.HistoricalData.SymbolId);
 
                     _completeCandles.Add(symbol.Name, new());
                     _mainSymbol = symbol.Name;

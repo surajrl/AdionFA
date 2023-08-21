@@ -8,7 +8,7 @@ namespace AdionFA.UI.Infrastructure.Validators
         public CrossingBuilderConfigurationBaseVMValidator()
         {
             RuleFor(m => m.WekaMaxRatio)
-            .GreaterThanOrEqualTo(0);
+                .GreaterThanOrEqualTo(0);
 
             RuleFor(m => m.WekaNTotal)
                 .GreaterThanOrEqualTo(0);

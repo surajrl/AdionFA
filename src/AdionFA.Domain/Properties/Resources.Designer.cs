@@ -97,6 +97,15 @@ namespace AdionFA.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crossing Builder Completed.
+        /// </summary>
+        public static string CrossingBuilderCompleted {
+            get {
+                return ResourceManager.GetString("CrossingBuilderCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End Date.
         /// </summary>
         public static string EndDate {
@@ -160,24 +169,6 @@ namespace AdionFA.Domain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Must be greater than one and less than.
-        /// </summary>
-        public static string MustBeGreaterThanOneAndLessThanTow {
-            get {
-                return ResourceManager.GetString("MustBeGreaterThanOneAndLessThanTow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Must be less than one.
-        /// </summary>
-        public static string MustBeLessOneAndTwo {
-            get {
-                return ResourceManager.GetString("MustBeLessOneAndTwo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Node Builder.
         /// </summary>
         public static string NodeBuilder {
@@ -201,33 +192,6 @@ namespace AdionFA.Domain.Properties {
         public static string NotEmpty {
             get {
                 return ResourceManager.GetString("NotEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot be null.
-        /// </summary>
-        public static string NotNull {
-            get {
-                return ResourceManager.GetString("NotNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Number must be greater than.
-        /// </summary>
-        public static string NumberGreaterThan {
-            get {
-                return ResourceManager.GetString("NumberGreaterThan", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Must be greater than or equal to.
-        /// </summary>
-        public static string NumberGreaterThanOrEqualTo {
-            get {
-                return ResourceManager.GetString("NumberGreaterThanOrEqualTo", resourceCulture);
             }
         }
         

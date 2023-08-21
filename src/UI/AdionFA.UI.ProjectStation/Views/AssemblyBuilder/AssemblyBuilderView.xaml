@@ -62,33 +62,24 @@
             </Setter>
         </Style>
     </UserControl.Resources>
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
+        <!--  Process & Cancel Buttons  -->
         <StackPanel HorizontalAlignment="Right"
                     Orientation="Horizontal">
-            <!--  Stop Button  -->
-            <Grid Margin="0,20,10,0">
-                <Button Width="80"
-                        Height="40"
-                        Command="{Binding Stop}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:FontAwesome Width="14"
-                                               Kind="PauseCircleSolid" />
-                        <Label Content="Stop"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-            </Grid>
             <!--  Cancel Button  -->
             <Grid Margin="0,20,10,0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding Cancel}">
+                        Command="{Binding CancelCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Width="14"
                                                Kind="StopCircleSolid" />
@@ -97,25 +88,17 @@
                     </StackPanel>
                 </Button>
             </Grid>
-            <!--  Continue Button  -->
-            <Grid Margin="0,20,10,0">
-                <Button Width="80"
-                        Height="40"
-                        Command="{Binding Continue}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:FontAwesome Width="14"
-                                               Kind="PlayCircleSolid" />
-                        <Label Content="Continue"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-            </Grid>
+
             <!--  Process Button  -->
             <Grid Margin="0,20,0,0">
-                <Button x:Name="ProcessBtn"
-                        Width="80"
+                <metro:ProgressRing Width="25"
+                                    Height="25"
+                                    Panel.ZIndex="1"
+                                    IsActive="True"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Button Width="80"
                         Height="40"
-                        Command="{Binding Process}"
+                        Command="{Binding ProcessCommand}"
                         IsEnabled="{Binding CanExecute}">
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -125,12 +108,9 @@
                                FontSize="11" />
                     </StackPanel>
                 </Button>
-                <metro:ProgressRing Width="25"
-                                    Height="25"
-                                    IsActive="True"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </StackPanel>
+
         <!--  Configuration  -->
         <Expander Grid.Row="1"
                   Margin="0,10,0,10"
@@ -139,6 +119,7 @@
                   Style="{DynamicResource ControlExpanderStyle}">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -175,6 +156,38 @@
 
                 <StackPanel Grid.Row="1"
                             Orientation="Horizontal">
+                    <!--  Maximum Correlation Percent  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Correlation %" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MaxCorrelationPercent}" />
+                    </StackPanel>
+                    <!--  Maximum Progressiveness Variation  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Progressiveness Variation"
+                               IsEnabled="{Binding ProjectConfiguration.IsProgressiveness}" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MaxProgressivenessVariation}" />
+                    </StackPanel>
+                    <!--  Maximum Parallelism  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Parallelism" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MaxParallelism}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
                     <!--  Assembly Nodes UP Target  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
                         <Label Content="Assembly Nodes UP Target *" />
@@ -207,7 +220,7 @@
                 </StackPanel>
 
                 <!--  IS  -->
-                <StackPanel Grid.Row="2"
+                <StackPanel Grid.Row="3"
                             Orientation="Horizontal">
                     <!--  Minimum Success Rate Improvement IS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
@@ -241,9 +254,8 @@
                 </StackPanel>
 
                 <!--  OS  -->
-                <StackPanel Grid.Row="3"
+                <StackPanel Grid.Row="4"
                             Orientation="Horizontal">
-
                     <!--  Minimum Success Rate Improvement OS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
                         <Label Content="Minimum Success Rate Improvement % (OS)" />
@@ -305,80 +317,72 @@
                 </StackPanel>
             </Grid>
         </Expander>
+
         <!--  Assembly Builder  -->
         <metro:MetroHeader Grid.Row="2"
                            Header="Assembly Builder">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <!--  Assembly Nodes Buttons  -->
-                <StackPanel HorizontalAlignment="Left"
-                            Orientation="Horizontal">
-                    <!--  Assembly Nodes UP  -->
-                    <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="assemblyNodesUP"
-                                Width="215"
-                                Height="40"
-                                IsEnabled="{Binding AssemblyBuilder.WinningAssemblyNodesUP.Count, Converter={StaticResource IntToBooleanConverter}}">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Width="14"
-                                                            VerticalAlignment="Center"
-                                                            Kind="GraphOutline" />
-                                <Label Content="Winning Assembly Nodes UP"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger EventName="Click"
-                                                        SourceName="assemblyNodesUP">
-                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                        <behaviors:InvokeCommandAction.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
-                                                <Binding Path="AssemblyBuilder.WinningAssemblyNodesUP" />
-                                                <Binding Path="AssemblyBuilder.ChildNodesUP" />
-                                            </MultiBinding>
-                                        </behaviors:InvokeCommandAction.CommandParameter>
-                                    </behaviors:InvokeCommandAction>
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                    </Grid>
-                    <!--  Assembly Nodes DOWN  -->
-                    <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="assemblyNodesDOWN"
-                                Width="215"
-                                Height="40"
-                                IsEnabled="{Binding AssemblyBuilder.WinningAssemblyNodesDOWN.Count, Converter={StaticResource IntToBooleanConverter}}">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Width="14"
-                                                            VerticalAlignment="Center"
-                                                            Kind="GraphOutline" />
-                                <Label Content="Winning Assembly Nodes DOWN"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger EventName="Click"
-                                                        SourceName="assemblyNodesDOWN">
-                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                        <behaviors:InvokeCommandAction.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
-                                                <Binding Path="AssemblyBuilder.WinningAssemblyNodesDOWN" />
-                                                <Binding Path="AssemblyBuilder.ChildNodesDOWN" />
-                                            </MultiBinding>
-                                        </behaviors:InvokeCommandAction.CommandParameter>
-                                    </behaviors:InvokeCommandAction>
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                    </Grid>
-                </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <!--  Winning Assembly Nodes UP  -->
+                <Grid Margin="{StaticResource ColumnMargin}">
+                    <Button x:Name="winningAssemblyNodesUP"
+                            Width="210"
+                            Height="40"
+                            IsEnabled="{Binding AssemblyBuilder.WinningNodesUP.Count, Converter={StaticResource IntToBooleanConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Width="14"
+                                                        VerticalAlignment="Center"
+                                                        Kind="TrophyOutline" />
+                            <Label Content="Winning Assembly Nodes UP"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="Click"
+                                                    SourceName="winningAssemblyNodesUP">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                            <Binding Path="AssemblyBuilder.WinningNodesUP" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                </Grid>
+
+                <!--  Winning Assembly Nodes DOWN  -->
+                <Grid Margin="{StaticResource ColumnMargin}">
+                    <Button x:Name="winningAssemblyNodesDOWN"
+                            Width="210"
+                            Height="40"
+                            IsEnabled="{Binding AssemblyBuilder.WinningNodesDOWN.Count, Converter={StaticResource IntToBooleanConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Width="14"
+                                                        VerticalAlignment="Center"
+                                                        Kind="TrophyOutline" />
+                            <Label Content="Winning Assembly Nodes DOWN"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="Click"
+                                                    SourceName="winningAssemblyNodesDOWN">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
+                                            <Binding Path="AssemblyBuilder" />
+                                            <Binding Path="ChildNodesDOWN" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                </Grid>
+
                 <!--  Mean Success Rate Percent  -->
-                <StackPanel Grid.Column="1"
-                            Margin="{StaticResource ColumnMargin}"
+                <StackPanel Margin="{StaticResource ColumnMargin}"
                             VerticalAlignment="Center">
                     <TextBlock>
                         <Run Text="Mean Success Rate UP (IS):" />
@@ -387,20 +391,55 @@
                         <Run Text="Mean Success Rate DOWN (IS):" />
                         <Run Text="{Binding MeanSuccessRatePercentDOWN, StringFormat=N2}" /></TextBlock>
                 </StackPanel>
-                <!--  Maximum Parallelism Configuration  -->
-                <StackPanel Grid.Column="2"
-                            Margin="{StaticResource ColumnMargin}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                    <Label Content="Maximum Parallelism" />
-                    <TextBox IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
-                             Text="{Binding MaxParallelism}" />
-                </StackPanel>
+
+                <!--  Load Assembly Builder  -->
+                <Button Width="150"
+                        Height="40"
+                        Margin="{StaticResource ColumnMargin}"
+                        Command="{Binding LoadAssemblyBuilderCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Width="14"
+                                                    VerticalAlignment="Center"
+                                                    Kind="Upload" />
+                        <Label Content="Load Assembly Builder"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </metro:MetroHeader>
+
+        <!--  Weka Depth  -->
+        <metro:MetroHeader Grid.Row="3"
+                           Header="Weka Depth">
+            <Grid Margin="{StaticResource ColumnMargin}">
+                <Label HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Panel.ZIndex="1"
+                       Content="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaStartDepth}" />
+                <Label HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Panel.ZIndex="1"
+                       Content="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaEndDepth}" />
+                <Label HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Panel.ZIndex="1"
+                       Content="{Binding CurrentWekaDepth}" />
+                <Border Height="20"
+                        BorderBrush="Black"
+                        BorderThickness="1">
+                    <metro:MetroProgressBar Height="20"
+                                            Background="Transparent"
+                                            Foreground="CadetBlue"
+                                            Maximum="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaEndDepth}"
+                                            Minimum="{Binding ProjectConfiguration.AssemblyBuilderConfiguration.WekaStartDepth}"
+                                            Value="{Binding CurrentWekaDepth}" />
+
+                </Border>
             </Grid>
         </metro:MetroHeader>
+
         <!--  Assembly Builder Processes  -->
-        <Grid Grid.Row="3"
+        <Grid Grid.Row="4"
               Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -507,14 +546,14 @@
                                                                     Foreground="CadetBlue"
                                                                     Maximum="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                                     Minimum="0"
-                                                                    Value="{Binding ProgressCounter}" />
+                                                                    Value="{Binding CompletedBacktests}" />
                                             <TextBlock Grid.Column="2"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center">
                                                 <Run Text="Completed" />
                                                 <Run Text=" - " />
                                                 <Run FontWeight="SemiBold"
-                                                     Text="{Binding ProgressCounter}" />
+                                                     Text="{Binding CompletedBacktests}" />
                                                 <Run Text="/" />
                                                 <Run FontWeight="SemiBold"
                                                      Text="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}" /></TextBlock>
@@ -527,6 +566,7 @@
                 </DataGrid.Columns>
             </DataGrid>
 
+            <!--  Assembly Builder Process UP Empty  -->
             <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -636,14 +676,14 @@
                                                                     Foreground="CadetBlue"
                                                                     Maximum="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}"
                                                                     Minimum="0"
-                                                                    Value="{Binding ProgressCounter}" />
+                                                                    Value="{Binding CompletedBacktests}" />
                                             <TextBlock Grid.Column="2"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center">
                                                 <Run Text="Completed" />
                                                 <Run Text=" - " />
                                                 <Run FontWeight="SemiBold"
-                                                     Text="{Binding ProgressCounter}" />
+                                                     Text="{Binding CompletedBacktests}" />
                                                 <Run Text="/" />
                                                 <Run FontWeight="SemiBold"
                                                      Text="{Binding BacktestAssemblyNodes.Count, Mode=OneWay}" /></TextBlock>
@@ -655,6 +695,8 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+
+            <!--  Assembly Builder Process DOWN Empty  -->
             <StackPanel Grid.Column="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"

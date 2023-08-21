@@ -129,6 +129,9 @@
   <data name="CrossingBuilder" xml:space="preserve">
     <value>Crossing Builder</value>
   </data>
+  <data name="CrossingBuilderCompleted" xml:space="preserve">
+    <value>Crossing Builder Completed</value>
+  </data>
   <data name="EndDate" xml:space="preserve">
     <value>End Date</value>
   </data>
@@ -150,12 +153,6 @@
   <data name="Market" xml:space="preserve">
     <value>Market</value>
   </data>
-  <data name="MustBeGreaterThanOneAndLessThanTow" xml:space="preserve">
-    <value>Must be greater than one and less than</value>
-  </data>
-  <data name="MustBeLessOneAndTwo" xml:space="preserve">
-    <value>Must be less than one</value>
-  </data>
   <data name="NodeBuilder" xml:space="preserve">
     <value>Node Builder</value>
   </data>
@@ -164,15 +161,6 @@
   </data>
   <data name="NotEmpty" xml:space="preserve">
     <value>Is required</value>
-  </data>
-  <data name="NotNull" xml:space="preserve">
-    <value>Cannot be null</value>
-  </data>
-  <data name="NumberGreaterThan" xml:space="preserve">
-    <value>Number must be greater than</value>
-  </data>
-  <data name="NumberGreaterThanOrEqualTo" xml:space="preserve">
-    <value>Must be greater than or equal to</value>
   </data>
   <data name="ProjectConfiguration" xml:space="preserve">
     <value>Project Configuration</value>

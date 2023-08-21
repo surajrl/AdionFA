@@ -5,6 +5,7 @@ using AdionFA.Infrastructure.Persistence;
 using AdionFA.Infrastructure.Services;
 using AdionFA.TransferObject.Base;
 using AdionFA.TransferObject.MarketData;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace AdionFA.Application.Services.MarketData
         {
         }
 
-        // Historical Data
+        // Historical data
 
         public IList<HistoricalDataDTO> GetAllHistoricalData(bool includeGraph)
         {
@@ -124,8 +125,6 @@ namespace AdionFA.Application.Services.MarketData
 
             foreach (var candle in historicalData.HistoricalDataCandles)
             {
-                // Most of the time spend here ...
-
                 candle.CreatedOn = DateTime.UtcNow;
                 candle.IsDeleted = false;
             }
@@ -137,13 +136,27 @@ namespace AdionFA.Application.Services.MarketData
             dbContext.Set<HistoricalData>().Add(historicalData);
             Logger.Information($"MarketDataService.CreateHistoricalData() :: dbContext.Set<HistoricalData>().Add().");
 
-            dbContext.SaveChanges(); // ... and here
+            dbContext.SaveChanges();
             Logger.Information($"MarketDataService.CreateHistoricalData() :: dbContext.SaveChanges().");
 
             responseDTO.IsSuccess = historicalData.HistoricalDataId > 0;
 
             return responseDTO;
         }
+
+        // Historical data candles
+
+        public IList<HistoricalDataCandleDTO> GetHistoricalDataCandles(int historicalDataId)
+        {
+            using var dbContext = new AdionFADbContext();
+            var historicalData = dbContext.Set<HistoricalData>()
+                .Where(e => e.HistoricalDataId == historicalDataId && !e.IsDeleted)
+                .Include(e => e.HistoricalDataCandles)
+                .FirstOrDefault();
+
+            return Mapper.Map<List<HistoricalDataCandleDTO>>(historicalData.HistoricalDataCandles);
+        }
+
 
         // Timeframe
 
@@ -212,15 +225,6 @@ namespace AdionFA.Application.Services.MarketData
             using var dbContext = new AdionFADbContext();
             var symbol = dbContext.Set<Symbol>()
                 .FirstOrDefault(e => e.SymbolId == symbolId && !e.IsDeleted);
-
-            return Mapper.Map<SymbolDTO>(symbol);
-        }
-
-        public SymbolDTO GetSymbol(string symbolName)
-        {
-            using var dbContext = new AdionFADbContext();
-            var symbol = dbContext.Set<Symbol>()
-                .FirstOrDefault(e => e.Name == symbolName && !e.IsDeleted);
 
             return Mapper.Map<SymbolDTO>(symbol);
         }

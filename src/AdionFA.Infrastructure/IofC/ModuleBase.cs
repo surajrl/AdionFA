@@ -2,8 +2,6 @@
 using AdionFA.Application.Services.Commons;
 using AdionFA.Application.Services.MarketData;
 using AdionFA.Application.Services.Projects;
-using AdionFA.Infrastructure.AssemblyBuilder.Contracts;
-using AdionFA.Infrastructure.AssemblyBuilder.Services;
 using AdionFA.Infrastructure.AutoMappers;
 using AdionFA.Infrastructure.Directories.Contracts;
 using AdionFA.Infrastructure.Directories.Services;
@@ -11,8 +9,7 @@ using AdionFA.Infrastructure.Extractor.Contracts;
 using AdionFA.Infrastructure.Extractor.Services;
 using AdionFA.Infrastructure.MetaTrader.Contracts;
 using AdionFA.Infrastructure.MetaTrader.Services;
-using AdionFA.Infrastructure.NodeBuilder.Contracts;
-using AdionFA.Infrastructure.NodeBuilder.Services;
+using AdionFA.Infrastructure.Modules.Builder;
 using AdionFA.Infrastructure.Weka.Contracts;
 using AdionFA.Infrastructure.Weka.Services;
 using AutoMapper;
@@ -52,8 +49,7 @@ namespace AdionFA.Infrastructure.IofC
 
             Kernel.Bind<IProjectDirectoryService>().To<ProjectDirectoryService>();
             Kernel.Bind<IExtractorService>().To<ExtractorService>();
-            Kernel.Bind<INodeBuilderService>().To<NodeBuilderService>();
-            Kernel.Bind<IAssemblyBuilderService>().To<AssemblyBuilderService>();
+            Kernel.Bind<IBuilderService>().To<BuilderService>();
             Kernel.Bind<ITradeService>().To<TradeService>();
 
             // Application

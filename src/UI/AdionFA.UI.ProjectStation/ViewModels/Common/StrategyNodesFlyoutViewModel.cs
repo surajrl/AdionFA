@@ -1,4 +1,4 @@
-﻿using AdionFA.Infrastructure.Modules.Strategy;
+﻿using AdionFA.Infrastructure.Modules.Builder;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;

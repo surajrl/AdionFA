@@ -1,6 +1,6 @@
 ﻿using AdionFA.Domain.Enums;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Modules.Strategy;
+using AdionFA.Infrastructure.Modules.Builder;
 using System;
 using System.Diagnostics;
 using System.IO;

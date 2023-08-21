@@ -67,28 +67,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
+        <!--  Process & Cancel Buttons  -->
         <StackPanel HorizontalAlignment="Right"
                     Orientation="Horizontal">
-            <!--  Stop Button  -->
-            <Grid Margin="0,20,10,0">
-                <Button Width="80"
-                        Height="40"
-                        Command="{Binding Stop}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:FontAwesome Width="14"
-                                               Kind="PauseCircleSolid" />
-                        <Label Content="Stop"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-            </Grid>
             <!--  Cancel Button  -->
             <Grid Margin="0,20,10,0">
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding Cancel}">
+                        Command="{Binding CancelCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:FontAwesome Width="14"
                                                Kind="StopCircleSolid" />
@@ -97,24 +87,17 @@
                     </StackPanel>
                 </Button>
             </Grid>
-            <!--  Continue Button  -->
-            <Grid Margin="0,20,10,0">
-                <Button Width="80"
-                        Height="40"
-                        Command="{Binding Continue}">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:FontAwesome Width="14"
-                                               Kind="PlayCircleSolid" />
-                        <Label Content="Continue"
-                               FontSize="11" />
-                    </StackPanel>
-                </Button>
-            </Grid>
+
             <!--  Process Button  -->
             <Grid Margin="0,20,0,0">
+                <metro:ProgressRing Width="25"
+                                    Height="25"
+                                    Panel.ZIndex="1"
+                                    IsActive="True"
+                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Button Width="80"
                         Height="40"
-                        Command="{Binding Process}">
+                        Command="{Binding ProcessCommand}">
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <iconPacks:FontAwesome Width="14"
@@ -123,12 +106,9 @@
                                FontSize="11" />
                     </StackPanel>
                 </Button>
-                <metro:ProgressRing Width="25"
-                                    Height="25"
-                                    IsActive="True"
-                                    Visibility="{Binding IsTransactionActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </StackPanel>
+
         <!--  Configuration  -->
         <Expander Grid.Row="1"
                   Margin="0,10,0,10"
@@ -137,8 +117,6 @@
                   Style="{DynamicResource ControlExpanderStyle}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -176,6 +154,38 @@
 
                 <StackPanel Grid.Row="1"
                             Orientation="Horizontal">
+                    <!--  Maximum Correlation Percent  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Correlation %" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MaxCorrelationPercent}" />
+                    </StackPanel>
+                    <!--  Maximum Progressiveness Variation  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Progressiveness Variation"
+                               IsEnabled="{Binding ProjectConfiguration.IsProgressiveness}" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MaxProgressivenessVariation}" />
+                    </StackPanel>
+                    <!--  Maximum Parallelism  -->
+                    <StackPanel Margin="{StaticResource ColumnMargin}">
+                        <Label Content="Maximum Parallelism" />
+                        <TextBox Width="250"
+                                 Focusable="False"
+                                 IsEnabled="False"
+                                 IsReadOnly="True"
+                                 Text="{Binding ProjectConfiguration.MaxParallelism}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
                     <!--  Assembly Nodes UP Target  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
                         <Label Content="Strategy Nodes UP Target" />
@@ -185,7 +195,6 @@
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.StrategyNodesUPTarget}" />
                     </StackPanel>
-
                     <!--  Assembly Nodes DOWN Target  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
                         <Label Content="Strategy Nodes DOWN Target" />
@@ -195,7 +204,6 @@
                                  IsReadOnly="True"
                                  Text="{Binding ProjectConfiguration.CrossingBuilderConfiguration.StrategyNodesDOWNTarget}" />
                     </StackPanel>
-
                     <!--  Total Trades Target  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
                         <Label Content="Total Trades Target" />
@@ -207,8 +215,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  IS  -->
-                <StackPanel Grid.Row="2"
+                <StackPanel Grid.Row="3"
                             Orientation="Horizontal">
                     <!--  Minimum Success Rate Improvement IS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
@@ -231,8 +238,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  OS  -->
-                <StackPanel Grid.Row="3"
+                <StackPanel Grid.Row="4"
                             Orientation="Horizontal">
                     <!--  Minimum Success Rate Improvement OS  -->
                     <StackPanel Margin="{StaticResource ColumnMargin}">
@@ -300,94 +306,86 @@
         <!--  Crossing Builder  -->
         <metro:MetroHeader Grid.Row="2"
                            Header="Crossing Builder">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <!--  Winning Strategy Nodes UP  -->
+                <Grid Margin="{StaticResource ColumnMargin}">
+                    <Button x:Name="winningStrategyNodesUP"
+                            Width="210"
+                            Height="40"
+                            IsEnabled="{Binding CrossingBuilder.WinningNodesUP.Count, Converter={StaticResource IntToBooleanConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Width="14"
+                                                        VerticalAlignment="Center"
+                                                        Kind="TrophyOutline" />
+                            <Label Content="Winning Strategy Nodes UP"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="Click"
+                                                    SourceName="winningStrategyNodesUP">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
+                                            <Binding Path="CrossingBuilder.WinningNodesUP" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                </Grid>
 
-                <StackPanel>
-                    <!--  Winning Strategy Nodes UP  -->
-                    <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="winningStrategyNodesUP"
-                                Width="200"
-                                Height="40"
-                                IsEnabled="{Binding CrossingBuilder.WinningStrategyNodesUP.Count, Converter={StaticResource IntToBooleanConverter}}">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Width="14"
-                                                            VerticalAlignment="Center"
-                                                            Kind="TrophyOutline" />
-                                <Label Content="Winning Strategy Nodes UP"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger EventName="Click"
-                                                        SourceName="winningStrategyNodesUP">
-                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                        <behaviors:InvokeCommandAction.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
-                                                <Binding Path="CrossingBuilder.WinningStrategyNodesUP" />
-                                            </MultiBinding>
-                                        </behaviors:InvokeCommandAction.CommandParameter>
-                                    </behaviors:InvokeCommandAction>
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                    </Grid>
-                    <!--  Winning Strategy Nodes DOWN  -->
-                    <Grid Margin="{StaticResource ColumnMargin}">
-                        <Button x:Name="winningStrategyNodesDOWN"
-                                Width="200"
-                                Height="40"
-                                IsEnabled="{Binding CrossingBuilder.WinningStrategyNodesDOWN.Count, Converter={StaticResource IntToBooleanConverter}}">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Width="14"
-                                                            VerticalAlignment="Center"
-                                                            Kind="TrophyOutline" />
-                                <Label Content="Winning Strategy Nodes DOWN"
-                                       FontSize="11" />
-                            </StackPanel>
-                            <behaviors:Interaction.Triggers>
-                                <behaviors:EventTrigger EventName="Click"
-                                                        SourceName="winningStrategyNodesDOWN">
-                                    <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
-                                        <behaviors:InvokeCommandAction.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
-                                                <Binding Path="CrossingBuilder.WinningStrategyNodesDOWN" />
-                                            </MultiBinding>
-                                        </behaviors:InvokeCommandAction.CommandParameter>
-                                    </behaviors:InvokeCommandAction>
-                                </behaviors:EventTrigger>
-                            </behaviors:Interaction.Triggers>
-                        </Button>
-                    </Grid>
-                </StackPanel>
+                <!--  Winning Strategy Nodes DOWN  -->
+                <Grid Margin="{StaticResource ColumnMargin}">
+                    <Button x:Name="winningStrategyNodesDOWN"
+                            Width="210"
+                            Height="40"
+                            IsEnabled="{Binding CrossingBuilder.WinningNodesDOWN.Count, Converter={StaticResource IntToBooleanConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Width="14"
+                                                        VerticalAlignment="Center"
+                                                        Kind="TrophyOutline" />
+                            <Label Content="Winning Strategy Nodes DOWN"
+                                   FontSize="11" />
+                        </StackPanel>
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="Click"
+                                                    SourceName="winningStrategyNodesDOWN">
+                                <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
+                                    <behaviors:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleStrategyNodes}" />
+                                            <Binding Path="CrossingBuilder.WinningNodesDOWN" />
+                                        </MultiBinding>
+                                    </behaviors:InvokeCommandAction.CommandParameter>
+                                </behaviors:InvokeCommandAction>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Button>
+                </Grid>
 
                 <!--  Crossing Historical Data  -->
-                <StackPanel Grid.Column="1"
-                            Margin="{StaticResource ColumnMargin}">
+                <StackPanel Margin="{StaticResource ColumnMargin}">
                     <Label Content="Crossing Historical Data" />
                     <ComboBox DisplayMemberPath="Name"
+                              IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                               ItemsSource="{Binding CrossingHistoricalData}"
                               SelectedValue="{Binding CrossingHistoricalDataId, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}"
                               SelectedValuePath="Id" />
                 </StackPanel>
 
                 <!--  Load From ...  -->
-                <StackPanel Grid.Column="2"
-                            Margin="{StaticResource ColumnMargin}"
+                <StackPanel Margin="{StaticResource ColumnMargin}"
                             Orientation="Horizontal">
                     <StackPanel>
                         <Label Content="Load From" />
                         <metro:ToggleSwitch Content="Node Builder"
+                                            IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                                             IsOn="{Binding LoadFromNodeBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Toggled="LoadFromNodeBuilderToggleSwitch_Toggled" />
                         <metro:ToggleSwitch Content="Assembly Builder"
+                                            IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                                             IsOn="{Binding LoadFromAssemblyBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Toggled="LoadFromAssemblyBuilderToggleSwitch_Toggled" />
                     </StackPanel>
@@ -402,22 +400,11 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Maximum Parallelism Configuration  -->
-                <StackPanel Grid.Column="3"
-                            Margin="{StaticResource ColumnMargin}"
-                            HorizontalAlignment="Right">
-                    <Label Content="Maximum Parallelism" />
-                    <TextBox IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
-                             Text="{Binding MaxParallelism}" />
-                </StackPanel>
-
                 <!--  Load Crossing Builder  -->
-                <Button Grid.Column="4"
-                        Width="150"
+                <Button Width="150"
                         Height="40"
                         Margin="{StaticResource ColumnMargin}"
-                        HorizontalAlignment="Right"
-                        Command="{Binding LoadCrossingBuilder}">
+                        Command="{Binding LoadCrossingBuilderCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconMaterial Width="14"
                                                     VerticalAlignment="Center"
@@ -426,15 +413,47 @@
                                FontSize="11" />
                     </StackPanel>
                 </Button>
+            </StackPanel>
+        </metro:MetroHeader>
+
+        <!--  Weka Depth  -->
+        <metro:MetroHeader Grid.Row="3"
+                           Header="Weka Depth">
+            <Grid Margin="{StaticResource ColumnMargin}">
+                <Label HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Panel.ZIndex="1"
+                       Content="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaStartDepth}" />
+                <Label HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Panel.ZIndex="1"
+                       Content="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaEndDepth}" />
+                <Label HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Panel.ZIndex="1"
+                       Content="{Binding CurrentWekaDepth}" />
+                <Border Height="20"
+                        BorderBrush="Black"
+                        BorderThickness="1">
+                    <metro:MetroProgressBar Height="20"
+                                            Background="Transparent"
+                                            Foreground="CadetBlue"
+                                            Maximum="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaEndDepth}"
+                                            Minimum="{Binding ProjectConfiguration.CrossingBuilderConfiguration.WekaStartDepth}"
+                                            Value="{Binding CurrentWekaDepth}" />
+
+                </Border>
             </Grid>
         </metro:MetroHeader>
+
         <!--  Crossing Builder Processes  -->
-        <Grid Grid.Row="3"
+        <Grid Grid.Row="4"
               Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+
             <!--  Crossing Builder Process UP Nodes  -->
             <DataGrid Margin="0,0,10,0"
                       AutoGenerateColumns="False"
@@ -476,9 +495,9 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <!--  Crossing Nodes UP  -->
+                    <!--  Strategy Nodes UP  -->
                     <DataGridTemplateColumn Width="*"
-                                            Header="Crossing Nodes UP">
+                                            Header="Strategy Nodes UP">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Expander IsEnabled="{Binding BacktestStrategyNodes.Count, Converter={StaticResource IntToBooleanConverter}}"
@@ -536,7 +555,7 @@
                                                                     Foreground="CadetBlue"
                                                                     Maximum="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
                                                                     Minimum="0"
-                                                                    Value="{Binding ProgressCounter}" />
+                                                                    Value="{Binding CompletedBacktests}" />
                                         </Grid>
                                         <TextBlock Grid.Column="2"
                                                    HorizontalAlignment="Center"
@@ -544,10 +563,11 @@
                                             <Run Text="Completed" />
                                             <Run Text=" - " />
                                             <Run FontWeight="SemiBold"
-                                                 Text="{Binding ProgressCounter}" />
+                                                 Text="{Binding CompletedBacktests}" />
                                             <Run Text="/" />
                                             <Run FontWeight="SemiBold"
-                                                 Text="{Binding BacktestStrategyNodes.Count, Mode=OneWay}" /></TextBlock>
+                                                 Text="{Binding BacktestStrategyNodes.Count, Mode=OneWay}" />
+                                        </TextBlock>
                                     </Grid>
                                 </Expander>
                             </DataTemplate>
@@ -555,6 +575,8 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+
+            <!--  Crossing Builder Process UP Empty  -->
             <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Visibility="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -604,9 +626,9 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <!--  Crossing Nodes DOWN  -->
+                    <!--  Strategy Nodes DOWN  -->
                     <DataGridTemplateColumn Width="*"
-                                            Header="Crossing Nodes DOWN">
+                                            Header="Strategy Nodes DOWN">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Expander IsEnabled="{Binding BacktestStrategyNodes.Count, Converter={StaticResource IntToBooleanConverter}, Mode=OneWay}"
@@ -664,7 +686,7 @@
                                                                     Foreground="CadetBlue"
                                                                     Maximum="{Binding BacktestStrategyNodes.Count, Mode=OneWay}"
                                                                     Minimum="0"
-                                                                    Value="{Binding ProgressCounter}" />
+                                                                    Value="{Binding CompletedBacktests}" />
                                         </Grid>
                                         <TextBlock Grid.Column="2"
                                                    HorizontalAlignment="Center"
@@ -672,7 +694,7 @@
                                             <Run Text="Completed" />
                                             <Run Text=" - " />
                                             <Run FontWeight="SemiBold"
-                                                 Text="{Binding ProgressCounter}" />
+                                                 Text="{Binding CompletedBacktests}" />
                                             <Run Text="/" />
                                             <Run FontWeight="SemiBold"
                                                  Text="{Binding BacktestStrategyNodes.Count, Mode=OneWay}" /></TextBlock>
@@ -684,6 +706,7 @@
                 </DataGrid.Columns>
             </DataGrid>
 
+            <!--  Crossing Builder Process DOWN Empty  -->
             <StackPanel Grid.Column="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"

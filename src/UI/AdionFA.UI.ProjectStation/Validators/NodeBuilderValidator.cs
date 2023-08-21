@@ -12,11 +12,7 @@ namespace AdionFA.UI.ProjectStation.Validators
                 .NotNull()
                 .NotEmpty();
 
-            RuleFor(model => model.MaxParallelism)
-                .GreaterThan(0);
-
-            RuleFor(model => model.ProjectConfiguration)
-                .SetValidator(new ProjectConfigurationVMValidator());
+            RuleFor(model => model.ProjectConfiguration).SetValidator(new ProjectConfigurationVMValidator());
         }
     }
 }

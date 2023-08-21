@@ -147,8 +147,9 @@
                                                 <StackPanel>
                                                     <Label Content="Parent Node"
                                                            FontWeight="SemiBold" />
-                                                    <ListView ItemsSource="{Binding ParentNodeData}" />
+                                                    <ListView ItemsSource="{Binding ParentNodeData.Node}" />
                                                 </StackPanel>
+                                                <!--  Child Nodes  -->
                                                 <StackPanel Grid.Row="1">
                                                     <Label Content="Child Nodes"
                                                            FontWeight="SemiBold" />

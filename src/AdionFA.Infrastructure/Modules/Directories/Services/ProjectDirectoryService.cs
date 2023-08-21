@@ -13,14 +13,14 @@ namespace AdionFA.Infrastructure.Directories.Services
 {
     public class ProjectDirectoryService : IProjectDirectoryService
     {
-        public bool HasWritePermissionOnPath(string path)
+        public bool HasWritePermissionOnPath(string filePath)
         {
             try
             {
                 var writeAllow = false;
                 var writeDeny = false;
 
-                var accessControlList = new DirectoryInfo(path).GetAccessControl();
+                var accessControlList = new DirectoryInfo(filePath).GetAccessControl();
                 if (accessControlList == null)
                 {
                     return false;
@@ -99,52 +99,52 @@ namespace AdionFA.Infrastructure.Directories.Services
             {
                 if (ExistDefaultWorkspace())
                 {
-                    var di = new DirectoryInfo(ProjectDirectoryManager.ProjectsDirectoryBase());
-                    if (di.Exists)
+                    var directoryInfo = new DirectoryInfo(ProjectDirectoryManager.ProjectsDirectoryBase());
+                    if (directoryInfo.Exists)
                     {
                         // Extractor
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.ExtractorTemplate.GetDescription(), projectName));
 
-                        // Node Builder
+                        // Node builder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription(), projectName));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorWithoutSchedule.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorWithoutSchedule.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Europe.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.America.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.NodeBuilderExtractorMarket.GetDescription(), projectName, MarketRegionEnum.Asia.GetMetadata().Name));
 
-                        // Assembly Builder
+                        // Assembly builder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription(), projectName));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.AssemblyBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
 
-                        // Crossing Builder
+                        // Crossing builder
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectName));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription(), projectName));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription(), projectName));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectName, "UP"));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Europe.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.America.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "UP", MarketRegionEnum.Asia.GetMetadata().Name));
 
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
-                        di.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorWithoutSchedule.GetDescription(), projectName, "DOWN"));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Europe.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.America.GetMetadata().Name));
+                        directoryInfo.CreateSubdirectory(string.Format(ProjectDirectoryEnum.CrossingBuilderExtractorMarket.GetDescription(), projectName, "DOWN", MarketRegionEnum.Asia.GetMetadata().Name));
                     }
                 }
 
@@ -157,13 +157,13 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public bool CopyCSVFileTo(FileInfo fi, string targetDir)
+        public bool CopyCSVFileTo(FileInfo fileInfo, string targetDir)
         {
             try
             {
-                if (File.Exists(fi.FullName))
+                if (File.Exists(fileInfo.FullName))
                 {
-                    File.Copy(fi.FullName, Path.Combine(targetDir, fi.Name), overwrite: true);
+                    File.Copy(fileInfo.FullName, Path.Combine(targetDir, fileInfo.Name), overwrite: true);
                     return true;
                 }
 
@@ -176,14 +176,14 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public async Task<bool> CopyCSVFileToAsync(FileInfo fi, string targetDir)
+        public async Task<bool> CopyCSVFileToAsync(FileInfo fileInfo, string targetDir)
         {
             try
             {
-                if (File.Exists(fi.FullName))
+                if (File.Exists(fileInfo.FullName))
                 {
-                    using var SourceStream = File.Open(fi.FullName, FileMode.Open);
-                    using var DestinationStream = File.Create(Path.Combine(targetDir, fi.Name));
+                    using var SourceStream = File.Open(fileInfo.FullName, FileMode.Open);
+                    using var DestinationStream = File.Create(Path.Combine(targetDir, fileInfo.Name));
 
                     await SourceStream.CopyToAsync(DestinationStream);
 
@@ -220,23 +220,25 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public FileInfo[] GetFilesInPath(string path, string ext = "*.csv")
+        public FileInfo[] GetFilesInPath(string filePath, string fileExtension)
         {
-            var directory = new DirectoryInfo(path);
-            var files = directory.GetFiles(ext);
+            var directory = new DirectoryInfo(filePath);
+            var files = directory.GetFiles(fileExtension);
+
             return files;
         }
 
-        public bool CreateBackup(string path)
+        public bool CreateBackup(string filePath)
         {
             try
             {
-                if (Directory.Exists(path))
+                if (Directory.Exists(filePath))
                 {
-                    DirectoryInfo di = new(path);
+                    DirectoryInfo di = new(filePath);
                     var bu = di.CreateSubdirectory("Backup_" + DateTime.UtcNow.Ticks);
                     return CopyCSVFiles(di.FullName, di.FullName);
                 }
+
                 return false;
             }
             catch (Exception ex)
@@ -246,15 +248,17 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public bool DeleteFile(string path)
+        public bool DeleteFile(string filePath)
         {
             try
             {
                 // Check if file exists with its full path
-                if (File.Exists(path))
+
+                if (File.Exists(filePath))
                 {
                     // If file found, delete it
-                    File.Delete(path);
+
+                    File.Delete(filePath);
 
                     return true;
                 }
@@ -268,22 +272,25 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public bool DeleteAllFiles(string sourceDir, string ext = "*.csv", SearchOption option = 0, bool overwrite = false, bool isBackup = true)
+        public bool DeleteAllFiles(string sourceDir, string fileExtension, bool doBackup)
         {
             var backupDir = @$"{sourceDir}\Backup_" + DateTime.UtcNow.Ticks;
 
             try
             {
-                var filesToDelete = Directory.GetFiles(sourceDir, ext, option)
-                    .Where(d => !d.Contains("Backup_")).ToArray();
+                var filesToDelete = Directory.GetFiles(sourceDir, fileExtension)
+                    .Where(d => !d.Contains("Backup_"))
+                    .ToArray();
 
-                if (isBackup)
+                if (doBackup)
                 {
                     // Copy text files
+
                     foreach (var file in filesToDelete)
                     {
-                        // Remove path from the file name
-                        var fName = file[(sourceDir.Length + 1)..];
+                        // Get only the file name
+
+                        var fileName = file[(sourceDir.Length + 1)..];
 
                         try
                         {
@@ -293,11 +300,14 @@ namespace AdionFA.Infrastructure.Directories.Services
                             }
 
                             // Will not overwrite if the destination file already exists
-                            var targetPath = Path.Combine(backupDir, option == SearchOption.AllDirectories ? Path.GetFileName(fName) : fName);
-                            File.Copy(Path.Combine(sourceDir, fName), targetPath, overwrite);
+
+                            var targetPath = Path.Combine(backupDir, fileName);
+
+                            File.Copy(Path.Combine(sourceDir, fileName), targetPath);
                         }
 
                         // Catch exception if the file was already copied
+
                         catch (IOException copyError)
                         {
                             Trace.TraceError(copyError.Message);
@@ -307,6 +317,7 @@ namespace AdionFA.Infrastructure.Directories.Services
                 }
 
                 // Delete source files that were copied
+
                 foreach (var file in filesToDelete)
                 {
                     File.Delete(file);

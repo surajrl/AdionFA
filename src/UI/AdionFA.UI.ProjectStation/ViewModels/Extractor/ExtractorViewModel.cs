@@ -59,13 +59,12 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             if (item == HamburgerMenuItems.ExtractorTrim)
             {
-                // Get the latest project configuration
                 ProjectConfiguration = _mapper.Map<ProjectConfigurationDTO, ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
 
                 ExtractorPath = ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory();
                 ExtractorTemplates.Clear();
 
-                foreach (var template in _projectDirectoryService.GetFilesInPath(ExtractorPath))
+                foreach (var template in _projectDirectoryService.GetFilesInPath(ExtractorPath, "*.csv"))
                 {
                     ExtractorTemplates.Add(template.Name);
                 }
@@ -109,8 +108,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     directoryService.CopyCSVFileTo(fileInfo, ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
                     ExtractorTemplates.Add(fileInfo.Name);
                 }
-
-                ContainerLocator.Current.Resolve<IEventAggregator>().GetEvent<ExtractorTemplatesUpdatedEvent>().Publish(true);
             }
         });
 
@@ -126,7 +123,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var directoryService = new ProjectDirectoryService();
-                if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), isBackup: false))
+                if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv", false))
                 {
                     var filenames = new List<string>();
                     foreach (var filename in openFileDialog.FileNames)
@@ -138,8 +135,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                     ExtractorTemplates.Clear();
                     ExtractorTemplates.AddRange(filenames);
-
-                    ContainerLocator.Current.Resolve<IEventAggregator>().GetEvent<ExtractorTemplatesUpdatedEvent>().Publish(true);
                 }
             }
         });

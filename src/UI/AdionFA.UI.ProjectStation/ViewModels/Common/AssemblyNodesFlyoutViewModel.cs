@@ -1,4 +1,4 @@
-﻿using AdionFA.Infrastructure.Modules.Strategy;
+﻿using AdionFA.Infrastructure.Modules.Builder;
 using AdionFA.UI.Infrastructure;
 using AdionFA.UI.Infrastructure.Base;
 using AdionFA.UI.Infrastructure.Services;
@@ -36,8 +36,12 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
                         AssemblyNodes.AddRange(list);
                         break;
 
-                    case AssemblyNodeModel assembledNode:
-                        AssemblyNodes.Add(assembledNode);
+                    case BuilderModel<AssemblyNodeModel> nodeBuilder:
+                        AssemblyNodes.AddRange(((BuilderModel<AssemblyNodeModel>)flyout.ModelOne).WinningNodesUP);
+                        AssemblyNodes.AddRange(((BuilderModel<AssemblyNodeModel>)flyout.ModelOne).WinningNodesDOWN);
+                        break;
+                    case AssemblyNodeModel assemblyNode:
+                        AssemblyNodes.Add(assemblyNode);
                         break;
                 }
             }
@@ -45,9 +49,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels.Common
 
         public ICommand RemoveNodeFromMetaTraderCommand => new DelegateCommand<object>(item =>
         {
-            if (item is AssemblyNodeModel assembledNode)
+            if (item is AssemblyNodeModel assemblyNode)
             {
-                AssemblyNodes.Remove(assembledNode);
+                AssemblyNodes.Remove(assemblyNode);
             }
         });
 

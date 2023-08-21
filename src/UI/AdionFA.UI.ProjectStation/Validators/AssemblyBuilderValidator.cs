@@ -10,19 +10,13 @@ namespace AdionFA.UI.ProjectStation.Validators
         {
             RuleFor(model => model.AssemblyBuilderProcessesDOWN)
                 .NotEmpty()
-                .When(model => model.AssemblyBuilderProcessesUP.Count == 0)
-                .WithMessage("No nodes to build");
+                .When(model => model.AssemblyBuilderProcessesUP.Count == 0);
 
             RuleFor(model => model.AssemblyBuilderProcessesUP)
                 .NotEmpty()
-                .When(model => model.AssemblyBuilderProcessesDOWN.Count == 0)
-                .WithMessage("No nodes to build");
+                .When(model => model.AssemblyBuilderProcessesDOWN.Count == 0);
 
-            RuleFor(model => model.MaxParallelism).GreaterThan(0)
-                .WithMessage("Max Parallelism must be greater than 0");
-
-            RuleFor(model => model.ProjectConfiguration)
-                .SetValidator(new ProjectConfigurationVMValidator());
+            RuleFor(model => model.ProjectConfiguration).SetValidator(new ProjectConfigurationVMValidator());
         }
     }
 }

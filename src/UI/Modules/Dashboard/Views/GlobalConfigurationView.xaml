@@ -276,6 +276,15 @@
                                                  Value="{Binding GlobalConfiguration.MaxProgressivenessVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
 
+                        <!--  Maximum Parallelism  -->
+                        <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label Content="Maximum Parallelism *" />
+                            <metro:NumericUpDown Minimum="1"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding GlobalConfiguration.MaxParallelism, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
 
                     </StackPanel>
                 </metro:MetroHeader>

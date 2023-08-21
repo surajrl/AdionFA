@@ -8,9 +8,7 @@ using AdionFA.Infrastructure.Extractor.Model;
 using AdionFA.Infrastructure.Helpers;
 using AdionFA.Infrastructure.IofC;
 using AdionFA.Infrastructure.Managements;
-using AdionFA.Infrastructure.Modules.Strategy;
-using AdionFA.Infrastructure.NodeBuilder.Contracts;
-using AdionFA.Infrastructure.NodeBuilder.Model;
+using AdionFA.Infrastructure.Modules.Builder;
 using AdionFA.Infrastructure.Weka.Services;
 using AdionFA.TransferObject.Project;
 using AdionFA.UI.Infrastructure.AutoMapper;
@@ -19,7 +17,6 @@ using AdionFA.UI.Infrastructure.Model.Project;
 using AdionFA.UI.ProjectStation.Commands;
 using AdionFA.UI.ProjectStation.EventAggregator;
 using AdionFA.UI.ProjectStation.Features;
-using AdionFA.UI.ProjectStation.Model.Common;
 using AdionFA.UI.ProjectStation.Validators;
 using AutoMapper;
 using MahApps.Metro.Controls.Dialogs;
@@ -46,7 +43,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private readonly IProjectDirectoryService _projectDirectoryService;
         private readonly IExtractorService _extractorService;
-        private readonly INodeBuilderService _nodeBuilderService;
+        private readonly IBuilderService _builderService;
 
         private readonly IProjectService _projectService;
         private readonly IMarketDataService _marketDataService;
@@ -54,7 +51,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         private readonly IEventAggregator _eventAggregator;
 
         private CancellationTokenSource _cancellationTokenSource;
-        private readonly ManualResetEventSlim _manualResetEventSlim;
         private readonly object _lock;
         private bool _disposedValue;
 
@@ -63,39 +59,15 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         {
             _projectDirectoryService = IoC.Kernel.Get<IProjectDirectoryService>();
             _extractorService = IoC.Kernel.Get<IExtractorService>();
-            _nodeBuilderService = IoC.Kernel.Get<INodeBuilderService>();
+            _builderService = IoC.Kernel.Get<IBuilderService>();
 
             _projectService = IoC.Kernel.Get<IProjectService>();
             _marketDataService = IoC.Kernel.Get<IMarketDataService>();
 
-            _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
-
             ContainerLocator.Current.Resolve<IAppProjectCommands>().SelectItemHamburgerMenuCommand.RegisterCommand(SelectItemHamburgerMenuCommand);
 
-            // Event aggregators
-
+            _eventAggregator = ContainerLocator.Current.Resolve<IEventAggregator>();
             _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Subscribe(canExecute => CanExecute = canExecute);
-
-            _eventAggregator.GetEvent<ExtractorTemplatesUpdatedEvent>().Subscribe(updated =>
-            {
-                var canUpdateProcesses =
-                NodeBuilderProcesses.All(process => process.Message == BuilderProcessStatus.NBNotStarted.GetMetadata().Name)
-                || NodeBuilderProcesses.All(process => process.Message.Contains(BuilderProcessStatus.Canceled.GetMetadata().Name));
-
-                // Only update the extractor templates if the builder process has not started or has been cancelled
-                if (updated && canUpdateProcesses)
-                {
-                    UpdateExtractorTemplates();
-                }
-            });
-
-            _eventAggregator.GetEvent<BuilderResetEvent>().Subscribe(builderReset =>
-            {
-                if (builderReset)
-                {
-                    DeleteNodeBuilder();
-                }
-            });
 
             _mapper = new MapperConfiguration(mc =>
             {
@@ -103,87 +75,64 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }).CreateMapper();
 
             _lock = new();
-            _manualResetEventSlim = new(true);
             _cancellationTokenSource = new();
 
-            NodeBuilderProcesses = new();
-            MaxParallelism = Environment.ProcessorCount - 1;
-
-            // Load XML files containing winning nodes
             NodeBuilder = new();
-            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml").ToList().ForEach(file =>
-            {
-                NodeBuilder.AllWinningNodes.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
-            });
-            _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml").ToList().ForEach(file =>
-            {
-                NodeBuilder.AllWinningNodes.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
-            });
-
-            UpdateExtractorTemplates();
+            NodeBuilderProcesses = new();
         }
 
         public ICommand SelectItemHamburgerMenuCommand => new DelegateCommand<string>(item =>
         {
             if (item == HamburgerMenuItems.NodeBuilderTrim)
             {
+                // Load most recent project configuration
+
                 ProjectConfiguration = _mapper.Map<ProjectConfigurationVM>(_projectService.GetProjectConfiguration(ProcessArgs.ProjectId, true));
+
+                // Load XML files containing winning single nodes
+
+                if (!IsTransactionActive)
+                {
+                    NodeBuilder.AllWinningNodes.Clear();
+
+                    _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml")
+                    .ToList()
+                    .ForEach(file =>
+                    {
+                        NodeBuilder.AllWinningNodes.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
+                    });
+
+                    _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml")
+                    .ToList()
+                    .ForEach(file =>
+                    {
+                        NodeBuilder.AllWinningNodes.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
+                    });
+                }
             }
         });
 
-        public ICommand Stop => new DelegateCommand(() =>
+        public ICommand LoadNodeBuilderCommand => new DelegateCommand(async () =>
         {
-            _manualResetEventSlim.Reset();
+            var load = await MessageHelper.ShowMessageInputAsync(this,
+                Resources.NodeBuilder,
+                "Loading a new Node Builder will delete all the existing Single Nodes\n"
+                + "Do you want to continue?").ConfigureAwait(true);
 
-            foreach (var process in NodeBuilderProcesses)
+            if (load != MessageDialogResult.Affirmative)
             {
-                if (process.Message != BuilderProcessStatus.NBCompleted.GetMetadata().Name
-                && process.Message != BuilderProcessStatus.NBNotStarted.GetMetadata().Name)
-                {
-                    var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
-                    process.Message = $"{process.Message} - {stopped}";
-                }
+                return;
             }
 
-            CanCancelOrContinue = true;
-        }, () => IsTransactionActive && !CanCancelOrContinue)
+            LoadNodeBuilder();
+        }, () => !IsTransactionActive && CanExecute)
             .ObservesProperty(() => IsTransactionActive)
-            .ObservesProperty(() => CanCancelOrContinue);
+            .ObservesProperty(() => CanExecute);
 
-        public ICommand Cancel => new DelegateCommand(() =>
-        {
-            _cancellationTokenSource.Cancel();
-            _manualResetEventSlim.Set();
+        public ICommand CancelCommand => new DelegateCommand(() => _cancellationTokenSource.Cancel(), () => IsTransactionActive)
+            .ObservesProperty(() => IsTransactionActive);
 
-            CanCancelOrContinue = false;
-        }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
-
-        public ICommand Continue => new DelegateCommand(() =>
-        {
-            _manualResetEventSlim.Set();
-
-            var stopped = BuilderProcessStatus.Stopped.GetMetadata().Name;
-            foreach (var process in NodeBuilderProcesses)
-            {
-                process.Message = process.Message.Replace($" - {stopped}", string.Empty);
-            }
-            CanCancelOrContinue = false;
-        }, () => CanCancelOrContinue).ObservesProperty(() => CanCancelOrContinue);
-
-        private void DeleteNodeBuilder()
-        {
-            // Delete node builder nodes
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), ext: "*.xml", isBackup: false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), ext: "*.xml", isBackup: false);
-            // Delete node builder extractions
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodeBuilderExtractorWithoutScheduleDirectory(), isBackup: false);
-
-            NodeBuilder.AllWinningNodes.Clear();
-
-            UpdateExtractorTemplates();
-        }
-
-        public ICommand Process => new DelegateCommand(async () =>
+        public ICommand ProcessCommand => new DelegateCommand(async () =>
         {
             var validator = Validate(new NodeBuilderValidator());
             if (!validator.IsValid)
@@ -195,32 +144,33 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 return;
             }
 
-            if (NodeBuilder.AllWinningNodes.Count > 0)
-            {
-                var deleteAll = await MessageHelper.ShowMessageInputAsync(this,
-                    Resources.NodeBuilder,
-                    "Starting a new process will delete all the Nodes, Assembly Nodes and Strategy Nodes.\n"
-                    + "Do you want to continue?").ConfigureAwait(true);
-
-                if (deleteAll != MessageDialogResult.Affirmative)
-                {
-                    return;
-                }
-            }
-
             try
             {
                 IsTransactionActive = true;
-
                 _eventAggregator.GetEvent<AppProjectCanExecuteEvent>().Publish(false);
-                _eventAggregator.GetEvent<BuilderResetEvent>().Publish(true);
 
                 _cancellationTokenSource = new();
 
+                if (NodeBuilder.AllWinningNodes.Count > 0)
+                {
+                    var process = await MessageHelper.ShowMessageInputAsync(this,
+                     Resources.NodeBuilder,
+                     "Existing Single Nodes found, starting a new process will delete them\n"
+                     + "Do you want to continue?").ConfigureAwait(true);
+
+                    if (process != MessageDialogResult.Affirmative)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        LoadNodeBuilder();
+                    }
+                }
+
                 // Historical data
 
-                var projectCandles = _marketDataService.GetHistoricalData(ProcessArgs.HistoricalDataId, true)
-                .HistoricalDataCandles
+                var allProjectCandles = _marketDataService.GetHistoricalDataCandles(ProjectConfiguration.Project.HistoricalDataId)
                 .Select(hdCandle => new Candle
                 {
                     Date = hdCandle.StartDate,
@@ -234,43 +184,46 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     Volume = hdCandle.Volume,
                     Spread = hdCandle.Spread,
 
-                    Label = hdCandle.Close > hdCandle.Open ? "UP" : "DOWN"
+                    Label = hdCandle.Close > hdCandle.Open ? Domain.Enums.Label.UP.GetDescription() : Domain.Enums.Label.DOWN.GetDescription()
                 })
                 .OrderBy(candle => candle.Date)
                 .ThenBy(candle => candle.Time);
 
                 await Task.Factory.StartNew(() =>
                 {
-                    // Extraction
+                    ExtractionProcess(allProjectCandles);
 
-                    ExtractionProcess(projectCandles);
-
-                    for (CurrentWekaDepth = ProjectConfiguration.NodeBuilderConfiguration.WekaStartDepth; CurrentWekaDepth <= ProjectConfiguration.NodeBuilderConfiguration.WekaEndDepth; CurrentWekaDepth++)
+                    CurrentWekaDepth = ProjectConfiguration.NodeBuilderConfiguration.WekaStartDepth;
+                    while (true)
                     {
-                        // Find nodes
+                        // Reset processes
 
-                        var backtestNodes = GetBacktestNodes();
+                        foreach (var builderProcess in NodeBuilderProcesses)
+                        {
+                            builderProcess.CompletedBacktests = 0;
+                            builderProcess.ExecutingBacktests = 0;
+                        }
 
-                        // Backtest of nodes
-
-                        BacktestProcess(backtestNodes, projectCandles);
+                        var allBacktestSingleNodes = FindBacktestSingleNodes();
+                        BacktestProcess(allBacktestSingleNodes, allProjectCandles);
 
                         // Check correlation
 
-                        foreach (var process in NodeBuilderProcesses)
+                        foreach (var builderProcess in NodeBuilderProcesses)
                         {
-                            process.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Name;
+                            builderProcess.Message = BuilderProcessStatus.ExecutingCorrelation.GetMetadata().Name;
                         }
 
+                        NodeBuilder.AllWinningNodes.Clear();
                         NodeBuilder.AllWinningNodes.AddRange(
-                            _nodeBuilderService.Correlation<SingleNodeModel>(
+                            _builderService.Correlation<SingleNodeModel>(
                                 ProcessArgs.ProjectName,
                                 EntityTypeEnum.NodeBuilder,
                                 ProjectConfiguration.MaxCorrelationPercent));
 
                         // Stop if target is met
 
-                        var totalTrades = NodeBuilder.AllWinningNodes.Select(node => node.BacktestIS.TotalTrades + node.BacktestOS.TotalTrades).Sum();
+                        var totalTrades = NodeBuilder.AllWinningNodes.Select(node => node.BacktestIS.TotalTrades).Sum();
 
                         if (NodeBuilder.WinningNodesUP.Count >= ProjectConfiguration.NodeBuilderConfiguration.NodesUPTarget
                         && NodeBuilder.WinningNodesDOWN.Count >= ProjectConfiguration.NodeBuilderConfiguration.NodesDOWNTarget
@@ -279,32 +232,31 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                             break;
                         }
 
-                        // reset the process
+                        // Stop if weka depth is met
 
-                        foreach (var process in NodeBuilderProcesses)
+                        CurrentWekaDepth++;
+                        if (CurrentWekaDepth > ProjectConfiguration.NodeBuilderConfiguration.WekaEndDepth)
                         {
-                            process.CompletedBacktests = 0;
-                            process.ExecutingBacktests = 0;
+                            CurrentWekaDepth--;
+                            break;
                         }
                     }
                 }, _cancellationTokenSource.Token, TaskCreationOptions.None, TaskScheduler.Default);
 
-                foreach (var process in NodeBuilderProcesses)
+                foreach (var builderProcess in NodeBuilderProcesses)
                 {
-                    process.Message = BuilderProcessStatus.NBCompleted.GetMetadata().Name;
+                    builderProcess.Message = BuilderProcessStatus.NBCompleted.GetMetadata().Name;
                 }
 
-                // Results
-
-                _eventAggregator.GetEvent<NodeBuilderCompletedEvent>().Publish(true);
+                // Results message
 
                 var msgUP = NodeBuilder.WinningNodesUP.Count > 0
-                ? $"{NodeBuilder.WinningNodesUP.Count} UP Nodes Found"
-                : "No UP Nodes Found";
+                ? $"{NodeBuilder.WinningNodesUP.Count} UP Single Nodes {(NodeBuilder.WinningNodesUP.Count == 1 ? "Node" : "Nodes")} Found"
+                : "No UP Single Nodes Found";
 
                 var msgDOWN = NodeBuilder.WinningNodesDOWN.Count > 0
-                ? $"{NodeBuilder.WinningNodesDOWN.Count} DOWN Nodes Found"
-                : "No DOWN Nodes Found";
+                ? $"{NodeBuilder.WinningNodesDOWN.Count} DOWN Single Nodes {(NodeBuilder.WinningNodesDOWN.Count == 1 ? "Node" : "Nodes")} Found"
+                : "No DOWN Single Nodes Found";
 
                 MessageHelper.ShowMessage(this,
                     Resources.NodeBuilder,
@@ -314,10 +266,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
             catch (OperationCanceledException)
             {
-                foreach (var strategyBuilderProcess in NodeBuilderProcesses)
-                {
-                    strategyBuilderProcess.Message = BuilderProcessStatus.Canceled.GetMetadata().Name;
-                }
+                MessageHelper.ShowMessage(this,
+                    Resources.NodeBuilder,
+                    Resources.NodeBuilder + " cancelled");
             }
             catch (Exception ex)
             {
@@ -332,53 +283,56 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = null;
             }
-        }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
+        }, () => !IsTransactionActive && NodeBuilderProcesses.Count > 0)
+            .ObservesProperty(() => IsTransactionActive)
+            .ObservesProperty(() => NodeBuilderProcesses.Count);
 
-        private void ExtractionProcess(IEnumerable<Candle> projectCandles)
+        private void ExtractionProcess(IEnumerable<Candle> candles)
         {
             Parallel.ForEach(
                 NodeBuilderProcesses,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = MaxParallelism,
+                    MaxDegreeOfParallelism = ProjectConfiguration.MaxParallelism,
                     CancellationToken = _cancellationTokenSource.Token
                 },
-                process =>
+                builderProcess =>
                 {
-                    process.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Name;
+                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    var extractionIndicators = _extractorService.BuildIndicatorsFromCSV(process.ExtractionTemplatePath);
+                    builderProcess.Message = BuilderProcessStatus.ExecutingExtraction.GetMetadata().Name;
+
+                    var extractionIndicators = _extractorService.BuildIndicatorsFromCSV(builderProcess.ExtractionTemplatePath);
                     var extractionResult = _extractorService.DoExtraction(
                         ProjectConfiguration.FromDateIS.Value,
                         ProjectConfiguration.ToDateIS.Value,
                         extractionIndicators,
-                        projectCandles.ToList(),
-                        ProcessArgs.TimeframeId,
+                        candles.ToList(),
+                        ProjectConfiguration.Project.HistoricalData.TimeframeId,
                         ProjectConfiguration.ExtractorMinVariation);
 
                     var timeSignature = DateTime.UtcNow.ToString("yyyy.MM.dd.HH.mm.ss", CultureInfo.InvariantCulture);
-                    var nameSignature = process.ExtractionTemplateName.Replace(".csv", string.Empty);
+                    var nameSignature = builderProcess.ExtractionTemplateName.Replace(".csv", string.Empty);
 
-                    var extractionName = $"{nameSignature}.{timeSignature}.csv";
-                    var extractionPath = ProcessArgs.ProjectName.ProjectNodeBuilderExtractorWithoutScheduleDirectory(extractionName);
+                    builderProcess.ExtractionName = $"{nameSignature}.{timeSignature}.csv";
+                    builderProcess.ExtractionPath = ProcessArgs.ProjectName.ProjectNodeBuilderExtractorWithoutScheduleDirectory(builderProcess.ExtractionName);
+
                     _extractorService.ExtractorWrite(
-                        extractionPath,
-                        extractionResult,
-                        0,
-                        0);
+                        builderProcess.ExtractionPath,
+                        extractionResult);
 
-                    process.ExtractionName = extractionName;
-                    process.ExtractionPath = extractionPath;
-                    process.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Name;
+                    builderProcess.Message = BuilderProcessStatus.ExtractionCompleted.GetMetadata().Name;
                 });
         }
 
-        private List<SingleNodeModel> GetBacktestNodes()
+        private List<SingleNodeModel> FindBacktestSingleNodes()
         {
-            var backtestNodes = new List<SingleNodeModel>();
+            var allBacktestSingleNodes = new List<SingleNodeModel>();
 
             foreach (var process in NodeBuilderProcesses)
             {
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
                 // Weka
 
                 process.Message = BuilderProcessStatus.ExecutingWeka.GetMetadata().Name;
@@ -394,7 +348,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     (double)ProjectConfiguration.NodeBuilderConfiguration.WekaMaxRatio,
                     ProjectConfiguration.NodeBuilderConfiguration.WekaNTotal);
 
-                // No tree was found
+                // No tree found
+
                 if (responseWeka.Count == 0)
                 {
                     continue;
@@ -416,76 +371,86 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     })
                     .ToList();
 
-                backtestNodes.AddRange(nodes);
-                process.BacktestNodes.Clear();
-                process.BacktestNodes.AddRange(nodes);
+                allBacktestSingleNodes.AddRange(nodes);
+                process.BacktestSingleNodes.Clear();
+                process.BacktestSingleNodes.AddRange(nodes);
 
-                process.Message = process.BacktestNodes.Count == 0
+                process.Message = process.BacktestSingleNodes.Count == 0
                     ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name // No backtests to do
                     : process.Message = BuilderProcessStatus.WekaCompleted.GetMetadata().Name;
             }
 
-            return backtestNodes;
+            return allBacktestSingleNodes;
         }
 
-        private void BacktestProcess(List<SingleNodeModel> backtestNodes, IEnumerable<Candle> projectCandles)
+        private void BacktestProcess(List<SingleNodeModel> singleNodes, IEnumerable<Candle> candles)
         {
-            var backtestNodesPartition = Partitioner.Create(backtestNodes, EnumerablePartitionerOptions.NoBuffering);
-
             Parallel.ForEach(
-                backtestNodesPartition,
+                Partitioner.Create(singleNodes, EnumerablePartitionerOptions.NoBuffering),
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = MaxParallelism,
+                    MaxDegreeOfParallelism = ProjectConfiguration.MaxParallelism,
                     CancellationToken = _cancellationTokenSource.Token,
                 },
-                node =>
+                singleNode =>
                 {
-                    _manualResetEventSlim.Wait();
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                     // Get a reference to the process being backtested
-                    var process = NodeBuilderProcesses
-                    .Where(process => process.BacktestNodes.Any(processNode => processNode == node))
+
+                    var builderProcess = NodeBuilderProcesses
+                    .Where(builderProcess => builderProcess.BacktestSingleNodes.Any(processNode => processNode == singleNode))
                     .FirstOrDefault();
 
                     lock (_lock)
                     {
-                        process.ExecutingBacktests++;
-                        process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
+                        builderProcess.ExecutingBacktests++;
+                        builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {builderProcess.ExecutingBacktests} {(builderProcess.ExecutingBacktests == 1 ? "Node" : "Nodes")}";
                     }
 
-                    node.WinningStrategy = _nodeBuilderService.BuildBacktestOfNode(
-                        node,
-                        projectCandles,
+                    singleNode.WinningStrategy = _builderService.BuildBacktestOfSingleNode(
+                        singleNode,
+                        candles,
                         _mapper.Map<ProjectConfigurationDTO>(ProjectConfiguration),
-                        ProcessArgs.TimeframeId,
-                        _manualResetEventSlim,
                         _cancellationTokenSource.Token);
 
-                    if (node.WinningStrategy)
+                    if (singleNode.WinningStrategy)
                     {
-                        SerializerHelper.SerializeNode(ProcessArgs.ProjectName, node);
+                        SerializerHelper.SerializeNode(ProcessArgs.ProjectName, singleNode);
                     }
 
                     lock (_lock)
                     {
-                        process.ExecutingBacktests--;
-                        process.CompletedBacktests++;
-                        process.ProgressCounter++;
+                        builderProcess.ExecutingBacktests--;
+                        builderProcess.CompletedBacktests++;
 
-                        process.Message = process.CompletedBacktests == process.BacktestNodes.Count
-                        ? process.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name
-                        : process.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {process.ExecutingBacktests} Nodes";
+                        builderProcess.Message = builderProcess.CompletedBacktests == builderProcess.BacktestSingleNodes.Count
+                        ? builderProcess.Message = BuilderProcessStatus.BacktestCompleted.GetMetadata().Name
+                        : builderProcess.Message = $"{BuilderProcessStatus.ExecutingBacktest.GetMetadata().Name} of {builderProcess.ExecutingBacktests} {(builderProcess.ExecutingBacktests == 1 ? "Node" : "Nodes")}";
                     }
                 });
         }
 
-        private void UpdateExtractorTemplates()
+        private void LoadNodeBuilder()
         {
+            // Remove existing winning single nodes
+
+            NodeBuilder.AllWinningNodes.Clear();
+
+            // Delete single node files from node builder
+
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml", false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml", false);
+
+            // Delete extraction files from node builder
+
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodeBuilderExtractorWithoutScheduleDirectory(), "*.csv", false);
+
+            // Load processes
+
             NodeBuilderProcesses.Clear();
 
-            var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory());
+            var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv");
             foreach (var file in extractionTemplates)
             {
                 NodeBuilderProcesses.Add(new BuilderProcess
@@ -495,19 +460,12 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ExtractionName = file.Name,
                     Message = BuilderProcessStatus.NBNotStarted.GetMetadata().Name,
                     Tree = new(),
-                    BacktestNodes = new()
+                    BacktestSingleNodes = new()
                 });
             }
         }
 
         // View Bindings
-
-        private bool _canCancelOrContinue;
-        public bool CanCancelOrContinue
-        {
-            get => _canCancelOrContinue;
-            set => SetProperty(ref _canCancelOrContinue, value);
-        }
 
         private bool _isTransactionActive;
         public bool IsTransactionActive
@@ -530,26 +488,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             set => SetProperty(ref _projectConfiguration, value);
         }
 
-        private int _maxParallelism;
-        public int MaxParallelism
-        {
-            get => _maxParallelism;
-            set => SetProperty(ref _maxParallelism, value);
-        }
-
-        private NodeBuilderModel _nodeBuilder;
-        public NodeBuilderModel NodeBuilder
+        private BuilderModel<SingleNodeModel> _nodeBuilder;
+        public BuilderModel<SingleNodeModel> NodeBuilder
         {
             get => _nodeBuilder;
             set => SetProperty(ref _nodeBuilder, value);
         }
 
-        private ObservableCollection<BuilderProcess> _nodeBuilderProcesses;
-        public ObservableCollection<BuilderProcess> NodeBuilderProcesses
-        {
-            get => _nodeBuilderProcesses;
-            set => SetProperty(ref _nodeBuilderProcesses, value);
-        }
+        public ObservableCollection<BuilderProcess> NodeBuilderProcesses { get; }
 
         private int _currentWekaDepth;
         public int CurrentWekaDepth

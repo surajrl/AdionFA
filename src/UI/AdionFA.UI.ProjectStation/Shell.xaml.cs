@@ -23,7 +23,7 @@ namespace AdionFA.UI.ProjectStation
 
                 // Common
 
-                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(NodesFlyoutView));
+                regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(SingleNodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(AssemblyNodesFlyoutView));
                 regionManager?.RegisterViewWithRegion(FlyoutRegions.FlyoutRegion, typeof(StrategyNodesFlyoutView));
             }

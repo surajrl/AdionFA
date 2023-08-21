@@ -190,7 +190,7 @@ namespace AdionFA.Infrastructure.Extractor.Services
                     MathOperatorEnum? optor = null;
                     string[] divisions = null;
 
-                    // Operator Split
+                    // Operator split
 
                     if (f.Contains(">="))
                     {
@@ -218,12 +218,11 @@ namespace AdionFA.Infrastructure.Extractor.Services
                         divisions = f.Split('=');
                     }
 
-                    // Params Split
+                    // Params split
+
                     if (divisions.Length == 2)
                     {
                         var indicatorParams = divisions[0].Split("_");
-
-                        // NOT PARSING THE LAST THREE ITEMS OF STOCHRSI
                         var indicatorName = indicatorParams[0].Replace(".", "_");
 
                         if (Enum.TryParse(indicatorName, out IndicatorEnum indicatorType))
@@ -552,7 +551,7 @@ namespace AdionFA.Infrastructure.Extractor.Services
             IList<IndicatorBase> indicators,
             IList<Candle> candles,
             int timeframeId,
-            decimal variation = 0)
+            int minVariation)
         {
             try
             {
@@ -561,7 +560,7 @@ namespace AdionFA.Infrastructure.Extractor.Services
                 // Select candles that meet the variation condition
                 var data = (from c in candles
                             let v = int.Parse(c.Open.ToString(CultureInfo.InvariantCulture).Replace(".", string.Empty)) - int.Parse(c.Close.ToString(CultureInfo.InvariantCulture).Replace(".", string.Empty))
-                            where Math.Abs(v) >= (double)variation || variation == 0
+                            where Math.Abs(v) >= (double)minVariation || minVariation == 0
                             select new Candle
                             {
                                 Date = c.Date,
@@ -831,10 +830,13 @@ namespace AdionFA.Infrastructure.Extractor.Services
             };
         }
 
-        public bool ExtractorWrite(string path, IList<IndicatorBase> indicators, int fromRegionTime = 0, int toRegionTime = 0)
+        public bool ExtractorWrite(string path, IList<IndicatorBase> indicators)
         {
             try
             {
+                var fromRegionTime = 0;
+                var toRegionTime = 0;
+
                 if (indicators.ToList().Count > 0)
                 {
                     var columnCount = indicators.ToList().Count;

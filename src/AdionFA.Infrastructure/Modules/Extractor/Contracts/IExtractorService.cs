@@ -16,7 +16,7 @@ namespace AdionFA.Infrastructure.Extractor.Contracts
             IList<IndicatorBase> indicators,
             IList<Candle> candles,
             int timeframeId,
-            decimal variation = 0);
+            int minimumVariation);
 
         IList<IndicatorBase> CalculateNodeIndicators(
             Candle firstCandle,
@@ -26,6 +26,6 @@ namespace AdionFA.Infrastructure.Extractor.Contracts
 
         IList<Candle> GetCandles(string historyFilePath);
 
-        bool ExtractorWrite(string path, IList<IndicatorBase> indicators, int fromTime = 0, int toTime = 0);
+        bool ExtractorWrite(string path, IList<IndicatorBase> indicators);
     }
 }

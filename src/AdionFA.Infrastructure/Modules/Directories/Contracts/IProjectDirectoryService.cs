@@ -5,16 +5,26 @@ namespace AdionFA.Infrastructure.Directories.Contracts
 {
     public interface IProjectDirectoryService
     {
-        bool HasWritePermissionOnPath(string path);
+        bool HasWritePermissionOnPath(string filePath);
+
         bool ExistDefaultWorkspace();
+
         bool CreateDefaultWorkspace();
+
         bool CreateDefaultProjectWorkspace(string projectName);
-        bool CopyCSVFileTo(FileInfo fi, string targetDir);
-        Task<bool> CopyCSVFileToAsync(FileInfo fi, string targetDir);
+
+        bool CopyCSVFileTo(FileInfo fileInfo, string targetDir);
+
+        Task<bool> CopyCSVFileToAsync(FileInfo fileInfo, string targetDir);
+
         bool CopyCSVFiles(string sourceDir, string targetDir);
-        FileInfo[] GetFilesInPath(string path, string ext = "*.csv");
-        bool CreateBackup(string path);
-        bool DeleteFile(string path);
-        bool DeleteAllFiles(string sourceDir, string ext = "*.csv", SearchOption option = 0, bool overwrite = false, bool isBackup = true);
+
+        FileInfo[] GetFilesInPath(string filePath, string fileExtension);
+
+        bool CreateBackup(string filePath);
+
+        bool DeleteFile(string filePath);
+
+        bool DeleteAllFiles(string sourceDir, string fileExtension, bool doBackup);
     }
 }

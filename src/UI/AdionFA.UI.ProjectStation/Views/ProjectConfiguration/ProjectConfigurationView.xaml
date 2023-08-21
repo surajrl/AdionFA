@@ -366,7 +366,7 @@
                                                 Toggled="ProgressivenessToggleSwitch_Toggled" />
                         </StackPanel>
 
-                        <!--  Progressiveness  -->
+                        <!--  Maximum Progressiveness Variation  -->
                         <StackPanel MinWidth="{StaticResource ColumnWidth}"
                                     Margin="{StaticResource ColumnMargin}">
                             <Label IsEnabled="{Binding ProjectConfiguration.IsProgressiveness}">
@@ -382,6 +382,15 @@
                                                  Value="{Binding ProjectConfiguration.MaxProgressivenessVariation, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
                         </StackPanel>
 
+                        <!--  Maximum Parallelism  -->
+                        <StackPanel MinWidth="{StaticResource ColumnWidth}"
+                                    Margin="{StaticResource ColumnMargin}">
+                            <Label Content="Maximum Parallelism *" />
+                            <metro:NumericUpDown Minimum="1"
+                                                 NumericInputMode="Numbers"
+                                                 Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                                 Value="{Binding ProjectConfiguration.MaxParallelism, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" />
+                        </StackPanel>
 
                     </StackPanel>
                 </metro:MetroHeader>

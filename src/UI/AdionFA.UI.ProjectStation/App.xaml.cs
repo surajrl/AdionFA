@@ -123,9 +123,6 @@ namespace AdionFA.UI.ProjectStation
 
     public static class ProcessArgs
     {
-        public static int SymbolId => IoC.Kernel.Get<IProjectService>().GetProject(ProjectId, true).HistoricalData.SymbolId;
-        public static int TimeframeId => IoC.Kernel.Get<IProjectService>().GetProject(ProjectId, true).HistoricalData.TimeframeId;
-        public static int HistoricalDataId => IoC.Kernel.Get<IProjectService>().GetProject(ProjectId, true).HistoricalDataId;
         public static int ProjectId { get; set; }
         public static string ProjectName { get; set; }
     }
