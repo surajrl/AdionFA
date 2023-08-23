@@ -51,7 +51,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 var validationResults = GlobalConfiguration.Validate();
                 if (!validationResults.IsValid)
                 {
-                    MessageHelper.ShowMessages(this,
+                    MessageHelper.ShowMessagesAsync(this,
                         Resources.GlobalConfiguration,
                         validationResults.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -64,7 +64,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 IsTransactionActive = false;
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     Resources.GlobalConfiguration,
                     responseDTO.IsSuccess
                     ? Resources.SuccessEntitySave

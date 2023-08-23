@@ -22,9 +22,9 @@ namespace AdionFA.UI.Infrastructure.Helpers
             };
         }
 
-        public static async void ShowMessage(object context, string title, string message)
+        public static async Task<MessageDialogResult> ShowMessageAsync(object context, string title, string message)
         {
-            await Dialog.ShowMessageAsync(context,
+            return await Dialog.ShowMessageAsync(context,
                 title, $"{message ?? string.Empty}",
                 settings: _setting);
         }
@@ -37,7 +37,7 @@ namespace AdionFA.UI.Infrastructure.Helpers
                 settings: _setting).ConfigureAwait(false);
         }
 
-        public static async void ShowMessages(object context, string title, string[] messages)
+        public static async void ShowMessagesAsync(object context, string title, string[] messages)
         {
             var megs = messages?.ToArray() ?? Array.Empty<string>();
             await Dialog.ShowMessageAsync(context,

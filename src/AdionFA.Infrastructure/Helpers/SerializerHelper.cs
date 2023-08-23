@@ -21,7 +21,7 @@ namespace AdionFA.Infrastructure.Helpers
             XMLSerializeObject(node, string.Format(@"{0}\{1}", directory, filename));
         }
 
-        private static void XMLSerializeObject<T>(T serializableObject, string fileName)
+        public static void XMLSerializeObject<T>(T serializableObject, string fileName)
         {
             if (serializableObject == null)
             {

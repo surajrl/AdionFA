@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -109,14 +110,16 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 {
                     CrossingBuilder.AllWinningNodes.Clear();
 
-                    _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription()), "*.xml")
+                    new DirectoryInfo(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription()))
+                    .GetFiles("*", SearchOption.AllDirectories)
                     .ToList()
                     .ForEach(file =>
                     {
                         CrossingBuilder.AllWinningNodes.Add(SerializerHelper.XMLDeSerializeObject<StrategyNodeModel>(file.FullName));
                     });
 
-                    _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription()), "*.xml")
+                    new DirectoryInfo(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription()))
+                    .GetFiles("*", SearchOption.AllDirectories)
                     .ToList()
                     .ForEach(file =>
                     {
@@ -138,28 +141,30 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 return;
             }
 
-            CrossingBuilder.AllWinningNodes.Clear();
-
-            CrossingBuilderProcessesUP.Clear();
-            CrossingBuilderProcessesDOWN.Clear();
-
             if (LoadFromNodeBuilder)
             {
+                DeleteCrossingBuilder();
                 FromNodeBuilder();
             }
             else if (LoadFromAssemblyBuilder)
             {
+                DeleteCrossingBuilder();
                 FromAssemblyBuilder();
+            }
+            else if (LoadFromCrossingBuilder)
+            {
+                FromCrossingBuilder();
             }
             else
             {
                 // ...
             }
-        }, () => !IsTransactionActive && CanExecute && (LoadFromNodeBuilder || LoadFromAssemblyBuilder))
+        }, () => !IsTransactionActive && CanExecute && (LoadFromNodeBuilder || LoadFromAssemblyBuilder || LoadFromCrossingBuilder))
             .ObservesProperty(() => IsTransactionActive)
             .ObservesProperty(() => CanExecute)
             .ObservesProperty(() => LoadFromNodeBuilder)
-            .ObservesProperty(() => LoadFromAssemblyBuilder);
+            .ObservesProperty(() => LoadFromAssemblyBuilder)
+            .ObservesProperty(() => LoadFromCrossingBuilder);
 
         public ICommand CancelCommand => new DelegateCommand(() => _cancellationTokenSource.Cancel(), () => IsTransactionActive)
             .ObservesProperty(() => IsTransactionActive);
@@ -169,7 +174,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             var validator = Validate(new CrossingBuilderValidator());
             if (!validator.IsValid)
             {
-                MessageHelper.ShowMessages(this,
+                MessageHelper.ShowMessagesAsync(this,
                     EntityTypeEnum.CrossingBuilder.GetMetadata().Name,
                     validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -220,51 +225,13 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 if (CrossingBuilder.AllWinningNodes.Count > 0)
                 {
-                    var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv");
-                    foreach (var file in extractionTemplates)
-                    {
-                        foreach (var strategyNode in CrossingBuilder.WinningNodesUP)
-                        {
-                            CrossingBuilderProcessesUP.Add(new BuilderProcess
-                            {
-                                ExtractionTemplatePath = file.FullName,
-                                ExtractionTemplateName = file.Name,
-                                ExtractionName = file.Name,
-                                Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                                Tree = new(),
 
-                                BacktestStrategyNodes = new(),
-                                CurrentSuccessRateIS = strategyNode.BacktestIS.SuccessRatePercent,
-                                CurrentSuccessRateOS = strategyNode.BacktestOS.SuccessRatePercent,
-                                CurrentParentNodes = new(strategyNode.ParentNodesData),
-                                CurrentChildNodes = new(strategyNode.ChildNodesData),
-                                CurrentCrossingNodes = new(strategyNode.CrossingNodesData),
-                                PreviousBacktestOperationsIS = new(strategyNode.BacktestIS.BacktestOperations)
-                            });
-                        }
+                    await MessageHelper.ShowMessageAsync(this,
+                        Resources.CrossingBuilder,
+                        $"Adding {CrossingSymbolName} to previous strategy nodes")
+                     .ConfigureAwait(true);
 
-                        foreach (var strategyNode in CrossingBuilder.WinningNodesDOWN)
-                        {
-                            CrossingBuilderProcessesDOWN.Add(new BuilderProcess
-                            {
-                                ExtractionTemplatePath = file.FullName,
-                                ExtractionTemplateName = file.Name,
-                                ExtractionName = file.Name,
-                                Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                                Tree = new(),
-
-                                BacktestStrategyNodes = new(),
-                                CurrentSuccessRateIS = strategyNode.BacktestIS.SuccessRatePercent,
-                                CurrentSuccessRateOS = strategyNode.BacktestOS.SuccessRatePercent,
-                                CurrentParentNodes = new(strategyNode.ParentNodesData),
-                                CurrentChildNodes = new(strategyNode.ChildNodesData),
-                                CurrentCrossingNodes = new(strategyNode.CrossingNodesData),
-                                PreviousBacktestOperationsIS = new(strategyNode.BacktestIS.BacktestOperations)
-                            });
-                        }
-                    }
-
-                    DeleteCrossingBuilder();
+                    FromCrossingBuilder();
                 }
 
                 await Task.Factory.StartNew(() =>
@@ -346,18 +313,19 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 ? $"{CrossingBuilder.WinningNodesDOWN.Count} DOWN Strategy {(CrossingBuilder.WinningNodesDOWN.Count == 1 ? "Node" : "Nodes")} Found"
                 : "No DOWN Strategy Nodes Found";
 
-                MessageHelper.ShowMessage(this,
+                await MessageHelper.ShowMessageAsync(this,
                     Resources.CrossingBuilder,
                     $"{Resources.CrossingBuilderCompleted}\n\n" +
                     $"{msgUP}\n" +
-                    $"{msgDOWN}");
-
+                    $"{msgDOWN}")
+                .ConfigureAwait(true);
             }
             catch (OperationCanceledException)
             {
-                MessageHelper.ShowMessage(this,
+                await MessageHelper.ShowMessageAsync(this,
                     Resources.CrossingBuilder,
-                    Resources.CrossingBuilder + " cancelled");
+                    Resources.CrossingBuilder + " cancelled")
+                .ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -489,8 +457,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         .OrderByDescending(node => node)
                         .ToList();
 
-                        node.Label = label.GetDescription();
-
                         var newStrategyNode = new StrategyNodeModel
                         {
                             ParentNodesData = new(builderProcess.CurrentParentNodes),
@@ -579,6 +545,85 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         }
 
 
+        private void FromCrossingBuilder()
+        {
+            if (CrossingBuilder.WinningNodesUP.Count > 0)
+            {
+                var directoryName = string.Join("-",
+                    ProjectConfiguration.Project.HistoricalData.Symbol.Name,
+                    CrossingBuilder.WinningNodesUP.First().CrossingNodesData.Select(crossingNode => crossingNode.Item3).First());
+
+                var d = new DirectoryInfo(Path.Combine(ProcessArgs.ProjectName.ProjectNodesUPDirectory(CrossingBuilder.WinningNodesUP.First().WinningUPDirectory)));
+                d.CreateSubdirectory(directoryName);
+                foreach (var winningStrategyNodeUP in CrossingBuilder.WinningNodesUP)
+                {
+                    SerializerHelper.XMLSerializeObject(winningStrategyNodeUP, Path.Combine(d.FullName, directoryName, winningStrategyNodeUP.Name + ".xml"));
+                }
+            }
+            if (CrossingBuilder.WinningNodesDOWN.Count > 0)
+            {
+                var directoryName = string.Join("-",
+                    ProjectConfiguration.Project.HistoricalData.Symbol.Name,
+                    CrossingBuilder.WinningNodesDOWN.First().CrossingNodesData.Select(crossingNode => crossingNode.Item3).First());
+
+                var d = new DirectoryInfo(Path.Combine(ProcessArgs.ProjectName.ProjectNodesUPDirectory(CrossingBuilder.WinningNodesDOWN.First().WinningDOWNDirectory)));
+                d.CreateSubdirectory(directoryName);
+                foreach (var winningStrategyNodeDOWN in CrossingBuilder.WinningNodesDOWN)
+                {
+                    SerializerHelper.XMLSerializeObject(winningStrategyNodeDOWN, Path.Combine(d.FullName, directoryName, winningStrategyNodeDOWN.Name + ".xml"));
+                }
+            }
+
+            CrossingBuilderProcessesUP.Clear();
+            CrossingBuilderProcessesDOWN.Clear();
+
+            var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv");
+            foreach (var file in extractionTemplates)
+            {
+                foreach (var strategyNode in CrossingBuilder.WinningNodesUP)
+                {
+                    CrossingBuilderProcessesUP.Add(new BuilderProcess
+                    {
+                        ExtractionTemplatePath = file.FullName,
+                        ExtractionTemplateName = file.Name,
+                        ExtractionName = file.Name,
+                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                        Tree = new(),
+
+                        BacktestStrategyNodes = new(),
+                        CurrentSuccessRateIS = strategyNode.BacktestIS.SuccessRatePercent,
+                        CurrentSuccessRateOS = strategyNode.BacktestOS.SuccessRatePercent,
+                        CurrentParentNodes = new(strategyNode.ParentNodesData),
+                        CurrentChildNodes = new(strategyNode.ChildNodesData),
+                        CurrentCrossingNodes = new(strategyNode.CrossingNodesData),
+                        PreviousBacktestOperationsIS = new(strategyNode.BacktestIS.BacktestOperations)
+                    });
+                }
+
+                foreach (var strategyNode in CrossingBuilder.WinningNodesDOWN)
+                {
+                    CrossingBuilderProcessesDOWN.Add(new BuilderProcess
+                    {
+                        ExtractionTemplatePath = file.FullName,
+                        ExtractionTemplateName = file.Name,
+                        ExtractionName = file.Name,
+                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                        Tree = new(),
+
+                        BacktestStrategyNodes = new(),
+                        CurrentSuccessRateIS = strategyNode.BacktestIS.SuccessRatePercent,
+                        CurrentSuccessRateOS = strategyNode.BacktestOS.SuccessRatePercent,
+                        CurrentParentNodes = new(strategyNode.ParentNodesData),
+                        CurrentChildNodes = new(strategyNode.ChildNodesData),
+                        CurrentCrossingNodes = new(strategyNode.CrossingNodesData),
+                        PreviousBacktestOperationsIS = new(strategyNode.BacktestIS.BacktestOperations)
+                    });
+                }
+            }
+
+            DeleteCrossingBuilder();
+        }
+
         private void FromNodeBuilder()
         {
             var singleNodesUP = new List<SingleNodeModel>();
@@ -597,6 +642,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 singleNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<SingleNodeModel>(file.FullName));
             });
+
+            CrossingBuilderProcessesUP.Clear();
+            CrossingBuilderProcessesDOWN.Clear();
 
             var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv");
             foreach (var file in extractionTemplates)
@@ -656,6 +704,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 assemblyNodesDOWN.Add(SerializerHelper.XMLDeSerializeObject<AssemblyNodeModel>(file.FullName));
             });
 
+            CrossingBuilderProcessesUP.Clear();
+            CrossingBuilderProcessesDOWN.Clear();
+
             var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv");
             foreach (var file in extractionTemplates)
             {
@@ -689,8 +740,8 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         BacktestStrategyNodes = new(),
                         CurrentSuccessRateIS = assemblyNodesDOWN.Select(node => node.BacktestIS.SuccessRatePercent).Sum() / assemblyNodesDOWN.Count,
                         CurrentSuccessRateOS = assemblyNodesDOWN.Select(node => node.BacktestOS.SuccessRatePercent).Sum() / assemblyNodesDOWN.Count,
-                        CurrentParentNodes = new(assemblyNodesUP.Select(assemblyNode => assemblyNode.ParentNodeData)),
-                        CurrentChildNodes = new(assemblyNodesUP.FirstOrDefault().ChildNodesData),
+                        CurrentParentNodes = new(assemblyNodesDOWN.Select(assemblyNode => assemblyNode.ParentNodeData)),
+                        CurrentChildNodes = new(assemblyNodesDOWN.FirstOrDefault().ChildNodesData),
                         CurrentCrossingNodes = new(),
                         PreviousBacktestOperationsIS = new(BuilderService.GetBacktestOperations(assemblyNodesDOWN))
                     });
@@ -789,6 +840,13 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ObservableCollection<BuilderProcess> CrossingBuilderProcessesUP { get; }
         public ObservableCollection<BuilderProcess> CrossingBuilderProcessesDOWN { get; }
+
+        private bool _loadFromCrossingBuilder;
+        public bool LoadFromCrossingBuilder
+        {
+            get => _loadFromCrossingBuilder;
+            set => SetProperty(ref _loadFromCrossingBuilder, value);
+        }
 
         private bool _loadFromNodeBuilder;
         public bool LoadFromNodeBuilder

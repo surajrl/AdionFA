@@ -43,6 +43,7 @@ namespace AdionFA.Infrastructure.MetaTrader.Services
                 candleHistory.ToList());
 
             // Check each indicator
+
             for (var i = 0; i < nodeIndicatorsResult.Count; i++)
             {
                 var indicator = nodeIndicatorsResult[i];

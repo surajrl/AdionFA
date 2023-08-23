@@ -64,7 +64,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 {
                     IsTransactionActive = false;
 
-                    MessageHelper.ShowMessages(this,
+                    MessageHelper.ShowMessagesAsync(this,
                         EntityTypeEnum.HistoricalData.GetMetadata().Name,
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -77,7 +77,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                     IsTransactionActive = false;
 
-                    MessageHelper.ShowMessage(this,
+                    MessageHelper.ShowMessageAsync(this,
                         EntityTypeEnum.HistoricalData.GetMetadata().Name,
                         result.IsSuccess
                         ? Resources.SuccessEntitySave
@@ -142,7 +142,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     return true;
                 }
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     EntityTypeEnum.HistoricalData.GetMetadata().Name,
                     Resources.HistoricalDataEmpty);
 

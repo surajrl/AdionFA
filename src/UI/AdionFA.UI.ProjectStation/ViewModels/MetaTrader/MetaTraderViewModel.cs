@@ -72,7 +72,9 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 mc.AddProfile(new AutoMappingInfrastructureProfile());
             }).CreateMapper();
 
-            Nodes = new();
+            SingleNodes = new();
+            AssemblyNodes = new();
+
             DataInput = new();
             DataOutput = new();
 
@@ -152,15 +154,15 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 Trace.TraceError(ex.Message);
             }
         }, () => !IsTransactionActive
-        && (TestNodes && Nodes.Count > 0
-        || TestAssemblyNode && AssemblyNode != null
+        && (TestNodes && SingleNodes.Count > 0
+        || TestAssemblyNode && AssemblyNodes != null
         || TestStrategyNode && StrategyNode != null))
             .ObservesProperty(() => IsTransactionActive)
             .ObservesProperty(() => TestNodes)
             .ObservesProperty(() => TestAssemblyNode)
             .ObservesProperty(() => TestStrategyNode)
-            .ObservesProperty(() => Nodes.Count)
-            .ObservesProperty(() => AssemblyNode)
+            .ObservesProperty(() => SingleNodes.Count)
+            .ObservesProperty(() => AssemblyNodes)
             .ObservesProperty(() => StrategyNode);
 
         private void Subscriber()
@@ -231,7 +233,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private bool IsTradeNodes()
         {
-            foreach (var node in Nodes)
+            foreach (var node in SingleNodes)
             {
                 var isTrade = _tradeService.IsTrade(
                     node.NodeData.Node,
@@ -249,62 +251,112 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private bool IsTradeAssemblyNode()
         {
-            // Test for parent node
-            var isTrade = _tradeService.IsTrade(
-                AssemblyNode.ParentNodeData.Node,
-                _completeCandles[_mainSymbol],
-                _currentCandles[_mainSymbol]);
+            var isTrade = false;
 
-            if (!isTrade)
+            if (IsMultiAssemblyMode)
             {
-                return false;
-            }
+                // Test for one of the parent nodes
 
-            // Test for one child node
-            foreach (var childNode in AssemblyNode.ChildNodesData)
-            {
-                isTrade = _tradeService.IsTrade(
-                    childNode.Node,
-                    _completeCandles[_mainSymbol],
-                    _currentCandles[_mainSymbol]);
-
-                if (isTrade)
+                foreach (var parentNode in AssemblyNodes.Select(assemblyNode => assemblyNode.ParentNodeData))
                 {
-                    return true;
+                    isTrade = _tradeService.IsTrade(
+                        parentNode.Node,
+                        _completeCandles[_mainSymbol],
+                        _currentCandles[_mainSymbol]);
+
+                    if (isTrade)
+                    {
+                        break;
+                    }
                 }
-            }
 
-            return false;
-        }
-
-        private bool IsTradeStrategyNode()
-        {
-            // Test parent node
-            var isTrade = _tradeService.IsTrade(
-                StrategyNode.ParentNodesData.First().Node,
-                _completeCandles[_mainSymbol],
-                _currentCandles[_mainSymbol]);
-
-            if (!isTrade)
-            {
-                return false;
-            }
-
-            // Test for every crossing node
-            for (var idx = 0; idx < StrategyNode.CrossingNodesData.Count; idx++)
-            {
-                isTrade = _tradeService.IsTrade(
-                    StrategyNode.CrossingNodesData[idx].Item1.Node,
-                    _completeCandles[_crossingSymbols[idx]],
-                    _currentCandles[_crossingSymbols[idx]]);
+                // No parent node passed
 
                 if (!isTrade)
                 {
                     return false;
                 }
+
+                // Test for one of the child nodes
+
+                foreach (var childNode in AssemblyNodes.First().ChildNodesData)
+                {
+                    isTrade = _tradeService.IsTrade(
+                        childNode.Node,
+                        _completeCandles[_mainSymbol],
+                        _currentCandles[_mainSymbol]);
+
+                    if (isTrade)
+                    {
+                        break;
+                    }
+                }
+
+                return isTrade;
+            }
+            else
+            {
+                // Test for the parent node
+
+                isTrade = _tradeService.IsTrade(
+                        AssemblyNodes.First().ParentNodeData.Node,
+                        _completeCandles[_mainSymbol],
+                        _currentCandles[_mainSymbol]);
+
+                // Parent node did not pass
+
+                if (!isTrade)
+                {
+                    return false;
+                }
+
+                // Test for one of the child nodes
+
+                foreach (var childNode in AssemblyNodes.First().ChildNodesData)
+                {
+                    isTrade = _tradeService.IsTrade(
+                        childNode.Node,
+                        _completeCandles[_mainSymbol],
+                        _currentCandles[_mainSymbol]);
+
+                    if (isTrade)
+                    {
+                        break;
+                    }
+                }
+
+                return isTrade;
+            }
+        }
+
+        private bool IsTradeStrategyNode()
+        {
+            var isTrade = false;
+
+            // Test for at least one parent node
+
+            foreach (var parentNode in StrategyNode.ParentNodesData)
+            {
+                isTrade = _tradeService.IsTrade(
+                    parentNode.Node,
+                    _completeCandles[_mainSymbol],
+                    _currentCandles[_mainSymbol]);
+
+                if (isTrade)
+                {
+                    break;
+                }
             }
 
-            // Test for one child node
+            // No parent node passed
+
+            if (!isTrade)
+            {
+                return false;
+            }
+
+            // Test for at least one child node
+
             foreach (var childNode in StrategyNode.ChildNodesData)
             {
                 isTrade = _tradeService.IsTrade(
@@ -314,11 +366,33 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 if (isTrade)
                 {
-                    return true;
+                    break;
                 }
             }
 
-            return false;
+            // No child node passed
+
+            if (!isTrade)
+            {
+                return false;
+            }
+
+            // Test for at least one crossing node
+
+            for (var idx = 0; idx < StrategyNode.CrossingNodesData.Count; idx++)
+            {
+                isTrade = _tradeService.IsTrade(
+                    StrategyNode.CrossingNodesData[idx].Item1.Node,
+                    _completeCandles[_crossingSymbols[idx]],
+                    _currentCandles[_crossingSymbols[idx]]);
+
+                if (isTrade)
+                {
+                    break;
+                }
+            }
+
+            return isTrade;
         }
 
         private void Requester()
@@ -330,28 +404,28 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                 var isTrade = false;
-                var label = string.Empty;
+                var label = Domain.Enums.Label.UP;
 
                 if (TestNodes && IsTradeNodes())
                 {
                     isTrade = true;
-                    label = Nodes[0].NodeData.Label;
+                    label = SingleNodes.First().Label;
                 }
                 else if (TestAssemblyNode && IsTradeAssemblyNode())
                 {
                     isTrade = true;
-                    label = AssemblyNode.ParentNodeData.Label;
+                    label = AssemblyNodes.First().Label;
                 }
                 else if (TestStrategyNode && IsTradeStrategyNode())
                 {
                     isTrade = true;
-                    label = StrategyNode.ParentNodesData.First().Label;
+                    label = StrategyNode.Label;
                 }
 
                 if (isTrade)
                 {
                     // request --------------------------------------------------------------
-                    var operationRequest = label.ToLowerInvariant() == "up"
+                    var operationRequest = label == Domain.Enums.Label.UP
                     ? _tradeService.OperationRequest(OrderTypeEnum.Buy)
                     : _tradeService.OperationRequest(OrderTypeEnum.Sell);
 
@@ -416,17 +490,24 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand AddNodeToMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is SingleNodeModel node)
+            if (item is SingleNodeModel singleNode)
             {
-                if (Nodes.IndexOf(node) == -1)
+                // Check if the single node is already added
+
+                if (SingleNodes.IndexOf(singleNode) == -1)
                 {
-                    Nodes.Add(node);
+                    SingleNodes.Add(singleNode);
                 }
             }
 
             if (item is AssemblyNodeModel assemblyNode)
             {
-                AssemblyNode = assemblyNode;
+                // Check if the assembly node is already added
+
+                if (AssemblyNodes.IndexOf(assemblyNode) == -1)
+                {
+                    AssemblyNodes.Add(assemblyNode);
+                }
             }
 
             if (item is StrategyNodeModel strategyNode)
@@ -437,14 +518,14 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         public ICommand RemoveNodeFromMetaTrader => new DelegateCommand<object>(item =>
         {
-            if (item is SingleNodeModel node)
+            if (item is SingleNodeModel singleNode)
             {
-                Nodes.Remove(node);
+                SingleNodes.Remove(singleNode);
             }
 
             if (item is AssemblyNodeModel assemblyNode)
             {
-                AssemblyNode = null;
+                AssemblyNodes.Remove(assemblyNode);
             }
 
             if (item is StrategyNodeModel strategyNode)
@@ -497,18 +578,25 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             set => SetProperty(ref _testNodes, value);
         }
 
-        private ObservableCollection<SingleNodeModel> _nodes;
-        public ObservableCollection<SingleNodeModel> Nodes
+        private ObservableCollection<SingleNodeModel> _singleNodes;
+        public ObservableCollection<SingleNodeModel> SingleNodes
         {
-            get => _nodes;
-            set => SetProperty(ref _nodes, value);
+            get => _singleNodes;
+            set => SetProperty(ref _singleNodes, value);
         }
 
-        private AssemblyNodeModel _assembledNode;
-        public AssemblyNodeModel AssemblyNode
+        private ObservableCollection<AssemblyNodeModel> _assemblyNodes;
+        public ObservableCollection<AssemblyNodeModel> AssemblyNodes
         {
-            get => _assembledNode;
-            set => SetProperty(ref _assembledNode, value);
+            get => _assemblyNodes;
+            set => SetProperty(ref _assemblyNodes, value);
+        }
+
+        private bool _isMultiAssemblyMode;
+        public bool IsMultiAssemblyMode
+        {
+            get => _isMultiAssemblyMode;
+            set => SetProperty(ref _isMultiAssemblyMode, value);
         }
 
         private StrategyNodeModel _strategyNode;

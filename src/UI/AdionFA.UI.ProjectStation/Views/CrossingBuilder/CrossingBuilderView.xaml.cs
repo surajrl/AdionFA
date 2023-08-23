@@ -14,6 +14,18 @@ namespace AdionFA.UI.ProjectStation.Views
             InitializeComponent();
         }
 
+        private void LoadFromCrossingBuilderToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is CrossingBuilderViewModel vm)
+            {
+                if (vm.LoadFromCrossingBuilder)
+                {
+                    vm.LoadFromNodeBuilder = false;
+                    vm.LoadFromAssemblyBuilder = false;
+                }
+            }
+        }
+
         private void LoadFromNodeBuilderToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             if (DataContext is CrossingBuilderViewModel vm)
@@ -21,6 +33,7 @@ namespace AdionFA.UI.ProjectStation.Views
                 if (vm.LoadFromNodeBuilder)
                 {
                     vm.LoadFromAssemblyBuilder = false;
+                    vm.LoadFromCrossingBuilder = false;
                 }
             }
         }
@@ -32,6 +45,7 @@ namespace AdionFA.UI.ProjectStation.Views
                 if (vm.LoadFromAssemblyBuilder)
                 {
                     vm.LoadFromNodeBuilder = false;
+                    vm.LoadFromCrossingBuilder = false;
                 }
             }
         }
@@ -42,11 +56,11 @@ namespace AdionFA.UI.ProjectStation.Views
             {
                 if (vm.IsMultiAssemblyMode)
                 {
-                    assemblyMode.Content = "Multi Assembly";
+                    assemblyMode.Content = "Multi Assembly ON";
                 }
                 else
                 {
-                    assemblyMode.Content = "Single Assembly";
+                    assemblyMode.Content = "Single Assembly ON";
                 }
             }
         }

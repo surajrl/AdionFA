@@ -216,6 +216,15 @@
                         <metro:ToggleSwitch IsEnabled="{Binding CanExecute}"
                                             IsOn="{Binding TestAssemblyNode, Mode=TwoWay}"
                                             Toggled="TestAssemblyNodeToggleSwitch_Toggled" />
+                        <!--  Assembly Mode  -->
+                        <StackPanel>
+                            <Label Content="Assembly Mode" />
+                            <metro:ToggleSwitch x:Name="assemblyMode"
+                                                Content="Single Assembly ON"
+                                                IsEnabled="{Binding TestAssemblyNode}"
+                                                IsOn="{Binding IsMultiAssemblyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Toggled="MultiAssemblyToggleSwitch_Toggled" />
+                        </StackPanel>
                     </StackPanel>
                     <StackPanel>
                         <Label Content="Test Nodes" />
@@ -223,6 +232,7 @@
                                             IsOn="{Binding TestNodes, Mode=TwoWay}"
                                             Toggled="TestNodesToggleSwitch_Toggled" />
                     </StackPanel>
+
                 </StackPanel>
 
                 <!--  Strategy, Assembly & Nodes Buttons  -->
@@ -263,12 +273,12 @@
                         <Button x:Name="assemblyNodesBtn"
                                 Width="125"
                                 Height="40"
-                                IsEnabled="{Binding AssemblyNode, Converter={StaticResource NullToBooleanConverter}}">
+                                IsEnabled="{Binding AssemblyNodes.Count, Converter={StaticResource IntToBooleanConverter}}">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Width="15"
                                                             VerticalAlignment="Center"
                                                             Kind="Graph" />
-                                <Label Content="Assembly Node"
+                                <Label Content="Assembly Nodes"
                                        FontSize="11" />
                             </StackPanel>
                             <behaviors:Interaction.Triggers>
@@ -278,7 +288,7 @@
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                                 <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
-                                                <Binding Path="AssemblyNode" />
+                                                <Binding Path="AssemblyNodes" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>
@@ -291,7 +301,7 @@
                         <Button x:Name="nodeBtn"
                                 Width="80"
                                 Height="40"
-                                IsEnabled="{Binding Nodes.Count, Converter={StaticResource IntToBooleanConverter}}">
+                                IsEnabled="{Binding SingleNodes.Count, Converter={StaticResource IntToBooleanConverter}}">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Width="15"
                                                             VerticalAlignment="Center"
@@ -305,8 +315,8 @@
                                     <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                         <behaviors:InvokeCommandAction.CommandParameter>
                                             <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
-                                                <Binding Path="Nodes" />
+                                                <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSingleNodes}" />
+                                                <Binding Path="SingleNodes" />
                                             </MultiBinding>
                                         </behaviors:InvokeCommandAction.CommandParameter>
                                     </behaviors:InvokeCommandAction>

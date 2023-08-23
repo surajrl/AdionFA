@@ -69,7 +69,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             var validationResult = Project.Validate();
             if (!validationResult.IsValid)
             {
-                MessageHelper.ShowMessages(this,
+                MessageHelper.ShowMessagesAsync(this,
                     Resources.CreateProject,
                     validationResult.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -89,7 +89,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 IsTransactionActive = false;
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     Resources.CreateProject,
                     responseDTO.IsSuccess
                     ? Resources.SuccessEntitySave

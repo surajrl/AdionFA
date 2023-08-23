@@ -78,7 +78,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 {
                     IsTransactionActive = false;
 
-                    MessageHelper.ShowMessages(this,
+                    MessageHelper.ShowMessagesAsync(this,
                         "Download Historical Data",
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -140,7 +140,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                     IsTransactionActive = false;
 
-                    MessageHelper.ShowMessage(this,
+                    MessageHelper.ShowMessageAsync(this,
                         EntityTypeEnum.HistoricalData.GetMetadata().Name,
                         responseDTO.IsSuccess
                         ? Resources.SuccessEntitySave
@@ -156,7 +156,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
             catch (Exception ex)
             {
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     "Download Historical Data",
                     $"{ex.Message}");
 
@@ -231,7 +231,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
             catch (Exception ex)
             {
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     "Error",
                     $"{ex.Message}");
 
@@ -278,7 +278,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     return true;
                 }
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     EntityTypeEnum.HistoricalData.GetMetadata().Name,
                     Resources.HistoricalDataEmpty);
 

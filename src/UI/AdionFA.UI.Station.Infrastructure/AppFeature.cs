@@ -33,14 +33,7 @@
 
         // ProjectStation
 
-        // Strategy Builder
-
-        public const string FlyoutProjectModuleCorrelationNodes = "FlyoutProjectModuleCorrelationNodes";
-        public const string FlyoutProjectModuleSavedNodes = "FlyoutProjectModuleSavedNodes";
-
-        // Common
-
-        public const string FlyoutProjectModuleNodes = "FlyoutProjectModuleNodes";
+        public const string FlyoutProjectModuleSingleNodes = "FlyoutProjectModuleSingleNodes";
         public const string FlyoutProjectModuleAssemblyNodes = "FlyoutProjectModuleAssemblyNodes";
         public const string FlyoutProjectModuleStrategyNodes = "FlyoutProjectModuleStrategyNodes";
     }

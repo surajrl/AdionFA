@@ -10,12 +10,12 @@ namespace AdionFA.UI.ProjectStation.Common
     /// </summary>
     public partial class SingleNodesFlyoutView : Flyout, IFlyoutView
     {
-        public SingleNodesFlyoutView(SingleNodesFlyoutViewModel vm)
+        public SingleNodesFlyoutView(NodesFlyoutViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;
         }
 
-        public string FlyoutName => FlyoutRegions.FlyoutProjectModuleNodes;
+        public string FlyoutName => FlyoutRegions.FlyoutProjectModuleSingleNodes;
     }
 }

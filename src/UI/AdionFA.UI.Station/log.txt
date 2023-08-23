@@ -1067,3 +1067,11 @@ LIMIT 1
 20-08-2023 17:29:57.166 [Information] [ProcessId 16380] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.Set<Project>().Add(). 
 20-08-2023 17:29:57.387 [Information] [ProcessId 16380] [ThreadId 1] :: ProjectService.CreateProject() :: dbContext.SaveChanges(). 
 20-08-2023 17:29:57.393 [Information] [ProcessId 16380] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+22-08-2023 20:32:47.116 [Information] [ProcessId 7576] [ThreadId 1] :: ProjectService.GetAllProject() :: Call. 
+22-08-2023 20:32:53.360 [Information] [ProcessId 7576] [ThreadId 1] :: App.OnStartup() :: AdionFA.UI.Station 
+22-08-2023 20:41:04.244 [Information] [ProcessId 7576] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: Call. 
+22-08-2023 20:41:17.579 [Information] [ProcessId 7576] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.Set<HistoricalData>().Add(). 
+22-08-2023 20:41:32.527 [Information] [ProcessId 7576] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.SaveChanges(). 
+22-08-2023 20:45:37.512 [Information] [ProcessId 7576] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: Call. 
+22-08-2023 20:45:48.302 [Information] [ProcessId 7576] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.Set<HistoricalData>().Add(). 
+22-08-2023 20:46:00.632 [Information] [ProcessId 7576] [ThreadId 1] :: MarketDataService.CreateHistoricalData() :: dbContext.SaveChanges(). 

@@ -137,7 +137,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             var validator = Validate(new NodeBuilderValidator());
             if (!validator.IsValid)
             {
-                MessageHelper.ShowMessages(this,
+                MessageHelper.ShowMessagesAsync(this,
                     EntityTypeEnum.NodeBuilder.GetMetadata().Name,
                     validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -258,7 +258,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 ? $"{NodeBuilder.WinningNodesDOWN.Count} DOWN Single Nodes {(NodeBuilder.WinningNodesDOWN.Count == 1 ? "Node" : "Nodes")} Found"
                 : "No DOWN Single Nodes Found";
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     Resources.NodeBuilder,
                     $"{Resources.NodeBuilderCompleted}\n\n"
                     + $"{msgUP}\n"
@@ -266,7 +266,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
             catch (OperationCanceledException)
             {
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     Resources.NodeBuilder,
                     Resources.NodeBuilder + " cancelled");
             }

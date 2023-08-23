@@ -437,11 +437,13 @@ namespace AdionFA.Infrastructure.Modules.Builder
                     if (!parentNodeSignal)
                     {
                         // Move to the next candle
+
                         continue;
                     }
                 }
 
                 // Check for at least one child node
+
                 var childNodeSignal = false;
                 foreach (var childNode in strategyNode.ChildNodesData)
                 {
@@ -462,10 +464,12 @@ namespace AdionFA.Infrastructure.Modules.Builder
                 if (!childNodeSignal)
                 {
                     // Move to the next candle
+
                     continue;
                 }
 
                 // Check for at least one crossing node
+
                 var crossingNodeSignal = false;
                 foreach (var crossingNode in strategyNode.CrossingNodesData)
                 {

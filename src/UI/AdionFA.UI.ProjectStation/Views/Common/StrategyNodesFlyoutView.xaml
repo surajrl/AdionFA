@@ -42,7 +42,7 @@
             <!--  Strategy Nodes  -->
             <DataGrid AutoGenerateColumns="False"
                       IsReadOnly="True"
-                      ItemsSource="{Binding StrategyNodes}">
+                      ItemsSource="{Binding Nodes}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />

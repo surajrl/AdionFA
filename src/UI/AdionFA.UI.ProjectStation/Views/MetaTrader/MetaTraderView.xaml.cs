@@ -16,28 +16,52 @@ namespace AdionFA.UI.ProjectStation.Views
 
         private void TestStrategyNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (((MetaTraderViewModel)DataContext).TestStrategyNode)
+            if (DataContext is MetaTraderViewModel vm)
             {
-                ((MetaTraderViewModel)DataContext).TestNodes = false;
-                ((MetaTraderViewModel)DataContext).TestAssemblyNode = false;
+                if (vm.TestStrategyNode)
+                {
+                    vm.TestNodes = false;
+                    vm.TestAssemblyNode = false;
+                }
             }
         }
 
         private void TestAssemblyNodeToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (((MetaTraderViewModel)DataContext).TestAssemblyNode)
+            if (DataContext is MetaTraderViewModel vm)
             {
-                ((MetaTraderViewModel)DataContext).TestNodes = false;
-                ((MetaTraderViewModel)DataContext).TestStrategyNode = false;
+                if (vm.TestAssemblyNode)
+                {
+                    vm.TestNodes = false;
+                    vm.TestStrategyNode = false;
+                }
             }
         }
 
         private void TestNodesToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (((MetaTraderViewModel)DataContext).TestNodes)
+            if (DataContext is MetaTraderViewModel vm)
             {
-                ((MetaTraderViewModel)DataContext).TestAssemblyNode = false;
-                ((MetaTraderViewModel)DataContext).TestStrategyNode = false;
+                if (vm.TestNodes)
+                {
+                    vm.TestAssemblyNode = false;
+                    vm.TestStrategyNode = false;
+                }
+            }
+        }
+
+        private void MultiAssemblyToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MetaTraderViewModel vm)
+            {
+                if (vm.IsMultiAssemblyMode)
+                {
+                    assemblyMode.Content = "Multi Assembly ON";
+                }
+                else
+                {
+                    assemblyMode.Content = "Single Assembly ON";
+                }
             }
         }
     }

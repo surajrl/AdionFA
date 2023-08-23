@@ -61,7 +61,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 var validator = _projectConfiguration.Validate();
                 if (!validator.IsValid)
                 {
-                    MessageHelper.ShowMessages(this,
+                    MessageHelper.ShowMessagesAsync(this,
                         EntityTypeEnum.ProjectConfiguration.GetMetadata().Name,
                         validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -73,7 +73,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 var responseDTO = _projectService.UpdateProjectConfiguration(_mapper.Map<ProjectConfigurationDTO>(ProjectConfiguration));
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                 Resources.ProjectConfiguration,
                 responseDTO.IsSuccess
                 ? Resources.SuccessEntitySave
@@ -111,7 +111,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 ? Resources.SuccessEntitySave
                 : string.IsNullOrEmpty(responseDTO.Message) ? Resources.FailEntitySave : responseDTO.Message;
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     Resources.RestoreProjectConfiguration,
                     msg);
             }

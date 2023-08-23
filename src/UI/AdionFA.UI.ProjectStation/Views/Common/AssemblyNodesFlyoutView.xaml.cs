@@ -10,7 +10,7 @@ namespace AdionFA.UI.ProjectStation.Common
     /// </summary>
     public partial class AssemblyNodesFlyoutView : Flyout, IFlyoutView
     {
-        public AssemblyNodesFlyoutView(AssemblyNodesFlyoutViewModel vm)
+        public AssemblyNodesFlyoutView(NodesFlyoutViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;

@@ -42,7 +42,7 @@
             <!--  Assembly Nodes  -->
             <DataGrid AutoGenerateColumns="False"
                       IsReadOnly="True"
-                      ItemsSource="{Binding AssemblyNodes}">
+                      ItemsSource="{Binding Nodes}">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                      Color="White" />

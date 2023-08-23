@@ -388,12 +388,16 @@
                                             IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
                                             IsOn="{Binding LoadFromAssemblyBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Toggled="LoadFromAssemblyBuilderToggleSwitch_Toggled" />
+                        <metro:ToggleSwitch Content="Crossing Builder"
+                                            IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                                            IsOn="{Binding LoadFromCrossingBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Toggled="LoadFromCrossingBuilderToggleSwitch_Toggled" />
                     </StackPanel>
                     <!--  Assembly Mode  -->
                     <StackPanel>
                         <Label Content="Assembly Mode" />
                         <metro:ToggleSwitch x:Name="assemblyMode"
-                                            Content="Single Assembly"
+                                            Content="Single Assembly ON"
                                             IsEnabled="{Binding LoadFromAssemblyBuilder}"
                                             IsOn="{Binding IsMultiAssemblyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Toggled="MultiAssemblyToggleSwitch_Toggled" />

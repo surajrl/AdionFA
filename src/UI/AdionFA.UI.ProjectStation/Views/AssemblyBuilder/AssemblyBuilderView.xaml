@@ -371,8 +371,7 @@
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
                                             <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleAssemblyNodes}" />
-                                            <Binding Path="AssemblyBuilder" />
-                                            <Binding Path="ChildNodesDOWN" />
+                                            <Binding Path="AssemblyBuilder.WinningNodesDOWN" />
                                         </MultiBinding>
                                     </behaviors:InvokeCommandAction.CommandParameter>
                                 </behaviors:InvokeCommandAction>

@@ -347,7 +347,7 @@
                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                     <behaviors:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSingleNodes}" />
                                             <Binding Path="NodeBuilder" />
                                         </MultiBinding>
                                     </behaviors:InvokeCommandAction.CommandParameter>
@@ -493,7 +493,7 @@
                                                 <behaviors:InvokeCommandAction Command="{x:Static infrastructure:ApplicationCommands.ShowFlyoutCommand}">
                                                     <behaviors:InvokeCommandAction.CommandParameter>
                                                         <MultiBinding Converter="{StaticResource CommandParameterFlyoutConverter}">
-                                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleNodes}" />
+                                                            <Binding Source="{x:Static infrastructure:FlyoutRegions.FlyoutProjectModuleSingleNodes}" />
                                                             <Binding Path="BacktestSingleNodes" />
                                                         </MultiBinding>
                                                     </behaviors:InvokeCommandAction.CommandParameter>

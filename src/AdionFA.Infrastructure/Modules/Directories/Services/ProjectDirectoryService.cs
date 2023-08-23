@@ -7,13 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
-using System.Threading.Tasks;
 
 namespace AdionFA.Infrastructure.Directories.Services
 {
     public class ProjectDirectoryService : IProjectDirectoryService
     {
-        public bool HasWritePermissionOnPath(string filePath)
+        private static bool HasWritePermissionOnPath(string filePath)
         {
             try
             {
@@ -58,7 +57,7 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public bool ExistDefaultWorkspace()
+        private static bool ExistDefaultWorkspace()
         {
             try
             {
@@ -176,29 +175,7 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public async Task<bool> CopyCSVFileToAsync(FileInfo fileInfo, string targetDir)
-        {
-            try
-            {
-                if (File.Exists(fileInfo.FullName))
-                {
-                    using var SourceStream = File.Open(fileInfo.FullName, FileMode.Open);
-                    using var DestinationStream = File.Create(Path.Combine(targetDir, fileInfo.Name));
-
-                    await SourceStream.CopyToAsync(DestinationStream);
-
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-                return false;
-            }
-        }
-
-        public bool CopyCSVFiles(string sourceDir, string targetDir)
+        private bool CopyCSVFiles(string sourceDir, string targetDir)
         {
             try
             {

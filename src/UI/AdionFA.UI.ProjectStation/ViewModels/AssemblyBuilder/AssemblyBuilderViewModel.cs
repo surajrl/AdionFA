@@ -140,7 +140,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             var validator = Validate(new AssemblyBuilderValidator());
             if (!validator.IsValid)
             {
-                MessageHelper.ShowMessages(this,
+                MessageHelper.ShowMessagesAsync(this,
                     EntityTypeEnum.AssemblyBuilder.GetMetadata().Name,
                     validator.Errors.Select(msg => msg.ErrorMessage).ToArray());
 
@@ -269,7 +269,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 ? $"{AssemblyBuilder.WinningNodesDOWN.Count} DOWN Assembly {(AssemblyBuilder.WinningNodesDOWN.Count == 1 ? "Node" : "Nodes")} Found"
                 : "No DOWN Assembly Nodes Found";
 
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     Resources.AssemblyBuilder,
                     $"{Resources.AssemblyBuilderCompleted}\n\n" +
                     $"{msgUP}\n" +
@@ -277,7 +277,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
             catch (OperationCanceledException)
             {
-                MessageHelper.ShowMessage(this,
+                MessageHelper.ShowMessageAsync(this,
                     Resources.AssemblyBuilder,
                     Resources.AssemblyBuilder + " cancelled");
             }
@@ -410,8 +410,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                         .OrderByDescending(node => node)
                         .ToList();
 
-                        node.Label = label.GetDescription();
-
                         return new AssemblyNodeModel
                         {
                             ParentNodeData = node,
@@ -419,9 +417,10 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                             .Select(node => node.NodeData)
                             .ToList(),
                             BacktestStatusIS = BacktestStatus.NotStarted,
-                            BacktestStatusOS = BacktestStatus.NotStarted
+                            BacktestStatusOS = BacktestStatus.NotStarted,
                         };
-                    }).ToList();
+                    })
+                    .ToList();
 
                 allBacktestAssemblyNodes.AddRange(nodes);
                 builderProcess.BacktestAssemblyNodes.Clear();

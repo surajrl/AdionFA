@@ -9,6 +9,9 @@ namespace AdionFA.Infrastructure.MetaTrader.Contracts
     {
         ZmqMsgRequestModel OperationRequest(OrderTypeEnum orderType);
 
-        bool IsTrade(IList<string> singleNode, IList<Candle> candleHistory, Candle currentCandle);
+        bool IsTrade(
+            IList<string> singleNode,
+            IList<Candle> candleHistory,
+            Candle currentCandle);
     }
 }

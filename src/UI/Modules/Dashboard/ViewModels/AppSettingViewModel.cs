@@ -111,7 +111,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                                 _projectDirectoryService.CreateDefaultProjectWorkspace(project.ProjectName);
                             }
 
-                            MessageHelper.ShowMessage(this,
+                            MessageHelper.ShowMessageAsync(this,
                                 EntityTypeEnum.Setting.GetMetadata().Name,
                                 "Default workspace was updated");
                         }
@@ -119,7 +119,7 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                 }
                 else
                 {
-                    MessageHelper.ShowMessage(this,
+                    MessageHelper.ShowMessageAsync(this,
                         EntityTypeEnum.Setting.GetMetadata().Name,
                         "Close all running projects to run the operation");
                 }
