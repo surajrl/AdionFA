@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -269,17 +270,19 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 ? $"{AssemblyBuilder.WinningNodesDOWN.Count} DOWN Assembly {(AssemblyBuilder.WinningNodesDOWN.Count == 1 ? "Node" : "Nodes")} Found"
                 : "No DOWN Assembly Nodes Found";
 
-                MessageHelper.ShowMessageAsync(this,
+                await MessageHelper.ShowMessageAsync(this,
                     Resources.AssemblyBuilder,
                     $"{Resources.AssemblyBuilderCompleted}\n\n" +
                     $"{msgUP}\n" +
-                    $"{msgDOWN}");
+                    $"{msgDOWN}")
+                .ConfigureAwait(true);
             }
             catch (OperationCanceledException)
             {
-                MessageHelper.ShowMessageAsync(this,
+                await MessageHelper.ShowMessageAsync(this,
                     Resources.AssemblyBuilder,
-                    Resources.AssemblyBuilder + " cancelled");
+                    Resources.AssemblyBuilder + " cancelled")
+                .ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -501,13 +504,13 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             // Delete assembly node files from assembly builder
 
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription()), "*.xml", false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription()), "*.xml", false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesUP.GetDescription()), "*.xml", false, SearchOption.TopDirectoryOnly);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.AssemblyBuilderNodesDOWN.GetDescription()), "*.xml", false, SearchOption.TopDirectoryOnly);
 
             // Delete extraction files from assembly builder
 
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.UP), "*.csv", false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.DOWN), "*.csv", false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.UP), "*.csv", false, SearchOption.TopDirectoryOnly);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectAssemblyBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.DOWN), "*.csv", false, SearchOption.TopDirectoryOnly);
 
             // Load child nodes
 

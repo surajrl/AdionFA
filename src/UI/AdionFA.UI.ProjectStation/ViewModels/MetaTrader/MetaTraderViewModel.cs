@@ -249,7 +249,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             return false;
         }
 
-        private bool IsTradeAssemblyNode()
+        private bool IsTradeAssemblyNodes()
         {
             var isTrade = false;
 
@@ -411,7 +411,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     isTrade = true;
                     label = SingleNodes.First().Label;
                 }
-                else if (TestAssemblyNode && IsTradeAssemblyNode())
+                else if (TestAssemblyNode && IsTradeAssemblyNodes())
                 {
                     isTrade = true;
                     label = AssemblyNodes.First().Label;

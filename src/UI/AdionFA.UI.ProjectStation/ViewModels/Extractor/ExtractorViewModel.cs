@@ -123,7 +123,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var directoryService = new ProjectDirectoryService();
-                if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv", false))
+                if (directoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv", false, SearchOption.AllDirectories))
                 {
                     var filenames = new List<string>();
                     foreach (var filename in openFileDialog.FileNames)

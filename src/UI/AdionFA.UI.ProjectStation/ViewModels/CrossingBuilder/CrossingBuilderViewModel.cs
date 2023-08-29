@@ -132,7 +132,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         public ICommand LoadCrossingBuilderCommand => new DelegateCommand(async () =>
         {
             var load = await MessageHelper.ShowMessageInputAsync(this,
-                    Resources.AssemblyBuilder,
+                    Resources.CrossingBuilder,
                     "Loading a new Crossing Builder will delete all the existing Strategy Nodes\n"
                     + "Do you want to continue?").ConfigureAwait(true);
 
@@ -143,28 +143,51 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             if (LoadFromNodeBuilder)
             {
-                DeleteCrossingBuilder();
+                DeleteCrossingBuilder(true);
                 FromNodeBuilder();
             }
             else if (LoadFromAssemblyBuilder)
             {
-                DeleteCrossingBuilder();
+                DeleteCrossingBuilder(true);
                 FromAssemblyBuilder();
             }
             else if (LoadFromCrossingBuilder)
             {
                 FromCrossingBuilder();
+                DeleteCrossingBuilder(true);
             }
             else
             {
                 // ...
             }
-        }, () => !IsTransactionActive && CanExecute && (LoadFromNodeBuilder || LoadFromAssemblyBuilder || LoadFromCrossingBuilder))
-            .ObservesProperty(() => IsTransactionActive)
-            .ObservesProperty(() => CanExecute)
+        }, () => CanLoad && (LoadFromNodeBuilder || LoadFromAssemblyBuilder || LoadFromCrossingBuilder))
+            .ObservesProperty(() => CanLoad)
             .ObservesProperty(() => LoadFromNodeBuilder)
             .ObservesProperty(() => LoadFromAssemblyBuilder)
             .ObservesProperty(() => LoadFromCrossingBuilder);
+
+        public ICommand ResetCrossingBuilderCommand => new DelegateCommand(async () =>
+        {
+            var reset = await MessageHelper.ShowMessageInputAsync(this,
+                Resources.CrossingBuilder,
+                $"Resetting the {Resources.CrossingBuilder} will delete all Strategy Nodes found")
+            .ConfigureAwait(true);
+
+            if (reset != MessageDialogResult.Affirmative)
+            {
+                return;
+            }
+
+            IsCrossingStarted = false;
+
+            CrossingBuilderProcessesUP.Clear();
+            CrossingBuilderProcessesDOWN.Clear();
+
+            DeleteCrossingBuilder(true);
+
+        }, () => !IsTransactionActive && IsCrossingStarted)
+            .ObservesProperty(() => IsCrossingStarted)
+            .ObservesProperty(() => IsTransactionActive);
 
         public ICommand CancelCommand => new DelegateCommand(() => _cancellationTokenSource.Cancel(), () => IsTransactionActive)
             .ObservesProperty(() => IsTransactionActive);
@@ -223,16 +246,28 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
                 // Create the UP and DOWN processes from the previous strategy nodes
 
-                if (CrossingBuilder.AllWinningNodes.Count > 0)
+                if (IsCrossingStarted)
                 {
+                    if (CrossingBuilder.AllWinningNodes.Count <= 0)
+                    {
+                        await MessageHelper.ShowMessageAsync(this,
+                            Resources.CrossingBuilder,
+                            $"No previous Strategy Nodes found")
+                         .ConfigureAwait(true);
+
+                        return;
+                    }
 
                     await MessageHelper.ShowMessageAsync(this,
                         Resources.CrossingBuilder,
-                        $"Adding {CrossingSymbolName} to previous strategy nodes")
+                        $"Adding {CrossingSymbolName} to previous Strategy Nodes")
                      .ConfigureAwait(true);
 
                     FromCrossingBuilder();
+                    DeleteCrossingBuilder(false);
                 }
+
+                IsCrossingStarted = true;
 
                 await Task.Factory.StartNew(() =>
                 {
@@ -620,8 +655,6 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     });
                 }
             }
-
-            DeleteCrossingBuilder();
         }
 
         private void FromNodeBuilder()
@@ -791,7 +824,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             }
         }
 
-        private void DeleteCrossingBuilder()
+        private void DeleteCrossingBuilder(bool deleteAll)
         {
             // Reset the winning strategy nodes
 
@@ -799,13 +832,13 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             // Delete node files from the crossing Builder
 
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription()), "*.xml", false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription()), "*.xml", false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.CrossingBuilderNodesUP.GetDescription()), "*.xml", false, deleteAll ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.CrossingBuilderNodesDOWN.GetDescription()), "*.xml", false, deleteAll ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
             // Delete extractor files from the crossing Builder
 
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.UP), "*.csv", false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.DOWN), "*.csv", false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.UP), "*.csv", false, deleteAll ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectCrossingBuilderExtractorWithoutScheduleDirectory(Domain.Enums.Label.DOWN), "*.csv", false, deleteAll ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
         }
 
         // View Bindings
@@ -814,15 +847,42 @@ namespace AdionFA.UI.ProjectStation.ViewModels
         public bool IsTransactionActive
         {
             get => _isTransactionActive;
-            set => SetProperty(ref _isTransactionActive, value);
+            set
+            {
+                if (SetProperty(ref _isTransactionActive, value))
+                {
+                    RaisePropertyChanged(nameof(CanLoad));
+                }
+            }
         }
 
         private bool _canExecute = true;
         public bool CanExecute
         {
             get => _canExecute;
-            set => SetProperty(ref _canExecute, value);
+            set
+            {
+                if (SetProperty(ref _canExecute, value))
+                {
+                    RaisePropertyChanged(nameof(CanLoad));
+                }
+            }
         }
+
+        private bool _isCrossingStarted;
+        public bool IsCrossingStarted
+        {
+            get => _isCrossingStarted;
+            set
+            {
+                if (SetProperty(ref _isCrossingStarted, value))
+                {
+                    RaisePropertyChanged(nameof(CanLoad));
+                }
+            }
+        }
+
+        public bool CanLoad => !IsTransactionActive && CanExecute && !IsCrossingStarted;
 
         private ProjectConfigurationVM _projectConfiguration;
         public ProjectConfigurationVM ProjectConfiguration

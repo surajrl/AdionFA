@@ -221,9 +221,15 @@
                             <Label Content="Assembly Mode" />
                             <metro:ToggleSwitch x:Name="assemblyMode"
                                                 Content="Single Assembly ON"
-                                                IsEnabled="{Binding TestAssemblyNode}"
                                                 IsOn="{Binding IsMultiAssemblyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                Toggled="MultiAssemblyToggleSwitch_Toggled" />
+                                                Toggled="MultiAssemblyToggleSwitch_Toggled">
+                                <metro:ToggleSwitch.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                        <Binding Path="CanExecute" />
+                                        <Binding Path="TestAssemblyNode" />
+                                    </MultiBinding>
+                                </metro:ToggleSwitch.IsEnabled>
+                            </metro:ToggleSwitch>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel>

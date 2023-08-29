@@ -5,12 +5,12 @@
                         xmlns:prism="http://prismlibrary.com/">
     <Application.Resources>
         <ResourceDictionary>
-            <!--LookAndFeel-->
+            <!--  LookAndFeel  -->
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/AdionFA.UI.LookAndFeel;component/LookAndFeel.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!--Converters-->
+            <!--  Converters  -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converter:InverseBooleanConverter x:Key="InverseBooleanConverter" />
             <converter:IntToBooleanConverter x:Key="IntToBooleanConverter" />
@@ -20,6 +20,7 @@
             <converter:NullToBooleanConverter x:Key="NullToBooleanConverter" />
             <converter:BacktestStatusToVisibilityConverter x:Key="BacktestStatusToVisibilityConverter" />
             <converter:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+            <converter:BooleanAndConverter x:Key="BooleanAndConverter" />
 
             <converter:CompositeConverter x:Key="InverseBooleanToVisibilityConverter">
                 <converter:InverseBooleanConverter />

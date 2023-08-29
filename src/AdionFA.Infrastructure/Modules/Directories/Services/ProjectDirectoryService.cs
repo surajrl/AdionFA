@@ -249,13 +249,13 @@ namespace AdionFA.Infrastructure.Directories.Services
             }
         }
 
-        public bool DeleteAllFiles(string sourceDir, string fileExtension, bool doBackup)
+        public bool DeleteAllFiles(string sourceDir, string fileExtension, bool doBackup, SearchOption searchOption)
         {
             var backupDir = @$"{sourceDir}\Backup_" + DateTime.UtcNow.Ticks;
 
             try
             {
-                var filesToDelete = Directory.GetFiles(sourceDir, fileExtension)
+                var filesToDelete = Directory.GetFiles(sourceDir, fileExtension, searchOption)
                     .Where(d => !d.Contains("Backup_"))
                     .ToArray();
 
@@ -302,9 +302,9 @@ namespace AdionFA.Infrastructure.Directories.Services
 
                 return true;
             }
-            catch (DirectoryNotFoundException dirNotFound)
+            catch (DirectoryNotFoundException ex)
             {
-                Trace.TraceError(dirNotFound.Message);
+                Trace.TraceError(ex.Message);
                 throw;
             }
         }

@@ -16,6 +16,6 @@ namespace AdionFA.Infrastructure.Directories.Contracts
 
         bool DeleteFile(string filePath);
 
-        bool DeleteAllFiles(string sourceDir, string fileExtension, bool doBackup);
+        bool DeleteAllFiles(string sourceDir, string fileExtension, bool doBackup, SearchOption searchOption);
     }
 }

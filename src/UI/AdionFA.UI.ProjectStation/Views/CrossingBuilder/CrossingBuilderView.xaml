@@ -71,9 +71,23 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  Process & Cancel Buttons  -->
+        <!--  Process, Cancel & Reset Buttons  -->
         <StackPanel HorizontalAlignment="Right"
                     Orientation="Horizontal">
+            <!--  Reset Button  -->
+            <Grid Margin="0,20,10,0">
+                <Button Width="160"
+                        Height="40"
+                        Command="{Binding ResetCrossingBuilderCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:FontAwesome Width="14"
+                                               Kind="RedoSolid" />
+                        <Label Content="Reset Crossing Builder"
+                               FontSize="11" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
             <!--  Cancel Button  -->
             <Grid Margin="0,20,10,0">
                 <Button Width="80"
@@ -381,15 +395,15 @@
                     <StackPanel>
                         <Label Content="Load From" />
                         <metro:ToggleSwitch Content="Node Builder"
-                                            IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                                            IsEnabled="{Binding CanLoad}"
                                             IsOn="{Binding LoadFromNodeBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Toggled="LoadFromNodeBuilderToggleSwitch_Toggled" />
                         <metro:ToggleSwitch Content="Assembly Builder"
-                                            IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                                            IsEnabled="{Binding CanLoad}"
                                             IsOn="{Binding LoadFromAssemblyBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Toggled="LoadFromAssemblyBuilderToggleSwitch_Toggled" />
                         <metro:ToggleSwitch Content="Crossing Builder"
-                                            IsEnabled="{Binding IsTransactionActive, Converter={StaticResource InverseBooleanConverter}}"
+                                            IsEnabled="{Binding CanLoad}"
                                             IsOn="{Binding LoadFromCrossingBuilder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Toggled="LoadFromCrossingBuilderToggleSwitch_Toggled" />
                     </StackPanel>
@@ -398,9 +412,15 @@
                         <Label Content="Assembly Mode" />
                         <metro:ToggleSwitch x:Name="assemblyMode"
                                             Content="Single Assembly ON"
-                                            IsEnabled="{Binding LoadFromAssemblyBuilder}"
                                             IsOn="{Binding IsMultiAssemblyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Toggled="MultiAssemblyToggleSwitch_Toggled" />
+                                            Toggled="MultiAssemblyToggleSwitch_Toggled">
+                            <metro:ToggleSwitch.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="CanLoad" />
+                                    <Binding Path="LoadFromAssemblyBuilder" />
+                                </MultiBinding>
+                            </metro:ToggleSwitch.IsEnabled>
+                        </metro:ToggleSwitch>
                     </StackPanel>
                 </StackPanel>
 

@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -258,17 +259,19 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                 ? $"{NodeBuilder.WinningNodesDOWN.Count} DOWN Single Nodes {(NodeBuilder.WinningNodesDOWN.Count == 1 ? "Node" : "Nodes")} Found"
                 : "No DOWN Single Nodes Found";
 
-                MessageHelper.ShowMessageAsync(this,
+                await MessageHelper.ShowMessageAsync(this,
                     Resources.NodeBuilder,
                     $"{Resources.NodeBuilderCompleted}\n\n"
                     + $"{msgUP}\n"
-                    + $"{msgDOWN}");
+                    + $"{msgDOWN}")
+                .ConfigureAwait(true);
             }
             catch (OperationCanceledException)
             {
-                MessageHelper.ShowMessageAsync(this,
+                await MessageHelper.ShowMessageAsync(this,
                     Resources.NodeBuilder,
-                    Resources.NodeBuilder + " cancelled");
+                    Resources.NodeBuilder + " cancelled")
+                .ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -439,12 +442,12 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
             // Delete single node files from node builder
 
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml", false);
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml", false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesUPDirectory(ProjectDirectoryEnum.NodeBuilderNodesUP.GetDescription()), "*.xml", false, SearchOption.TopDirectoryOnly);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodesDOWNDirectory(ProjectDirectoryEnum.NodeBuilderNodesDOWN.GetDescription()), "*.xml", false, SearchOption.TopDirectoryOnly);
 
             // Delete extraction files from node builder
 
-            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodeBuilderExtractorWithoutScheduleDirectory(), "*.csv", false);
+            _projectDirectoryService.DeleteAllFiles(ProcessArgs.ProjectName.ProjectNodeBuilderExtractorWithoutScheduleDirectory(), "*.csv", false, SearchOption.TopDirectoryOnly);
 
             // Load processes
 
