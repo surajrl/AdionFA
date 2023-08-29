@@ -251,7 +251,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private bool IsTradeAssemblyNodes()
         {
-            var isTrade = false;
+            var isTrade = true;
 
             if (IsMultiAssemblyMode)
             {
@@ -331,7 +331,7 @@ namespace AdionFA.UI.ProjectStation.ViewModels
 
         private bool IsTradeStrategyNode()
         {
-            var isTrade = false;
+            var isTrade = true;
 
             // Test for at least one parent node
 

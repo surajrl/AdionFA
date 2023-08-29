@@ -134,17 +134,18 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
 
                 DownloadHistoricalDataModel.FilepathHistoricalData = json.Data;
 
-                if (CreateHistory())
+                if (await CreateHistoryAsync().ConfigureAwait(true))
                 {
                     var responseDTO = _marketDataService.CreateHistoricalData(_mapper.Map<DownloadHistoricalDataModel, HistoricalDataDTO>(DownloadHistoricalDataModel));
 
                     IsTransactionActive = false;
 
-                    MessageHelper.ShowMessageAsync(this,
+                    await MessageHelper.ShowMessageAsync(this,
                         EntityTypeEnum.HistoricalData.GetMetadata().Name,
                         responseDTO.IsSuccess
                         ? Resources.SuccessEntitySave
-                        : Resources.FailEntitySave);
+                        : Resources.FailEntitySave)
+                    .ConfigureAwait(true);
 
                     if (responseDTO.IsSuccess)
                     {
@@ -156,9 +157,10 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
             catch (Exception ex)
             {
-                MessageHelper.ShowMessageAsync(this,
+                await MessageHelper.ShowMessageAsync(this,
                     "Download Historical Data",
-                    $"{ex.Message}");
+                    $"{ex.Message}")
+                .ConfigureAwait(true);
 
                 IsTransactionActive = false;
             }
@@ -231,15 +233,16 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
             }
             catch (Exception ex)
             {
-                MessageHelper.ShowMessageAsync(this,
+                await MessageHelper.ShowMessageAsync(this,
                     "Error",
-                    $"{ex.Message}");
+                    $"{ex.Message}")
+                .ConfigureAwait(true);
 
                 IsTransactionActive = false;
             }
         }, () => !IsTransactionActive).ObservesProperty(() => IsTransactionActive);
 
-        private bool CreateHistory()
+        private async Task<bool> CreateHistoryAsync()
         {
             try
             {
@@ -278,9 +281,11 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                     return true;
                 }
 
-                MessageHelper.ShowMessageAsync(this,
+                await MessageHelper.ShowMessageAsync(this,
                     EntityTypeEnum.HistoricalData.GetMetadata().Name,
-                    Resources.HistoricalDataEmpty);
+                    Resources.HistoricalDataEmpty)
+                            .ConfigureAwait(true);
+
 
                 return false;
             }

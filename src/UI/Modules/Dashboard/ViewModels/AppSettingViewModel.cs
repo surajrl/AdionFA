@@ -111,17 +111,19 @@ namespace AdionFA.UI.Module.Dashboard.ViewModels
                                 _projectDirectoryService.CreateDefaultProjectWorkspace(project.ProjectName);
                             }
 
-                            MessageHelper.ShowMessageAsync(this,
+                            await MessageHelper.ShowMessageAsync(this,
                                 EntityTypeEnum.Setting.GetMetadata().Name,
-                                "Default workspace was updated");
+                                "Default workspace was updated")
+                            .ConfigureAwait(true);
                         }
                     }
                 }
                 else
                 {
-                    MessageHelper.ShowMessageAsync(this,
+                    await MessageHelper.ShowMessageAsync(this,
                         EntityTypeEnum.Setting.GetMetadata().Name,
-                        "Close all running projects to run the operation");
+                        "Close all running projects to run the operation")
+                            .ConfigureAwait(true);
                 }
             }
             catch (Exception ex)
