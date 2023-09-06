@@ -588,11 +588,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ProjectConfiguration.Project.HistoricalData.Symbol.Name,
                     CrossingBuilder.WinningNodesUP.First().CrossingNodesData.Select(crossingNode => crossingNode.Item3).First());
 
-                var d = new DirectoryInfo(Path.Combine(ProcessArgs.ProjectName.ProjectNodesUPDirectory(CrossingBuilder.WinningNodesUP.First().WinningUPDirectory)));
-                d.CreateSubdirectory(directoryName);
+                var directoryInfo = new DirectoryInfo(Path.Combine(ProcessArgs.ProjectName.ProjectNodesUPDirectory(CrossingBuilder.WinningNodesUP.First().WinningUPDirectory)));
+                directoryInfo.CreateSubdirectory(directoryName);
                 foreach (var winningStrategyNodeUP in CrossingBuilder.WinningNodesUP)
                 {
-                    SerializerHelper.XMLSerializeObject(winningStrategyNodeUP, Path.Combine(d.FullName, directoryName, winningStrategyNodeUP.Name + ".xml"));
+                    SerializerHelper.XMLSerializeObject(winningStrategyNodeUP, Path.Combine(directoryInfo.FullName, directoryName, winningStrategyNodeUP.Name + ".xml"));
                 }
             }
             if (CrossingBuilder.WinningNodesDOWN.Count > 0)
@@ -601,11 +601,11 @@ namespace AdionFA.UI.ProjectStation.ViewModels
                     ProjectConfiguration.Project.HistoricalData.Symbol.Name,
                     CrossingBuilder.WinningNodesDOWN.First().CrossingNodesData.Select(crossingNode => crossingNode.Item3).First());
 
-                var d = new DirectoryInfo(Path.Combine(ProcessArgs.ProjectName.ProjectNodesUPDirectory(CrossingBuilder.WinningNodesDOWN.First().WinningDOWNDirectory)));
-                d.CreateSubdirectory(directoryName);
+                var directoryInfo = new DirectoryInfo(Path.Combine(ProcessArgs.ProjectName.ProjectNodesUPDirectory(CrossingBuilder.WinningNodesDOWN.First().WinningDOWNDirectory)));
+                directoryInfo.CreateSubdirectory(directoryName);
                 foreach (var winningStrategyNodeDOWN in CrossingBuilder.WinningNodesDOWN)
                 {
-                    SerializerHelper.XMLSerializeObject(winningStrategyNodeDOWN, Path.Combine(d.FullName, directoryName, winningStrategyNodeDOWN.Name + ".xml"));
+                    SerializerHelper.XMLSerializeObject(winningStrategyNodeDOWN, Path.Combine(directoryInfo.FullName, directoryName, winningStrategyNodeDOWN.Name + ".xml"));
                 }
             }
 
@@ -615,45 +615,39 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             var extractionTemplates = _projectDirectoryService.GetFilesInPath(ProcessArgs.ProjectName.ProjectExtractorTemplatesDirectory(), "*.csv");
             foreach (var file in extractionTemplates)
             {
-                foreach (var strategyNode in CrossingBuilder.WinningNodesUP)
+                CrossingBuilderProcessesUP.Add(new BuilderProcess
                 {
-                    CrossingBuilderProcessesUP.Add(new BuilderProcess
-                    {
-                        ExtractionTemplatePath = file.FullName,
-                        ExtractionTemplateName = file.Name,
-                        ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                        Tree = new(),
+                    ExtractionTemplatePath = file.FullName,
+                    ExtractionTemplateName = file.Name,
+                    ExtractionName = file.Name,
+                    Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                    Tree = new(),
 
-                        BacktestStrategyNodes = new(),
-                        CurrentSuccessRateIS = strategyNode.BacktestIS.SuccessRatePercent,
-                        CurrentSuccessRateOS = strategyNode.BacktestOS.SuccessRatePercent,
-                        CurrentParentNodes = new(strategyNode.ParentNodesData),
-                        CurrentChildNodes = new(strategyNode.ChildNodesData),
-                        CurrentCrossingNodes = new(strategyNode.CrossingNodesData),
-                        PreviousBacktestOperationsIS = new(strategyNode.BacktestIS.BacktestOperations)
-                    });
-                }
+                    BacktestStrategyNodes = new(),
+                    CurrentSuccessRateIS = CrossingBuilder.WinningNodesUP.First().BacktestIS.SuccessRatePercent,
+                    CurrentSuccessRateOS = CrossingBuilder.WinningNodesUP.First().BacktestOS.SuccessRatePercent,
+                    CurrentParentNodes = new(CrossingBuilder.WinningNodesUP.First().ParentNodesData),
+                    CurrentChildNodes = new(CrossingBuilder.WinningNodesUP.First().ChildNodesData),
+                    CurrentCrossingNodes = new(CrossingBuilder.WinningNodesUP.Select(strategyNode => strategyNode.CrossingNodesData).First()),
+                    PreviousBacktestOperationsIS = new(CrossingBuilder.WinningNodesUP.First().BacktestIS.BacktestOperations)
+                });
 
-                foreach (var strategyNode in CrossingBuilder.WinningNodesDOWN)
+                CrossingBuilderProcessesDOWN.Add(new BuilderProcess
                 {
-                    CrossingBuilderProcessesDOWN.Add(new BuilderProcess
-                    {
-                        ExtractionTemplatePath = file.FullName,
-                        ExtractionTemplateName = file.Name,
-                        ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                        Tree = new(),
+                    ExtractionTemplatePath = file.FullName,
+                    ExtractionTemplateName = file.Name,
+                    ExtractionName = file.Name,
+                    Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                    Tree = new(),
 
-                        BacktestStrategyNodes = new(),
-                        CurrentSuccessRateIS = strategyNode.BacktestIS.SuccessRatePercent,
-                        CurrentSuccessRateOS = strategyNode.BacktestOS.SuccessRatePercent,
-                        CurrentParentNodes = new(strategyNode.ParentNodesData),
-                        CurrentChildNodes = new(strategyNode.ChildNodesData),
-                        CurrentCrossingNodes = new(strategyNode.CrossingNodesData),
-                        PreviousBacktestOperationsIS = new(strategyNode.BacktestIS.BacktestOperations)
-                    });
-                }
+                    BacktestStrategyNodes = new(),
+                    CurrentSuccessRateIS = CrossingBuilder.WinningNodesDOWN.First().BacktestIS.SuccessRatePercent,
+                    CurrentSuccessRateOS = CrossingBuilder.WinningNodesDOWN.First().BacktestOS.SuccessRatePercent,
+                    CurrentParentNodes = new(CrossingBuilder.WinningNodesDOWN.First().ParentNodesData),
+                    CurrentChildNodes = new(CrossingBuilder.WinningNodesDOWN.First().ChildNodesData),
+                    CurrentCrossingNodes = new(CrossingBuilder.WinningNodesDOWN.Select(strategyNode => strategyNode.CrossingNodesData).First()),
+                    PreviousBacktestOperationsIS = new(CrossingBuilder.WinningNodesDOWN.First().BacktestIS.BacktestOperations)
+                });
             }
         }
 
@@ -745,39 +739,45 @@ namespace AdionFA.UI.ProjectStation.ViewModels
             {
                 if (IsMultiAssemblyMode)
                 {
-                    CrossingBuilderProcessesUP.Add(new BuilderProcess
+                    if (assemblyNodesUP.Count > 0)
                     {
-                        ExtractionTemplatePath = file.FullName,
-                        ExtractionTemplateName = file.Name,
-                        ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                        Tree = new(),
+                        CrossingBuilderProcessesUP.Add(new BuilderProcess
+                        {
+                            ExtractionTemplatePath = file.FullName,
+                            ExtractionTemplateName = file.Name,
+                            ExtractionName = file.Name,
+                            Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                            Tree = new(),
 
-                        BacktestStrategyNodes = new(),
-                        CurrentSuccessRateIS = assemblyNodesUP.Select(node => node.BacktestIS.SuccessRatePercent).Sum() / assemblyNodesUP.Count,
-                        CurrentSuccessRateOS = assemblyNodesUP.Select(node => node.BacktestOS.SuccessRatePercent).Sum() / assemblyNodesUP.Count,
-                        CurrentParentNodes = new(assemblyNodesUP.Select(assemblyNode => assemblyNode.ParentNodeData)),
-                        CurrentChildNodes = new(assemblyNodesUP.FirstOrDefault().ChildNodesData),
-                        CurrentCrossingNodes = new(),
-                        PreviousBacktestOperationsIS = new(BuilderService.GetBacktestOperations(assemblyNodesUP))
-                    });
+                            BacktestStrategyNodes = new(),
+                            CurrentSuccessRateIS = assemblyNodesUP.Select(node => node.BacktestIS.SuccessRatePercent).Sum() / assemblyNodesUP.Count,
+                            CurrentSuccessRateOS = assemblyNodesUP.Select(node => node.BacktestOS.SuccessRatePercent).Sum() / assemblyNodesUP.Count,
+                            CurrentParentNodes = new(assemblyNodesUP.Select(assemblyNode => assemblyNode.ParentNodeData)),
+                            CurrentChildNodes = new(assemblyNodesUP.FirstOrDefault().ChildNodesData),
+                            CurrentCrossingNodes = new(),
+                            PreviousBacktestOperationsIS = new(BuilderService.GetBacktestOperations(assemblyNodesUP))
+                        });
+                    }
 
-                    CrossingBuilderProcessesDOWN.Add(new BuilderProcess
+                    if (assemblyNodesDOWN.Count > 0)
                     {
-                        ExtractionTemplatePath = file.FullName,
-                        ExtractionTemplateName = file.Name,
-                        ExtractionName = file.Name,
-                        Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
-                        Tree = new(),
+                        CrossingBuilderProcessesDOWN.Add(new BuilderProcess
+                        {
+                            ExtractionTemplatePath = file.FullName,
+                            ExtractionTemplateName = file.Name,
+                            ExtractionName = file.Name,
+                            Message = BuilderProcessStatus.CBNotStarted.GetMetadata().Name,
+                            Tree = new(),
 
-                        BacktestStrategyNodes = new(),
-                        CurrentSuccessRateIS = assemblyNodesDOWN.Select(node => node.BacktestIS.SuccessRatePercent).Sum() / assemblyNodesDOWN.Count,
-                        CurrentSuccessRateOS = assemblyNodesDOWN.Select(node => node.BacktestOS.SuccessRatePercent).Sum() / assemblyNodesDOWN.Count,
-                        CurrentParentNodes = new(assemblyNodesDOWN.Select(assemblyNode => assemblyNode.ParentNodeData)),
-                        CurrentChildNodes = new(assemblyNodesDOWN.FirstOrDefault().ChildNodesData),
-                        CurrentCrossingNodes = new(),
-                        PreviousBacktestOperationsIS = new(BuilderService.GetBacktestOperations(assemblyNodesDOWN))
-                    });
+                            BacktestStrategyNodes = new(),
+                            CurrentSuccessRateIS = assemblyNodesDOWN.Select(node => node.BacktestIS.SuccessRatePercent).Sum() / assemblyNodesDOWN.Count,
+                            CurrentSuccessRateOS = assemblyNodesDOWN.Select(node => node.BacktestOS.SuccessRatePercent).Sum() / assemblyNodesDOWN.Count,
+                            CurrentParentNodes = new(assemblyNodesDOWN.Select(assemblyNode => assemblyNode.ParentNodeData)),
+                            CurrentChildNodes = new(assemblyNodesDOWN.FirstOrDefault().ChildNodesData),
+                            CurrentCrossingNodes = new(),
+                            PreviousBacktestOperationsIS = new(BuilderService.GetBacktestOperations(assemblyNodesDOWN))
+                        });
+                    }
                 }
                 else
                 {
